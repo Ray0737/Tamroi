@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Sign In — Siam Echo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <style>
+    /* ── Page shell: vertically centered ─────────────────── */
+    .auth-page {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px var(--space-md) calc(var(--space-xl) + env(safe-area-inset-bottom));
+      position: relative;
+    }
+
+    /* Back button — absolute top-left, doesn't shift content */
+    .back-btn {
+      position: absolute;
+      top: calc(var(--space-md) + env(safe-area-inset-top));
+      left: var(--space-md);
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid var(--color-border);
+      background: none;
+      color: var(--color-white);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background var(--transition-fast);
+      text-decoration: none;
+    }
+
+    .back-btn:hover { background: rgba(255,255,255,0.06); }
+    .back-btn svg   { width: 18px; height: 18px; }
+
+    /* ── Centered card ────────────────────────────────────── */
+    .auth-card {
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    /* ── Logo + title ─────────────────────────────────────── */
+    .auth-logo {
+      width: 52px; height: 52px;
+      background: var(--color-primary);
+      border-radius: var(--radius-lg);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: var(--shadow-primary);
+      margin-bottom: 2px;
+    }
+
+    .auth-logo svg { width: 26px; height: 26px; color: #1C1B2E; stroke: #1C1B2E; }
+
+    .auth-title {
+      font-family: var(--font-heading);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      color: var(--color-white);
+      margin: 0;
+    }
+
+    .auth-subtitle {
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+      margin: 0;
+    }
+
+    /* ── Sliding underline tabs ───────────────────────────── */
+    .auth-tabs {
+      width: 100%;
+      display: flex;
+      position: relative;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 10px;
+      background: none;
+      border: none;
+      color: var(--color-muted);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      cursor: pointer;
+      transition: color var(--transition-fast);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .auth-tab.active { color: var(--color-white); }
+
+    /* Sliding orange line indicator */
+    .auth-tab-line {
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 50%;
+      height: 2px;
+      background: var(--color-primary);
+      border-radius: 2px 2px 0 0;
+      transition: transform var(--transition-base);
+    }
+
+    .auth-tabs[data-active="register"] .auth-tab-line {
+      transform: translateX(100%);
+    }
+
+    /* ── Form sections ────────────────────────────────────── */
+    .form-section {
+      display: none;
+      width: 100%;
+    }
+
+    /* Instant show — just a quick 120ms fade, no slide-up */
+    .form-section.active {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      animation: fadeIn 0.12s ease forwards;
+    }
+
+    /* ── Smaller inputs (local override) ──────────────────── */
+    .auth-card .input-dark {
+      padding: 10px 14px;
+      font-size: 13px;
+    }
+
+    .auth-card .input-wrap .input-icon {
+      width: 16px; height: 16px;
+    }
+
+    /* Keep left icon padding aligned with smaller input */
+    .auth-card .input-wrap .input-icon ~ .input-dark {
+      padding-left: 38px;
+    }
+
+    /* ── Smaller buttons ──────────────────────────────────── */
+    .auth-card .btn {
+      padding: 11px 20px;
+      font-size: 13px;
+    }
+
+    /* ── Autofill: look identical to a normal typed input ────
+       Problem: Chrome forces a bg color on autofilled inputs and
+       rgba/semi-transparent box-shadows composite ON TOP of it,
+       leaving the tint visible. var() also doesn't always resolve
+       inside :-webkit-autofill.
+       Fix: solid hex = rgba(255,255,255,0.06) over #2B2D35 (page bg)
+            = rgb(56,58,65) = #383A41  → completely replaces Chrome's
+            tint with the exact same color the input normally shows.
+    ────────────────────────────────────────────────────────── */
+    .input-dark:-webkit-autofill,
+    .input-dark:-webkit-autofill:hover,
+    .input-dark:-webkit-autofill:focus,
+    .input-dark:-webkit-autofill:active {
+      /* Solid opaque color = rendered input bg — fully hides Chrome tint */
+      -webkit-box-shadow: 0 0 0 9999px #2A283B inset !important;
+      /* Literal hex — var() is unreliable inside :-webkit-autofill */
+      -webkit-text-fill-color: #ffffff !important;
+      caret-color: #ffffff;
+      /* Hold bg frozen so Chrome can't animate it back to its color */
+      transition: background-color 9999s ease-in-out 0s;
+    }
+
+    /* Error state: solid red-tinted bg to match is-error appearance */
+    .input-dark.is-error:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 9999px #3a3035 inset !important;
+      border-color: #ff6b6b !important;
+    }
+
+    /* ── Input error state ────────────────────────────────── */
+    .input-dark.is-error {
+      border-color: #ff6b6b;
+      background: rgba(255,107,107,0.05);
+    }
+
+    .input-warn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #ff6b6b;
+      display: none;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .input-warn.show { display: flex; }
+    .input-warn svg  { width: 14px; height: 14px; }
+
+    .input-wrap:has(.input-warn.show) .input-dark:not([type="password"]) {
+      padding-right: 34px;
+    }
+
+    .field-error {
+      font-size: 11px;
+      color: #ff6b6b;
+      margin-top: 2px;
+      padding-left: 2px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      line-height: 1.3;
+    }
+
+    .field-error:empty { display: none; }
+    .field-error svg   { flex-shrink: 0; }
+
+    /* ── Divider ──────────────────────────────────────────── */
+    .auth-card .divider-text {
+      margin: 4px 0;
+      font-size: 12px;
+    }
+
+    /* ── Bottom switch text ───────────────────────────────── */
+    .auth-switch {
+      font-size: 12px;
+      color: var(--color-muted);
+      text-align: center;
+      margin: 4px 0 0;
+    }
+
+    .auth-switch button {
+      background: none;
+      border: none;
+      color: var(--color-primary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      transition: opacity var(--transition-fast);
+    }
+
+    .auth-switch button:hover { opacity: 0.8; }
+
+    /* ── Success toast ────────────────────────────────────── */
+    .auth-toast {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%) translateY(calc(-100% - 20px));
+      background: var(--color-success);
+      color: var(--color-bg);
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: var(--text-sm);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      box-shadow: var(--shadow-success);
+      transition: transform 0.35s cubic-bezier(0.34,1.4,0.64,1);
+      white-space: nowrap;
+      max-width: calc(var(--max-width) - 32px);
+    }
+
+    .auth-toast.show { transform: translateX(-50%) translateY(0); }
+    .auth-toast svg  { flex-shrink: 0; }
+
+    .auth-toast.info {
+      background: var(--color-card-dark);
+      color: var(--color-white);
+      border: 1px solid var(--color-border);
+      box-shadow: var(--shadow-card);
+    }
+  </style>
+</head>
+<body>
+<div class="app-wrapper">
+
+  <!-- Toast -->
+  <div class="auth-toast" id="auth-toast">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+    <span id="auth-toast-msg">สำเร็จ!</span>
+  </div>
+
+  <div class="auth-page">
+
+    <!-- Back button (absolute, doesn't affect centering) -->
+    <a href="index.html" class="back-btn" aria-label="Back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15,18 9,12 15,6"/>
+      </svg>
+    </a>
+
+    <!-- Centered card -->
+    <div class="auth-card">
+
+      <!-- Logo + name -->
+      <div class="auth-logo anim-fade-down">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polygon points="16.24,7.76 14.12,14.12 7.76,16.24 9.88,9.88" fill="currentColor" stroke="none"/>
+        </svg>
+      </div>
+
+      <div class="text-center anim-fade-up" style="animation-delay:0.05s">
+        <h1 class="auth-title" id="auth-page-title">เข้าสู่ระบบ</h1>
+        <p class="auth-subtitle">Siam Echo · ลุยไทย</p>
+      </div>
+
+      <!-- Underline tab switch -->
+      <div class="auth-tabs anim-fade-up" id="auth-tabs" data-active="login" style="animation-delay:0.1s">
+        <button class="auth-tab active" data-tab="login"    onclick="switchAuthTab('login')">เข้าสู่ระบบ</button>
+        <button class="auth-tab"        data-tab="register" onclick="switchAuthTab('register')">สมัครสมาชิก</button>
+        <div class="auth-tab-line"></div>
+      </div>
+
+      <!-- ── Login Form ── -->
+      <div class="form-section active" id="form-login">
+
+        <div class="form-group">
+          <label class="form-label">อีเมล</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <input class="input-dark" type="email" id="login-email" placeholder="example@email.com" autocomplete="email">
+            <span class="input-warn" id="login-email-warn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </span>
+          </div>
+          <p class="field-error" id="login-email-err"></p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">รหัสผ่าน</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+            </svg>
+            <input class="input-dark" type="password" id="login-password" placeholder="รหัสผ่าน" autocomplete="current-password">
+            <button class="input-action" onclick="togglePwd('login-password')" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <p class="field-error" id="login-password-err"></p>
+        </div>
+
+        <button class="btn btn-primary btn-full" id="btn-login" onclick="handleLogin()">
+          เข้าสู่ระบบ
+        </button>
+
+        <div class="divider-text">หรือ</div>
+
+        <button class="btn btn-google btn-full" onclick="handleGoogle()">
+          <svg viewBox="0 0 24 24" width="16" height="16" style="flex-shrink:0">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <p class="auth-switch">
+          ยังไม่มีบัญชี?
+          <button onclick="switchAuthTab('register')">สมัครสมาชิก</button>
+        </p>
+
+      </div><!-- end form-login -->
+
+      <!-- ── Register Form ── -->
+      <div class="form-section" id="form-register">
+
+        <div class="form-group">
+          <label class="form-label">ชื่อผู้ใช้ (Username)</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+            <input class="input-dark" type="text" id="reg-username" placeholder="TravelerName" autocomplete="username">
+            <span class="input-warn" id="reg-username-warn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </span>
+          </div>
+          <p class="field-error" id="reg-username-err"></p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">อีเมล</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <input class="input-dark" type="email" id="reg-email" placeholder="example@email.com" autocomplete="email">
+            <span class="input-warn" id="reg-email-warn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </span>
+          </div>
+          <p class="field-error" id="reg-email-err"></p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">รหัสผ่าน</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+            </svg>
+            <input class="input-dark" type="password" id="reg-password" placeholder="อย่างน้อย 6 ตัวอักษร" autocomplete="new-password">
+            <button class="input-action" onclick="togglePwd('reg-password')" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <p class="field-error" id="reg-password-err"></p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ยืนยันรหัสผ่าน</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+            </svg>
+            <input class="input-dark" type="password" id="reg-confirm" placeholder="ยืนยันรหัสผ่าน" autocomplete="new-password">
+            <button class="input-action" onclick="togglePwd('reg-confirm')" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <p class="field-error" id="reg-confirm-err"></p>
+        </div>
+
+        <button class="btn btn-primary btn-full" id="btn-register" onclick="handleRegister()">
+          สร้างบัญชี
+        </button>
+
+        <div class="divider-text">หรือ</div>
+
+        <button class="btn btn-google btn-full" onclick="handleGoogle()">
+          <svg viewBox="0 0 24 24" width="16" height="16" style="flex-shrink:0">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <p class="auth-switch">
+          มีบัญชีแล้ว?
+          <button onclick="switchAuthTab('login')">เข้าสู่ระบบ</button>
+        </p>
+
+      </div><!-- end form-register -->
+
+    </div><!-- end auth-card -->
+  </div><!-- end auth-page -->
+</div><!-- end app-wrapper -->
+
+<!-- Scripts -->
+<script src="js/env.js"></script>
+<script src="js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* ── Tab switch ─────────────────────────────────────── */
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('mode') === 'register') switchAuthTab('register');
+
+  function switchAuthTab(tab) {
+    const tabs = document.getElementById('auth-tabs');
+    tabs.dataset.active = tab;
+
+    document.querySelectorAll('.auth-tab').forEach(b =>
+      b.classList.toggle('active', b.dataset.tab === tab));
+
+    document.getElementById('form-login').classList.toggle('active', tab === 'login');
+    document.getElementById('form-register').classList.toggle('active', tab === 'register');
+    document.getElementById('auth-page-title').textContent =
+      tab === 'login' ? 'เข้าสู่ระบบ' : 'สมัครสมาชิก';
+
+    clearAllErrors();
+  }
+
+  /* ── Toast ──────────────────────────────────────────── */
+  function showToast(msg, type = 'success') {
+    const toast = document.getElementById('auth-toast');
+    const msgEl  = document.getElementById('auth-toast-msg');
+    msgEl.textContent = msg;
+    toast.className = `auth-toast ${type}`;
+    void toast.offsetWidth;
+    toast.classList.add('show');
+    clearTimeout(toast._hide);
+    toast._hide = setTimeout(() => toast.classList.remove('show'), 3200);
+  }
+
+  /* ── Field error helpers ────────────────────────────── */
+  const _warnSVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;flex-shrink:0"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+
+  function setFieldError(id, msg) {
+    const input  = document.getElementById(id);
+    const errEl  = document.getElementById(id + '-err');
+    const warnEl = document.getElementById(id + '-warn');
+    if (input)  input.classList.toggle('is-error', !!msg);
+    if (errEl) {
+      if (msg) {
+        // _warnSVG is a safe static string; message is set via createTextNode (no parsing)
+        errEl.innerHTML = _warnSVG;
+        errEl.appendChild(document.createTextNode(' ' + msg));
+      } else {
+        errEl.innerHTML = '';
+      }
+    }
+    if (warnEl) warnEl.classList.toggle('show', !!msg);
+  }
+
+  function clearAllErrors() {
+    document.querySelectorAll('.input-dark').forEach(el => el.classList.remove('is-error'));
+    document.querySelectorAll('.field-error').forEach(el => { el.innerHTML = ''; });
+    document.querySelectorAll('.input-warn').forEach(el => el.classList.remove('show'));
+  }
+
+  document.querySelectorAll('.input-dark').forEach(input => {
+    input.addEventListener('input', () => setFieldError(input.id, ''));
+  });
+
+  /* ── Loading ────────────────────────────────────────── */
+  function setLoading(btnId, loading, defaultLabel) {
+    const btn = document.getElementById(btnId);
+    if (loading) { btn.innerHTML = '<div class="spinner" style="margin:0 auto;width:18px;height:18px"></div>'; btn.disabled = true; }
+    else         { btn.innerHTML = defaultLabel; btn.disabled = false; }
+  }
+
+  /* ── Password toggle ────────────────────────────────── */
+  function togglePwd(inputId) {
+    const input = document.getElementById(inputId);
+    input.type = input.type === 'password' ? 'text' : 'password';
+  }
+
+  /* ── Login ──────────────────────────────────────────── */
+  async function handleLogin() {
+    clearAllErrors();
+    const email    = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    let ok = true;
+    if (!email)                  { setFieldError('login-email',    'กรุณากรอกอีเมล'); ok = false; }
+    else if (!email.includes('@')){ setFieldError('login-email',    'รูปแบบอีเมลไม่ถูกต้อง'); ok = false; }
+    if (!password)               { setFieldError('login-password', 'กรุณากรอกรหัสผ่าน'); ok = false; }
+    if (!ok) return;
+
+    setLoading('btn-login', true, 'เข้าสู่ระบบ');
+    try {
+      await DB.Auth.signIn(email, password);
+      showToast('เข้าสู่ระบบสำเร็จ! กำลังโหลดแผนที่...');
+      setTimeout(() => window.location.href = 'onboarding.html', 1200);
+    } catch (err) {
+      setLoading('btn-login', false, 'เข้าสู่ระบบ');
+      console.error('[signIn error]', err.message);
+      const msg = (err.message || '').toLowerCase();
+      if (msg.includes('confirm') || msg.includes('not confirmed')) {
+        setFieldError('login-email', 'ยังไม่ได้ยืนยันอีเมล — ตรวจสอบกล่องจดหมายแล้วคลิกลิงก์ยืนยัน');
+        showToast('กรุณายืนยันอีเมลก่อน', 'info');
+      } else if (msg.includes('invalid') || msg.includes('credentials') || msg.includes('password')) {
+        setFieldError('login-password', 'รหัสผ่านไม่ถูกต้อง');
+      } else if (msg.includes('not found') || msg.includes('no user')) {
+        setFieldError('login-email', 'ไม่พบบัญชีนี้ในระบบ');
+      } else {
+        setFieldError('login-email', err.message || 'เข้าสู่ระบบไม่สำเร็จ');
+      }
+    }
+  }
+
+  /* ── Register ───────────────────────────────────────── */
+  async function handleRegister() {
+    clearAllErrors();
+    const username = document.getElementById('reg-username').value.trim();
+    const email    = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const confirm  = document.getElementById('reg-confirm').value;
+
+    let ok = true;
+    if (!username || username.length < 3) { setFieldError('reg-username', 'ชื่อผู้ใช้ต้องมีอย่างน้อย 3 ตัวอักษร'); ok = false; }
+    if (!email || !email.includes('@'))   { setFieldError('reg-email',    'รูปแบบอีเมลไม่ถูกต้อง'); ok = false; }
+    if (!password || password.length < 6) { setFieldError('reg-password', 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร'); ok = false; }
+    if (password && password !== confirm) { setFieldError('reg-confirm',  'รหัสผ่านไม่ตรงกัน'); ok = false; }
+    if (!ok) return;
+
+    setLoading('btn-register', true, 'สร้างบัญชี');
+    try {
+      const result = await DB.Auth.signUp(email, password, username);
+      if (result?.user && !result?.session) {
+        showToast('สมัครสำเร็จ! กรุณาตรวจสอบอีเมลเพื่อยืนยันบัญชี', 'info');
+        setTimeout(() => switchAuthTab('login'), 3000);
+      } else {
+        showToast('สมัครสำเร็จ! กำลังพาไปที่แผนที่...');
+        setTimeout(() => window.location.href = 'onboarding.html', 1200);
+      }
+    } catch (err) {
+      setLoading('btn-register', false, 'สร้างบัญชี');
+      console.error('[signUp error]', err.message);
+      const raw = err.message || '';
+      const msg = raw.toLowerCase();
+      if (msg.includes('already registered') || msg.includes('user already') || msg.includes('already exists')) {
+        setFieldError('reg-email', 'อีเมลนี้มีบัญชีอยู่แล้ว — ลองเข้าสู่ระบบแทน');
+      } else if (msg.includes('rate limit') || msg.includes('too many')) {
+        setFieldError('reg-email', 'ส่งคำขอบ่อยเกินไป รอสักครู่แล้วลองใหม่');
+      } else if (msg.includes('password') || msg.includes('weak')) {
+        setFieldError('reg-password', raw);
+      } else if (msg.includes('username') || (msg.includes('unique') && msg.includes('username'))) {
+        setFieldError('reg-username', 'ชื่อผู้ใช้นี้มีผู้ใช้งานแล้ว');
+      } else if (msg.includes('signup') && (msg.includes('disabled') || msg.includes('not allowed'))) {
+        setFieldError('reg-email', 'การสมัครถูกปิดอยู่ — กรุณาเปิด Email provider ใน Supabase');
+      } else {
+        setFieldError('reg-email', raw || 'สมัครไม่สำเร็จ กรุณาลองใหม่');
+      }
+    }
+  }
+
+  /* ── Google OAuth ───────────────────────────────────── */
+  async function handleGoogle() {
+    const isRegister = document.getElementById('form-register').classList.contains('active');
+    const errTarget  = isRegister ? 'reg-email' : 'login-email';
+    try {
+      await DB.Auth.signInGoogle();
+    } catch (err) {
+      console.error('[Google OAuth error]', err.message);
+      const msg = (err.message || '').toLowerCase();
+      if (msg.includes('provider') && (msg.includes('enabled') || msg.includes('disabled'))) {
+        setFieldError(errTarget, 'Google OAuth ยังไม่ได้เปิดใช้งาน — ตั้งค่าใน Supabase Dashboard');
+      } else if (msg.includes('redirect') || msg.includes('url')) {
+        setFieldError(errTarget, 'Redirect URL ไม่ถูกต้อง — เพิ่ม ' + window.location.origin + ' ใน Supabase');
+      } else {
+        setFieldError(errTarget, err.message || 'Google sign-in ไม่สำเร็จ');
+      }
+    }
+  }
+
+  /* ── Enter key ──────────────────────────────────────── */
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    if (document.getElementById('form-login').classList.contains('active')) handleLogin();
+    else handleRegister();
+  });
+</script>
+</body>
+</html>

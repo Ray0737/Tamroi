@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Setup — Siam Echo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <style>
+    /* ── Page shell ─────────────────────────────────────── */
+    .onboard-page {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-xl) var(--space-md) calc(var(--space-xl) + env(safe-area-inset-bottom));
+    }
+
+    .onboard-card {
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    /* ── Step indicator ──────────────────────────────────── */
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: var(--space-sm);
+    }
+
+    .step-dot {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 2px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+      color: var(--color-muted);
+      transition: background var(--transition-base), border-color var(--transition-base), color var(--transition-base);
+      flex-shrink: 0;
+    }
+
+    .step-dot.active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: var(--color-on-primary);
+    }
+
+    .step-dot.done {
+      background: var(--color-success);
+      border-color: var(--color-success);
+      color: #1C1B2E;
+    }
+
+    .step-line {
+      width: 48px; height: 2px;
+      background: var(--color-border);
+      margin: 0 6px;
+      border-radius: 2px;
+      transition: background var(--transition-base);
+    }
+
+    .step-line.done { background: var(--color-success); }
+
+    /* ── Step sections ───────────────────────────────────── */
+    .onboard-step {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-md);
+      width: 100%;
+    }
+
+    .onboard-step.active { display: flex; }
+
+    /* ── Illustration area ───────────────────────────────── */
+    .illus-wrap {
+      width: 140px; height: 140px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    /* Location illustration — pulsing rings */
+    .pulse-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1.5px solid var(--color-primary);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .ring-1 { width: 140px; height: 140px; opacity: 0.06; animation: ringPulse 3s ease-in-out infinite; }
+    .ring-2 { width: 108px; height: 108px; opacity: 0.10; animation: ringPulse 3s ease-in-out infinite 0.4s; }
+    .ring-3 { width: 78px;  height: 78px;  opacity: 0.15; animation: ringPulse 3s ease-in-out infinite 0.8s; }
+
+    @keyframes ringPulse {
+      0%, 100% { opacity: 0.06; transform: translate(-50%,-50%) scale(1); }
+      50%       { opacity: 0.18; transform: translate(-50%,-50%) scale(1.05); }
+    }
+
+    .illus-pin {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -52%);
+      width: 56px; height: 56px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ── Title + text ────────────────────────────────────── */
+    .onboard-title {
+      font-family: var(--font-heading);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      text-align: center;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .onboard-sub {
+      font-size: var(--text-sm);
+      color: var(--color-muted);
+      text-align: center;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    /* ── Feature benefit list ────────────────────────────── */
+    .benefit-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .benefit-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+    }
+
+    .benefit-icon {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: var(--color-primary-dim);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .benefit-icon svg { width: 16px; height: 16px; stroke: var(--color-primary); }
+
+    .benefit-text {
+      font-size: var(--text-sm);
+      color: var(--color-white);
+      line-height: 1.3;
+      flex: 1;
+    }
+
+    .benefit-text small {
+      display: block;
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+      margin-top: 2px;
+    }
+
+    /* ── District grid (step 2) ──────────────────────────── */
+    .district-grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-sm);
+      width: 100%;
+    }
+
+    .dc-card {
+      background: var(--color-card-darker);
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md) var(--space-sm);
+      cursor: pointer;
+      text-align: center;
+      transition: border-color var(--transition-fast), background var(--transition-fast),
+                  transform var(--transition-fast);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .dc-card:hover  { border-color: rgba(246,193,158,0.35); background: rgba(246,193,158,0.04); }
+    .dc-card:active { transform: scale(0.96); }
+
+    .dc-card.selected {
+      border-color: var(--color-primary);
+      background: var(--color-primary-dim);
+    }
+
+    .dc-icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      display: flex; align-items: center; justify-content: center;
+      transition: background var(--transition-fast);
+    }
+
+    .dc-card.selected .dc-icon { background: var(--color-primary-dim); }
+    .dc-icon svg { width: 16px; height: 16px; stroke: var(--color-muted); }
+    .dc-card.selected .dc-icon svg { stroke: var(--color-primary); }
+
+    .dc-name-th {
+      font-family: var(--font-heading);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      margin: 0;
+      color: var(--color-white);
+      line-height: 1.2;
+    }
+
+    .dc-name-en {
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+      margin: 0;
+    }
+
+    /* ── Skip link ───────────────────────────────────────── */
+    .skip-link {
+      font-size: 12px;
+      color: var(--color-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      padding: 4px;
+      transition: color var(--transition-fast);
+    }
+
+    .skip-link:hover { color: var(--color-white); }
+  </style>
+</head>
+<body>
+<div class="app-wrapper">
+  <div class="onboard-page">
+    <div class="onboard-card">
+
+      <!-- Step indicator -->
+      <div class="step-indicator">
+        <div class="step-dot active" id="dot-1">1</div>
+        <div class="step-line" id="line-1"></div>
+        <div class="step-dot" id="dot-2">2</div>
+      </div>
+
+      <!-- ══ STEP 1: Location Permission ══ -->
+      <div class="onboard-step active anim-fade-up" id="step-location">
+
+        <!-- Pulsing location illustration -->
+        <div class="illus-wrap">
+          <div class="pulse-ring ring-1"></div>
+          <div class="pulse-ring ring-2"></div>
+          <div class="pulse-ring ring-3"></div>
+          <div class="illus-pin">
+            <svg viewBox="0 0 56 56" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <!-- Pin background -->
+              <path d="M28 6 C17.5 6 9 14.5 9 25 C9 38 28 52 28 52 C28 52 47 38 47 25 C47 14.5 38.5 6 28 6 Z"
+                    fill="rgba(246,193,158,0.18)" stroke="#F6C19E" stroke-width="2"/>
+              <!-- Inner dot -->
+              <circle cx="28" cy="25" r="9" fill="#F6C19E" opacity="0.9"/>
+              <circle cx="28" cy="25" r="4.5" fill="#1C1B2E"/>
+            </svg>
+          </div>
+        </div>
+
+        <h2 class="onboard-title">เปิดการระบุตำแหน่ง</h2>
+        <p class="onboard-sub">ให้แอปรู้ว่าคุณอยู่ที่ไหน<br>เพื่อประสบการณ์การสำรวจที่ดีที่สุด</p>
+
+        <div class="benefit-list">
+          <div class="benefit-row">
+            <div class="benefit-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 8v4l3 3"/>
+              </svg>
+            </div>
+            <div class="benefit-text">
+              แจ้งเตือนอัตโนมัติเมื่ออยู่ใกล้สถานที่ประวัติศาสตร์
+              <small>ไม่พลาดการสำรวจที่สำคัญ</small>
+            </div>
+          </div>
+
+          <div class="benefit-row">
+            <div class="benefit-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2"/>
+                <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/>
+                <line x1="12" y1="12" x2="12" y2="16"/>
+                <line x1="10" y1="14" x2="14" y2="14"/>
+              </svg>
+            </div>
+            <div class="benefit-text">
+              รับ ×2 Points เมื่อใช้ BTS / MRT ในกรุงเทพฯ
+              <small>Bangkok public transport bonus</small>
+            </div>
+          </div>
+
+          <div class="benefit-row">
+            <div class="benefit-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </div>
+            <div class="benefit-text">
+              ค้นหา OTOP และร้านกาแฟใกล้เคียงอัตโนมัติ
+              <small>Support Nodes จะปรากฏในแผนที่</small>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-full" id="btn-allow-location" onclick="requestLocation()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px">
+            <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
+          อนุญาตการเข้าถึงตำแหน่ง
+        </button>
+
+        <button class="skip-link" onclick="goToStep2()">ข้ามก่อน — ตั้งค่าในภายหลัง</button>
+
+      </div><!-- end step-location -->
+
+      <!-- ══ STEP 2: Home Territory ══ -->
+      <div class="onboard-step" id="step-home">
+
+        <div style="text-align:center">
+          <h2 class="onboard-title">เลือกอาณาเขตบ้านเกิด</h2>
+          <p class="onboard-sub" style="margin-top:6px">
+            ย่านนี้จะเป็นจุดเริ่มต้นการผจญภัย<br>
+            และจะเปิดหมอกทันทีเมื่อเริ่มเล่น
+          </p>
+        </div>
+
+        <div class="district-grid-2col" id="district-grid"></div>
+
+        <button class="btn btn-primary btn-full" id="btn-confirm-home"
+                onclick="confirmHomeAndStart()" disabled
+                style="opacity:0.45;pointer-events:none">
+          ยืนยันอาณาเขตบ้านเกิด
+        </button>
+
+      </div><!-- end step-home -->
+
+    </div><!-- end onboard-card -->
+  </div>
+</div><!-- end app-wrapper -->
+
+<script src="js/env.js"></script>
+<script src="js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* ── Auth guard + already-onboarded check ──────────────── */
+  (async () => {
+    let session = null;
+    try { session = await DB.Auth.getSession(); } catch { /* not configured */ }
+
+    if (localStorage.getItem('siamecho_onboarded')) {
+      // Already completed onboarding — only go to app if actually logged in
+      if (session) { window.location.replace('app.html'); return; }
+      // Session gone (expired etc.) — clear stale flag and re-login
+      localStorage.removeItem('siamecho_onboarded');
+    }
+
+    // Must be logged in to reach onboarding
+    if (!session) { window.location.replace('login.html'); return; }
+
+    // First time onboarding — also listen for OAuth SIGNED_IN
+    // (in case Supabase is still exchanging the token when this page loads)
+    if (!session) {
+      DB.Auth.onStateChange((event, s) => {
+        if (event === 'SIGNED_IN' && s) { /* proceed — page already loaded */ }
+        else if (event === 'INITIAL_SESSION' && !s) {
+          window.location.replace('login.html');
+        }
+      });
+    }
+  })();
+
+  /* ── District data ──────────────────────────────────────── */
+  const DISTRICTS = [
+    { id: 'rattanakosin', name_th: 'รัตนโกสินทร์',   name_en: 'Rattanakosin',     lat: 13.7519, lng: 100.4930 },
+    { id: 'dusit',        name_th: 'ดุสิต-พระนคร',   name_en: 'Dusit-Phra Nakhon',lat: 13.7740, lng: 100.5109 },
+    { id: 'pathumwan',    name_th: 'ปทุมวัน-สยาม',   name_en: 'Pathumwan-Siam',   lat: 13.7442, lng: 100.5320 },
+    { id: 'silom',        name_th: 'สีลม-บางรัก',    name_en: 'Silom-Bangrak',    lat: 13.7274, lng: 100.5329 },
+    { id: 'sukhumvit',    name_th: 'สุขุมวิท',        name_en: 'Sukhumvit',        lat: 13.7339, lng: 100.5614 },
+    { id: 'watthana',     name_th: 'วัฒนา-ทองหล่อ',  name_en: 'Watthana-Thonglor',lat: 13.7297, lng: 100.5826 },
+    { id: 'chatuchak',    name_th: 'จตุจักร',         name_en: 'Chatuchak',        lat: 13.8022, lng: 100.5507 },
+    { id: 'ladphrao',     name_th: 'ลาดพร้าว',        name_en: 'Ladphrao',         lat: 13.8100, lng: 100.5900 },
+    { id: 'bang_kapi',    name_th: 'บางกะปิ-มีนบุรี', name_en: 'Bang Kapi',        lat: 13.7775, lng: 100.6392 },
+    { id: 'phra_khanong', name_th: 'พระโขนง-อ่อนนุช', name_en: 'Phra Khanong',     lat: 13.7009, lng: 100.5953 },
+    { id: 'bang_na',      name_th: 'บางนา',            name_en: 'Bang Na',          lat: 13.6571, lng: 100.6123 },
+    { id: 'nonthaburi',   name_th: 'นนทบุรี',          name_en: 'Nonthaburi',       lat: 13.8621, lng: 100.5144 },
+  ];
+
+  let selectedDistrictId = null;
+
+  /* ── Step 1: Location permission ───────────────────────── */
+  function requestLocation() {
+    const btn = document.getElementById('btn-allow-location');
+    btn.innerHTML = '<div class="spinner" style="width:18px;height:18px;margin:0 auto"></div>';
+    btn.disabled = true;
+
+    if (!navigator.geolocation) {
+      goToStep2(); return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        try {
+          localStorage.setItem('siamecho_location', JSON.stringify({
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          }));
+        } catch { /* ignore */ }
+        goToStep2();
+      },
+      () => goToStep2(),  // denied or error — continue anyway
+      { timeout: 8000, maximumAge: 0 }
+    );
+  }
+
+  /* ── Transition to step 2 ───────────────────────────────── */
+  function goToStep2() {
+    // Update step indicator
+    document.getElementById('dot-1').className  = 'step-dot done';
+    document.getElementById('dot-1').textContent = '✓';
+    document.getElementById('line-1').classList.add('done');
+    document.getElementById('dot-2').classList.add('active');
+
+    // Switch step panels
+    document.getElementById('step-location').classList.remove('active');
+    const stepHome = document.getElementById('step-home');
+    stepHome.classList.add('active', 'anim-fade-up');
+
+    // Populate district grid
+    renderDistrictGrid();
+  }
+
+  /* ── District grid render ───────────────────────────────── */
+  function renderDistrictGrid() {
+    const grid = document.getElementById('district-grid');
+    const pinSVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>`;
+
+    grid.innerHTML = DISTRICTS.map(d => `
+      <div class="dc-card" id="dc-${d.id}" onclick="selectDistrict('${d.id}')">
+        <div class="dc-icon">${pinSVG}</div>
+        <p class="dc-name-th">${d.name_th}</p>
+        <p class="dc-name-en">${d.name_en}</p>
+      </div>
+    `).join('');
+  }
+
+  /* ── District selection ─────────────────────────────────── */
+  function selectDistrict(id) {
+    selectedDistrictId = id;
+
+    document.querySelectorAll('.dc-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('dc-' + id).classList.add('selected');
+
+    const btn = document.getElementById('btn-confirm-home');
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = 'auto';
+  }
+
+  /* ── Confirm and launch app ─────────────────────────────── */
+  function confirmHomeAndStart() {
+    if (!selectedDistrictId) return;
+
+    const district = DISTRICTS.find(d => d.id === selectedDistrictId);
+    if (!district) return;
+
+    try {
+      localStorage.setItem('siamecho_home', JSON.stringify({
+        id:      district.id,
+        lat:     district.lat,
+        lng:     district.lng,
+        name_th: district.name_th,
+        name_en: district.name_en,
+      }));
+      localStorage.setItem('siamecho_onboarded', '1');
+    } catch { /* ignore storage errors */ }
+
+    window.location.href = 'app.html';
+  }
+</script>
+</body>
+</html>
