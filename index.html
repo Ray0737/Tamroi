@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Siam Echo — ลุยไทย</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <style>
+    /* ── Page shell ─────────────────────────────────────── */
+    .splash-screen {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 8vh var(--space-md) 210px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── Organic ink-drop blobs ──────────────────────────── */
+    .bg-blob {
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .bg-blob-1 {
+      width: 340px;
+      height: 320px;
+      top: -110px;
+      right: -130px;
+      background: var(--color-success);
+      opacity: 0.06;
+      border-radius: 30% 70% 60% 40% / 50% 40% 60% 50%;
+      animation: blobMorph 14s ease-in-out infinite;
+    }
+
+    .bg-blob-2 {
+      width: 230px;
+      height: 250px;
+      bottom: 190px;
+      left: -75px;
+      background: var(--color-primary);
+      opacity: 0.07;
+      border-radius: 60% 40% 40% 60% / 60% 60% 40% 40%;
+      animation: blobMorph 18s ease-in-out infinite reverse;
+    }
+
+    .bg-blob-3 {
+      width: 160px;
+      height: 140px;
+      top: 36%;
+      left: 14%;
+      background: var(--color-success);
+      opacity: 0.05;
+      border-radius: 70% 30% 50% 50% / 40% 60% 40% 60%;
+      animation: blobMorph 10s ease-in-out infinite 3s;
+    }
+
+    /* ── Hero cluster ────────────────────────────────────── */
+    .hero-cluster {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      margin-bottom: var(--space-lg);
+      flex-shrink: 0;
+    }
+
+    /* Center book card */
+    .hero-book {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 92px;
+      height: 92px;
+      background: var(--color-card-dark);
+      border: 1.5px solid rgba(246, 193, 158, 0.25);
+      border-radius: var(--radius-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 0 0 6px rgba(246, 193, 158, 0.06);
+      animation: pulse 4s ease-in-out infinite 1s;
+    }
+
+    .hero-book svg {
+      width: 52px;
+      height: 52px;
+    }
+
+    /* Floating badge cards */
+    .hero-badge {
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      background: var(--color-card-dark);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-badge svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--color-primary);
+    }
+
+    /* Positions form a loose diamond around center */
+    .hb-tl {
+      top: 12px;
+      left: 16px;
+      animation: floatY 3.0s ease-in-out infinite;
+    }
+
+    .hb-tr {
+      top: 12px;
+      right: 16px;
+      animation: floatY 3.5s ease-in-out infinite 0.5s;
+    }
+
+    .hb-bl {
+      bottom: 12px;
+      left: 16px;
+      animation: floatY 4.0s ease-in-out infinite 1.0s;
+    }
+
+    .hb-br {
+      bottom: 12px;
+      right: 16px;
+      animation: floatY 3.2s ease-in-out infinite 1.5s;
+    }
+
+    /* Connector lines (decorative) */
+    .hero-cluster::before,
+    .hero-cluster::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 120px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(246, 193, 158, 0.15), transparent);
+      transform-origin: left center;
+    }
+
+    .hero-cluster::before {
+      transform: translate(-50%, -50%) rotate(-35deg);
+    }
+
+    .hero-cluster::after {
+      transform: translate(-50%, -50%) rotate(35deg);
+    }
+
+    @keyframes floatY {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-7px);
+      }
+    }
+
+    /* ── Title ───────────────────────────────────────────── */
+    .app-name {
+      font-family: var(--font-heading);
+      font-size: 34px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .app-name .accent {
+      color: var(--color-primary);
+    }
+
+    .app-tagline {
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+      text-align: center;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: var(--space-lg);
+    }
+
+    /* ── Feature card grid (replaces pills) ──────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-sm);
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 0;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-lg);
+      padding: 14px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      text-align: center;
+    }
+
+    .feature-card svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--color-primary);
+      flex-shrink: 0;
+    }
+
+    .feature-card span {
+      font-size: 10px;
+      color: var(--color-muted);
+      line-height: 1.3;
+      font-weight: 500;
+    }
+
+    /* ── Developer footer ────────────────────────────────── */
+    .dev-footer {
+      margin-top: var(--space-xl);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dev-by {
+      font-size: 11px;
+      color: var(--color-muted);
+      margin: 0;
+    }
+
+    .dev-name {
+      color: var(--color-white);
+      font-weight: 600;
+    }
+
+    .dev-school {
+      font-size: 10px;
+      color: rgba(137, 134, 168, 0.6);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .dev-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 2px;
+    }
+
+    .dev-link {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      color: rgba(137, 134, 168, 0.65);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+
+    .dev-link:hover {
+      color: var(--color-primary);
+    }
+
+    .dev-sep {
+      color: rgba(137, 134, 168, 0.3);
+      font-size: 10px;
+    }
+
+    /* ── Bottom CTA ──────────────────────────────────────── */
+    .bottom-cta {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      max-width: var(--max-width);
+      background: linear-gradient(to top, var(--color-bg) 60%, transparent);
+      padding: 48px var(--space-lg) calc(var(--space-lg) + env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cta-primary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      height: 52px;
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+      border-radius: var(--radius-full);
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 8px 32px rgba(246, 193, 158, 0.28);
+      transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+      letter-spacing: 0.3px;
+    }
+
+    .cta-primary svg {
+      width: 18px;
+      height: 18px;
+      transition: transform 0.2s ease;
+    }
+
+    .cta-primary:hover {
+      background: #ECA07A;
+      box-shadow: 0 12px 40px rgba(246, 193, 158, 0.35);
+      transform: translateY(-1px);
+      color: var(--color-on-primary);
+    }
+
+    .cta-primary:hover svg {
+      transform: translateX(3px);
+    }
+
+    .cta-primary:active {
+      transform: scale(0.97);
+      opacity: 0.95;
+    }
+
+    .cta-login {
+      font-size: 13px;
+      color: var(--color-muted);
+      margin: 14px 0 0;
+      text-align: center;
+    }
+
+    .cta-login a {
+      color: var(--color-white);
+      font-weight: 600;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+      padding-bottom: 1px;
+      transition: border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .cta-login a:hover {
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-wrapper">
+    <div class="splash-screen">
+
+      <!-- Organic background blobs -->
+      <div class="bg-blob bg-blob-1"></div>
+      <div class="bg-blob bg-blob-2"></div>
+      <div class="bg-blob bg-blob-3"></div>
+
+      <!-- ── Hero: open book + floating history badges ── -->
+      <div class="hero-cluster anim-fade-in">
+
+        <!-- Top-left: Scroll / Document -->
+        <div class="hero-badge hb-tl">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="8" y1="13" x2="16" y2="13" />
+            <line x1="8" y1="17" x2="13" y2="17" />
+          </svg>
+        </div>
+
+        <!-- Top-right: Crown -->
+        <div class="hero-badge hb-tr">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 20h20" />
+            <path d="M2 14l5-8 5 5 5-8 5 8v6H2v-3z" />
+            <circle cx="8" cy="8" r="1" fill="currentColor" />
+            <circle cx="16" cy="5" r="1" fill="currentColor" />
+            <circle cx="12" cy="11" r="1" fill="currentColor" />
+          </svg>
+        </div>
+
+        <!-- Center: Open Book (main icon) -->
+        <div class="hero-book">
+          <svg viewBox="0 0 56 56" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Left page -->
+            <path d="M4,12 Q4,44 28,46 L28,14 Q18,12 4,12 Z" fill="rgba(246,193,158,0.18)"
+              stroke="rgba(246,193,158,0.55)" stroke-width="1.5" />
+            <!-- Right page -->
+            <path d="M52,12 Q52,44 28,46 L28,14 Q38,12 52,12 Z" fill="rgba(255,255,255,0.1)"
+              stroke="rgba(255,255,255,0.28)" stroke-width="1.5" />
+            <!-- Spine -->
+            <line x1="28" y1="14" x2="28" y2="46" stroke="rgba(246,193,158,0.7)" stroke-width="2" />
+            <!-- Left page text lines -->
+            <line x1="10" y1="22" x2="24" y2="21" stroke="rgba(246,193,158,0.45)" stroke-width="1.3" />
+            <line x1="10" y1="28" x2="24" y2="27" stroke="rgba(246,193,158,0.35)" stroke-width="1.3" />
+            <line x1="10" y1="34" x2="22" y2="33" stroke="rgba(246,193,158,0.25)" stroke-width="1.3" />
+            <!-- Right page text lines -->
+            <line x1="32" y1="21" x2="46" y2="22" stroke="rgba(255,255,255,0.28)" stroke-width="1.3" />
+            <line x1="32" y1="27" x2="46" y2="28" stroke="rgba(255,255,255,0.22)" stroke-width="1.3" />
+            <line x1="32" y1="33" x2="44" y2="34" stroke="rgba(255,255,255,0.16)" stroke-width="1.3" />
+            <!-- Book bottom cover edge -->
+            <path d="M4,44 Q4,50 28,52 Q52,50 52,44" stroke="rgba(246,193,158,0.3)" stroke-width="1.5" fill="none" />
+          </svg>
+        </div>
+
+        <!-- Bottom-left: Sword -->
+        <div class="hero-badge hb-bl">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 4L4 20" />
+            <path d="M20 4l-5 1-1 5L20 4z" fill="rgba(246,193,158,0.2)" />
+            <path d="M8 16l-2 2" />
+            <path d="M6.5 14.5l-3 3 1 1 3-3" />
+          </svg>
+        </div>
+
+        <!-- Bottom-right: Map pin -->
+        <div class="hero-badge hb-br">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+        </div>
+
+      </div><!-- end hero-cluster -->
+
+      <!-- Title -->
+      <h1 class="app-name anim-fade-up" style="animation-delay:0.1s">
+        <span class="accent">Siam</span> Echo
+      </h1>
+      <p class="app-tagline anim-fade-up" style="animation-delay:0.15s">
+        Explore · Capture · Conquer Thailand
+      </p>
+
+      <!-- Feature cards grid -->
+      <div class="features-grid anim-fade-up" style="animation-delay:0.2s">
+
+        <div class="feature-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
+            <line x1="8" y1="2" x2="8" y2="18" />
+            <line x1="16" y1="6" x2="16" y2="22" />
+          </svg>
+          <span>Fog of War Map</span>
+        </div>
+
+        <div class="feature-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="22" x2="21" y2="22" />
+            <line x1="6" y1="18" x2="6" y2="11" />
+            <line x1="10" y1="18" x2="10" y2="11" />
+            <line x1="14" y1="18" x2="14" y2="11" />
+            <line x1="18" y1="18" x2="18" y2="11" />
+            <polygon points="12 2 20 7 4 7" />
+          </svg>
+          <span>Historical Figures</span>
+        </div>
+
+        <div class="feature-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="6" />
+            <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" />
+          </svg>
+          <span>Leaderboard</span>
+        </div>
+
+      </div>
+
+      <!-- Developer credit -->
+      <div class="dev-footer anim-fade-up" style="animation-delay:0.28s">
+        <p class="dev-by">Developed by <span class="dev-name">ปลามึกยักษ์</span></p>
+        <p class="dev-school">
+          โรงเรียนสาธิตมหาวิทยาลัยศรีนครินทรวิโรฒ ประสานมิตร (ฝ่ายมัธยม)
+          <br>วิชาเอกวิศวกรรมปัญญาประดิษฐ์ (AI)
+        </p>
+        <div class="dev-links">
+          <a href="https://github.com/Ray0737" target="_blank" rel="noopener" class="dev-link">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px">
+              <path
+                d="M12 2C6.477 2 2 6.484 2 12.021c0 4.428 2.865 8.185 6.839 9.504.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844a9.59 9.59 0 012.504.338c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.203 22 16.447 22 12.021 22 6.484 17.523 2 12 2z" />
+            </svg>
+
+          </a>
+          <span class="dev-sep">·</span>
+          <a href="mailto:raphee.rattanamanoonporn@gmail.com" class="dev-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" style="width:13px;height:13px">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+              <polyline points="22,6 12,13 2,6" />
+            </svg>
+
+          </a>
+        </div>
+      </div>
+
+    </div><!-- end splash-screen -->
+
+    <!-- Bottom CTA -->
+    <div class="bottom-cta anim-fade-up" style="animation-delay:0.32s">
+      <a href="login.html?mode=register" class="cta-primary">
+        เริ่มการเดินทาง
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg>
+      </a>
+      <p class="cta-login">
+        มีบัญชีแล้ว? <a href="login.html?mode=login">เข้าสู่ระบบ</a>
+      </p>
+    </div>
+
+  </div><!-- end app-wrapper -->
+
+  <script src="js/env.js"></script>
+  <script src="js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
+  <script>
+    (async () => {
+      try {
+        const session = await DB.Auth.getSession();
+        if (session) {
+          // Already logged in — go to app, or onboarding if not yet completed
+          const dest = localStorage.getItem('siamecho_onboarded') ? 'app.html' : 'onboarding.html';
+          window.location.replace(dest);
+        }
+      } catch { /* Supabase not configured yet — stay on splash */ }
+    })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
