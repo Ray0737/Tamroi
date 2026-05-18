@@ -1,0 +1,179 @@
+# Tamroi (ตามรอย) — Development Progress
+
+> NSC 2026 · Team ปลามึกยักษ์ · Last updated: 2026-05-18
+
+---
+
+## Phase 1 — Web MVP · "The Digital Lab Foundation" ← Current Phase
+
+### Scope Summary
+Build a mobile-responsive web app that validates the core Watchtower + Fog of War loop with GPS check-ins, sepia→colour map transitions, C-Class figure quizzes, and a leaderboard — before committing to a native mobile build.
+
+---
+
+## Implementation Status
+
+### Pages & UI Shell
+
+| File | Status | Notes |
+|---|---|---|
+| `index.html` | ✅ Done | Splash / landing page, animated blob, CTA to login |
+| `login.html` | ✅ Done | Email + password + Google OAuth, register flow |
+| `onboarding.html` | ✅ Done | Location permission request + home district picker |
+| `app.html` | ✅ Done | 4-tab shell — Map · Collection · Missions · Leaderboard |
+
+### CSS (Design System)
+
+| File | Status | Notes |
+|---|---|---|
+| `css/variables.css` | ✅ Done | Full design token set (colors, spacing, radii, transitions) |
+| `css/layout.css` | ✅ Done | Fixed top bar (56px), fixed footer nav (60px), max-width 430px |
+| `css/components.css` | ✅ Done | Buttons, cards, inputs, bottom sheets, notification badges |
+| `css/map.css` | ✅ Done | Leaflet overrides, fog layer, markers, GPS dot, node info card |
+| `css/animations.css` | ✅ Done | blobMorph, floatY, locationPulse, and more keyframes |
+
+### JavaScript Modules
+
+| File | Status | Notes |
+|---|---|---|
+| `js/config.js` | ✅ Done | Reads `window.ENV` → exports `window.APP_CONFIG` |
+| `js/env.example.js` | ✅ Done | Credential template (gitignored actual `env.js`) |
+| `js/utils.js` | ✅ Done | `escapeHtml()` XSS utility |
+| `js/supabase-client.js` | ✅ Done | Full DB & Auth abstraction — Auth, Profiles, Districts, Figures, Leaderboard |
+| `js/app.js` | ✅ Done | Boot sequence, auth guard, tab navigation, toast notifications |
+| `js/map.js` | ✅ Done | Leaflet map, Fog of War (inverted polygon), live GPS dot, watchtower markers, node info card. **5 Bangkok districts** seeded as mock data |
+| `js/collection.js` | ✅ Done | Historical figures + artifacts grid, collection status display |
+| `js/missions.js` | ✅ Done | Active quest list + daily challenge display |
+| `js/leaderboard.js` | ✅ Done | Podium + ranked player list with Legacy Score |
+
+### Database (Supabase)
+
+| File | Status | Notes |
+|---|---|---|
+| `supabase/schema.sql` | ✅ Done | Full schema + Bangkok district seed data |
+| `supabase/patch_auth_fix.sql` | ✅ Done | Auth trigger fix + RLS INSERT policy |
+
+### Deployment
+
+| File | Status | Notes |
+|---|---|---|
+| `build.js` | ✅ Done | Vercel build script — injects `SUPABASE_URL` & `SUPABASE_ANON_KEY` at deploy time |
+| `vercel.json` | ✅ Done | Security headers (CSP, X-Frame, Permissions-Policy, HSTS), Supabase + Google OAuth allowed |
+
+### Documentation
+
+| File | Status | Notes |
+|---|---|---|
+| `README.md` | ✅ Done | Full project overview, roadmap, local dev + Supabase + Vercel setup |
+| `CODING_INSTRUCTIONS.md` | ✅ Done | Design system spec, component patterns, layout rules |
+| `tam_roi_nsc_proposal.md` | ✅ Done | Detailed game mechanics proposal |
+| `document/` | ✅ Done | NSC BOOK (.docx + .pdf), 12 UI screenshots, flowcharts, proposal versions (v0–v7) |
+
+---
+
+## What's Working (Phase 1 Core Loop)
+
+- **Auth flow** — email/password + Google OAuth via Supabase, auth guard on app pages
+- **Onboarding** — location permission request, home district selection
+- **Fog of War** — inverted Leaflet polygon clears per district on Watchtower check-in
+- **Live GPS tracking** — real-time user dot + accuracy ring on map
+- **Watchtower markers** — 5 Bangkok districts (Rattanakosin, Dusit, Pathumwan, Silom, Sukhumvit, Watthana + more)
+- **Node info card** — tappable bottom sheet showing outpost/landmark details
+- **Collection grid** — historical figures + artifacts display
+- **Daily missions** — quest list and challenge tracker
+- **Leaderboard** — podium + ranked list with Legacy Score metrics
+- **Design system** — consistent dark charcoal + orange + sage green palette, mobile-first 430px
+
+## Known Gaps / Next Steps Within Phase 1
+
+- [ ] Full Thailand district coverage (currently Bangkok-only mock data — needs Supabase integration for all provinces)
+- [ ] C-Class figure quiz flow (quiz modal UI exists, backend answer validation needs testing)
+- [ ] Fog clearing persistence (Supabase `districts_explored` table write + re-read on reload)
+- [ ] BTS/MRT transport bonus detection (×2 points buff logic)
+- [ ] Proximity lore triggers (GPS range → contextual narration popup)
+- [ ] QA pass on all auth edge cases (email confirm off for dev, production email confirm needed)
+- [ ] Vercel production deployment + live environment variable smoke test
+
+---
+
+## Phase 2+ Development Roadmap
+
+> Derived from [README.md](README.md) · Phases 2–5
+
+---
+
+### Phase 2 — Mobile App · "The Immersive Leap"
+
+**Goal:** Migrate from browser to a dedicated iOS/Android application to unlock hardware features unavailable in the web MVP.
+
+**Key Features:**
+- Native AR figure-capture sequences using the device camera
+- Background GPS tracking — push notifications when an Echo (historical event echo) enters range without opening the app
+- QR code scanning at OTOP shops, cafés, and outposts to trigger encounters
+- Improved offline map caching for rural areas with poor connectivity
+
+**Tech Stack:**
+- React Native (cross-platform iOS + Android)
+- ARKit (iOS) / ARCore (Android) for Augmented Reality
+- Expo or bare React Native depending on AR integration requirements
+- Retain Supabase as backend (existing schema carries forward)
+
+**Migration Priorities:**
+1. Port all JS modules to React Native components
+2. Implement AR capture scene (replace simple quiz with immersive capture)
+3. Background location service + local push notifications
+4. QR scanner integration at outpost nodes
+
+---
+
+### Phase 3 — Co-Op & Community · "The Social Layer"
+
+**Goal:** Transform solo exploration into a social experience requiring collaboration for the hardest content.
+
+**Key Features:**
+- **Raid Encounters** — Legendary (S-Class) figures require 3+ players to simultaneously solve linked riddles at different locations
+- **District Leaderboards** — per-province rankings in addition to the national High Chronicler board
+- **Artifact Trading** — player-to-player artifact exchange system with rarity tiers
+- **Clan/Party System** — form exploration groups for coordinated Fog clearing
+
+**Tech Stack:**
+- Supabase Realtime (WebSocket channels for live raid coordination)
+- Socket.io as fallback or alternative for lower-latency party communication
+- Push notifications via FCM/APNs for raid invitations and trade requests
+
+---
+
+### Phase 4 — Seasonal Content · "The Live Service Era"
+
+**Goal:** Keep the map alive with rotating story seasons and era-shifting content.
+
+**Key Features:**
+- **Main Quest Seasons** — rotating multi-month story arcs: *Ayutthaya Rising → The Silk Road → Modern Revolution*
+- **Era Filter Toggle** — map overlay switch to shift historical periods (Sukhothai / Ayutthaya / Rattanakosin / Modern)
+- **Limited-Time Figures** — seasonal S-Class characters available only during specific calendar windows
+- **Expandable Geography** — framework to extend beyond Thailand to Southeast Asia and global history themes
+
+**Content Pipeline:**
+- Historian consultant integration for accuracy review
+- CMS layer for district/figure content management without code deploys
+- A/B testing seasonal quest structures for engagement
+
+---
+
+### Phase 5 — Business & Media Ecosystem
+
+**Goal:** Monetize and scale through partnerships while preserving the educational core.
+
+**Key Features:**
+
+| Partner Type | Mechanism | Benefit |
+|---|---|---|
+| **Film Studios** | Thai period drama tie-in characters | Limited-edition S-Class figures, licensed storylines |
+| **Certified Brand Outposts** | Cafés/landmarks pay to become Premium Nodes | Real-world discounts for players + in-game Stamina reward |
+| **Tourism Authority of Thailand (TAT)** | Government-sponsored rural discovery events | "Bounty" missions for under-visited provinces |
+| **Green Logistics** | BTS/MRT/boats/trains grant massive XP multipliers | Incentivize sustainable transport, reduce car dependency |
+
+**Revenue Model:**
+- B2B: Outpost certification fees from businesses
+- B2G: TAT and provincial tourism board sponsorship
+- B2C: Cosmetic season pass (no pay-to-win, educational integrity preserved)
