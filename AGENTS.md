@@ -12,8 +12,10 @@ Primary user: Thai tourist/traveler, roughly age 20-30. The UI mixes Thai labels
 
 ## Product Mechanics
 
-- Watchtower check-in clears Fog of War for a district     .
+- Watchtower check-in clears Fog of War for a district.
 - Cleared district state persists through Supabase `user_districts`.
+- First-run onboarding asks for location permission, then stores a chosen home district in localStorage before launching the app.
+- The map can also prompt for a home district and clears that district locally as the starting base.
 - S-Class / Legendary figures are phase-locked behind support-node progress:
   - Visit 2 local cafes for Local Rumors.
   - Visit 1 OTOP/workshop for a Relic.
@@ -27,10 +29,10 @@ Primary user: Thai tourist/traveler, roughly age 20-30. The UI mixes Thai labels
 
 ## Tech Stack
 
-- Frontend: HTML5, Bootstrap 5.3 CDN, vanilla JavaScript.
-- JavaScript style: browser globals plus module objects/IIFEs, not ES module imports.
-- Map: Leaflet.js with CartoDB Dark tiles.
-- Backend/auth: Supabase Auth, PostgreSQL, RLS.
+- Frontend: HTML5, Bootstrap 5.3.3 CDN, vanilla JavaScript.
+- JavaScript style: classic browser scripts, globals, and module objects/IIFEs; do not use ES module imports.
+- Map: Leaflet.js 1.9.4 with CartoDB Dark tiles.
+- Backend/auth: Supabase JS v2 CDN, Supabase Auth, PostgreSQL, RLS.
 - Deployment: Vercel static output with `node build.js` generating `js/env.js`.
 - Local dev: VS Code Live Server or any simple static server, usually port 5500.
 
@@ -38,23 +40,23 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 
 ## Repository Map
 
-- `index.html`: splash / landing page.
-- `login.html`: email/password login, register, Google OAuth.
+- `index.html`: splash / landing page with Supabase session redirect handling.
+- `login.html`: centered email/password login, register, Google OAuth, and client-side form validation.
 - `onboarding.html`: first-run location permission and home district picker.
-- `app.html`: main app shell with Map, Collection, Missions, Leaderboard tabs.
+- `app.html`: main app shell with Map, Collection, Missions, Leaderboard tabs, Bootstrap offcanvas panels, bottom sheets, and figure modal.
 - `build.js`: Vercel build-time env injection into `js/env.js`.
 - `vercel.json`: deployment config and security headers.
 - `css/variables.css`: authoritative design tokens.
 - `css/layout.css`: app wrapper, fixed top bar, bottom nav, tab shell.
-- `css/components.css`: buttons, cards, inputs, pills, bottom sheets, badges.
+- `css/components.css`: buttons, cards, inputs, pills, bottom sheets, badges, collection/missions/leaderboard components.
 - `css/map.css`: Leaflet overrides, fog layer, markers, GPS dot, node card.
 - `css/animations.css`: shared keyframes and transitions.
 - `js/config.js`: reads `window.ENV` and writes `window.APP_CONFIG`.
 - `js/env.example.js`: local credential template; copy to `js/env.js`.
 - `js/utils.js`: exposes `escapeHtml()`.
 - `js/supabase-client.js`: the only place that should call Supabase directly; exposes `window.DB`.
-- `js/app.js`: boot, auth guard, tabs, sheets, notifications; exposes `window.AppCore`.
-- `js/map.js`: Leaflet map, inverted fog polygon, watchtowers, nodes, GPS, home location.
+- `js/app.js`: boot, auth guard, tabs, sheets, notifications, top bar; exposes `window.AppCore`.
+- `js/map.js`: Leaflet map, inverted fog polygon, watchtowers, support nodes, GPS dot/ring, home location picker.
 - `js/collection.js`: figures and artifacts grid.
 - `js/missions.js`: active mission and daily challenges.
 - `js/leaderboard.js`: metric tabs, podium, ranked list.
@@ -69,6 +71,9 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `window.APP_CONFIG.appName` is `Siam Echo`, version `0.6.0`.
 - The map currently carries mock Bangkok/Nonthaburi district and node data with Supabase fallback/integration.
 - The database seed in `supabase/schema.sql` currently seeds a smaller Bangkok district set than `js/map.js`.
+- `js/map.js` gates check-in behind support-node progress, with a Rattanakosin demo shortcut.
+- Home/base district behavior is partly duplicated: `onboarding.html` stores `tam_roi_home`, while `js/map.js` reads and writes `siamecho_home`.
+- Real-time GPS uses `navigator.geolocation.watchPosition`; failures should degrade silently and keep the app usable.
 - Collection, missions, notifications, and leaderboard use mock fallback data when Supabase calls fail.
 - `window.DB` groups `Auth`, `Profiles`, `Districts`, `Figures`, `Artifacts`, `Leaderboard`, and `Notifications`.
 - `window.AppCore` groups `App`, `switchTab`, `openSheet`, `closeAllSheets`, and `showFloatPts`.
@@ -109,12 +114,15 @@ Important tokens:
 --color-primary: #F6C19E;
 --color-on-primary: #1C1B2E;
 --color-success: #7BC67E;
+--color-primary-dim: rgba(246,193,158,0.15);
+--color-success-dim: rgba(123,198,126,0.15);
 --color-surface: #E1F0E3;
 --color-white: #FFFFFF;
 --color-card-dark: #252240;
 --color-card-darker: #201E38;
 --color-muted: #8986A8;
 --color-border: rgba(255,255,255,0.07);
+--color-overlay: rgba(0,0,0,0.65);
 --top-bar-height: 56px;
 --bottom-nav-height: 60px;
 --max-width: 430px;
@@ -138,14 +146,16 @@ Layout:
 
 - Keep the project zero-tooling: plain HTML/CSS/JS.
 - Preserve the existing global module pattern: IIFEs or module objects exposed on `window`.
+- Load order matters because scripts are classic globals: `env.js`, `config.js`, `utils.js` where needed, Supabase CDN, `supabase-client.js`, then page modules.
 - Route all Supabase access through `js/supabase-client.js`.
 - Do not call `window.supabase` directly from page modules.
 - Use `escapeHtml()` for all DB-sourced, user-sourced, or dynamic strings inserted into `innerHTML`.
 - Prefer `textContent`, DOM APIs, or safe attributes when practical.
 - Guard nullable app state, map state, DOM nodes, and user/session values.
 - Keep Bootstrap usage consistent with the repo: utility classes are fine; custom app shell/nav are hand-built.
+- Bootstrap offcanvas is used for notifications and settings; custom bottom sheets are used for map actions.
 - Bottom sheets should follow the `app.html` `.bottom-sheet` plus `.bottom-sheet-overlay` pattern.
-- Avoid inline styles in new code when a reusable class in `css/components.css`, `css/layout.css`, or `css/map.css` is appropriate. Existing files contain inline styles; do not expand that pattern without a practical reason.
+- Avoid inline styles in new code when a reusable class in `css/components.css`, `css/layout.css`, or `css/map.css` is appropriate. The pulled pages still contain substantial inline page styles and SVG styles; avoid expanding that pattern without a practical reason.
 - Comments should explain non-obvious why, not repeat what the code does.
 
 ## Security Rules
@@ -165,6 +175,7 @@ There is no formal test runner in this MVP. For changes:
 - Verify mobile width around 375px and the 430px max frame.
 - For auth or DB changes, test with valid `js/env.js` and Supabase RLS enabled.
 - For map changes, verify Leaflet loads, tiles render, GPS failures degrade gracefully, and bottom sheets remain tappable.
+- For onboarding or home-location changes, verify both `onboarding.html` and the in-app home picker because they currently use different localStorage keys.
 - For deployment changes, check `build.js` and `vercel.json` together.
 
 ## Known Gaps
@@ -172,6 +183,7 @@ There is no formal test runner in this MVP. For changes:
 - Full Thailand district coverage is not implemented; the app currently relies on Bangkok/Nonthaburi mock data plus partial Supabase seeds.
 - C-Class quiz flow and backend answer validation still need completion/testing.
 - Fog clearing persistence via `user_districts` needs end-to-end verification.
+- Onboarding home district persistence is not wired to the map's current `siamecho_home` key; the map may prompt again after onboarding.
 - BTS/MRT x2 transport bonus detection is represented in UI/context but not fully implemented.
 - Proximity lore triggers are planned but not complete.
 - Production auth/email-confirmation behavior needs QA.
