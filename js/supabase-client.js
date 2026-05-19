@@ -11,7 +11,7 @@ const Auth = {
     if (error) throw error;
     return data;
   },
-
+//test
   async signUp(email, password, username) {
     const { data, error } = await _sb.auth.signUp({
       email, password,
