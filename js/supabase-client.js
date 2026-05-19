@@ -86,6 +86,20 @@ const Profiles = {
       .single();
     if (error) throw error;
     return data;
+  },
+
+  async addLegacyPoints(userId, pts) {
+    const amount = Number(pts) || 0;
+    const { error } = await _sb.rpc('increment_legacy_score', {
+      p_user_id: userId,
+      p_amount: amount
+    });
+    if (!error) return;
+
+    const profile = await Profiles.get(userId);
+    await Profiles.update(userId, {
+      legacy_score: (profile.legacy_score || 0) + amount
+    });
   }
 };
 
@@ -155,22 +169,11 @@ const Figures = {
   },
 
   async capture(userId, figureId, quizScore) {
-    const figure = await _sb.from('figures').select('legacy_pts').eq('id', figureId).single();
-    const pts = figure.data?.legacy_pts || 0;
-
     const { data, error } = await _sb
       .from('user_captures')
       .insert({ user_id: userId, figure_id: figureId, quiz_score: quizScore })
       .select().single();
     if (error) throw error;
-
-    // Update legacy score + archive count
-    const profile = await Profiles.get(userId);
-    await Profiles.update(userId, {
-      legacy_score: (profile.legacy_score || 0) + pts,
-      archive_count: (profile.archive_count || 0) + 1
-    });
-
     return data;
   }
 };
@@ -216,6 +219,63 @@ const Leaderboard = {
       .limit(limit);
     if (error) throw error;
     return data;
+  },
+
+  subscribe(callback) {
+    return _sb
+      .channel('leaderboard-updates')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles' }, callback)
+      .subscribe();
+  }
+};
+
+// ── Lore ───────────────────────────────────────────────
+const Lore = {
+  async getAll() {
+    const { data, error } = await _sb
+      .from('lore_nodes')
+      .select('*, districts(name_th,name_en,province)')
+      .eq('is_active', true)
+      .order('chain_id', { ascending: true, nullsFirst: false })
+      .order('chain_part', { ascending: true });
+    if (error) throw error;
+    return data;
+  },
+
+  async getUserUnlocked(userId) {
+    const { data, error } = await _sb
+      .from('user_lore')
+      .select('unlocked_at, lore_nodes(*, districts(name_th,name_en,province))')
+      .eq('user_id', userId)
+      .order('unlocked_at', { ascending: false });
+    if (error) throw error;
+    return data;
+  },
+
+  async unlock(userId, loreId) {
+    const { data, error } = await _sb
+      .from('user_lore')
+      .upsert({ user_id: userId, lore_id: loreId }, {
+        onConflict: 'user_id,lore_id',
+        ignoreDuplicates: true
+      })
+      .select()
+      .single();
+    if (error && error.code !== 'PGRST116') throw error;
+    return data;
+  }
+};
+
+// ── Quiz ───────────────────────────────────────────────
+const Quiz = {
+  async getForFigure(figureId, count = 1) {
+    const { data, error } = await _sb
+      .from('quiz_questions')
+      .select('*')
+      .eq('figure_id', figureId)
+      .limit(count);
+    if (error) throw error;
+    return count === 1 ? (data?.[0] || null) : data;
   }
 };
 
@@ -242,4 +302,4 @@ const Notifications = {
 };
 
 // Expose globally
-window.DB = { Auth, Profiles, Districts, Figures, Artifacts, Leaderboard, Notifications };
+window.DB = { Auth, Profiles, Districts, Figures, Artifacts, Leaderboard, Lore, Quiz, Notifications };

@@ -10,8 +10,16 @@ const MapModule = (() => {
   let _locationWatcher = null;    // watchPosition handle
   let allDistrictsCache = null;
   let homeLocation      = null;
+  let lastKnownPosition = null;
+  let loreNodes = [];
+  let activeLoreNode = null;
+  const unlockedLoreIds = new Set();
+  const pendingLoreIds = new Set();
+  const completedLoreChains = new Set();
   const HOME_KEY = 'tam_roi_home';
   const LEGACY_HOME_KEY = 'siam' + 'echo_home';
+  const LORE_KEY = 'tam_roi_lore_unlocked';
+  const CHECKIN_TOLERANCE_M = 500;
 
   // ── Bangkok bounding box for the fog overlay ────────
   // Covers entire Greater Bangkok + Nonthaburi
@@ -140,6 +148,84 @@ const MapModule = (() => {
     { districtId: 'nonthaburi', type: 'otop',     lat: 13.865, lng: 100.520, name: 'ตลาดนนทบุรี' },
   ];
 
+  const LORE_NODES = [
+    {
+      id: 'lore-rattanakosin-wall',
+      name_th: 'ร่องรอยกำแพงเมือง',
+      name_en: 'Old City Wall Trace',
+      lat: 13.7530,
+      lng: 100.4970,
+      radius_m: 120,
+      lore_pts: 30,
+      content_type: 'text',
+      content_th: 'บริเวณเกาะรัตนโกสินทร์เคยเป็นศูนย์กลางการป้องกันเมือง มีคูคลองและกำแพงเมืองช่วยกำหนดขอบเขตอำนาจของกรุงเทพฯ ยุคแรก',
+      content_en: 'Rattanakosin once relied on canals and walls to define and defend the early capital.',
+      chain_id: 'chain-rattanakosin-founding',
+      chain_part: 1,
+      district_id: 'rattanakosin',
+    },
+    {
+      id: 'lore-grand-palace-axis',
+      name_th: 'แกนพระบรมมหาราชวัง',
+      name_en: 'Grand Palace Axis',
+      lat: 13.7510,
+      lng: 100.4925,
+      radius_m: 120,
+      lore_pts: 30,
+      content_type: 'text',
+      content_th: 'พระบรมมหาราชวังไม่ได้เป็นเพียงที่ประทับ แต่เป็นสัญลักษณ์ของการตั้งราชธานีใหม่และการจัดระเบียบพื้นที่ศักดิ์สิทธิ์ของเมือง',
+      content_en: 'The Grand Palace marked both royal residence and the sacred order of the new capital.',
+      chain_id: 'chain-rattanakosin-founding',
+      chain_part: 2,
+      district_id: 'rattanakosin',
+    },
+    {
+      id: 'lore-wat-pho-learning',
+      name_th: 'วัดโพธิ์กับความรู้สาธารณะ',
+      name_en: 'Wat Pho Public Knowledge',
+      lat: 13.7465,
+      lng: 100.4930,
+      radius_m: 120,
+      lore_pts: 40,
+      content_type: 'text',
+      content_th: 'วัดโพธิ์เป็นแหล่งรวบรวมตำรา ความรู้แพทย์แผนไทย และจารึกที่เปิดให้ผู้คนเรียนรู้ จึงเปรียบเสมือนมหาวิทยาลัยกลางเมืองในอดีต',
+      content_en: 'Wat Pho preserved inscriptions and traditional knowledge for public learning.',
+      chain_id: 'chain-rattanakosin-founding',
+      chain_part: 3,
+      district_id: 'rattanakosin',
+    },
+    {
+      id: 'lore-silom-trade',
+      name_th: 'เส้นทางการค้าสีลม',
+      name_en: 'Silom Trade Route',
+      lat: 13.7260,
+      lng: 100.5310,
+      radius_m: 100,
+      lore_pts: 25,
+      content_type: 'text',
+      content_th: 'ย่านสีลมเติบโตจากเส้นทางคมนาคมและการค้า เชื่อมชุมชนริมเจ้าพระยากับเศรษฐกิจเมืองสมัยใหม่',
+      content_en: 'Silom grew from transport and trade routes linking river communities with the modern city.',
+      chain_id: null,
+      chain_part: null,
+      district_id: 'silom',
+    },
+    {
+      id: 'lore-chatuchak-market',
+      name_th: 'ตลาดนัดกับเมืองร่วมสมัย',
+      name_en: 'Weekend Market Memory',
+      lat: 13.7990,
+      lng: 100.5510,
+      radius_m: 100,
+      lore_pts: 25,
+      content_type: 'text',
+      content_th: 'จตุจักรสะท้อนเศรษฐกิจสร้างสรรค์ของกรุงเทพฯ ที่รวมงานฝีมือ อาหาร และความทรงจำของคนเมืองไว้ในพื้นที่เดียว',
+      content_en: 'Chatuchak reflects Bangkok creative commerce through crafts, food, and urban memory.',
+      chain_id: null,
+      chain_part: null,
+      district_id: 'chatuchak',
+    },
+  ];
+
   // ── User state ─────────────────────────────────────
   let userDistrictState = {
     rattanakosin: { fogged: false, cafes_visited: 2, otops_visited: 1, landmarks_visited: 2 },
@@ -187,6 +273,7 @@ const MapModule = (() => {
     }).addTo(map);
 
     loadDistrictData();
+    loadLoreData();
     updateStatsBar();
 
     // Dismiss node info card on map click/drag
@@ -204,7 +291,12 @@ const MapModule = (() => {
     if (!navigator.geolocation) return;
 
     _locationWatcher = navigator.geolocation.watchPosition(
-      pos => updateLocationDot(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy),
+      pos => {
+        const { latitude, longitude, accuracy } = pos.coords;
+        lastKnownPosition = { lat: latitude, lng: longitude, accuracy };
+        updateLocationDot(latitude, longitude, accuracy);
+        checkLoreProximity(latitude, longitude);
+      },
       err => console.warn('[GPS]', err.message),
       { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
     );
@@ -265,6 +357,125 @@ const MapModule = (() => {
       addHomeMarker(homeLocation);
       renderAll(districts);
     }
+  }
+
+  async function loadLoreData() {
+    loreNodes = LORE_NODES;
+    loadLocalLoreState();
+
+    const user = window.AppCore?.App?.user;
+    if (!user) return;
+
+    try {
+      const [nodes, unlocked] = await Promise.all([
+        DB.Lore.getAll(),
+        DB.Lore.getUserUnlocked(user.id),
+      ]);
+      if (nodes?.length) loreNodes = nodes;
+      unlocked.forEach(row => {
+        const id = row.lore_id || row.lore_nodes?.id;
+        if (id) unlockedLoreIds.add(id);
+      });
+      persistLocalLoreState();
+    } catch { /* keep mock/local lore state */ }
+  }
+
+  function loadLocalLoreState() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(LORE_KEY) || '[]');
+      saved.forEach(id => unlockedLoreIds.add(id));
+    } catch { /* ignore */ }
+  }
+
+  function persistLocalLoreState() {
+    try {
+      localStorage.setItem(LORE_KEY, JSON.stringify([...unlockedLoreIds]));
+    } catch { /* ignore */ }
+  }
+
+  function haversineDistance(lat1, lng1, lat2, lng2) {
+    const toRad = deg => deg * Math.PI / 180;
+    const earthRadiusM = 6371000;
+    const dLat = toRad(Number(lat2) - Number(lat1));
+    const dLng = toRad(Number(lng2) - Number(lng1));
+    const a = Math.sin(dLat / 2) ** 2
+      + Math.cos(toRad(Number(lat1))) * Math.cos(toRad(Number(lat2)))
+      * Math.sin(dLng / 2) ** 2;
+    return earthRadiusM * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  function checkLoreProximity(userLat, userLng) {
+    if (!loreNodes.length) loreNodes = LORE_NODES;
+
+    loreNodes.forEach(node => {
+      if (unlockedLoreIds.has(node.id) || pendingLoreIds.has(node.id)) return;
+      const distance = haversineDistance(userLat, userLng, node.lat, node.lng);
+      if (distance <= (node.radius_m || 100)) unlockLore(node);
+    });
+  }
+
+  function unlockLore(node) {
+    activeLoreNode = node;
+    pendingLoreIds.add(node.id);
+
+    const banner = document.getElementById('proximity-banner');
+    const name = document.getElementById('proximity-name');
+    if (banner && name) {
+      name.textContent = node.name_th || node.name_en || 'Lore nearby';
+      banner.classList.add('show');
+      setTimeout(() => banner.classList.remove('show'), 2500);
+    }
+
+    window.AppCore?.openLoreSheet(node);
+  }
+
+  async function saveLoreUnlock(loreId) {
+    const node = loreNodes.find(item => item.id === loreId) || activeLoreNode;
+    if (!node) return;
+
+    const btn = document.getElementById('btn-save-lore');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = `<div class="spinner"></div>`;
+    }
+
+    const user = window.AppCore?.App?.user;
+    try {
+      if (user) {
+        await DB.Lore.unlock(user.id, node.id);
+        await DB.Profiles.addLegacyPoints(user.id, node.lore_pts || 0);
+      }
+    } catch { /* offline/demo unlock still persists locally */ }
+
+    unlockedLoreIds.add(node.id);
+    pendingLoreIds.delete(node.id);
+    persistLocalLoreState();
+    window.AppCore?.closeAllSheets();
+    showFloatPtsOnMap(node.lore_pts || 0);
+    checkLoreChainComplete(node, user);
+  }
+
+  async function checkLoreChainComplete(node, user) {
+    if (!node.chain_id || completedLoreChains.has(node.chain_id)) return;
+
+    const chainNodes = loreNodes
+      .filter(item => item.chain_id === node.chain_id)
+      .sort((a, b) => (a.chain_part || 0) - (b.chain_part || 0));
+    if (chainNodes.length < 3) return;
+
+    const complete = chainNodes.every(item => unlockedLoreIds.has(item.id));
+    if (!complete) return;
+
+    completedLoreChains.add(node.chain_id);
+    try {
+      if (user) await DB.Profiles.addLegacyPoints(user.id, 50);
+    } catch { /* keep chain completion visible even if score write fails */ }
+
+    window.AppCore?.openLoreChainSheet({
+      title: `${chainNodes[0].name_th || 'Lore Chain'} Complete`,
+      content: chainNodes.map(item => item.content_th || item.content_en || '').join('\n\n'),
+    });
+    showFloatPtsOnMap(50);
   }
 
   // ── Unified render ─────────────────────────────────
@@ -486,6 +697,12 @@ const MapModule = (() => {
     if (!activeDistrict) return;
     const d   = activeDistrict;
     const btn = document.getElementById('btn-checkin');
+
+    if (!isDev() && !isWithinCheckInRange(d)) {
+      window.AppCore?.showToast('คุณอยู่ไกลเกินไป — เดินทางให้ใกล้กว่านี้');
+      return;
+    }
+
     btn.innerHTML = `<div class="spinner"></div>`;
     btn.disabled  = true;
 
@@ -516,6 +733,17 @@ const MapModule = (() => {
     return (s.cafes_visited     || 0) >= (district.required_cafes     || 2) &&
            (s.otops_visited     || 0) >= (district.required_otops     || 1) &&
            (s.landmarks_visited || 0) >= (district.required_landmarks || 3);
+  }
+
+  function isWithinCheckInRange(district) {
+    if (!lastKnownPosition) return false;
+    const lat = district.watchtower_lat || district.center_lat;
+    const lng = district.watchtower_lng || district.center_lng;
+    return haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, lat, lng) <= CHECKIN_TOLERANCE_M;
+  }
+
+  function isDev() {
+    return ['localhost', '127.0.0.1', ''].includes(window.location.hostname);
   }
 
   // ── Home location ───────────────────────────────────
@@ -613,7 +841,10 @@ const MapModule = (() => {
 
   document.getElementById('btn-checkin')?.addEventListener('click', performCheckIn);
 
-  return { init, resize, confirmHome, skipHomePicker };
+  function getLoreNodes() { return loreNodes.length ? loreNodes : LORE_NODES; }
+  function getUnlockedLoreIds() { return [...unlockedLoreIds]; }
+
+  return { init, resize, confirmHome, skipHomePicker, saveLoreUnlock, getLoreNodes, getUnlockedLoreIds };
 })();
 
 window.MapModule = MapModule;

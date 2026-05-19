@@ -226,17 +226,18 @@
        ═══════════════════════════════════════════════════════════ -->
 
   <current_session_objective>
-    <priority_1>Complete the full Lore system (T11 → T15 + T23 + T24) end-to-end:
-      GPS proximity check → Lore unlock bottom sheet → Lore Journal DB persistence →
-      multi-site Lore chain consolidation → Lore Points write.
+    <status date="2026-05-19">Completed in current workspace: T01, T06, T09, T11, T12, T13, T14, T15, T20, T21, T22, T24, T25.
+      Added supabase/patch_lore.sql and tests/lore-static.test.mjs.
+    </status>
+    <priority_1>Continue the district encounter loop:
+      Support Node visit tracking (T02) → Support Node completion gate (T03) →
+      C-Class quiz modal using DB.Quiz.getForFigure() (T04).
     </priority_1>
-    <priority_2>Add the missing infrastructure the Word doc specifies but the code lacks:
-      Supabase DB trigger for Legacy Score, GPS tolerance radius for check-ins,
-      Supabase Realtime leaderboard subscription, quiz data table in DB.
+    <priority_2>Complete remaining scoring and collection polish:
+      Real map discovery % from DB (T07), collection refresh after capture (T08),
+      Legendary Master Quiz (T05), and BTS/MRT bonus (T10).
     </priority_2>
-    <priority_3>Fix fog clearing persistence (T01) — the single most visually broken thing
-      because cleared districts reset on every page reload.
-    </priority_3>
+    <priority_3>Polish production infrastructure later: notifications Realtime (T19), full district coverage (T16), email verification (T17), Vercel smoke test (T18).</priority_3>
     <note>Do NOT start new features until the current priority is fully working and tested.
       Implement one task at a time. After each task, state what file was changed and what
       the user should see/test to verify it works.

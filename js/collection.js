@@ -4,6 +4,7 @@ const CollectionModule = (() => {
   let allArtifacts = [];
   let captures     = new Set();
   let ownedArtifacts = new Set();
+  let loreEntries = [];
   let activeFilter = 'all';
   let loaded = false;
 
@@ -29,29 +30,49 @@ const CollectionModule = (() => {
   const MOCK_OWNED_ART  = new Set(['old-map', 'ceramic-bowl']);
 
   async function load() {
-    if (loaded) return;
+    if (loaded) {
+      await refreshLoreEntries();
+      render();
+      return;
+    }
     loaded = true;
 
     const user = window.AppCore?.App?.user;
     try {
       [allFigures, allArtifacts] = await Promise.all([DB.Figures.getAll(), DB.Artifacts.getAll()]);
       if (user) {
-        const [caps, arts] = await Promise.all([
+        const [caps, arts, lore] = await Promise.all([
           DB.Figures.getUserCaptures(user.id),
           DB.Artifacts.getUserArtifacts(user.id),
+          DB.Lore.getUserUnlocked(user.id),
         ]);
         caps.forEach(c => captures.add(c.figure_id));
         arts.forEach(a => ownedArtifacts.add(a.artifact_id));
+        loreEntries = normalizeLoreRows(lore);
       }
     } catch {
       allFigures   = MOCK_FIGURES;
       allArtifacts = MOCK_ARTIFACTS;
       captures      = MOCK_CAPTURES;
       ownedArtifacts = MOCK_OWNED_ART;
+      loreEntries = getLocalLoreEntries();
     }
 
     bindFilters();
     render();
+  }
+
+  async function refreshLoreEntries() {
+    const user = window.AppCore?.App?.user;
+    if (!user) {
+      loreEntries = getLocalLoreEntries();
+      return;
+    }
+    try {
+      loreEntries = normalizeLoreRows(await DB.Lore.getUserUnlocked(user.id));
+    } catch {
+      loreEntries = getLocalLoreEntries();
+    }
   }
 
   function bindFilters() {
@@ -72,6 +93,7 @@ const CollectionModule = (() => {
 
   function render() {
     renderStats();
+    renderLoreJournal();
     renderFigures();
     renderArtifacts();
   }
@@ -95,8 +117,10 @@ const CollectionModule = (() => {
     const personSVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:36px;height:36px"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
     const grid    = document.getElementById('figure-grid');
     const query   = document.getElementById('collection-search')?.value?.toLowerCase() || '';
+    const journal = document.getElementById('lore-journal');
 
     let filtered = allFigures.filter(f => {
+      if (activeFilter === 'journal') return false;
       if (activeFilter !== 'all' && activeFilter !== 'artifacts' && f.class !== activeFilter.toUpperCase()) return false;
       if (activeFilter === 'artifacts') return false;
       if (query && !f.name_en.toLowerCase().includes(query) && !f.name_th.includes(query)) return false;
@@ -104,6 +128,8 @@ const CollectionModule = (() => {
     });
 
     if (!grid) return;
+    grid.hidden = activeFilter === 'journal';
+    if (journal) journal.hidden = activeFilter !== 'journal';
 
     grid.innerHTML = filtered.map(f => {
       const isCaptured = captures.has(f.id);
@@ -141,7 +167,9 @@ const CollectionModule = (() => {
 
   function renderArtifacts() {
     const container = document.getElementById('artifact-scroll');
+    const section = document.getElementById('collection-artifacts-section');
     if (!container) return;
+    if (section) section.hidden = activeFilter === 'journal';
 
     const list = activeFilter === 'all' || activeFilter === 'artifacts'
       ? allArtifacts
@@ -180,6 +208,122 @@ const CollectionModule = (() => {
         </div>
       `;
     }).join('');
+  }
+
+  function renderLoreJournal() {
+    const journal = document.getElementById('lore-journal');
+    if (!journal) return;
+
+    if (activeFilter !== 'journal') {
+      journal.hidden = true;
+      return;
+    }
+
+    journal.hidden = false;
+    if (!loreEntries.length) {
+      journal.innerHTML = `
+        <div class="lore-journal-card">
+          <p class="lore-journal-title">ยังไม่มี Lore</p>
+          <p class="lore-journal-preview">เดินเข้าใกล้จุดประวัติศาสตร์บนแผนที่เพื่อปลดล็อคเรื่องราว</p>
+        </div>
+      `;
+      return;
+    }
+
+    const grouped = groupLoreEntries(loreEntries);
+    journal.innerHTML = grouped.map(group => {
+      if (!group.chainId) return renderLoreEntry(group.entries[0]);
+      const complete = group.entries.length >= 3;
+      const pct = Math.min(100, Math.round((group.entries.length / 3) * 100));
+      return `
+        <div class="lore-chain-card">
+          <div class="lore-chain-head">
+            <div>
+              <p class="lore-journal-title">${escapeHtml(group.title)}</p>
+              <p class="lore-journal-meta">${complete ? 'Complete' : `${group.entries.length}/3 parts`}</p>
+            </div>
+            <span class="lore-type-badge">${complete ? 'Complete' : `${group.entries.length}/3`}</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill orange" style="width:${pct}%"></div></div>
+          <div style="display:flex;flex-direction:column;gap:var(--space-sm);margin-top:var(--space-sm)">
+            ${group.entries.map(renderLoreEntry).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    journal.querySelectorAll('.lore-journal-card').forEach(card => {
+      card.addEventListener('click', () => card.classList.toggle('expanded'));
+    });
+  }
+
+  function normalizeLoreRows(rows) {
+    return (rows || [])
+      .map(row => {
+        const node = row.lore_nodes || row;
+        if (!node?.id) return null;
+        return {
+          ...node,
+          unlocked_at: row.unlocked_at || node.unlocked_at,
+        };
+      })
+      .filter(Boolean);
+  }
+
+  function getLocalLoreEntries() {
+    const nodes = window.MapModule?.getLoreNodes?.() || [];
+    const unlocked = new Set(window.MapModule?.getUnlockedLoreIds?.() || []);
+    return nodes
+      .filter(node => unlocked.has(node.id))
+      .map(node => ({ ...node, unlocked_at: new Date().toISOString() }));
+  }
+
+  function groupLoreEntries(entries) {
+    const groups = [];
+    const byChain = new Map();
+
+    entries.forEach(entry => {
+      if (!entry.chain_id) {
+        groups.push({ chainId: null, entries: [entry] });
+        return;
+      }
+      if (!byChain.has(entry.chain_id)) {
+        const group = {
+          chainId: entry.chain_id,
+          title: entry.name_th || 'Lore Chain',
+          entries: [],
+        };
+        byChain.set(entry.chain_id, group);
+        groups.push(group);
+      }
+      byChain.get(entry.chain_id).entries.push(entry);
+    });
+
+    groups.forEach(group => {
+      group.entries.sort((a, b) => (a.chain_part || 0) - (b.chain_part || 0));
+    });
+    return groups;
+  }
+
+  function renderLoreEntry(entry) {
+    const district = entry.districts?.name_th || entry.district_name || entry.district_id || 'Thailand';
+    const date = entry.unlocked_at ? new Date(entry.unlocked_at).toLocaleDateString('th-TH') : '';
+    const content = entry.content_th || entry.content_en || '';
+    const preview = content.length > 80 ? content.slice(0, 80) + '...' : content;
+
+    return `
+      <div class="lore-journal-card" data-lore-id="${escapeHtml(entry.id)}">
+        <div class="lore-chain-head">
+          <div>
+            <p class="lore-journal-title">${escapeHtml(entry.name_th || entry.name_en || 'Lore')}</p>
+            <p class="lore-journal-meta">${escapeHtml(district)}${date ? ' · ' + escapeHtml(date) : ''}</p>
+          </div>
+          <span class="lore-type-badge">${escapeHtml(entry.content_type || 'text')}</span>
+        </div>
+        <p class="lore-journal-preview">${escapeHtml(preview)}</p>
+        <div class="lore-journal-full">${escapeHtml(content)}</div>
+      </div>
+    `;
   }
 
   function showDetail(figureId) {

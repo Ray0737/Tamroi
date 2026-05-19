@@ -269,6 +269,7 @@
             <button class="pill" data-filter="A">A-Class</button>
             <button class="pill" data-filter="C">C-Class</button>
             <button class="pill" data-filter="artifacts">Artifacts</button>
+            <button class="pill" data-filter="journal">Journal</button>
           </div>
 
           <!-- Stats -->
@@ -286,6 +287,8 @@
             <div class="figure-card"><div class="skeleton" style="width:72px;height:72px;border-radius:50%"></div></div>
             <div class="figure-card"><div class="skeleton" style="width:72px;height:72px;border-radius:50%"></div></div>
           </div>
+
+          <div class="lore-journal-list" id="lore-journal" hidden></div>
 
           <!-- Artifacts section -->
           <div id="collection-artifacts-section" class="mt-4">
@@ -441,6 +444,36 @@
     <button class="btn btn-ghost btn-full" onclick="MapModule.skipHomePicker()" style="font-size:var(--text-sm)">
       ข้ามก่อน — เริ่มจากกลางกรุงเทพฯ
     </button>
+  </div>
+
+  <!-- ════ LORE UNLOCK BOTTOM SHEET ════ -->
+  <div class="bottom-sheet" id="lore-sheet">
+    <div class="sheet-handle"></div>
+    <div class="lore-sheet-head">
+      <span class="lore-type-badge" id="lore-type-badge">text</span>
+      <span class="lore-pts-badge" id="lore-pts-badge">+0 pts</span>
+    </div>
+    <h3 class="sheet-title lore-title" id="lore-title">Lore</h3>
+    <img class="lore-media" id="lore-img" alt="" loading="lazy" hidden>
+    <div class="lore-audio-wrap" id="lore-audio-wrap" hidden>
+      <button class="btn btn-ghost btn-sm" id="lore-audio-toggle" type="button">เล่นเสียง</button>
+      <audio id="lore-audio"></audio>
+    </div>
+    <div class="lore-narrative" id="lore-narrative"></div>
+    <button class="btn btn-primary btn-full" id="btn-save-lore">บันทึกลง Journal</button>
+    <button class="btn btn-ghost btn-full mt-2" onclick="AppCore.closeAllSheets()" style="margin-top:8px">ปิด</button>
+  </div>
+
+  <!-- ════ LORE CHAIN COMPLETE SHEET ════ -->
+  <div class="bottom-sheet" id="chain-sheet">
+    <div class="sheet-handle"></div>
+    <div class="lore-sheet-head">
+      <span class="lore-type-badge">Chain Complete</span>
+      <span class="lore-pts-badge">+50 pts</span>
+    </div>
+    <h3 class="sheet-title lore-title" id="chain-title">เรื่องราวสมบูรณ์</h3>
+    <div class="lore-narrative" id="chain-narrative"></div>
+    <button class="btn btn-primary btn-full" onclick="AppCore.closeAllSheets()">ปิด</button>
   </div>
 
   <!-- ════ FIGURE DETAIL MODAL ════ -->

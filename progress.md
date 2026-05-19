@@ -39,10 +39,10 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 | `js/config.js` | ✅ Done | Reads `window.ENV` → exports `window.APP_CONFIG` |
 | `js/env.example.js` | ✅ Done | Credential template (gitignored actual `env.js`) |
 | `js/utils.js` | ✅ Done | `escapeHtml()` XSS utility |
-| `js/supabase-client.js` | ✅ Done | Full DB & Auth abstraction — Auth, Profiles, Districts, Figures, Leaderboard |
-| `js/app.js` | ✅ Done | Boot sequence, auth guard, tab navigation, toast notifications |
-| `js/map.js` | ✅ Done | Leaflet map, Fog of War (inverted polygon), live GPS dot, watchtower markers, node info card. **5 Bangkok districts** seeded as mock data |
-| `js/collection.js` | ✅ Done | Historical figures + artifacts grid, collection status display |
+| `js/supabase-client.js` | ✅ Done | Full DB & Auth abstraction — Auth, Profiles, Districts, Figures, Leaderboard, Lore, Quiz |
+| `js/app.js` | ✅ Done | Boot sequence, auth guard, tab navigation, bottom sheets, toast notifications |
+| `js/map.js` | ✅ Done | Leaflet map, Fog of War persistence, live GPS dot, watchtower markers, node card, Lore proximity unlocks |
+| `js/collection.js` | ✅ Done | Historical figures + artifacts grid, collection status display, Lore Journal |
 | `js/missions.js` | ✅ Done | Active quest list + daily challenge display |
 | `js/leaderboard.js` | ✅ Done | Podium + ranked player list with Legacy Score |
 
@@ -52,6 +52,7 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 |---|---|---|
 | `supabase/schema.sql` | ✅ Done | Full schema + Bangkok district seed data |
 | `supabase/patch_auth_fix.sql` | ✅ Done | Auth trigger fix + RLS INSERT policy |
+| `supabase/patch_lore.sql` | ✅ Done | Lore tables, quiz questions, legacy score trigger, seed lore/quiz content |
 
 ### Deployment
 
@@ -76,41 +77,48 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - **Auth flow** — email/password + Google OAuth via Supabase, auth guard on app pages
 - **Onboarding** — location permission request, home district selection
 - **Fog of War** — inverted Leaflet polygon clears per district on Watchtower check-in
+- **Fog persistence** — `user_districts` is re-read before map render and cleared holes survive reload
 - **Live GPS tracking** — real-time user dot + accuracy ring on map
+- **GPS check-in tolerance** — 500m Haversine gate on Watchtower check-in, bypassed on localhost
 - **Watchtower markers** — 5 Bangkok districts (Rattanakosin, Dusit, Pathumwan, Silom, Sukhumvit, Watthana + more)
 - **Node info card** — tappable bottom sheet showing outpost/landmark details
+- **Lore proximity system** — GPS range checks unlock lore sheets, persist to `user_lore`, and award lore points
+- **Lore Journal** — Collection → Journal lists unlocked lore, expands entries, and groups 3-part chains
+- **Lore chains** — completing all 3 chain parts shows consolidated story and awards +50 points
 - **Collection grid** — historical figures + artifacts display
 - **Daily missions** — quest list and challenge tracker
-- **Leaderboard** — podium + ranked list with Legacy Score metrics
+- **Leaderboard** — podium + ranked list with Legacy Score metrics and profile Realtime subscription
 - **Design system** — consistent dark charcoal + orange + sage green palette, mobile-first 430px
+- **Quiz infrastructure** — `quiz_questions` table and `DB.Quiz.getForFigure()` are available for capture flows
+- **Legacy score trigger** — `on_capture_update_score` DB trigger awards figure capture points
 
 ## Known Gaps / Next Steps Within Phase 1
 
 ### Core Loop Fixes
-- [ ] **T01** — Fog clearing persistence — re-read `user_districts` on `MapModule.init()`, re-punch cleared holes
+- [x] **T01** — Fog clearing persistence — re-read `user_districts` on map load and render cleared holes
 - [ ] **T02** — Support Node visit tracking — Visit button in node card increments `cafes/otops/landmarks_visited` in DB
 - [ ] **T03** — Support Node completion gate — check counters after check-in, show progress bars or Encounter button
 - [ ] **T04** — C-Class quiz modal — fetch from `quiz_questions` table, 4-option MCQ, capture on correct answer
 - [ ] **T05** — Legendary encounter + Master Quiz (3 questions, all correct) after Support Node gate
-- [ ] **T06** — `DB.Profiles.addLegacyPoints()` — client-side write for lore pts only (captures handled by DB trigger)
+- [x] **T06** — `DB.Profiles.addLegacyPoints()` — client-side write for lore pts only (captures handled by DB trigger)
 - [ ] **T07** — Real map discovery % from DB instead of mock value
 - [ ] **T08** — Collection grid refresh after capture (re-render card, no full reload)
-- [ ] **T09** — Leaderboard refresh after score update (via Realtime or explicit reload)
+- [x] **T09** — Leaderboard refresh after score update via Realtime profile updates
 - [ ] **T10** — BTS/MRT ×2 bonus — station polygon check on check-in
 
-### Lore System (new — not yet built)
-- [ ] **T11** — `haversineDistance()` helper + `LORE_NODES` array + `checkLoreProximity()` in GPS callback
-- [ ] **T12** — Lore unlock bottom sheet UI (title, narrative, image/audio optional, Save button)
-- [ ] **T13** — `user_lore` table (patch_lore.sql) + `DB.Lore.unlock()` + Journal tab in Collection
-- [ ] **T14** — Lore Points client-side write after `user_lore` insert
-- [ ] **T15** — Rich lore content types: image (lazy img), audio (custom play/pause)
-- [ ] **T24** — Multi-site Lore chain: 3-node, consolidated story sheet, +50 chain bonus, journal grouping
+### Lore System
+- [x] **T11** — `haversineDistance()` helper + `LORE_NODES` array + `checkLoreProximity()` in GPS callback
+- [x] **T12** — Lore unlock bottom sheet UI (title, narrative, image/audio optional, Save button)
+- [x] **T13** — `user_lore` table (patch_lore.sql) + `DB.Lore.unlock()` + Journal tab in Collection
+- [x] **T14** — Lore Points client-side write after `user_lore` insert
+- [x] **T15** — Rich lore content types: image (lazy img), audio (custom play/pause)
+- [x] **T24** — Multi-site Lore chain: 3-node, consolidated story sheet, +50 chain bonus, journal grouping
 
 ### Missing Infrastructure (from NSC doc)
-- [ ] **T20** — GPS tolerance radius 500m on check-in, bypass on localhost
-- [ ] **T21** — Supabase DB trigger `on_capture_update_score` on `user_captures` → `patch_lore.sql`
-- [ ] **T22** — Supabase Realtime subscription on `profiles` table for live leaderboard
-- [ ] **T25** — `quiz_questions` table + seed 2 questions per mock figure + `DB.Quiz.getForFigure()`
+- [x] **T20** — GPS tolerance radius 500m on check-in, bypass on localhost
+- [x] **T21** — Supabase DB trigger `on_capture_update_score` on `user_captures` → `patch_lore.sql`
+- [x] **T22** — Supabase Realtime subscription on `profiles` table for live leaderboard
+- [x] **T25** — `quiz_questions` table + seed 2 questions per mock figure + `DB.Quiz.getForFigure()`
 
 ### Infrastructure / Polish
 - [ ] **T16** — Full Thailand district coverage (load polygons from DB, not hardcode)
@@ -118,11 +126,11 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - [ ] **T18** — Vercel production smoke test with real env vars
 - [ ] **T19** — Real-time notifications via Supabase Realtime on `notifications` table
 
-### New Files to Add
+### New Files Added
 | File | Purpose |
 |---|---|
 | `supabase/patch_lore.sql` | `lore_nodes`, `user_lore`, `quiz_questions` tables + legacy score trigger |
-| `js/lore.js` (optional) | Lore proximity module if map.js gets too large |
+| `tests/lore-static.test.mjs` | Static regression check for Lore integration points |
 
 ---
 

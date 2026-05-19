@@ -48,13 +48,16 @@
 │   ├── utils.js         escapeHtml() — always use for user-visible strings
 │   ├── supabase-client.js  All DB & Auth calls live here
 │   ├── app.js           Boot · auth guard · tab navigation · notifications
-│   ├── map.js           Leaflet · Fog of War · watchtowers · GPS dot
-│   ├── collection.js    Figures + artifacts grid
+│   ├── map.js           Leaflet · Fog of War · watchtowers · GPS dot · Lore proximity
+│   ├── collection.js    Figures + artifacts grid · Lore Journal
 │   ├── missions.js      Active quest + daily challenges
 │   └── leaderboard.js   Podium + rank list
 └── supabase/
     ├── schema.sql        Full DB schema + Bangkok district seed data
-    └── patch_auth_fix.sql Auth trigger fix + RLS INSERT policy
+    ├── patch_auth_fix.sql Auth trigger fix + RLS INSERT policy
+    └── patch_lore.sql    Lore/quiz tables + legacy score trigger
+└── tests/
+    └── lore-static.test.mjs Static regression check for Lore integration
 ```
 
 **`js/env.js` is gitignored.** Never commit it. Copy from `env.example.js`.
@@ -138,9 +141,10 @@ cp js/env.example.js js/env.js
 1. Create project at supabase.com
 2. SQL Editor → run `supabase/schema.sql`
 3. SQL Editor → run `supabase/patch_auth_fix.sql`
-4. Authentication → Email → **disable "Confirm email"** for dev
-5. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
-6. Settings → API → copy URL + anon key into `js/env.js`
+4. SQL Editor → run `supabase/patch_lore.sql`
+5. Authentication → Email → **disable "Confirm email"** for dev
+6. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
+7. Settings → API → copy URL + anon key into `js/env.js`
 
 ---
 
@@ -200,6 +204,15 @@ cp js/env.example.js js/env.js
 | `user_lore` | Which lore nodes user has unlocked (RLS: own rows) |
 | `quiz_questions` | Location-specific MCQ questions per figure (public SELECT) |
 | `on_capture_update_score` trigger | Auto-updates `profiles.legacy_score` on `user_captures` insert |
+
+### Runtime APIs Added
+
+- `window.DB.Lore`: `getAll()`, `getUserUnlocked(userId)`, `unlock(userId, loreId)`
+- `window.DB.Quiz`: `getForFigure(figureId, count)`
+- `window.DB.Profiles.addLegacyPoints(userId, pts)`: lore-only score increment
+- `window.DB.Leaderboard.subscribe(callback)`: wrapped Supabase Realtime subscription
+- `window.AppCore.openLoreSheet(node)` and `openLoreChainSheet(chain)`: lore bottom sheets
+- `window.AppCore.showToast(message)`: app-level toast for check-in distance errors
 
 ---
 

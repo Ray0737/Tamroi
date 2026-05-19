@@ -2,6 +2,8 @@
 const LeaderboardModule = (() => {
   let loaded = false;
   let activeMetric = 'legacy';
+  let currentPlayers = [];
+  let realtimeChannel = null;
 
   const MY_ID = '__current_user__';
 
@@ -21,7 +23,11 @@ const LeaderboardModule = (() => {
   const CROWN_SVG = `<svg viewBox="0 0 24 24" fill="#FFD700" stroke="#FFD700" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M2 19l3-9 5 5 4-9 4 9 3-7v11H2z"/></svg>`;
 
   function load() {
-    if (loaded) { render(); return; }
+    if (loaded) {
+      render(currentPlayers);
+      subscribe();
+      return;
+    }
     loaded = true;
     bindControls();
     fetchAndRender();
@@ -65,7 +71,9 @@ const LeaderboardModule = (() => {
     } catch { /* use mock */ }
 
     sortPlayers(players);
+    currentPlayers = players;
     render(players);
+    subscribe();
   }
 
   function sortPlayers(players) {
@@ -82,11 +90,61 @@ const LeaderboardModule = (() => {
   }
 
   function render(players) {
-    players = players || MOCK_PLAYERS;
+    players = players?.length ? players : MOCK_PLAYERS;
     sortPlayers(players);
+    currentPlayers = players;
     renderPodium(players.slice(0, 3));
     renderMyRank(players);
     renderList(players);
+  }
+
+  function subscribe() {
+    if (realtimeChannel || !window.AppCore?.App?.user || !DB.Leaderboard.subscribe) return;
+    try {
+      realtimeChannel = DB.Leaderboard.subscribe(onScoreUpdate);
+    } catch { realtimeChannel = null; }
+  }
+
+  function unsubscribe() {
+    if (!realtimeChannel) return;
+    try { realtimeChannel.unsubscribe(); } catch { /* ignore */ }
+    realtimeChannel = null;
+  }
+
+  function onScoreUpdate(payload) {
+    const updated = payload?.new;
+    if (!updated?.id || !currentPlayers.length) return;
+
+    const user = window.AppCore?.App?.user;
+    const rowId = updated.id === user?.id ? MY_ID : updated.id;
+    const idx = currentPlayers.findIndex(p => p.id === rowId);
+    if (idx === -1) return;
+
+    const before = currentPlayers.map(p => p.id).join('|');
+    currentPlayers[idx] = {
+      ...currentPlayers[idx],
+      legacy_score: updated.legacy_score,
+      map_discovery: updated.map_discovery,
+      archive_count: updated.archive_count,
+    };
+    sortPlayers(currentPlayers);
+    const after = currentPlayers.map(p => p.id).join('|');
+
+    if (before !== after) {
+      render(currentPlayers);
+      return;
+    }
+
+    patchPlayerRow(rowId);
+    renderPodium(currentPlayers.slice(0, 3));
+    renderMyRank(currentPlayers);
+  }
+
+  function patchPlayerRow(playerId) {
+    const row = document.querySelector(`[data-user-id="${CSS.escape(playerId)}"]`);
+    const player = currentPlayers.find(p => p.id === playerId);
+    const score = row?.querySelector('[data-rank-score]');
+    if (score && player) score.textContent = getMetricValue(player);
   }
 
   // ── Podium (top 3) ────────────────────────────────
@@ -196,7 +254,8 @@ const LeaderboardModule = (() => {
           border-radius:var(--radius-md);
           background:${isMe ? 'var(--color-primary-dim)' : 'transparent'};
           border-left:${isMe ? '3px solid var(--color-primary)' : '3px solid transparent'};
-          transition:background 0.15s">
+          transition:background 0.15s"
+          data-user-id="${escapeHtml(p.id)}">
           <span style="
             width:26px;text-align:center;font-size:13px;font-weight:700;flex-shrink:0;
             color:${c || (isMe ? 'var(--color-primary)' : 'var(--color-muted)')}">
@@ -218,7 +277,7 @@ const LeaderboardModule = (() => {
             </p>
             <p style="margin:1px 0 0;font-size:10px;color:var(--color-muted)">${escapeHtml(p.province)}</p>
           </div>
-          <span style="font-size:12px;font-weight:700;flex-shrink:0;
+          <span data-rank-score style="font-size:12px;font-weight:700;flex-shrink:0;
                        color:${isMe ? 'var(--color-primary)' : 'var(--color-white)'}">
             ${getMetricValue(p)}
           </span>
@@ -227,7 +286,7 @@ const LeaderboardModule = (() => {
     }).join('');
   }
 
-  return { load };
+  return { load, unsubscribe, onScoreUpdate };
 })();
 
 window.LeaderboardModule = LeaderboardModule;

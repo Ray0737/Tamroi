@@ -115,7 +115,12 @@ function bindNavigation() {
 
 function switchTab(tab) {
   if (App.currentTab === tab && App.mapInitialized) return;
+  const previousTab = App.currentTab;
   App.currentTab = tab;
+
+  if (previousTab === 'leaderboard' && tab !== 'leaderboard') {
+    window.LeaderboardModule?.unsubscribe?.();
+  }
 
   // Hide all tab sections
   document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
@@ -178,6 +183,62 @@ function closeAllSheets() {
   const nav     = document.querySelector('.bottom-nav');
   if (overlay) overlay.classList.remove('active');
   if (nav) nav.style.pointerEvents = '';  // restore nav
+}
+
+function openLoreSheet(node) {
+  const title = document.getElementById('lore-title');
+  const typeBadge = document.getElementById('lore-type-badge');
+  const ptsBadge = document.getElementById('lore-pts-badge');
+  const narrative = document.getElementById('lore-narrative');
+  const img = document.getElementById('lore-img');
+  const audioWrap = document.getElementById('lore-audio-wrap');
+  const audio = document.getElementById('lore-audio');
+  const audioToggle = document.getElementById('lore-audio-toggle');
+  const saveBtn = document.getElementById('btn-save-lore');
+  if (!title || !typeBadge || !ptsBadge || !narrative || !saveBtn) return;
+
+  const contentType = node.content_type || 'text';
+  title.textContent = node.name_th || node.name_en || 'Lore';
+  typeBadge.textContent = contentType;
+  ptsBadge.textContent = `+${node.lore_pts || 0} pts`;
+  narrative.textContent = node.content_th || node.content_en || '';
+
+  if (img) {
+    const isImage = contentType === 'image' && node.media_url;
+    img.hidden = !isImage;
+    img.src = isImage ? node.media_url : '';
+    img.alt = isImage ? (node.name_th || node.name_en || '') : '';
+  }
+
+  if (audioWrap && audio && audioToggle) {
+    const isAudio = contentType === 'audio' && node.media_url;
+    audioWrap.hidden = !isAudio;
+    audio.src = isAudio ? node.media_url : '';
+    audioToggle.textContent = 'เล่นเสียง';
+    audioToggle.onclick = async () => {
+      if (audio.paused) {
+        await audio.play();
+        audioToggle.textContent = 'หยุดเสียง';
+      } else {
+        audio.pause();
+        audioToggle.textContent = 'เล่นเสียง';
+      }
+    };
+  }
+
+  saveBtn.disabled = false;
+  saveBtn.textContent = 'บันทึกลง Journal';
+  saveBtn.onclick = () => window.MapModule?.saveLoreUnlock(node.id);
+  openSheet('lore-sheet');
+}
+
+function openLoreChainSheet(chain) {
+  const title = document.getElementById('chain-title');
+  const narrative = document.getElementById('chain-narrative');
+  if (!title || !narrative) return;
+  title.textContent = chain.title || 'เรื่องราวสมบูรณ์';
+  narrative.textContent = chain.content || '';
+  openSheet('chain-sheet');
 }
 
 // ── Notifications ─────────────────────────────────────
@@ -245,6 +306,21 @@ function showFloatPts(pts, x, y) {
   el.addEventListener('animationend', () => el.remove());
 }
 
+function showToast(message) {
+  let toast = document.getElementById('app-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'app-toast';
+    toast.className = 'app-toast';
+    document.querySelector('.app-wrapper')?.appendChild(toast);
+  }
+
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(() => toast.classList.remove('show'), 2600);
+}
+
 // ── Sign Out ──────────────────────────────────────────
 document.getElementById('btn-signout')?.addEventListener('click', async () => {
   await DB.Auth.signOut();
@@ -261,4 +337,4 @@ function getMockNotifications() {
 }
 
 // ── Expose globally ───────────────────────────────────
-window.AppCore = { App, switchTab, openSheet, closeAllSheets, showFloatPts };
+window.AppCore = { App, switchTab, openSheet, closeAllSheets, openLoreSheet, openLoreChainSheet, showFloatPts, showToast };

@@ -43,25 +43,27 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `index.html`: splash / landing page with Supabase session redirect handling.
 - `login.html`: centered email/password login, register, Google OAuth, and client-side form validation.
 - `onboarding.html`: first-run location permission and home district picker.
-- `app.html`: main app shell with Map, Collection, Missions, Leaderboard tabs, Bootstrap offcanvas panels, bottom sheets, and figure modal.
+- `app.html`: main app shell with Map, Collection, Missions, Leaderboard tabs, Bootstrap offcanvas panels, lore/check-in/home bottom sheets, and figure modal.
 - `build.js`: Vercel build-time env injection into `js/env.js`.
 - `vercel.json`: deployment config and security headers.
 - `css/variables.css`: authoritative design tokens.
 - `css/layout.css`: app wrapper, fixed top bar, bottom nav, tab shell.
-- `css/components.css`: buttons, cards, inputs, pills, bottom sheets, badges, collection/missions/leaderboard components.
+- `css/components.css`: buttons, cards, inputs, pills, bottom sheets, badges, toast, collection/missions/leaderboard/lore components.
 - `css/map.css`: Leaflet overrides, fog layer, markers, GPS dot, node card.
 - `css/animations.css`: shared keyframes and transitions.
 - `js/config.js`: reads `window.ENV` and writes `window.APP_CONFIG`.
 - `js/env.example.js`: local credential template; copy to `js/env.js`.
 - `js/utils.js`: exposes `escapeHtml()`.
 - `js/supabase-client.js`: the only place that should call Supabase directly; exposes `window.DB`.
-- `js/app.js`: boot, auth guard, tabs, sheets, notifications, top bar; exposes `window.AppCore`.
-- `js/map.js`: Leaflet map, inverted fog polygon, watchtowers, support nodes, GPS dot/ring, home location picker.
-- `js/collection.js`: figures and artifacts grid.
+- `js/app.js`: boot, auth guard, tabs, sheets, lore sheets, toast, notifications, top bar; exposes `window.AppCore`.
+- `js/map.js`: Leaflet map, inverted fog polygon, watchtowers, support nodes, GPS dot/ring, home location picker, GPS Lore proximity checks.
+- `js/collection.js`: figures, artifacts grid, and Lore Journal.
 - `js/missions.js`: active mission and daily challenges.
 - `js/leaderboard.js`: metric tabs, podium, ranked list.
 - `supabase/schema.sql`: schema, seeds, views, and RLS policies.
 - `supabase/patch_auth_fix.sql`: robust auth trigger and profile insert policy.
+- `supabase/patch_lore.sql`: lore nodes, user lore, quiz questions, score functions/triggers, and seed content.
+- `tests/lore-static.test.mjs`: Node static regression check for Lore integration points.
 
 `js/env.js` is gitignored and must never be committed.
 
@@ -70,13 +72,15 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - The current CSS tokens in `css/variables.css` are authoritative. They differ from older docs: background is `#1C1B2E`, primary is `#F6C19E`, card surfaces are `#252240` / `#201E38`.
 - `window.APP_CONFIG.appName` is `Tamroi`, version `0.6.0`.
 - The map currently carries mock Bangkok/Nonthaburi district and node data with Supabase fallback/integration.
+- The map carries mock Lore nodes with Supabase fallback/integration, checks proximity in the GPS callback, and persists local fallback unlocks in `tam_roi_lore_unlocked`.
 - The database seed in `supabase/schema.sql` currently seeds a smaller Bangkok district set than `js/map.js`.
 - `js/map.js` gates check-in behind support-node progress, with a Rattanakosin demo shortcut.
+- `js/map.js` validates non-localhost Watchtower check-ins within a 500m Haversine radius from the district watchtower/center.
 - Home/base district state uses `tam_roi_home`; `js/map.js` migrates the legacy home key if present.
 - Real-time GPS uses `navigator.geolocation.watchPosition`; failures should degrade silently and keep the app usable.
 - Collection, missions, notifications, and leaderboard use mock fallback data when Supabase calls fail.
-- `window.DB` groups `Auth`, `Profiles`, `Districts`, `Figures`, `Artifacts`, `Leaderboard`, and `Notifications`.
-- `window.AppCore` groups `App`, `switchTab`, `openSheet`, `closeAllSheets`, and `showFloatPts`.
+- `window.DB` groups `Auth`, `Profiles`, `Districts`, `Figures`, `Artifacts`, `Leaderboard`, `Lore`, `Quiz`, and `Notifications`.
+- `window.AppCore` groups `App`, `switchTab`, `openSheet`, `closeAllSheets`, `openLoreSheet`, `openLoreChainSheet`, `showFloatPts`, and `showToast`.
 
 ## Development Setup
 
@@ -94,8 +98,9 @@ Supabase first-time setup:
 
 1. Run `supabase/schema.sql`.
 2. Run `supabase/patch_auth_fix.sql`.
-3. Disable email confirmation for development if needed.
-4. Add `http://127.0.0.1:5500/**` and `http://localhost:5500/**` to Auth redirect URLs.
+3. Run `supabase/patch_lore.sql`.
+4. Disable email confirmation for development if needed.
+5. Add `http://127.0.0.1:5500/**` and `http://localhost:5500/**` to Auth redirect URLs.
 
 Vercel setup:
 
@@ -181,34 +186,19 @@ There is no formal test runner in this MVP. For changes:
 ## Known Gaps
 
 ### Core Loop (broken or mock-only)
-- **Fog persistence**: fog holes re-punched on reload is NOT implemented — `MapModule.init()` does not re-read `user_districts`
 - **Support Node visit tracking**: `cafes_visited / otops_visited / landmarks_visited` columns exist but are never incremented by Visit button
 - **Support Node gate**: Encounter unlock check not wired — always shows as unlocked in current code
 - **C-Class quiz**: modal UI exists but question fetching from DB and capture write are incomplete
 - **Legendary Master Quiz**: not implemented — 3-question sequence for S/A figures missing
-- **Legacy Score write**: no DB trigger yet; client-side write may exist but DB trigger (`on_capture_update_score`) not deployed
 - **Map discovery %**: currently mock value, not computed from `user_districts`
 
-### Lore System (not yet built)
-- `haversineDistance()` helper function: missing
-- Lore proximity check in GPS callback: missing
-- Lore unlock bottom sheet: missing
-- `lore_nodes` and `user_lore` tables: not yet in DB (need `patch_lore.sql`)
-- Lore Journal tab in Collection: missing
-- Multi-site Lore chain consolidation: missing
-
 ### Missing DB / Infrastructure
-- `quiz_questions` table: not yet in DB
-- `on_capture_update_score` Supabase trigger: not yet deployed
-- Supabase Realtime leaderboard subscription: not implemented
-- GPS tolerance radius on check-in: not implemented
 - BTS/MRT ×2 bonus polygon check: not implemented
 - Real-time notifications via Supabase Realtime: not implemented
 
 ### Content / Data
 - Full Thailand district coverage: only Bangkok/Nonthaburi mock data
-- Quiz question content: no seeded data
-- Lore node content: no seeded data
+- Quiz and Lore content are seeded only for the current mock Bangkok figures/nodes.
 - Production email-confirmation: disabled for dev, needs re-enable before NSC demo
 
 ## Documentation Rule (MANDATORY for all agents)

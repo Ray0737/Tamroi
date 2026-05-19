@@ -30,10 +30,11 @@
 | Live GPS tracking dot + accuracy ring | `js/map.js` | |
 | Watchtower check-in bottom sheet (UI only) | `js/map.js` | DB write implemented |
 | Clickable node info card (café / OTOP / landmark) | `js/map.js` | |
+| GPS Lore proximity trigger + unlock flow | `js/map.js` | Mock + Supabase-backed lore nodes |
 | Historical figures + artifacts grid with rarity tiers | `js/collection.js` | Mock data |
-| Collection filter (All / S / A / C / Artifacts) + search | `js/collection.js` | |
+| Collection filter (All / S / A / C / Artifacts / Journal) + search | `js/collection.js` | Journal groups chained lore |
 | Active quest steps display + daily challenges | `js/missions.js` | Mock data, no persistence |
-| Leaderboard (podium + ranked list, 3 metric toggles) | `js/leaderboard.js` | Mock data |
+| Leaderboard (podium + ranked list, 3 metric toggles) | `js/leaderboard.js` | Supabase Realtime profile updates |
 | All Supabase DB & Auth abstraction | `js/supabase-client.js` | |
 | XSS-safe `escapeHtml()` | `js/utils.js` | |
 | Vercel build + env injection | `build.js` + `vercel.json` | |
@@ -43,6 +44,7 @@
 |---|---|
 | Full schema (profiles, districts, figures, artifacts, leaderboard view, notifications) | `supabase/schema.sql` |
 | RLS policies + auth trigger fix | `supabase/patch_auth_fix.sql` |
+| Lore, quiz, and score trigger patch | `supabase/patch_lore.sql` |
 
 ---
 
@@ -57,7 +59,7 @@
 
 #### Critical (core loop is broken without these)
 
-- [ ] **Fog clearing persistence** — `user_districts` row is written on check-in but not re-read on reload; fog holes disappear on refresh. Fix: call `Districts.getUserState()` in `MapModule.init()` and re-punch all previously cleared districts.
+- [x] **Fog clearing persistence** — `user_districts` rows are re-read before map render, so cleared holes survive refresh.
 
 - [ ] **Support Node visit tracking** — `user_districts` table has `cafes_visited`, `otops_visited`, `landmarks_visited` columns but they are never incremented. When user taps a café/OTOP/landmark node info card and confirms a visit, call `DB.Districts.updateNodeVisit(userId, districtId, nodeType)`.
 
@@ -69,7 +71,7 @@
 
 - [ ] **Legendary figure encounter flow** — once Support Nodes are complete for a district, activate the Encounter button. Show a "Master Quiz" or multi-step challenge sheet. On completion → `DB.Figures.capture()` for the S-Class figure → award legacy points.
 
-- [ ] **Legacy Points backend persistence** — after every capture, update `profiles.legacy_score += points` in Supabase. Currently the score is only shown from mock data; reading from `profiles` is wired but the write is missing.
+- [x] **Legacy Points backend persistence** — `supabase/patch_lore.sql` adds `on_capture_update_score`; `DB.Figures.capture()` no longer writes score client-side.
 
 - [ ] **Map discovery % real calculation** — compute `(user_districts with fogged=false) / (total districts)` from Supabase instead of the hardcoded mock percentage shown in the stats bar.
 
@@ -77,7 +79,7 @@
 
 - [ ] **Collection update after capture** — after a successful capture call, re-fetch `user_captures` and re-render the collection grid without a full page reload so the newly captured figure shows its green ribbon.
 
-- [ ] **Leaderboard refresh after events** — after legacy score updates, call `LeaderboardModule.load()` to pull fresh data from the `leaderboard` view.
+- [x] **Leaderboard refresh after events** — leaderboard subscribes to profile updates via `DB.Leaderboard.subscribe()` and patches/re-sorts rows.
 
 - [ ] **BTS/MRT transport bonus** — detect if the user checked in while near a BTS/MRT station polygon (add station polygons to map data) and apply ×2 points multiplier before writing to `profiles.legacy_score`.
 
@@ -88,21 +90,26 @@
 
 #### High
 
-- [ ] **GPS proximity trigger for lore nodes** — in `MapModule`, on each GPS position update check if user is within `radius_m` of any lore node (store `lore_nodes` as a separate array with lat/lng/radius). If yes and lore not yet unlocked → fire the lore unlock sequence.
+- [x] **GPS proximity trigger for lore nodes** — in `MapModule`, each GPS update checks `radius_m`; new lore opens the unlock sheet.
 
-- [ ] **Lore unlock UI** — bottom sheet that displays: title, historical narrative text, and optionally image/audio. Trigger animation matching proximity reveal (fade in from map layer).
+- [x] **Lore unlock UI** — bottom sheet displays title, narrative, optional image/audio, Save button, and point badge.
 
-- [ ] **Lore Journal persistence** — add a `lore_journal` table (`user_id, lore_id, unlocked_at`) in Supabase. Write a row on unlock. On Collection tab, add a "Journal" section listing all discovered lore entries.
+- [x] **Lore Journal persistence** — `user_lore` table and `DB.Lore.unlock()` persist entries; Collection has a Journal filter.
 
-- [ ] **Lore Points** — define point value per lore node. After unlocking, add to `profiles.legacy_score` just like a figure capture.
+- [x] **Lore Points** — lore unlocks call `DB.Profiles.addLegacyPoints()` after `user_lore` insert.
 
 #### Medium
 
-- [ ] **Rich lore content types** — extend lore nodes to support `content_type` field: `text`, `image`, `audio`, `document`. Render accordingly in the lore unlock sheet (audio via `<audio>` element, image via `<img>` with lazy load).
+- [x] **Rich lore content types** — lore sheet supports `text`, lazy image, and audio play/pause rendering.
 
 ---
 
 ### General / Infrastructure
+
+#### Done
+
+- [x] **GPS tolerance radius** — Watchtower check-in validates 500m Haversine distance outside localhost.
+- [x] **Quiz questions table** — `quiz_questions` table, public read policy, seed questions, and `DB.Quiz.getForFigure()`.
 
 #### Medium
 
