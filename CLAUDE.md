@@ -168,6 +168,7 @@ cp js/env.example.js js/env.js
   - `landmarks_visited >= 3` → *Historical Knowledge*
 - Support Node visit: tap node info card → Visit button → increments counter in `user_districts`
 - Progress bars shown per counter while locked; Encounter button appears when all met
+- Watchtower fog check-in is independent of support progress; support progress gates only S/A encounters
 
 ### Capture Flow
 
@@ -193,8 +194,10 @@ cp js/env.example.js js/env.js
 - Lore node unlocked: defined per node in `lore_nodes.lore_pts` (client-side write)
 - Lore chain complete bonus: +50 pts
 - BTS/MRT transport bonus: ×2 points multiplier on check-in
+- Current BTS/MRT MVP uses seeded station-radius points, not full rail polygons
 - Leaderboard metrics: Map Discovery % · Archive count · Legacy Score
 - Real-time leaderboard: Supabase Realtime subscription on `profiles` table
+- Real-time notifications: Supabase Realtime subscription on `notifications` inserts updates the badge/offcanvas
 
 ### New DB Tables / Patches (add via `supabase/patch_lore.sql`)
 
@@ -211,6 +214,7 @@ cp js/env.example.js js/env.js
 - `window.DB.Quiz`: `getForFigure(figureId, count)`
 - `window.DB.Profiles.addLegacyPoints(userId, pts)`: lore-only score increment
 - `window.DB.Leaderboard.subscribe(callback)`: wrapped Supabase Realtime subscription
+- `window.DB.Notifications.subscribe(userId, callback)`: live notification inserts
 - `window.AppCore.openLoreSheet(node)` and `openLoreChainSheet(chain)`: lore bottom sheets
 - `window.AppCore.showToast(message)`: app-level toast for check-in distance errors
 

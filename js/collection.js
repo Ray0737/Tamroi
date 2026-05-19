@@ -343,6 +343,11 @@ const CollectionModule = (() => {
     bsModal.show();
   }
 
+  function markCaptured(figureId) {
+    captures.add(figureId);
+    render();
+  }
+
   function checkSVG() {
     return `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5">
       <polyline points="1.5,6 4.5,9.5 10.5,2.5"/>
@@ -356,7 +361,7 @@ const CollectionModule = (() => {
     </svg>`;
   }
 
-  return { load, showDetail };
+  return { load, showDetail, markCaptured };
 })();
 
 window.CollectionModule = CollectionModule;

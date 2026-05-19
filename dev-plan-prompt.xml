@@ -226,18 +226,12 @@
        ═══════════════════════════════════════════════════════════ -->
 
   <current_session_objective>
-    <status date="2026-05-19">Completed in current workspace: T01, T06, T09, T11, T12, T13, T14, T15, T20, T21, T22, T24, T25.
-      Added supabase/patch_lore.sql and tests/lore-static.test.mjs.
+    <status date="2026-05-19">Completed in current workspace: T01, T02, T03, T04, T05, T06, T07, T08, T09, T10, T11, T12, T13, T14, T15, T19, T20, T21, T22, T24, T25.
+      Added supabase/patch_lore.sql, tests/lore-static.test.mjs, and tests/remaining-static.test.mjs.
     </status>
-    <priority_1>Continue the district encounter loop:
-      Support Node visit tracking (T02) → Support Node completion gate (T03) →
-      C-Class quiz modal using DB.Quiz.getForFigure() (T04).
-    </priority_1>
-    <priority_2>Complete remaining scoring and collection polish:
-      Real map discovery % from DB (T07), collection refresh after capture (T08),
-      Legendary Master Quiz (T05), and BTS/MRT bonus (T10).
-    </priority_2>
-    <priority_3>Polish production infrastructure later: notifications Realtime (T19), full district coverage (T16), email verification (T17), Vercel smoke test (T18).</priority_3>
+    <priority_1>Next: full Thailand district/content coverage (T16). Replace or extend mock Bangkok/Nonthaburi coverage with production district polygon/content data loaded from Supabase.</priority_1>
+    <priority_2>Production readiness: email verification setup and redirect copy (T17), then Vercel smoke test with real env vars (T18).</priority_2>
+    <priority_3>Polish/accuracy: persistent per-support-node visit IDs, full BTS/MRT station polygons instead of seeded radius points, and expanded quiz/lore content beyond mock figures.</priority_3>
     <note>Do NOT start new features until the current priority is fully working and tested.
       Implement one task at a time. After each task, state what file was changed and what
       the user should see/test to verify it works.

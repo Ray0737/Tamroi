@@ -141,7 +141,8 @@ const LeaderboardModule = (() => {
   }
 
   function patchPlayerRow(playerId) {
-    const row = document.querySelector(`[data-user-id="${CSS.escape(playerId)}"]`);
+    const safeId = String(playerId).replace(/"/g, '\\"');
+    const row = document.querySelector(`[data-user-id="${safeId}"]`);
     const player = currentPlayers.find(p => p.id === playerId);
     const score = row?.querySelector('[data-rank-score]');
     if (score && player) score.textContent = getMetricValue(player);

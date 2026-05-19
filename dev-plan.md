@@ -30,11 +30,15 @@
 | Live GPS tracking dot + accuracy ring | `js/map.js` | |
 | Watchtower check-in bottom sheet (UI only) | `js/map.js` | DB write implemented |
 | Clickable node info card (café / OTOP / landmark) | `js/map.js` | |
+| Support Node visit tracking + Encounter gate | `js/map.js` | DB RPC with local fallback |
+| C-Class quiz + Legendary Master Quiz | `js/map.js` | Uses `DB.Quiz.getForFigure()` |
 | GPS Lore proximity trigger + unlock flow | `js/map.js` | Mock + Supabase-backed lore nodes |
 | Historical figures + artifacts grid with rarity tiers | `js/collection.js` | Mock data |
 | Collection filter (All / S / A / C / Artifacts / Journal) + search | `js/collection.js` | Journal groups chained lore |
+| Collection capture refresh | `js/collection.js` | `markCaptured()` updates affected grid state |
 | Active quest steps display + daily challenges | `js/missions.js` | Mock data, no persistence |
 | Leaderboard (podium + ranked list, 3 metric toggles) | `js/leaderboard.js` | Supabase Realtime profile updates |
+| Real-time notification inserts | `js/app.js` + `js/supabase-client.js` | Badge/offcanvas update |
 | All Supabase DB & Auth abstraction | `js/supabase-client.js` | |
 | XSS-safe `escapeHtml()` | `js/utils.js` | |
 | Vercel build + env injection | `build.js` + `vercel.json` | |
@@ -61,27 +65,27 @@
 
 - [x] **Fog clearing persistence** — `user_districts` rows are re-read before map render, so cleared holes survive refresh.
 
-- [ ] **Support Node visit tracking** — `user_districts` table has `cafes_visited`, `otops_visited`, `landmarks_visited` columns but they are never incremented. When user taps a café/OTOP/landmark node info card and confirms a visit, call `DB.Districts.updateNodeVisit(userId, districtId, nodeType)`.
+- [x] **Support Node visit tracking** — node Visit button calls `DB.Districts.updateNodeVisit(userId, districtId, nodeType)` and disables after session visit.
 
-- [ ] **Support Node completion gate** — before showing the Legendary Encounter option, check `cafes_visited >= 2 && otops_visited >= 1 && landmarks_visited >= 3` in the district's `user_districts` row. Show a locked state with progress bars if not complete (mirrors the decision diamond in Flowchart 1).
+- [x] **Support Node completion gate** — Watchtower sheet shows progress bars while locked and Encounter button when complete.
 
-- [ ] **C-Class figure basic quiz modal** — when a C-Class figure node is tapped: show a 1-question quiz bottom sheet (question + 4 options). On correct answer → call `DB.Figures.capture(userId, figureId)` → award legacy points → show capture success screen.
+- [x] **C-Class figure basic quiz modal** — C-Class figure nodes show 1-question quiz; correct answer captures via `DB.Figures.capture()`.
 
 #### High
 
-- [ ] **Legendary figure encounter flow** — once Support Nodes are complete for a district, activate the Encounter button. Show a "Master Quiz" or multi-step challenge sheet. On completion → `DB.Figures.capture()` for the S-Class figure → award legacy points.
+- [x] **Legendary figure encounter flow** — once Support Nodes are complete, Encounter opens a 3-question Master Quiz and captures the S-Class figure.
 
 - [x] **Legacy Points backend persistence** — `supabase/patch_lore.sql` adds `on_capture_update_score`; `DB.Figures.capture()` no longer writes score client-side.
 
-- [ ] **Map discovery % real calculation** — compute `(user_districts with fogged=false) / (total districts)` from Supabase instead of the hardcoded mock percentage shown in the stats bar.
+- [x] **Map discovery % real calculation** — computes cleared/active districts via `DB.Districts.getDiscoveryPercent()` with mock fallback.
 
 #### Medium
 
-- [ ] **Collection update after capture** — after a successful capture call, re-fetch `user_captures` and re-render the collection grid without a full page reload so the newly captured figure shows its green ribbon.
+- [x] **Collection update after capture** — `CollectionModule.markCaptured()` updates captured state and re-renders the grid.
 
 - [x] **Leaderboard refresh after events** — leaderboard subscribes to profile updates via `DB.Leaderboard.subscribe()` and patches/re-sorts rows.
 
-- [ ] **BTS/MRT transport bonus** — detect if the user checked in while near a BTS/MRT station polygon (add station polygons to map data) and apply ×2 points multiplier before writing to `profiles.legacy_score`.
+- [x] **BTS/MRT transport bonus** — seeded station radius checks apply x2 point multiplier; full station polygons remain future data polish.
 
 ---
 
@@ -110,6 +114,7 @@
 
 - [x] **GPS tolerance radius** — Watchtower check-in validates 500m Haversine distance outside localhost.
 - [x] **Quiz questions table** — `quiz_questions` table, public read policy, seed questions, and `DB.Quiz.getForFigure()`.
+- [x] **Realtime notifications** — `DB.Notifications.subscribe()` listens for inserts and updates badge/offcanvas.
 
 #### Medium
 
@@ -121,7 +126,7 @@
 
 - [ ] **Vercel production smoke test** — deploy to Vercel, inject real `SUPABASE_URL` + `SUPABASE_ANON_KEY`, run through complete flow: sign up → onboarding → check in → capture figure → leaderboard update.
 
-- [ ] **Real-time notifications** — currently notifications are static mock rows. Wire `DB.Notifications.get()` and subscribe to Supabase Realtime for live push (capture events, raid invites, etc.).
+- [x] **Real-time notifications** — `DB.Notifications.get()` loads rows and `DB.Notifications.subscribe()` pushes inserts into the UI.
 
 ---
 

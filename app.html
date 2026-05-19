@@ -418,6 +418,7 @@
       <p style="font-size:var(--text-sm);font-weight:600;margin-bottom:var(--space-sm);color:var(--color-muted)">Unlock Requirements</p>
       <div class="checklist" id="checkin-checklist"></div>
     </div>
+    <div id="checkin-encounter"></div>
 
     <button class="btn btn-primary btn-full" id="btn-checkin">Check In & Clear Fog ✓</button>
     <button class="btn btn-ghost btn-full mt-2" onclick="AppCore.closeAllSheets()" style="margin-top:8px">Cancel</button>
@@ -474,6 +475,20 @@
     <h3 class="sheet-title lore-title" id="chain-title">เรื่องราวสมบูรณ์</h3>
     <div class="lore-narrative" id="chain-narrative"></div>
     <button class="btn btn-primary btn-full" onclick="AppCore.closeAllSheets()">ปิด</button>
+  </div>
+
+  <!-- ════ QUIZ BOTTOM SHEET ════ -->
+  <div class="bottom-sheet" id="quiz-sheet">
+    <div class="sheet-handle"></div>
+    <div class="lore-sheet-head">
+      <span class="lore-type-badge" id="quiz-step">Quiz</span>
+      <span class="lore-pts-badge" id="quiz-pts">+0 pts</span>
+    </div>
+    <h3 class="sheet-title lore-title" id="quiz-title">Historical Quiz</h3>
+    <div class="lore-narrative" id="quiz-question"></div>
+    <div id="quiz-options" style="display:flex;flex-direction:column;gap:var(--space-sm);margin-bottom:var(--space-md)"></div>
+    <button class="btn btn-primary btn-full" id="btn-submit-quiz">ตอบคำถาม</button>
+    <button class="btn btn-ghost btn-full mt-2" onclick="AppCore.closeAllSheets()" style="margin-top:8px">ปิด</button>
   </div>
 
   <!-- ════ FIGURE DETAIL MODAL ════ -->

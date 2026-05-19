@@ -120,6 +120,21 @@ const Districts = {
     return data;
   },
 
+  async getDiscoveryPercent(userId) {
+    const [{ count: cleared, error: clearedError }, { count: total, error: totalError }] = await Promise.all([
+      _sb.from('user_districts')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .eq('fogged', false),
+      _sb.from('districts')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_active', true),
+    ]);
+    if (clearedError) throw clearedError;
+    if (totalError) throw totalError;
+    return total ? Math.round(((cleared || 0) / total) * 100) : 0;
+  },
+
   async checkIn(userId, districtId) {
     const { data, error } = await _sb
       .from('user_districts')
@@ -132,7 +147,16 @@ const Districts = {
   },
 
   async updateNodeVisit(userId, districtId, nodeType) {
-    const col = nodeType + '_visited';
+    const { data: rpcData, error: rpcError } = await _sb.rpc('increment_node_visit', {
+      p_user_id: userId,
+      p_district_id: districtId,
+      p_node_type: nodeType
+    });
+    if (!rpcError) return rpcData;
+
+    const col = nodeType === 'cafe' ? 'cafes_visited'
+              : nodeType === 'otop' ? 'otops_visited'
+              : 'landmarks_visited';
     const { data: existing } = await _sb
       .from('user_districts')
       .select(col)
@@ -298,6 +322,18 @@ const Notifications = {
 
   async push(userId, type, title, message) {
     await _sb.from('notifications').insert({ user_id: userId, type, title, message });
+  },
+
+  subscribe(userId, callback) {
+    return _sb
+      .channel('user-notifications')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'notifications',
+        filter: `user_id=eq.${userId}`
+      }, callback)
+      .subscribe();
   }
 };
 

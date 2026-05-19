@@ -49,6 +49,27 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+CREATE OR REPLACE FUNCTION increment_node_visit(p_user_id UUID, p_district_id TEXT, p_node_type TEXT)
+RETURNS user_districts AS $$
+DECLARE
+  updated_row user_districts;
+BEGIN
+  INSERT INTO user_districts (user_id, district_id)
+  VALUES (p_user_id, p_district_id)
+  ON CONFLICT (user_id, district_id) DO NOTHING;
+
+  UPDATE user_districts
+  SET cafes_visited = CASE WHEN p_node_type = 'cafe' THEN COALESCE(cafes_visited, 0) + 1 ELSE cafes_visited END,
+      otops_visited = CASE WHEN p_node_type = 'otop' THEN COALESCE(otops_visited, 0) + 1 ELSE otops_visited END,
+      landmarks_visited = CASE WHEN p_node_type = 'landmark' THEN COALESCE(landmarks_visited, 0) + 1 ELSE landmarks_visited END
+  WHERE user_id = p_user_id
+    AND district_id = p_district_id
+  RETURNING * INTO updated_row;
+
+  RETURN updated_row;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 CREATE OR REPLACE FUNCTION update_legacy_score()
 RETURNS TRIGGER AS $$
 BEGIN

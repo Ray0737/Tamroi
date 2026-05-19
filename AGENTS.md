@@ -57,13 +57,14 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `js/supabase-client.js`: the only place that should call Supabase directly; exposes `window.DB`.
 - `js/app.js`: boot, auth guard, tabs, sheets, lore sheets, toast, notifications, top bar; exposes `window.AppCore`.
 - `js/map.js`: Leaflet map, inverted fog polygon, watchtowers, support nodes, GPS dot/ring, home location picker, GPS Lore proximity checks.
-- `js/collection.js`: figures, artifacts grid, and Lore Journal.
+- `js/collection.js`: figures, artifacts grid, Lore Journal, and capture card refresh.
 - `js/missions.js`: active mission and daily challenges.
 - `js/leaderboard.js`: metric tabs, podium, ranked list.
 - `supabase/schema.sql`: schema, seeds, views, and RLS policies.
 - `supabase/patch_auth_fix.sql`: robust auth trigger and profile insert policy.
 - `supabase/patch_lore.sql`: lore nodes, user lore, quiz questions, score functions/triggers, and seed content.
 - `tests/lore-static.test.mjs`: Node static regression check for Lore integration points.
+- `tests/remaining-static.test.mjs`: Node static regression check for support nodes, quiz, discovery, bonus, and Realtime.
 
 `js/env.js` is gitignored and must never be committed.
 
@@ -74,12 +75,16 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - The map currently carries mock Bangkok/Nonthaburi district and node data with Supabase fallback/integration.
 - The map carries mock Lore nodes with Supabase fallback/integration, checks proximity in the GPS callback, and persists local fallback unlocks in `tam_roi_lore_unlocked`.
 - The database seed in `supabase/schema.sql` currently seeds a smaller Bangkok district set than `js/map.js`.
-- `js/map.js` gates check-in behind support-node progress, with a Rattanakosin demo shortcut.
+- `js/map.js` no longer blocks fog check-in on support progress; support progress gates Legendary Encounter instead.
+- Support Node Visit buttons call `DB.Districts.updateNodeVisit()` and use a local visited set to prevent double taps in a session.
 - `js/map.js` validates non-localhost Watchtower check-ins within a 500m Haversine radius from the district watchtower/center.
+- `js/map.js` renders C-Class/S-Class figure markers in cleared districts and opens DB-backed quiz flows.
+- `js/map.js` computes live DB map discovery percentage when Supabase is available.
+- `js/map.js` has seeded BTS/MRT station radius data for x2 point multiplier checks.
 - Home/base district state uses `tam_roi_home`; `js/map.js` migrates the legacy home key if present.
 - Real-time GPS uses `navigator.geolocation.watchPosition`; failures should degrade silently and keep the app usable.
 - Collection, missions, notifications, and leaderboard use mock fallback data when Supabase calls fail.
-- `window.DB` groups `Auth`, `Profiles`, `Districts`, `Figures`, `Artifacts`, `Leaderboard`, `Lore`, `Quiz`, and `Notifications`.
+- `window.DB` groups `Auth`, `Profiles`, `Districts`, `Figures`, `Artifacts`, `Leaderboard`, `Lore`, `Quiz`, and `Notifications`; `Notifications.subscribe()` wraps Supabase Realtime.
 - `window.AppCore` groups `App`, `switchTab`, `openSheet`, `closeAllSheets`, `openLoreSheet`, `openLoreChainSheet`, `showFloatPts`, and `showToast`.
 
 ## Development Setup
@@ -186,15 +191,11 @@ There is no formal test runner in this MVP. For changes:
 ## Known Gaps
 
 ### Core Loop (broken or mock-only)
-- **Support Node visit tracking**: `cafes_visited / otops_visited / landmarks_visited` columns exist but are never incremented by Visit button
-- **Support Node gate**: Encounter unlock check not wired — always shows as unlocked in current code
-- **C-Class quiz**: modal UI exists but question fetching from DB and capture write are incomplete
-- **Legendary Master Quiz**: not implemented — 3-question sequence for S/A figures missing
-- **Map discovery %**: currently mock value, not computed from `user_districts`
+- Support node visits are session-de-duped only; persistent per-node visit IDs are not stored in DB yet.
+- Map discovery % uses DB count when Supabase is available, but falls back to local mock state offline.
 
 ### Missing DB / Infrastructure
-- BTS/MRT ×2 bonus polygon check: not implemented
-- Real-time notifications via Supabase Realtime: not implemented
+- BTS/MRT bonus uses seeded station radius points, not full station polygons.
 
 ### Content / Data
 - Full Thailand district coverage: only Bangkok/Nonthaburi mock data

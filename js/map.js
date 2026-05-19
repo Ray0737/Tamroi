@@ -13,13 +13,24 @@ const MapModule = (() => {
   let lastKnownPosition = null;
   let loreNodes = [];
   let activeLoreNode = null;
+  let activeQuiz = null;
   const unlockedLoreIds = new Set();
   const pendingLoreIds = new Set();
   const completedLoreChains = new Set();
+  const visitedSupportNodeIds = new Set();
   const HOME_KEY = 'tam_roi_home';
   const LEGACY_HOME_KEY = 'siam' + 'echo_home';
   const LORE_KEY = 'tam_roi_lore_unlocked';
   const CHECKIN_TOLERANCE_M = 500;
+
+  const BTS_MRT_STATIONS = [
+    { name: 'Siam BTS', lat: 13.7455, lng: 100.5348, radius_m: 300 },
+    { name: 'Asok BTS', lat: 13.7370, lng: 100.5604, radius_m: 300 },
+    { name: 'Mo Chit BTS', lat: 13.8026, lng: 100.5538, radius_m: 300 },
+    { name: 'Sala Daeng BTS', lat: 13.7286, lng: 100.5341, radius_m: 300 },
+    { name: 'Sanam Chai MRT', lat: 13.7437, lng: 100.4941, radius_m: 300 },
+    { name: 'Chatuchak Park MRT', lat: 13.8021, lng: 100.5530, radius_m: 300 },
+  ];
 
   // ── Bangkok bounding box for the fog overlay ────────
   // Covers entire Greater Bangkok + Nonthaburi
@@ -94,12 +105,12 @@ const MapModule = (() => {
   // ── Nodes ───────────────────────────────────────────
   const MOCK_NODES = [
     // Rattanakosin
-    { districtId: 'rattanakosin', type: 'cafe',     lat: 13.748, lng: 100.491, name: 'ร้านกาแฟโบราณ' },
-    { districtId: 'rattanakosin', type: 'cafe',     lat: 13.752, lng: 100.496, name: 'Café Chakri' },
-    { districtId: 'rattanakosin', type: 'otop',     lat: 13.756, lng: 100.498, name: 'OTOP ผ้าไทย' },
-    { districtId: 'rattanakosin', type: 'landmark', lat: 13.7510, lng: 100.4930, name: 'วัดพระแก้ว' },
-    { districtId: 'rattanakosin', type: 'landmark', lat: 13.7565, lng: 100.4925, name: 'พระบรมมหาราชวัง' },
-    { districtId: 'rattanakosin', type: 'landmark', lat: 13.7459, lng: 100.4883, name: 'วัดโพธิ์' },
+    { id: 'node-rattanakosin-cafe-1', districtId: 'rattanakosin', type: 'cafe',     lat: 13.748, lng: 100.491, name: 'ร้านกาแฟโบราณ' },
+    { id: 'node-rattanakosin-cafe-2', districtId: 'rattanakosin', type: 'cafe',     lat: 13.752, lng: 100.496, name: 'Café Chakri' },
+    { id: 'node-rattanakosin-otop-1', districtId: 'rattanakosin', type: 'otop',     lat: 13.756, lng: 100.498, name: 'OTOP ผ้าไทย' },
+    { id: 'node-rattanakosin-landmark-1', districtId: 'rattanakosin', type: 'landmark', lat: 13.7510, lng: 100.4930, name: 'วัดพระแก้ว' },
+    { id: 'node-rattanakosin-landmark-2', districtId: 'rattanakosin', type: 'landmark', lat: 13.7565, lng: 100.4925, name: 'พระบรมมหาราชวัง' },
+    { id: 'node-rattanakosin-landmark-3', districtId: 'rattanakosin', type: 'landmark', lat: 13.7459, lng: 100.4883, name: 'วัดโพธิ์' },
     // Dusit
     { districtId: 'dusit', type: 'landmark', lat: 13.775, lng: 100.513, name: 'พระที่นั่งวิมานเมฆ' },
     { districtId: 'dusit', type: 'landmark', lat: 13.768, lng: 100.508, name: 'วัดเบญจมบพิตร' },
@@ -147,6 +158,40 @@ const MapModule = (() => {
     { districtId: 'nonthaburi', type: 'cafe',     lat: 13.857, lng: 100.510, name: 'Nonthaburi Riverside Café' },
     { districtId: 'nonthaburi', type: 'otop',     lat: 13.865, lng: 100.520, name: 'ตลาดนนทบุรี' },
   ];
+
+  const FIGURE_NODES = [
+    { id: 'village-elder', districtId: 'silom', class: 'C', legacy_pts: 50, lat: 13.7268, lng: 100.5322, name_th: 'ขุนนางท้องถิ่น', name_en: 'Local Village Legend' },
+    { id: 'river-merchant', districtId: 'silom', class: 'C', legacy_pts: 50, lat: 13.7246, lng: 100.5295, name_th: 'พ่อค้าแม่น้ำ', name_en: 'River Merchant' },
+    { id: 'otop-master', districtId: 'chatuchak', class: 'C', legacy_pts: 50, lat: 13.8032, lng: 100.5534, name_th: 'ช่างฝีมือ OTOP', name_en: 'OTOP Craft Master' },
+    { id: 'king-taksin', districtId: 'rattanakosin', class: 'S', legacy_pts: 500, lat: 13.7525, lng: 100.4935, name_th: 'สมเด็จพระเจ้าตากสิน', name_en: 'King Taksin the Great' },
+  ];
+
+  const MOCK_QUIZ = {
+    'village-elder': {
+      question_th: 'ขุนนางท้องถิ่นในเกมสะท้อนบทบาทใดของชุมชน',
+      option_a: 'การนำและดูแลชุมชน',
+      option_b: 'การขับรถไฟฟ้า',
+      option_c: 'การผลิตดาวเทียม',
+      option_d: 'การสร้างห้างสรรพสินค้า',
+      correct_option: 'A',
+    },
+    'river-merchant': {
+      question_th: 'พ่อค้าแม่น้ำเกี่ยวข้องกับระบบใดมากที่สุด',
+      option_a: 'การค้าทางน้ำ',
+      option_b: 'รถไฟใต้ดิน',
+      option_c: 'อุตสาหกรรมอวกาศ',
+      option_d: 'ฟุตบอลอาชีพ',
+      correct_option: 'A',
+    },
+    'otop-master': {
+      question_th: 'OTOP ในเกมเน้นคุณค่าใด',
+      option_a: 'งานฝีมือท้องถิ่น',
+      option_b: 'การแข่งรถ',
+      option_c: 'อวกาศ',
+      option_d: 'อุตสาหกรรมน้ำมัน',
+      correct_option: 'A',
+    },
+  };
 
   const LORE_NODES = [
     {
@@ -344,6 +389,7 @@ const MapModule = (() => {
         stateData.forEach(s => {
           userDistrictState[s.district_id] = s;
         });
+        updateDiscoveryPercentFromDB(user.id);
       }
     } catch { /* use mock data */ }
 
@@ -443,7 +489,7 @@ const MapModule = (() => {
     try {
       if (user) {
         await DB.Lore.unlock(user.id, node.id);
-        await DB.Profiles.addLegacyPoints(user.id, node.lore_pts || 0);
+        await DB.Profiles.addLegacyPoints(user.id, (node.lore_pts || 0) * getTransportMultiplier());
       }
     } catch { /* offline/demo unlock still persists locally */ }
 
@@ -451,7 +497,9 @@ const MapModule = (() => {
     pendingLoreIds.delete(node.id);
     persistLocalLoreState();
     window.AppCore?.closeAllSheets();
-    showFloatPtsOnMap(node.lore_pts || 0);
+    const earned = (node.lore_pts || 0) * getTransportMultiplier();
+    if (earned > (node.lore_pts || 0)) window.AppCore?.showToast('BTS/MRT Bonus! x2 Legacy Points');
+    showFloatPtsOnMap(earned);
     checkLoreChainComplete(node, user);
   }
 
@@ -483,6 +531,7 @@ const MapModule = (() => {
     buildFogLayer(districts);
     renderWatchtowers(districts);
     renderNodes();
+    renderFigureNodes();
   }
 
   // ── Fog: single inverted polygon ───────────────────
@@ -567,6 +616,35 @@ const MapModule = (() => {
     });
   }
 
+  function renderFigureNodes() {
+    Object.keys(markers).forEach(k => {
+      if (k.startsWith('figure-')) { map.removeLayer(markers[k]); delete markers[k]; }
+    });
+
+    FIGURE_NODES.forEach(figure => {
+      const state = userDistrictState[figure.districtId] || { fogged: true };
+      if (state.fogged) return;
+
+      const icon = L.divIcon({
+        className: '',
+        html: `<div class="marker-node" style="color:var(--color-primary);background:var(--color-primary-dim);border-color:var(--color-primary)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+      });
+
+      const marker = L.marker([figure.lat, figure.lng], { icon }).addTo(map);
+      marker.on('click', () => {
+        if (figure.class === 'C') openQuizForFigure(figure.id);
+        else openLegendaryEncounter(figure.districtId, figure.id);
+      });
+      markers[`figure-${figure.id}`] = marker;
+    });
+  }
+
   // ── Node info card (above nav, no z-index conflicts) ──
   function showNodeInfoCard(node) {
     const card    = document.getElementById('node-info-card');
@@ -575,6 +653,8 @@ const MapModule = (() => {
 
     const cfg      = NODE_CFG[node.type] || NODE_CFG.landmark;
     const district = (allDistrictsCache || MOCK_DISTRICTS).find(d => d.id === node.districtId);
+    const id = getSupportNodeId(node);
+    const visited = visitedSupportNodeIds.has(id);
 
     const iconInner = node.type === 'cafe'
       ? '<path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/>'
@@ -608,11 +688,54 @@ const MapModule = (() => {
           </svg>
         </button>
       </div>
+      <div style="padding:0 14px 12px">
+        <button class="btn btn-sm ${visited ? 'btn-ghost' : 'btn-primary'} btn-full"
+                id="btn-visit-support-node"
+                onclick="MapModule.visitSupportNode('${escapeHtml(id)}')"
+                ${visited ? 'disabled' : ''}>
+          ${visited ? 'เยี่ยมชมแล้ว' : 'เยี่ยมชมสถานที่นี้'}
+        </button>
+      </div>
     `;
 
     card.classList.add('show');
     clearTimeout(_nodeCardTimer);
     _nodeCardTimer = setTimeout(() => card.classList.remove('show'), 4000);
+  }
+
+  async function visitSupportNode(nodeId) {
+    const node = MOCK_NODES.find(item => getSupportNodeId(item) === nodeId);
+    if (!node || visitedSupportNodeIds.has(nodeId)) return;
+
+    const btn = document.getElementById('btn-visit-support-node');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = `<div class="spinner"></div>`;
+    }
+
+    let nextState = null;
+    const user = window.AppCore?.App?.user;
+    try {
+      if (user) nextState = await DB.Districts.updateNodeVisit(user.id, node.districtId, node.type);
+    } catch { /* offline/demo fallback below */ }
+
+    const current = userDistrictState[node.districtId] || { fogged: false, cafes_visited: 0, otops_visited: 0, landmarks_visited: 0 };
+    const field = node.type === 'cafe' ? 'cafes_visited'
+      : node.type === 'otop' ? 'otops_visited'
+      : 'landmarks_visited';
+    userDistrictState[node.districtId] = nextState || {
+      ...current,
+      [field]: (current[field] || 0) + 1,
+    };
+
+    visitedSupportNodeIds.add(nodeId);
+    window.AppCore?.showToast('บันทึกการเยี่ยมชม ✓');
+    showNodeInfoCard(node);
+    if (activeDistrict?.id === node.districtId) showCheckInSheet(activeDistrict);
+  }
+
+  function getSupportNodeId(node) {
+    return node.id || `${node.districtId}-${node.type}-${node.lat}-${node.lng}`;
   }
 
   // ── Check-in sheet ─────────────────────────────────
@@ -649,6 +772,8 @@ const MapModule = (() => {
       </span>
     `;
 
+    renderSupportGate(district, state);
+
     document.getElementById('checkin-checklist').innerHTML = `
       <div class="checklist-item ${vc >= rc ? 'done' : ''}">
         <div class="check-icon ${vc >= rc ? 'done' : ''}">${vc >= rc ? checkSVG() : ''}</div>
@@ -665,31 +790,165 @@ const MapModule = (() => {
     `;
 
     const btn      = document.getElementById('btn-checkin');
-    const unlocked = canCheckIn(district.id, district);
     const alreadyCleared = !fogged;
 
     if (alreadyCleared) {
       btn.textContent = 'Already Explored ✓';
       btn.disabled    = true;
       btn.className   = 'btn btn-full btn-ghost';
-    } else if (unlocked) {
-      btn.textContent = 'Check In & Clear Fog';
-      btn.disabled    = false;
-      btn.className   = 'btn btn-full btn-primary';
     } else {
-      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> ยังไม่ครบเงื่อนไข`;
-      btn.disabled  = true;
-      btn.className = 'btn btn-full btn-ghost';
-    }
-
-    // Demo shortcut for Rattanakosin
-    if (district.id === 'rattanakosin' && fogged && !unlocked) {
-      btn.textContent = 'Check In & Clear Fog (Demo)';
+      btn.textContent = 'Check In & Clear Fog';
       btn.disabled    = false;
       btn.className   = 'btn btn-full btn-primary';
     }
 
     window.AppCore?.openSheet('checkin-sheet');
+  }
+
+  function renderSupportGate(district, state = {}) {
+    const container = document.getElementById('checkin-encounter');
+    if (!container) return;
+
+    const rows = [
+      { label: 'Cafe', count: state.cafes_visited || 0, required: district.required_cafes || 2 },
+      { label: 'OTOP', count: state.otops_visited || 0, required: district.required_otops || 1 },
+      { label: 'Landmark', count: state.landmarks_visited || 0, required: district.required_landmarks || 3 },
+    ];
+    const canUnlock = rows.every(row => row.count >= row.required);
+
+    if (canUnlock) {
+      container.innerHTML = `
+        <button class="btn btn-primary btn-full mb-3" onclick="MapModule.openLegendaryEncounter('${escapeHtml(district.id)}')">
+          ปลดล็อค Encounter
+        </button>
+      `;
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="card-outlined mb-3">
+        <p style="font-size:var(--text-sm);font-weight:700;margin-bottom:var(--space-sm);color:var(--color-muted)">Legendary Encounter Locked</p>
+        ${rows.map(row => {
+          const pct = Math.min(100, Math.round((row.count / row.required) * 100));
+          return `
+            <div style="margin-bottom:10px">
+              <div style="display:flex;justify-content:space-between;font-size:var(--text-xs);color:var(--color-muted);margin-bottom:4px">
+                <span>${row.label}</span><span>${row.count}/${row.required}</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill orange" style="width:${pct}%"></div></div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  function openLegendaryEncounter(districtId, figureId = null) {
+    const district = (allDistrictsCache || MOCK_DISTRICTS).find(item => item.id === districtId);
+    if (district && !canCheckIn(districtId, district)) {
+      window.AppCore?.showToast('ยังไม่ครบเงื่อนไข Support Nodes');
+      return;
+    }
+
+    const figure = figureId
+      ? FIGURE_NODES.find(item => item.id === figureId)
+      : FIGURE_NODES.find(item => item.districtId === districtId && item.class !== 'C');
+    if (!figure) {
+      window.AppCore?.showToast('ยังไม่มี Legendary Encounter ในย่านนี้');
+      return;
+    }
+    openQuizForFigure(figure.id);
+  }
+
+  async function openQuizForFigure(figureId, questionIndex = 0, questions = null) {
+    const figure = FIGURE_NODES.find(item => item.id === figureId);
+    if (!figure) return;
+
+    let quizQuestions = questions;
+    try {
+      if (!quizQuestions) {
+        const count = figure.class === 'C' ? 1 : 3;
+        const data = await DB.Quiz.getForFigure(figureId, count);
+        quizQuestions = Array.isArray(data) ? data : [data].filter(Boolean);
+      }
+    } catch { /* use fallback */ }
+
+    if (!quizQuestions?.length) quizQuestions = [MOCK_QUIZ[figureId]].filter(Boolean);
+    const question = quizQuestions[questionIndex];
+    if (!question) return;
+
+    activeQuiz = { figure, questions: quizQuestions, questionIndex, selected: null };
+    renderQuizSheet();
+    window.AppCore?.openSheet('quiz-sheet');
+  }
+
+  function renderQuizSheet() {
+    if (!activeQuiz) return;
+    const { figure, questions, questionIndex } = activeQuiz;
+    const question = questions[questionIndex];
+    const step = document.getElementById('quiz-step');
+    const pts = document.getElementById('quiz-pts');
+    const title = document.getElementById('quiz-title');
+    const questionEl = document.getElementById('quiz-question');
+    const options = document.getElementById('quiz-options');
+    const submit = document.getElementById('btn-submit-quiz');
+    if (!step || !pts || !title || !questionEl || !options || !submit) return;
+
+    step.textContent = figure.class === 'C' ? 'C-Class Quiz' : `Master Quiz ${questionIndex + 1}/${questions.length}`;
+    pts.textContent = `+${figure.legacy_pts || 0} pts`;
+    title.textContent = figure.name_th;
+    questionEl.textContent = question.question_th || '';
+    options.innerHTML = ['A', 'B', 'C', 'D'].map(option => {
+      const key = `option_${option.toLowerCase()}`;
+      return `
+        <button class="btn btn-ghost btn-full quiz-option" data-option="${option}" type="button">
+          ${option}. ${escapeHtml(question[key] || '')}
+        </button>
+      `;
+    }).join('');
+
+    options.querySelectorAll('.quiz-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeQuiz.selected = btn.dataset.option;
+        options.querySelectorAll('.quiz-option').forEach(item => item.classList.remove('btn-primary'));
+        btn.classList.add('btn-primary');
+      });
+    });
+
+    submit.disabled = false;
+    submit.textContent = questionIndex + 1 < questions.length ? 'ข้อต่อไป' : 'จับบุคคลนี้';
+    submit.onclick = submitQuizAnswer;
+  }
+
+  async function submitQuizAnswer() {
+    if (!activeQuiz?.selected) {
+      window.AppCore?.showToast('เลือกคำตอบก่อน');
+      return;
+    }
+
+    const question = activeQuiz.questions[activeQuiz.questionIndex];
+    if (activeQuiz.selected !== question.correct_option) {
+      window.AppCore?.showToast('ยังไม่ถูก ลองใหม่อีกครั้ง');
+      activeQuiz.selected = null;
+      renderQuizSheet();
+      return;
+    }
+
+    if (activeQuiz.questionIndex + 1 < activeQuiz.questions.length) {
+      openQuizForFigure(activeQuiz.figure.id, activeQuiz.questionIndex + 1, activeQuiz.questions);
+      return;
+    }
+
+    const user = window.AppCore?.App?.user;
+    try {
+      if (user) await DB.Figures.capture(user.id, activeQuiz.figure.id, activeQuiz.questions.length);
+    } catch { /* offline/demo capture below */ }
+
+    window.CollectionModule?.markCaptured?.(activeQuiz.figure.id);
+    window.AppCore?.closeAllSheets();
+    showFloatPtsOnMap(activeQuiz.figure.legacy_pts || 0);
+    window.AppCore?.showToast('จับบุคคลสำเร็จ');
+    activeQuiz = null;
   }
 
   // ── Perform check-in ────────────────────────────────
@@ -724,7 +983,8 @@ const MapModule = (() => {
 
     window.AppCore?.closeAllSheets();
     updateStatsBar();
-    showFloatPtsOnMap(150);
+    updateDiscoveryPercentFromDB(window.AppCore?.App?.user?.id);
+    showFloatPtsOnMap(150 * getTransportMultiplier());
   }
 
   // ── Check-in eligibility ────────────────────────────
@@ -792,6 +1052,7 @@ const MapModule = (() => {
 
     userDistrictState[districtId] = { ...(userDistrictState[districtId] || {}), fogged: false };
     renderAll(allDistrictsCache || MOCK_DISTRICTS);
+    updateDiscoveryPercentFromDB(window.AppCore?.App?.user?.id);
     window.AppCore?.showFloatPts(50, window.innerWidth / 2, window.innerHeight / 2);
   }
 
@@ -826,6 +1087,27 @@ const MapModule = (() => {
     if (el) el.textContent = pct + '%';
   }
 
+  async function updateDiscoveryPercentFromDB(userId) {
+    if (!userId) {
+      updateStatsBar();
+      return;
+    }
+    try {
+      const pct = await DB.Districts.getDiscoveryPercent(userId);
+      const el = document.getElementById('map-stat-explored');
+      if (el) el.textContent = pct + '%';
+    } catch {
+      updateStatsBar();
+    }
+  }
+
+  function getTransportMultiplier() {
+    if (!lastKnownPosition) return 1;
+    return BTS_MRT_STATIONS.some(station => (
+      haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, station.lat, station.lng) <= station.radius_m
+    )) ? 2 : 1;
+  }
+
   function showFloatPtsOnMap(pts) {
     const sz = map.getSize();
     window.AppCore?.showFloatPts(pts, sz.x / 2, sz.y / 2);
@@ -844,7 +1126,7 @@ const MapModule = (() => {
   function getLoreNodes() { return loreNodes.length ? loreNodes : LORE_NODES; }
   function getUnlockedLoreIds() { return [...unlockedLoreIds]; }
 
-  return { init, resize, confirmHome, skipHomePicker, saveLoreUnlock, getLoreNodes, getUnlockedLoreIds };
+  return { init, resize, confirmHome, skipHomePicker, saveLoreUnlock, visitSupportNode, openLegendaryEncounter, openQuizForFigure, submitQuizAnswer, getLoreNodes, getUnlockedLoreIds };
 })();
 
 window.MapModule = MapModule;

@@ -4,6 +4,7 @@ const App = {
   profile: null,
   currentTab: 'map',
   mapInitialized: false,
+  notifChannel: null,
 };
 
 // ── Boot ──────────────────────────────────────────────
@@ -69,6 +70,7 @@ async function _bootApp(user) {
   bindNavigation();
   bindSheetOverlay();
   loadNotifications();
+  subscribeNotifications();
   switchTab('map');
 }
 
@@ -260,6 +262,37 @@ async function loadNotifications() {
   }
 }
 
+function subscribeNotifications() {
+  if (!App.user || App.notifChannel || !DB.Notifications.subscribe) return;
+  try {
+    App.notifChannel = DB.Notifications.subscribe(App.user.id, payload => {
+      prependNotification(payload.new);
+      updateUnreadBadge(1);
+    });
+  } catch { App.notifChannel = null; }
+}
+
+function prependNotification(notif) {
+  const list = document.getElementById('notif-list');
+  if (!list || !notif) return;
+  renderNotifications([notif, ...getRenderedNotifications()]);
+}
+
+function getRenderedNotifications() {
+  return [...document.querySelectorAll('#notif-list .notif-row')].map(row => ({
+    id: row.dataset.id,
+    type: row.dataset.type || '',
+    title: row.querySelector('.notif-title')?.textContent || '',
+    message: row.querySelector('.notif-msg')?.textContent || '',
+    is_read: !row.classList.contains('unread'),
+  }));
+}
+
+function updateUnreadBadge(delta) {
+  const badge = document.querySelector('.notif-badge');
+  if (badge && delta > 0) badge.style.display = '';
+}
+
 function renderNotifications(notifs) {
   const list = document.getElementById('notif-list');
   if (!list) return;
@@ -275,7 +308,7 @@ function renderNotifications(notifs) {
   };
   // escapeHtml prevents XSS from DB-sourced notification title/message
   list.innerHTML = notifs.map(n => `
-    <div class="notif-row ${n.is_read ? '' : 'unread'}" data-id="${escapeHtml(String(n.id))}">
+    <div class="notif-row ${n.is_read ? '' : 'unread'}" data-id="${escapeHtml(String(n.id))}" data-type="${escapeHtml(n.type || '')}">
       <span class="notif-icon">${icons[n.type] || ''}</span>
       <div class="notif-body">
         <p class="notif-title">${escapeHtml(n.title)}</p>
@@ -323,6 +356,7 @@ function showToast(message) {
 
 // ── Sign Out ──────────────────────────────────────────
 document.getElementById('btn-signout')?.addEventListener('click', async () => {
+  try { await App.notifChannel?.unsubscribe?.(); } catch { /* ignore */ }
   await DB.Auth.signOut();
   window.location.href = 'index.html';
 });

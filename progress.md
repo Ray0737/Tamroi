@@ -82,6 +82,8 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - **GPS check-in tolerance** — 500m Haversine gate on Watchtower check-in, bypassed on localhost
 - **Watchtower markers** — 5 Bangkok districts (Rattanakosin, Dusit, Pathumwan, Silom, Sukhumvit, Watthana + more)
 - **Node info card** — tappable bottom sheet showing outpost/landmark details
+- **Support Node tracking** — node Visit button increments district support counters with DB RPC + local fallback
+- **Support Node gate** — Watchtower sheet shows progress bars or the Encounter button when requirements are met
 - **Lore proximity system** — GPS range checks unlock lore sheets, persist to `user_lore`, and award lore points
 - **Lore Journal** — Collection → Journal lists unlocked lore, expands entries, and groups 3-part chains
 - **Lore chains** — completing all 3 chain parts shows consolidated story and awards +50 points
@@ -89,22 +91,24 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - **Daily missions** — quest list and challenge tracker
 - **Leaderboard** — podium + ranked list with Legacy Score metrics and profile Realtime subscription
 - **Design system** — consistent dark charcoal + orange + sage green palette, mobile-first 430px
-- **Quiz infrastructure** — `quiz_questions` table and `DB.Quiz.getForFigure()` are available for capture flows
+- **Quiz infrastructure and capture flow** — `quiz_questions` table, C-Class quiz, Master Quiz, and capture writes are wired
 - **Legacy score trigger** — `on_capture_update_score` DB trigger awards figure capture points
+- **BTS/MRT transport bonus** — station-radius helper applies x2 points where GPS is near seeded rail stations
+- **Realtime notifications** — notification inserts subscribe through Supabase Realtime and update the offcanvas/badge
 
 ## Known Gaps / Next Steps Within Phase 1
 
 ### Core Loop Fixes
 - [x] **T01** — Fog clearing persistence — re-read `user_districts` on map load and render cleared holes
-- [ ] **T02** — Support Node visit tracking — Visit button in node card increments `cafes/otops/landmarks_visited` in DB
-- [ ] **T03** — Support Node completion gate — check counters after check-in, show progress bars or Encounter button
-- [ ] **T04** — C-Class quiz modal — fetch from `quiz_questions` table, 4-option MCQ, capture on correct answer
-- [ ] **T05** — Legendary encounter + Master Quiz (3 questions, all correct) after Support Node gate
+- [x] **T02** — Support Node visit tracking — Visit button in node card increments `cafes/otops/landmarks_visited` in DB
+- [x] **T03** — Support Node completion gate — check counters after check-in, show progress bars or Encounter button
+- [x] **T04** — C-Class quiz modal — fetch from `quiz_questions` table, 4-option MCQ, capture on correct answer
+- [x] **T05** — Legendary encounter + Master Quiz (3 questions, all correct) after Support Node gate
 - [x] **T06** — `DB.Profiles.addLegacyPoints()` — client-side write for lore pts only (captures handled by DB trigger)
-- [ ] **T07** — Real map discovery % from DB instead of mock value
-- [ ] **T08** — Collection grid refresh after capture (re-render card, no full reload)
+- [x] **T07** — Real map discovery % from DB instead of mock value
+- [x] **T08** — Collection grid refresh after capture (re-render card, no full reload)
 - [x] **T09** — Leaderboard refresh after score update via Realtime profile updates
-- [ ] **T10** — BTS/MRT ×2 bonus — station polygon check on check-in
+- [x] **T10** — BTS/MRT ×2 bonus — seeded station-radius check applies point multiplier
 
 ### Lore System
 - [x] **T11** — `haversineDistance()` helper + `LORE_NODES` array + `checkLoreProximity()` in GPS callback
@@ -124,13 +128,14 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - [ ] **T16** — Full Thailand district coverage (load polygons from DB, not hardcode)
 - [ ] **T17** — Re-enable email confirmation for production
 - [ ] **T18** — Vercel production smoke test with real env vars
-- [ ] **T19** — Real-time notifications via Supabase Realtime on `notifications` table
+- [x] **T19** — Real-time notifications via Supabase Realtime on `notifications` table
 
 ### New Files Added
 | File | Purpose |
 |---|---|
 | `supabase/patch_lore.sql` | `lore_nodes`, `user_lore`, `quiz_questions` tables + legacy score trigger |
 | `tests/lore-static.test.mjs` | Static regression check for Lore integration points |
+| `tests/remaining-static.test.mjs` | Static regression check for support node, quiz, discovery, bonus, and Realtime work |
 
 ---
 
