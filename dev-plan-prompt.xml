@@ -630,45 +630,307 @@
   </completed_features>
 
   <!-- ═══════════════════════════════════════════════════════════
-       REMAINING TASKS (full backlog)
+       REMAINING TASKS (full backlog with tech stack per task)
        ═══════════════════════════════════════════════════════════ -->
 
   <remaining_tasks>
 
     <group name="Lore System (FC2 — Lore/Proximity Loop)" current_focus="true">
-      <task id="T11" priority="high" affects="js/map.js">GPS proximity trigger — haversineDistance helper + LORE_NODES array + checkLoreProximity() in watchPosition callback. See ai_instructions L1 + L2.</task>
-      <task id="T12" priority="high" affects="app.html, js/map.js, css/components.css">Lore unlock bottom sheet — title, narrative, optional image/audio, Save button, lore pts badge. See ai_instructions L3.</task>
-      <task id="T13" priority="high" affects="supabase/patch_lore.sql, js/supabase-client.js, js/collection.js">Lore Journal DB persistence (user_lore table) + Journal filter tab in Collection. See ai_instructions L4 + L6.</task>
-      <task id="T14" priority="high" affects="js/map.js, js/supabase-client.js">Lore Points — client-side write to profiles.legacy_score after user_lore insert. See ai_instructions L4.</task>
-      <task id="T15" priority="medium" affects="js/map.js, app.html">Rich lore content types — image (lazy img), audio (custom play/pause), document (scrollable block). See ai_instructions L3.</task>
-      <task id="T24" priority="medium" affects="js/map.js, js/collection.js">Multi-site Lore chain — 3-node chain, chain completion detection, combined story sheet, +50 bonus, chain progress in Journal. See ai_instructions L5.</task>
+
+      <task id="T11" priority="high" affects="js/map.js">
+        <title>GPS proximity trigger for lore nodes</title>
+        <what>haversineDistance() helper + LORE_NODES array + checkLoreProximity() called inside watchPosition callback</what>
+        <tech>
+          <item api="HTML5 Geolocation">navigator.geolocation.watchPosition() — already running in MapModule; hook into the existing position callback</item>
+          <item api="Pure JS Math">haversineDistance(lat1,lng1,lat2,lng2) → metres — Haversine formula, no external library needed</item>
+          <item api="JS Set">module-level Set unlockedLoreIds — populated from DB.Lore.getUserUnlocked() on init; checked before firing unlock to prevent duplicates</item>
+          <item api="JS Array">LORE_NODES const array: [{ id, name_th, lat, lng, radius_m, lore_pts, content_type, content_th, chain_id, chain_part }]</item>
+        </tech>
+        <note>See ai_instructions L1 + L2</note>
+      </task>
+
+      <task id="T12" priority="high" affects="app.html, js/map.js, css/components.css">
+        <title>Lore unlock bottom sheet UI</title>
+        <what>Bottom sheet: Thai title, scrollable narrative, optional image/audio, Save button, lore pts badge</what>
+        <tech>
+          <item api="HTML pattern">Copy exact .bottom-sheet + .bottom-sheet-overlay pattern from existing sheets in app.html (id="lore-sheet")</item>
+          <item api="HTML5 Audio">&lt;audio id="lore-audio"&gt; element — shown/hidden based on content_type; custom play/pause button, no external audio library</item>
+          <item api="HTML5 img">&lt;img loading="lazy" id="lore-img"&gt; — native lazy loading, shown only when content_type === 'image'</item>
+          <item api="AppCore (js/app.js)">AppCore.openSheet('lore-sheet') to open; AppCore.closeAllSheets() on dismiss</item>
+          <item api="utils.js">utils.escapeHtml() for all content_th / content_en text injected via innerHTML</item>
+          <item api="CSS variables">--color-primary for pts badge; --color-card-dark for sheet background; Kanit font for Thai title (h3)</item>
+        </tech>
+        <note>See ai_instructions L3</note>
+      </task>
+
+      <task id="T13" priority="high" affects="supabase/patch_lore.sql, js/supabase-client.js, js/collection.js">
+        <title>Lore Journal DB persistence + Journal tab in Collection</title>
+        <what>Create user_lore table, DB.Lore namespace, Journal filter pill in collection grid</what>
+        <tech>
+          <item api="PostgreSQL / Supabase SQL">CREATE TABLE user_lore in patch_lore.sql; RLS: ALTER TABLE ENABLE ROW LEVEL SECURITY + policy user_id = auth.uid()</item>
+          <item api="Supabase JS v2 — insert">supabase.from('user_lore').upsert({ user_id, lore_id }, { onConflict: 'user_id,lore_id', ignoreDuplicates: true }) — safe to call multiple times</item>
+          <item api="Supabase JS v2 — select">supabase.from('user_lore').select('*, lore_nodes(*)').eq('user_id', userId) — join to get lore content in one query</item>
+          <item api="DB namespace (js/supabase-client.js)">Add window.DB.Lore = { getAll, getUserUnlocked, unlock } following existing namespace pattern</item>
+          <item api="DOM (js/collection.js)">Add 'Journal' pill alongside existing filter pills; toggle figure grid vs lore journal list on click; no new library needed</item>
+          <item api="utils.js">utils.escapeHtml() for all lore text rendered into journal entry cards</item>
+        </tech>
+        <note>See ai_instructions L4 + L6</note>
+      </task>
+
+      <task id="T14" priority="high" affects="js/map.js, js/supabase-client.js">
+        <title>Lore Points client-side write</title>
+        <what>After user_lore insert, add lore_pts to profiles.legacy_score via client call (no DB trigger for lore)</what>
+        <tech>
+          <item api="Supabase JS v2 — rpc">supabase.rpc('increment_legacy_score', { p_user_id: userId, p_amount: node.lore_pts }) — atomic server-side increment avoids race conditions; add this Postgres function in patch_lore.sql</item>
+          <item api="Fallback — JS update">If rpc not used: supabase.from('profiles').update({ legacy_score: current + pts }).eq('user_id', userId) — read current score first</item>
+          <item api="DB namespace">DB.Profiles.addLegacyPoints(userId, pts) — expose via supabase-client.js; called from js/map.js after DB.Lore.unlock() resolves</item>
+        </tech>
+        <note>See ai_instructions L4 — lore pts are client-side; figure capture pts are DB trigger (T21)</note>
+      </task>
+
+      <task id="T15" priority="medium" affects="js/map.js, app.html">
+        <title>Rich lore content types (image, audio, document)</title>
+        <what>Render lore sheet differently depending on content_type field from lore_nodes table</what>
+        <tech>
+          <item api="HTML5 img">loading="lazy" attribute — no JS needed for lazy load; set src only when sheet opens to avoid pre-fetching</item>
+          <item api="HTML5 Audio">HTMLAudioElement — toggle play/pause via audioEl.play() / audioEl.pause(); style with CSS only, no library</item>
+          <item api="CSS">Conditional class toggling: lore-sheet--image / lore-sheet--audio / lore-sheet--doc — show/hide relevant block per content_type</item>
+          <item api="Pure JS">switch(node.content_type) { case 'image': ... case 'audio': ... default: text } in the unlockLore() function</item>
+        </tech>
+        <note>See ai_instructions L3</note>
+      </task>
+
+      <task id="T24" priority="medium" affects="js/map.js, js/collection.js">
+        <title>Multi-site Lore chain (3-node chain → consolidated story + bonus)</title>
+        <what>After each lore unlock, check if all chain parts are collected; if so fire chain-complete sheet and +50 pts</what>
+        <tech>
+          <item api="Supabase JS v2 — select">After DB.Lore.unlock(), query: supabase.from('user_lore').select('lore_id').eq('user_id', userId) then filter by chain_id in JS</item>
+          <item api="Pure JS">Filter LORE_NODES by chain_id to get expected parts; compare against user's unlocked set to detect completion</item>
+          <item api="HTML pattern">Chain-complete sheet reuses .bottom-sheet pattern; content built by concatenating content_th of all 3 chain nodes</item>
+          <item api="DB.Profiles.addLegacyPoints">+50 chain bonus written the same way as lore pts (T14)</item>
+          <item api="DOM (js/collection.js)">Journal groups chained entries under a chain header card; Bootstrap progress bar for chain progress (n/3 parts)</item>
+        </tech>
+        <note>See ai_instructions L5</note>
+      </task>
+
     </group>
 
     <group name="Missing Systems (from Word doc)">
-      <task id="T20" priority="high" affects="js/map.js">GPS tolerance radius for check-in — 500m Haversine gate, toast if too far, bypass on localhost. See ai_instructions M1.</task>
-      <task id="T21" priority="high" affects="supabase/patch_lore.sql">Supabase DB trigger for Legacy Score on user_captures insert. Remove client-side score write for captures. See ai_instructions M2.</task>
-      <task id="T22" priority="medium" affects="js/leaderboard.js">Supabase Realtime subscription on profiles table — update leaderboard DOM on score change, unsubscribe on tab leave. See ai_instructions M3.</task>
-      <task id="T25" priority="medium" affects="supabase/patch_lore.sql, js/supabase-client.js">Quiz questions DB table — figure-specific questions, seed 2 per mock figure, DB.Quiz.getForFigure(). See ai_instructions M4.</task>
+
+      <task id="T20" priority="high" affects="js/map.js">
+        <title>GPS tolerance radius for check-in (500m gate)</title>
+        <what>Block check-in if user is more than 500m from district center; bypass on localhost</what>
+        <tech>
+          <item api="haversineDistance()">Same helper from T11 — haversineDistance(userLat, userLng, district.center_lat, district.center_lng)</item>
+          <item api="Pure JS">isDev() = ['localhost','127.0.0.1'].includes(window.location.hostname) — skip distance check in dev</item>
+          <item api="AppCore (js/app.js)">AppCore.showToast('คุณอยู่ไกลเกินไป — เดินทางให้ใกล้กว่านี้') — use existing toast system</item>
+          <item api="Stored position">Use the lastKnownPosition variable already tracked by watchPosition in MapModule — no extra GPS call needed</item>
+        </tech>
+        <note>See ai_instructions M1 — CHECKIN_TOLERANCE_M = 500 as a named constant at top of map.js</note>
+      </task>
+
+      <task id="T21" priority="high" affects="supabase/patch_lore.sql">
+        <title>Supabase DB trigger for Legacy Score on capture</title>
+        <what>PostgreSQL trigger: AFTER INSERT on user_captures → UPDATE profiles.legacy_score += figures.legacy_pts</what>
+        <tech>
+          <item api="PostgreSQL PL/pgSQL">CREATE OR REPLACE FUNCTION update_legacy_score() RETURNS TRIGGER — SECURITY DEFINER so it can update profiles regardless of RLS</item>
+          <item api="PostgreSQL trigger">CREATE TRIGGER on_capture_update_score AFTER INSERT ON user_captures FOR EACH ROW EXECUTE FUNCTION update_legacy_score()</item>
+          <item api="Supabase SQL Editor">Run patch_lore.sql in Supabase Dashboard → SQL Editor — no JS change needed</item>
+          <item api="JS cleanup">After deploying trigger, remove any client-side score write that fires after capture (lore pts write stays)</item>
+        </tech>
+        <note>See ai_instructions M2 — pure SQL, no JS library involved</note>
+      </task>
+
+      <task id="T22" priority="medium" affects="js/leaderboard.js">
+        <title>Supabase Realtime subscription for live leaderboard</title>
+        <what>Subscribe to profiles UPDATE events; update only the changed row in DOM without full reload</what>
+        <tech>
+          <item api="Supabase JS v2 Realtime">supabase.channel('leaderboard-updates').on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles' }, callback).subscribe()</item>
+          <item api="DOM">document.querySelector('[data-user-id="UUID"]') to find the affected row; update textContent of score/rank cells</item>
+          <item api="Pure JS">Re-sort the in-memory leaderboard array and re-render only if rank order changes (avoid unnecessary DOM thrash)</item>
+          <item api="Supabase channel cleanup">Store channel as module-level var; call channel.unsubscribe() when tab switches away (hook into existing tab switch in js/app.js)</item>
+        </tech>
+        <note>See ai_instructions M3</note>
+      </task>
+
+      <task id="T25" priority="medium" affects="supabase/patch_lore.sql, js/supabase-client.js">
+        <title>Quiz questions as DB table + seed data</title>
+        <what>Create quiz_questions table, seed 2 questions per mock figure, expose DB.Quiz.getForFigure()</what>
+        <tech>
+          <item api="PostgreSQL">CREATE TABLE quiz_questions in patch_lore.sql — RLS: public SELECT (no auth needed to read questions)</item>
+          <item api="Supabase JS v2 — select">supabase.from('quiz_questions').select('*').eq('figure_id', figureId).order('id').limit(3) — for Master Quiz fetch 3</item>
+          <item api="DB namespace">window.DB.Quiz = { getForFigure(figureId, count=1), getForDistrict(districtId) } added to supabase-client.js</item>
+          <item api="SQL seed">INSERT INTO quiz_questions statements in patch_lore.sql — at least 2 questions per mock figure (Thai question + 4 Thai options)</item>
+        </tech>
+        <note>See ai_instructions M4 — correct_option is safe to read client-side; score write is server-side trigger</note>
+      </task>
+
     </group>
 
     <group name="Core Loop Fixes (FC1 — District Encounter Loop)">
-      <task id="T01" priority="critical" affects="js/map.js, js/supabase-client.js">Fog clearing persistence — re-read user_districts on MapModule.init() and re-punch all cleared holes. See ai_instructions C1.</task>
-      <task id="T02" priority="critical" affects="js/map.js, js/supabase-client.js">Support Node visit tracking — Visit button in node info card increments cafes/otops/landmarks counter in DB. See ai_instructions C2.</task>
-      <task id="T03" priority="critical" affects="js/map.js">Support Node completion gate — check counters after check-in, show Encounter button or progress bars. See ai_instructions C3.</task>
-      <task id="T04" priority="critical" affects="js/map.js, js/collection.js, js/supabase-client.js">C-Class quiz modal — fetch from DB.Quiz.getForFigure(), 4-option MCQ, on correct → DB.Figures.capture() → capture animation.</task>
-      <task id="T05" priority="high" affects="js/map.js, js/missions.js">Legendary encounter flow — Master Quiz (3 questions, all correct required) after Support Node gate passes, then S-Class capture.</task>
-      <task id="T06" priority="high" affects="js/supabase-client.js, js/app.js">Legacy Points client write — only for Lore Points now (figure capture handled by DB trigger T21). Expose DB.Profiles.addLegacyPoints().</task>
-      <task id="T07" priority="high" affects="js/map.js, js/supabase-client.js">Real map discovery % — compute from user_districts count in DB, show in stats bar on init and after each check-in.</task>
-      <task id="T08" priority="medium" affects="js/collection.js">Collection refresh after capture — re-render only the affected figure card (green ribbon, remove lock).</task>
-      <task id="T09" priority="medium" affects="js/leaderboard.js">Leaderboard refresh after score update — handled by Realtime subscription (T22), fallback to LeaderboardModule.load().</task>
-      <task id="T10" priority="medium" affects="js/map.js">BTS/MRT bonus ×2 — station polygons in map.js, check GPS on check-in, apply multiplier before lore_pts write.</task>
+
+      <task id="T01" priority="critical" affects="js/map.js, js/supabase-client.js">
+        <title>Fix fog clearing persistence on reload</title>
+        <what>Re-read user_districts on MapModule.init() and re-punch fog holes for all fogged=false rows</what>
+        <tech>
+          <item api="Supabase JS v2 — select">DB.Districts.getUserState(userId) → supabase.from('user_districts').select('district_id,fogged').eq('user_id', userId).eq('fogged', false)</item>
+          <item api="Leaflet.js">fogLayer.removeLayer(districtPolygon) or rebuild the inverted polygon excluding cleared districts — use existing punchFogHole() pattern</item>
+          <item api="JS async/await">Called as first await inside MapModule.init() before markers render, so fog is correct before anything else appears</item>
+        </tech>
+        <note>See ai_instructions C1</note>
+      </task>
+
+      <task id="T02" priority="critical" affects="js/map.js, js/supabase-client.js">
+        <title>Support Node visit tracking</title>
+        <what>Visit button in node info card increments cafes_visited / otops_visited / landmarks_visited in user_districts</what>
+        <tech>
+          <item api="Supabase JS v2 — rpc">supabase.rpc('increment_node_visit', { p_user_id, p_district_id, p_node_type }) — atomic counter increment; add this Postgres function in patch_lore.sql</item>
+          <item api="Fallback — JS update">Read current row first, then: supabase.from('user_districts').update({ cafes_visited: current + 1 }).match({ user_id, district_id })</item>
+          <item api="DB namespace">DB.Districts.updateNodeVisit(userId, districtId, nodeType) where nodeType is 'cafe' | 'otop' | 'landmark'</item>
+          <item api="DOM">After successful update, disable the Visit button (button.disabled = true; button.textContent = 'เยี่ยมชมแล้ว') — prevent double-counting</item>
+          <item api="AppCore">AppCore.showToast('บันทึกการเยี่ยมชม ✓') after DB write</item>
+        </tech>
+        <note>See ai_instructions C2</note>
+      </task>
+
+      <task id="T03" priority="critical" affects="js/map.js">
+        <title>Support Node completion gate</title>
+        <what>After check-in, fetch node visit counts and show Encounter button or per-counter progress bars</what>
+        <tech>
+          <item api="Supabase JS v2 — select">supabase.from('user_districts').select('cafes_visited,otops_visited,landmarks_visited').match({ user_id, district_id }).single()</item>
+          <item api="Pure JS">const canUnlock = row.cafes_visited >= 2 &amp;&amp; row.otops_visited >= 1 &amp;&amp; row.landmarks_visited >= 3</item>
+          <item api="Bootstrap progress bar">&lt;div class="progress"&gt;&lt;div class="progress-bar" style="width: X%"&gt;&lt;/div&gt;&lt;/div&gt; — one per counter; X = Math.min(100, (count/required)*100)</item>
+          <item api="CSS variables">--color-muted for locked state text; --color-primary for Encounter button background when unlocked</item>
+          <item api="DOM">Dynamically inject the progress section OR Encounter button into the check-in sheet after DB read</item>
+        </tech>
+        <note>See ai_instructions C3</note>
+      </task>
+
+      <task id="T04" priority="critical" affects="js/map.js, js/collection.js, js/supabase-client.js">
+        <title>C-Class quiz modal (full end-to-end)</title>
+        <what>Fetch question from DB, show 4-option MCQ bottom sheet, on correct → capture → animation</what>
+        <tech>
+          <item api="DB.Quiz.getForFigure">DB.Quiz.getForFigure(figureId) → Supabase select (T25 prerequisite)</item>
+          <item api="HTML pattern">.bottom-sheet quiz sheet with 4 radio-style option buttons; highlight selected; confirm button</item>
+          <item api="Pure JS">Client-side validation: selectedOption === question.correct_option</item>
+          <item api="DB.Figures.capture">supabase.from('user_captures').insert({ user_id, figure_id }) — DB trigger handles score (T21)</item>
+          <item api="css/animations.css">Existing capture animation keyframes — add class to figure card element on success</item>
+          <item api="utils.js">utils.escapeHtml() for question_th and all option text</item>
+          <item api="DOM (js/collection.js)">After capture: find card by data-figure-id, remove lock overlay class, add captured-ribbon class</item>
+        </tech>
+      </task>
+
+      <task id="T05" priority="high" affects="js/map.js, js/missions.js">
+        <title>Legendary encounter + Master Quiz (3-question sequence)</title>
+        <what>After Support Node gate passes, show multi-step quiz; all 3 correct required to capture S-Class figure</what>
+        <tech>
+          <item api="DB.Quiz.getForFigure">DB.Quiz.getForFigureMany(figureId, 3) — fetch 3 questions; add this variant to DB.Quiz namespace</item>
+          <item api="Pure JS state machine">currentQuestionIndex, correctCount tracked in module scope during quiz flow; advance on each correct answer</item>
+          <item api="HTML pattern">Same .bottom-sheet quiz sheet as T04 but with step indicator: "คำถาม 1/3", "2/3", "3/3"</item>
+          <item api="DB.Figures.capture">Same insert as T04 — DB trigger awards 500 pts for S-Class automatically</item>
+          <item api="AppCore.showToast">Show failure toast if any answer is wrong, restart quiz from question 1</item>
+        </tech>
+      </task>
+
+      <task id="T06" priority="high" affects="js/supabase-client.js, js/app.js">
+        <title>DB.Profiles.addLegacyPoints() — client-side write for lore pts only</title>
+        <what>Expose atomic legacy score increment used exclusively by lore unlock (figure capture is DB trigger)</what>
+        <tech>
+          <item api="Supabase JS v2 — rpc">supabase.rpc('increment_legacy_score', { p_user_id, p_amount }) — add PostgreSQL function in patch_lore.sql: UPDATE profiles SET legacy_score = legacy_score + p_amount WHERE user_id = p_user_id</item>
+          <item api="DB namespace">window.DB.Profiles.addLegacyPoints = async (userId, pts) — wraps the rpc call</item>
+          <item api="Top bar refresh">After call resolves, update the legacy score display element in the top bar DOM directly</item>
+        </tech>
+      </task>
+
+      <task id="T07" priority="high" affects="js/map.js, js/supabase-client.js">
+        <title>Real map discovery % from DB</title>
+        <what>Replace mock % in stats bar with live calculation from user_districts and districts tables</what>
+        <tech>
+          <item api="Supabase JS v2 — count">supabase.from('user_districts').select('*', { count: 'exact', head: true }).eq('user_id', userId).eq('fogged', false) → cleared count</item>
+          <item api="Supabase JS v2 — count">supabase.from('districts').select('*', { count: 'exact', head: true }).eq('is_active', true) → total count</item>
+          <item api="Pure JS">Math.round((cleared / total) * 100) — called after every check-in and on MapModule.init()</item>
+          <item api="DOM">document.getElementById('discovery-pct').textContent = pct + '%' — update stats bar element</item>
+        </tech>
+      </task>
+
+      <task id="T08" priority="medium" affects="js/collection.js">
+        <title>Collection grid refresh after capture (no full reload)</title>
+        <what>After successful capture, update only the affected figure card in the DOM</what>
+        <tech>
+          <item api="DOM">document.querySelector('[data-figure-id="UUID"]') — find card by data attribute</item>
+          <item api="CSS class toggle">card.classList.remove('figure-locked'); card.classList.add('figure-captured') — shows green ribbon, removes lock overlay</item>
+          <item api="No library needed">Pure DOM manipulation — no Supabase re-fetch required since we already know which figure was captured</item>
+        </tech>
+      </task>
+
+      <task id="T09" priority="medium" affects="js/leaderboard.js">
+        <title>Leaderboard refresh after score update</title>
+        <what>Update current user's row in leaderboard DOM when their score changes</what>
+        <tech>
+          <item api="Supabase Realtime (T22)">Primary path — Realtime subscription fires onScoreUpdate(payload) which patches the DOM row</item>
+          <item api="Fallback — explicit reload">LeaderboardModule.load() called if Realtime not yet set up; fetches fresh leaderboard view from Supabase</item>
+          <item api="DOM">Find row by data-user-id, update score cell textContent and re-sort list if rank changed</item>
+        </tech>
+      </task>
+
+      <task id="T10" priority="medium" affects="js/map.js">
+        <title>BTS/MRT transport bonus ×2</title>
+        <what>Detect if user checked in while near a BTS/MRT station; apply ×2 multiplier to lore pts</what>
+        <tech>
+          <item api="Pure JS Haversine">Reuse haversineDistance() from T11 — check user GPS against each station in BTS_MRT_STATIONS array ({ name, lat, lng, radius_m: 300 })</item>
+          <item api="Leaflet.js (optional)">L.latLng(userLat, userLng).distanceTo(L.latLng(stLat, stLng)) — Leaflet's built-in distance in metres; cleaner if Leaflet already imported</item>
+          <item api="JS const array">BTS_MRT_STATIONS array defined at top of map.js — seed with 10–15 key Bangkok stations (Siam, Asok, Mo Chit, etc.)</item>
+          <item api="Multiplier logic">const multiplier = isNearStation(userLat, userLng) ? 2 : 1; pts = node.lore_pts * multiplier before DB.Profiles.addLegacyPoints()</item>
+          <item api="AppCore.showToast">Show 'BTS/MRT Bonus! ×2 Legacy Points 🚇' toast when multiplier activates</item>
+        </tech>
+      </task>
+
     </group>
 
     <group name="Infrastructure">
-      <task id="T16" priority="medium" affects="supabase/schema.sql, js/map.js">Full Thailand district coverage — load polygon_coords from DB instead of hardcode, seed remaining Bangkok districts.</task>
-      <task id="T17" priority="medium" affects="Supabase Dashboard">Email verification — re-enable Confirm email in Supabase before NSC demo, test full signup→verify flow.</task>
-      <task id="T18" priority="low" affects="vercel.json">Vercel production smoke test — full flow with real env vars.</task>
-      <task id="T19" priority="low" affects="js/supabase-client.js, js/app.js">Real-time notifications — Supabase Realtime channel on notifications table, live badge update.</task>
+
+      <task id="T16" priority="medium" affects="supabase/schema.sql, js/map.js">
+        <title>Full Thailand district coverage — load polygons from DB</title>
+        <what>Replace hardcoded DISTRICTS array in map.js with DB fetch; seed all Bangkok districts in Supabase</what>
+        <tech>
+          <item api="Supabase JS v2 — select">DB.Districts.getAll() → supabase.from('districts').select('*').eq('is_active', true) — already exists; just use it in MapModule.init() instead of the hardcoded array</item>
+          <item api="Leaflet.js">L.polygon(JSON.parse(district.polygon_coords)) for each district from DB; bind click handler per polygon</item>
+          <item api="SQL seed">INSERT INTO districts rows for remaining Bangkok districts in supabase/schema.sql or a new patch file</item>
+          <item api="GeoJSON (future)">For 77-province coverage: load Thailand GeoJSON and simplify polygons with turf.js simplify — defer to Phase 2</item>
+        </tech>
+      </task>
+
+      <task id="T17" priority="medium" affects="login.html, Supabase Dashboard">
+        <title>Email verification for production</title>
+        <what>Re-enable email confirmation in Supabase before NSC demo; update redirect URL handling</what>
+        <tech>
+          <item api="Supabase Dashboard">Auth → Email → enable "Confirm email" toggle — no code change for basic flow</item>
+          <item api="Supabase JS v2 — signUp">supabase.auth.signUp({ email, password, options: { emailRedirectTo: 'https://your-vercel-url/login.html' } }) — add emailRedirectTo in login.html register flow</item>
+          <item api="HTML">Add a "กรุณายืนยัน Email" (Please verify email) message shown after successful signup before redirect</item>
+        </tech>
+      </task>
+
+      <task id="T18" priority="low" affects="vercel.json">
+        <title>Vercel production smoke test</title>
+        <what>Deploy with real env vars and walk through complete flow end-to-end</what>
+        <tech>
+          <item api="Vercel Dashboard">Settings → Environment Variables → set SUPABASE_URL + SUPABASE_ANON_KEY → Redeploy</item>
+          <item api="build.js">node build.js runs at Vercel build time and writes js/env.js — verify output in Vercel build logs</item>
+          <item api="Browser DevTools">Check Network tab for Supabase 200 responses; Console for any JS errors; Application → Local Storage for session token</item>
+        </tech>
+      </task>
+
+      <task id="T19" priority="low" affects="js/supabase-client.js, js/app.js">
+        <title>Real-time notifications via Supabase Realtime</title>
+        <what>Live notification delivery without polling; update badge count and prepend to offcanvas panel</what>
+        <tech>
+          <item api="Supabase JS v2 Realtime">supabase.channel('user-notifs').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: 'user_id=eq.' + userId }, callback).subscribe()</item>
+          <item api="DOM">Prepend new notification row to offcanvas list; increment badge count int in top bar; no page reload</item>
+          <item api="DB namespace">DB.Notifications.subscribe(userId, callback) in supabase-client.js — wraps the Realtime channel setup</item>
+          <item api="Channel cleanup">Store channel ref; unsubscribe on signOut in AppCore boot sequence</item>
+        </tech>
+      </task>
+
     </group>
 
   </remaining_tasks>
