@@ -3,6 +3,7 @@
 *.xlsx
 *.pptx
 *.pdf
+~WRL*.tmp
 
 # ── Supabase / API credentials — NEVER commit these ──
 # js/env.js — unblocked on August branch so coding agent can use real credentials
