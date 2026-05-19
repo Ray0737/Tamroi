@@ -108,7 +108,7 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 
 **Key Features:**
 - Native AR figure-capture sequences using the device camera
-- Background GPS tracking — push notifications when an Echo (historical event echo) enters range without opening the app
+- Background GPS tracking — push notifications when proximity lore enters range without opening the app
 - QR code scanning at OTOP shops, cafés, and outposts to trigger encounters
 - Improved offline map caching for rural areas with poor connectivity
 

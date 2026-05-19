@@ -1,6 +1,6 @@
 # CLAUDE.md — Tamroi (ตามรอย) · NSC Prototype 06
 
-> Thailand Gamified Travel App · NSC 2026 · Team ปลามึกยักษ์
+> Tamroi · Thailand Gamified Travel App · NSC 2026 · Team ปลามึกยักษ์
 
 ---
 

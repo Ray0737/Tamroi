@@ -1,10 +1,10 @@
-# AGENTS.md - Tamroi / Siam Echo · NSC Prototype 06
+# AGENTS.md - Tamroi · NSC Prototype 06
 
 > Project guide for Codex and other coding agents. Keep this file aligned with `CLAUDE.md`, `README.md`, `CODING_INSTRUCTIONS.md`, and the current codebase.
 
 ## Project Context
 
-Tamroi (ตามรอย), also branded in-app as Siam Echo / ลุยไทย, is a mobile-first web MVP for NSC 2026 by team ปลามึกยักษ์. It is an educational travel game for Thai history: players visit real districts, check in at landmark Watchtowers, clear a Fog of War layer, unlock historical figures, collect artifacts, and compete on The High Chronicler leaderboard.
+Tamroi (ตามรอย) is a mobile-first web MVP for NSC 2026 by team ปลามึกยักษ์. It is an educational travel game for Thai history: players visit real districts, check in at landmark Watchtowers, clear a Fog of War layer, unlock historical figures, collect artifacts, and compete on The High Chronicler leaderboard.
 
 Current phase: Phase 1 Web MVP. There is no native app, no React, no npm workflow, no bundler, and no framework migration in this phase.
 
@@ -68,11 +68,11 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 ## Current Implementation Notes
 
 - The current CSS tokens in `css/variables.css` are authoritative. They differ from older docs: background is `#1C1B2E`, primary is `#F6C19E`, card surfaces are `#252240` / `#201E38`.
-- `window.APP_CONFIG.appName` is `Siam Echo`, version `0.6.0`.
+- `window.APP_CONFIG.appName` is `Tamroi`, version `0.6.0`.
 - The map currently carries mock Bangkok/Nonthaburi district and node data with Supabase fallback/integration.
 - The database seed in `supabase/schema.sql` currently seeds a smaller Bangkok district set than `js/map.js`.
 - `js/map.js` gates check-in behind support-node progress, with a Rattanakosin demo shortcut.
-- Home/base district behavior is partly duplicated: `onboarding.html` stores `tam_roi_home`, while `js/map.js` reads and writes `siamecho_home`.
+- Home/base district state uses `tam_roi_home`; `js/map.js` migrates the legacy home key if present.
 - Real-time GPS uses `navigator.geolocation.watchPosition`; failures should degrade silently and keep the app usable.
 - Collection, missions, notifications, and leaderboard use mock fallback data when Supabase calls fail.
 - `window.DB` groups `Auth`, `Profiles`, `Districts`, `Figures`, `Artifacts`, `Leaderboard`, and `Notifications`.
@@ -175,7 +175,7 @@ There is no formal test runner in this MVP. For changes:
 - Verify mobile width around 375px and the 430px max frame.
 - For auth or DB changes, test with valid `js/env.js` and Supabase RLS enabled.
 - For map changes, verify Leaflet loads, tiles render, GPS failures degrade gracefully, and bottom sheets remain tappable.
-- For onboarding or home-location changes, verify both `onboarding.html` and the in-app home picker because they currently use different localStorage keys.
+- For onboarding or home-location changes, verify both `onboarding.html` and the in-app home picker use the same `tam_roi_home` localStorage state.
 - For deployment changes, check `build.js` and `vercel.json` together.
 
 ## Known Gaps
@@ -183,7 +183,6 @@ There is no formal test runner in this MVP. For changes:
 - Full Thailand district coverage is not implemented; the app currently relies on Bangkok/Nonthaburi mock data plus partial Supabase seeds.
 - C-Class quiz flow and backend answer validation still need completion/testing.
 - Fog clearing persistence via `user_districts` needs end-to-end verification.
-- Onboarding home district persistence is not wired to the map's current `siamecho_home` key; the map may prompt again after onboarding.
 - BTS/MRT x2 transport bonus detection is represented in UI/context but not fully implemented.
 - Proximity lore triggers are planned but not complete.
 - Production auth/email-confirmation behavior needs QA.

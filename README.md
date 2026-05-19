@@ -21,7 +21,7 @@
 
 ### Phase 1 — Free Exploration (Clearing the Fog)
 
-The **Watchtower Mechanic**: travel to any province or district, reach the main landmark and check in → the Fog of War disappears for that zone, revealing nearby cafés, OTOP shops, and minor historical *"Echoes"*.
+The **Watchtower Mechanic**: travel to any province or district, reach the main landmark and check in → the Fog of War disappears for that zone, revealing nearby cafés, OTOP shops, and minor historical clues.
 
 ### Phase 2 — The Unlock Chain (Capturing Historical Figures)
 
@@ -74,7 +74,7 @@ Three metrics determine the most influential traveler in Thailand:
 
 ### Phase 2 — Mobile App · *"The Immersive Leap"*
 - Migrate from browser to dedicated iOS / Android app
-- Native AR captures · background GPS tracking for Echo alerts · QR code scanning at OTOP / Café outposts
+- Native AR captures · background GPS tracking for proximity lore alerts · QR code scanning at OTOP / Café outposts
 - **Tech:** React Native · AR engines (ARKit / ARCore)
 
 ### Phase 3 — Co-Op & Community · *"The Social Layer"*
