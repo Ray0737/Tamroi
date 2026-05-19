@@ -477,7 +477,10 @@ Notification row types:
 Website - NSC prototype 06/
 ├── index.html           ← Splash / Home
 ├── login.html           ← Login & Register
+├── onboarding.html      ← First-run location permission and home district
 ├── app.html             ← Main app shell (all tab pages)
+├── build.js             ← Vercel env injection
+├── vercel.json          ← Static deployment config and security headers
 ├── css/
 │   ├── variables.css    ← CSS custom properties (colors, spacing)
 │   ├── layout.css       ← Top bar, footer, page shell
@@ -485,16 +488,20 @@ Website - NSC prototype 06/
 │   ├── map.css          ← Map overlays, fog effect, markers
 │   └── animations.css   ← Keyframes and transitions
 ├── js/
+│   ├── env.js           ← Public Supabase anon config for local/static runtime
+│   ├── env.example.js   ← Credential template
+│   ├── config.js        ← window.ENV → window.APP_CONFIG
+│   ├── utils.js         ← escapeHtml()
+│   ├── supabase-client.js ← DB/Auth facade
 │   ├── app.js           ← Tab navigation, page switching
 │   ├── map.js           ← Leaflet init, fog layer, markers
 │   ├── missions.js      ← Mission state logic
 │   ├── collection.js    ← Figure/artifact data rendering
 │   └── leaderboard.js   ← Rank data, metric switching
-├── assets/
-│   ├── icons/           ← SVG icons (nav, markers, UI)
-│   ├── figures/         ← Historical figure portraits (placeholder)
-│   └── logo.svg         ← App logo
-└── CODING_INSTRUCTIONS.md
+├── supabase/            ← Schema and patch SQL files
+├── tests/               ← Node static regression checks
+├── docs/                ← Planning, progress, production, and proposal docs
+└── document/            ← NSC assets, screenshots, and generated documents
 ```
 
 ---

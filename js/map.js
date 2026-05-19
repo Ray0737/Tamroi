@@ -385,7 +385,10 @@ const MapModule = (() => {
 
       const user = window.AppCore?.App?.user;
       if (user) {
-        const stateData = await DB.Districts.getUserState(user.id);
+        const [stateData] = await Promise.all([
+          DB.Districts.getUserState(user.id),
+          loadVisitedSupportNodes(user.id),
+        ]);
         stateData.forEach(s => {
           userDistrictState[s.district_id] = s;
         });
@@ -403,6 +406,14 @@ const MapModule = (() => {
       addHomeMarker(homeLocation);
       renderAll(districts);
     }
+  }
+
+  async function loadVisitedSupportNodes(userId) {
+    if (!DB.Districts.getVisitedSupportNodes) return;
+    try {
+      const nodeIds = await DB.Districts.getVisitedSupportNodes(userId);
+      nodeIds.forEach(id => visitedSupportNodeIds.add(id));
+    } catch { /* older DB patches keep session-only visit dedupe */ }
   }
 
   async function loadLoreData() {
@@ -716,7 +727,7 @@ const MapModule = (() => {
     let nextState = null;
     const user = window.AppCore?.App?.user;
     try {
-      if (user) nextState = await DB.Districts.updateNodeVisit(user.id, node.districtId, node.type);
+      if (user) nextState = await DB.Districts.updateNodeVisit(user.id, node.districtId, node.type, nodeId);
     } catch { /* offline/demo fallback below */ }
 
     const current = userDistrictState[node.districtId] || { fogged: false, cafes_visited: 0, otops_visited: 0, landmarks_visited: 0 };

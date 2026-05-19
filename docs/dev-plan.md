@@ -30,7 +30,7 @@
 | Live GPS tracking dot + accuracy ring | `js/map.js` | |
 | Watchtower check-in bottom sheet (UI only) | `js/map.js` | DB write implemented |
 | Clickable node info card (café / OTOP / landmark) | `js/map.js` | |
-| Support Node visit tracking + Encounter gate | `js/map.js` | DB RPC with local fallback |
+| Support Node visit tracking + Encounter gate | `js/map.js` | DB RPC with persistent per-node dedupe and local fallback |
 | C-Class quiz + Legendary Master Quiz | `js/map.js` | Uses `DB.Quiz.getForFigure()` |
 | GPS Lore proximity trigger + unlock flow | `js/map.js` | Mock + Supabase-backed lore nodes |
 | Historical figures + artifacts grid with rarity tiers | `js/collection.js` | Mock data |
@@ -49,6 +49,7 @@
 | Full schema (profiles, districts, figures, artifacts, leaderboard view, notifications) | `supabase/schema.sql` |
 | RLS policies + auth trigger fix | `supabase/patch_auth_fix.sql` |
 | Lore, quiz, and score trigger patch | `supabase/patch_lore.sql` |
+| MVP district seed parity patch | `supabase/patch_district_seed.sql` |
 
 ---
 
@@ -65,7 +66,7 @@
 
 - [x] **Fog clearing persistence** — `user_districts` rows are re-read before map render, so cleared holes survive refresh.
 
-- [x] **Support Node visit tracking** — node Visit button calls `DB.Districts.updateNodeVisit(userId, districtId, nodeType)` and disables after session visit.
+- [x] **Support Node visit tracking** — node Visit button calls `DB.Districts.updateNodeVisit(userId, districtId, nodeType, nodeId)`, persists exact node IDs, and disables after persisted/session visit.
 
 - [x] **Support Node completion gate** — Watchtower sheet shows progress bars while locked and Encounter button when complete.
 
@@ -115,16 +116,18 @@
 - [x] **GPS tolerance radius** — Watchtower check-in validates 500m Haversine distance outside localhost.
 - [x] **Quiz questions table** — `quiz_questions` table, public read policy, seed questions, and `DB.Quiz.getForFigure()`.
 - [x] **Realtime notifications** — `DB.Notifications.subscribe()` listens for inserts and updates badge/offcanvas.
+- [x] **Persistent Support Node visits** — `user_support_node_visits` stores one row per `(user_id, node_id)`, and `increment_node_visit` increments counters only on first visit.
+- [x] **Project structure cleanup** — planning/proposal/support docs live under `docs/`; runnable static app files remain at repo root.
 
 #### Medium
 
-- [ ] **Full Thailand district coverage** — currently only 5–12 Bangkok districts are seeded as mock polygon data in `map.js`. Seed the remaining Bangkok districts (77 provinces × N districts) via the `districts` table in Supabase and load polygons from DB instead of hardcode.
+- [ ] **Full Thailand district coverage** — MVP Bangkok/Nonthaburi DB seed parity exists in `supabase/patch_district_seed.sql`; national coverage still needs curated production polygons/content.
 
-- [ ] **Email verification (production)** — currently disabled in Supabase for dev. Before NSC demo, re-enable email confirmation and test the full signup→verify→login flow.
+- [x] **Email verification (production)** — signup now sets `emailRedirectTo` back to `login.html`; Supabase Dashboard must still enable confirmation during deploy.
 
 #### Low
 
-- [ ] **Vercel production smoke test** — deploy to Vercel, inject real `SUPABASE_URL` + `SUPABASE_ANON_KEY`, run through complete flow: sign up → onboarding → check in → capture figure → leaderboard update.
+- [x] **Vercel production smoke test checklist** — see `production-smoke.md`; actual deploy walk-through still requires Vercel/Supabase environment access.
 
 - [x] **Real-time notifications** — `DB.Notifications.get()` loads rows and `DB.Notifications.subscribe()` pushes inserts into the UI.
 
@@ -160,4 +163,4 @@ Week 4 — Polish & demo prep
 ---
 
 ## Phase 2+ (Post-NSC Roadmap)
-See [README.md](README.md) and [progress.md](progress.md) for Phases 2–5 (native mobile, co-op raids, seasonal content, business partnerships).
+See [README.md](../README.md) and [progress.md](progress.md) for Phases 2–5 (native mobile, co-op raids, seasonal content, business partnerships).

@@ -134,7 +134,23 @@ Three metrics determine the most influential traveler in Thailand:
 │   └── leaderboard.js  Podium + rank list
 └── supabase/
     ├── schema.sql           Full DB schema + Bangkok district seed data
-    └── patch_auth_fix.sql   Auth trigger fix + RLS INSERT policy
+    ├── patch_auth_fix.sql   Auth trigger fix + RLS INSERT policy
+    ├── patch_lore.sql       Lore/support-node visit/quiz tables + score trigger
+    └── patch_district_seed.sql MVP district seed parity with map.js
+├── tests/
+│   └── run-static.mjs       One-command static regression suite
+├── docs/
+│   ├── CODING_INSTRUCTIONS.md Design system and implementation rules
+│   ├── dev-plan.md         Phase 1 development plan
+│   ├── dev-plan-prompt.xml Planning prompt and task history
+│   ├── progress.md         Current implementation progress
+│   ├── production-smoke.md Supabase/Vercel smoke-test checklist
+│   └── proposal/
+│       └── tam_roi_nsc_proposal.md NSC proposal
+├── document/               NSC assets, screenshots, and generated documents
+├── AGENTS.md               Agent instructions
+├── CLAUDE.md               Claude/Codex project guide
+└── README.md
 ```
 
 ---
@@ -154,6 +170,12 @@ cd NSC_2026
 # No npm install or build step needed for local development
 ```
 
+Static regression checks:
+
+```bash
+node tests/run-static.mjs
+```
+
 ---
 
 ## Supabase Setup
@@ -161,9 +183,11 @@ cd NSC_2026
 1. Create a project at [supabase.com](https://supabase.com)
 2. **SQL Editor → New Query** → run `supabase/schema.sql`
 3. **SQL Editor → New Query** → run `supabase/patch_auth_fix.sql`
-4. **Authentication → Providers → Email** → disable *"Confirm email"* for development
-5. **Authentication → URL Configuration** → add `http://127.0.0.1:5500/**` as a redirect URL
-6. **Settings → API** → copy *Project URL* and *anon public key* into `js/env.js`
+4. **SQL Editor → New Query** → run `supabase/patch_lore.sql`
+5. **SQL Editor → New Query** → run `supabase/patch_district_seed.sql`
+6. **Authentication → Providers → Email** → disable *"Confirm email"* for development
+7. **Authentication → URL Configuration** → add `http://127.0.0.1:5500/**` as a redirect URL
+8. **Settings → API** → copy *Project URL* and *anon public key* into `js/env.js`
 
 `js/env.js` is intentionally trackable for this prototype. Only store the Supabase project URL and anon public key there. Never place service-role keys, private tokens, `.env` secrets, or production-only credentials in client-side files.
 

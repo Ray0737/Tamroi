@@ -1,6 +1,6 @@
 # Tamroi (ตามรอย) — Development Progress
 
-> NSC 2026 · Team ปลามึกยักษ์ · Last updated: 2026-05-19
+> NSC 2026 · Team ปลามึกยักษ์ · Last updated: 2026-05-20
 
 ---
 
@@ -53,7 +53,8 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 |---|---|---|
 | `supabase/schema.sql` | ✅ Done | Full schema + Bangkok district seed data |
 | `supabase/patch_auth_fix.sql` | ✅ Done | Auth trigger fix + RLS INSERT policy |
-| `supabase/patch_lore.sql` | ✅ Done | Lore tables, quiz questions, legacy score trigger, seed lore/quiz content |
+| `supabase/patch_lore.sql` | ✅ Done | Lore tables, persistent support-node visits, quiz questions, legacy score trigger, seed lore/quiz content |
+| `supabase/patch_district_seed.sql` | ✅ Done | Adds MVP districts missing from initial DB seed |
 
 ### Deployment
 
@@ -67,8 +68,9 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 | File | Status | Notes |
 |---|---|---|
 | `README.md` | ✅ Done | Full project overview, roadmap, local dev + Supabase + Vercel setup |
-| `CODING_INSTRUCTIONS.md` | ✅ Done | Design system spec, component patterns, layout rules |
-| `tam_roi_nsc_proposal.md` | ✅ Done | Detailed game mechanics proposal |
+| `docs/CODING_INSTRUCTIONS.md` | ✅ Done | Design system spec, component patterns, layout rules |
+| `docs/production-smoke.md` | ✅ Done | Production Supabase/Vercel smoke-test checklist |
+| `docs/proposal/tam_roi_nsc_proposal.md` | ✅ Done | Detailed game mechanics proposal |
 | `document/` | ✅ Done | NSC BOOK (.docx + .pdf), 12 UI screenshots, flowcharts, proposal versions (v0–v7) |
 
 ---
@@ -83,7 +85,7 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - **GPS check-in tolerance** — 500m Haversine gate on Watchtower check-in, bypassed on localhost
 - **Watchtower markers** — 5 Bangkok districts (Rattanakosin, Dusit, Pathumwan, Silom, Sukhumvit, Watthana + more)
 - **Node info card** — tappable bottom sheet showing outpost/landmark details
-- **Support Node tracking** — node Visit button increments district support counters with DB RPC + local fallback
+- **Support Node tracking** — node Visit button persists exact node IDs, increments district support counters idempotently with DB RPC, and keeps local fallback for offline/demo mode
 - **Support Node gate** — Watchtower sheet shows progress bars or the Encounter button when requirements are met
 - **Lore proximity system** — GPS range checks unlock lore sheets, persist to `user_lore`, and award lore points
 - **Lore Journal** — Collection → Journal lists unlocked lore, expands entries, and groups 3-part chains
@@ -96,6 +98,9 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - **Legacy score trigger** — `on_capture_update_score` DB trigger awards figure capture points
 - **BTS/MRT transport bonus** — station-radius helper applies x2 points where GPS is near seeded rail stations
 - **Realtime notifications** — notification inserts subscribe through Supabase Realtime and update the offcanvas/badge
+- **Production email redirect** — email/password signup sets `emailRedirectTo` back to `login.html`
+- **MVP district DB seed patch** — DB can be brought up to parity with current map district coverage
+- **Clean project structure** — runnable static app files stay at repo root; support docs live under `docs/`
 
 ## Known Gaps / Next Steps Within Phase 1
 
@@ -110,6 +115,7 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - [x] **T08** — Collection grid refresh after capture (re-render card, no full reload)
 - [x] **T09** — Leaderboard refresh after score update via Realtime profile updates
 - [x] **T10** — BTS/MRT ×2 bonus — seeded station-radius check applies point multiplier
+- [x] **T26** — Persistent per-node Support Node visits — `user_support_node_visits` prevents duplicate counter increments after reload or across devices
 
 ### Lore System
 - [x] **T11** — `haversineDistance()` helper + `LORE_NODES` array + `checkLoreProximity()` in GPS callback
@@ -126,23 +132,29 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - [x] **T25** — `quiz_questions` table + seed 2 questions per mock figure + `DB.Quiz.getForFigure()`
 
 ### Infrastructure / Polish
-- [ ] **T16** — Full Thailand district coverage (load polygons from DB, not hardcode)
-- [ ] **T17** — Re-enable email confirmation for production
-- [ ] **T18** — Vercel production smoke test with real env vars
+- [ ] **T16** — Full Thailand district coverage beyond MVP Bangkok/Nonthaburi patch
+- [x] **T17** — Email verification redirect/copy is code-ready; Supabase Dashboard toggle remains a deployment action
+- [x] **T18** — Vercel production smoke checklist added in `docs/production-smoke.md`
 - [x] **T19** — Real-time notifications via Supabase Realtime on `notifications` table
+- [x] **T27** — Project structure cleanup — moved planning/proposal/support docs into `docs/` while preserving zero-tooling static app paths
 
 ### New Files Added
 | File | Purpose |
 |---|---|
-| `supabase/patch_lore.sql` | `lore_nodes`, `user_lore`, `quiz_questions` tables + legacy score trigger |
+| `supabase/patch_lore.sql` | `lore_nodes`, `user_lore`, `user_support_node_visits`, `quiz_questions` tables + legacy score trigger |
+| `supabase/patch_district_seed.sql` | MVP district seed parity with `js/map.js` |
 | `tests/lore-static.test.mjs` | Static regression check for Lore integration points |
 | `tests/remaining-static.test.mjs` | Static regression check for support node, quiz, discovery, bonus, and Realtime work |
+| `tests/prod-readiness-static.test.mjs` | Static regression check for production readiness docs/config |
+| `tests/district-seed-static.test.mjs` | Static regression check that SQL district seeds match MVP map districts |
+| `tests/env-policy-static.test.mjs` | Static regression check for tracked `js/env.js` public-anon policy |
+| `tests/run-static.mjs` | Runs the local static regression suite in one command |
 
 ---
 
 ## Phase 2+ Development Roadmap
 
-> Derived from [README.md](README.md) · Phases 2–5
+> Derived from [README.md](../README.md) · Phases 2–5
 
 ---
 

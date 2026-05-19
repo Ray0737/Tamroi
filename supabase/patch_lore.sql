@@ -30,14 +30,29 @@ CREATE TABLE IF NOT EXISTS user_lore (
   PRIMARY KEY (user_id, lore_id)
 );
 
+CREATE TABLE IF NOT EXISTS user_support_node_visits (
+  id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id     UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  district_id TEXT REFERENCES districts(id),
+  node_id     TEXT NOT NULL,
+  node_type   TEXT NOT NULL CHECK (node_type IN ('cafe','otop','landmark')),
+  visited_at  TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (user_id, node_id)
+);
+
 ALTER TABLE lore_nodes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_lore  ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_support_node_visits ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "public read lore" ON lore_nodes;
 CREATE POLICY "public read lore" ON lore_nodes FOR SELECT USING (is_active = true);
 
 DROP POLICY IF EXISTS "own lore" ON user_lore;
 CREATE POLICY "own lore" ON user_lore FOR ALL USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
+
+DROP POLICY IF EXISTS "own support node visits" ON user_support_node_visits;
+CREATE POLICY "own support node visits" ON user_support_node_visits
+FOR ALL USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
 
 CREATE OR REPLACE FUNCTION increment_legacy_score(p_user_id UUID, p_amount INTEGER)
 RETURNS VOID AS $$
@@ -49,19 +64,31 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-CREATE OR REPLACE FUNCTION increment_node_visit(p_user_id UUID, p_district_id TEXT, p_node_type TEXT)
+DROP FUNCTION IF EXISTS increment_node_visit(UUID, TEXT, TEXT);
+CREATE OR REPLACE FUNCTION increment_node_visit(p_user_id UUID, p_district_id TEXT, p_node_type TEXT, p_node_id TEXT)
 RETURNS user_districts AS $$
 DECLARE
   updated_row user_districts;
+  inserted_count INTEGER := 0;
 BEGIN
+  IF p_user_id <> auth.uid() THEN
+    RAISE EXCEPTION 'cannot record support node visit for another user';
+  END IF;
+
   INSERT INTO user_districts (user_id, district_id)
   VALUES (p_user_id, p_district_id)
   ON CONFLICT (user_id, district_id) DO NOTHING;
 
+  INSERT INTO user_support_node_visits (user_id, district_id, node_id, node_type)
+  VALUES (p_user_id, p_district_id, p_node_id, p_node_type)
+  ON CONFLICT (user_id, node_id) DO NOTHING;
+
+  GET DIAGNOSTICS inserted_count = ROW_COUNT;
+
   UPDATE user_districts
-  SET cafes_visited = CASE WHEN p_node_type = 'cafe' THEN COALESCE(cafes_visited, 0) + 1 ELSE cafes_visited END,
-      otops_visited = CASE WHEN p_node_type = 'otop' THEN COALESCE(otops_visited, 0) + 1 ELSE otops_visited END,
-      landmarks_visited = CASE WHEN p_node_type = 'landmark' THEN COALESCE(landmarks_visited, 0) + 1 ELSE landmarks_visited END
+  SET cafes_visited = CASE WHEN inserted_count > 0 AND p_node_type = 'cafe' THEN COALESCE(cafes_visited, 0) + 1 ELSE cafes_visited END,
+      otops_visited = CASE WHEN inserted_count > 0 AND p_node_type = 'otop' THEN COALESCE(otops_visited, 0) + 1 ELSE otops_visited END,
+      landmarks_visited = CASE WHEN inserted_count > 0 AND p_node_type = 'landmark' THEN COALESCE(landmarks_visited, 0) + 1 ELSE landmarks_visited END
   WHERE user_id = p_user_id
     AND district_id = p_district_id
   RETURNING * INTO updated_row;

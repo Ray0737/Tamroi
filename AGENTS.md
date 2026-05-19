@@ -1,6 +1,6 @@
 # AGENTS.md - Tamroi · NSC Prototype 06
 
-> Project guide for Codex and other coding agents. Keep this file aligned with `CLAUDE.md`, `README.md`, `CODING_INSTRUCTIONS.md`, and the current codebase.
+> Project guide for Codex and other coding agents. Keep this file aligned with `CLAUDE.md`, `README.md`, `docs/CODING_INSTRUCTIONS.md`, and the current codebase.
 
 ## Project Context
 
@@ -63,9 +63,21 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `js/leaderboard.js`: metric tabs, podium, ranked list.
 - `supabase/schema.sql`: schema, seeds, views, and RLS policies.
 - `supabase/patch_auth_fix.sql`: robust auth trigger and profile insert policy.
-- `supabase/patch_lore.sql`: lore nodes, user lore, quiz questions, score functions/triggers, and seed content.
+- `supabase/patch_lore.sql`: lore nodes, user lore, persistent support-node visits, quiz questions, score functions/triggers, and seed content.
+- `supabase/patch_district_seed.sql`: MVP district seed parity with `js/map.js`.
+- `docs/CODING_INSTRUCTIONS.md`: design system and implementation rules.
+- `docs/dev-plan.md`: Phase 1 development plan and next-step tracking.
+- `docs/dev-plan-prompt.xml`: planning prompt and historical task detail.
+- `docs/progress.md`: current implementation status.
+- `docs/production-smoke.md`: production Supabase/Vercel smoke-test checklist.
+- `docs/proposal/tam_roi_nsc_proposal.md`: detailed NSC/game proposal.
+- `document/`: NSC assets, screenshots, and generated documents.
 - `tests/lore-static.test.mjs`: Node static regression check for Lore integration points.
 - `tests/remaining-static.test.mjs`: Node static regression check for support nodes, quiz, discovery, bonus, and Realtime.
+- `tests/prod-readiness-static.test.mjs`: Node static regression check for production readiness docs/config.
+- `tests/district-seed-static.test.mjs`: Node static regression check that SQL district seeds match MVP map districts.
+- `tests/env-policy-static.test.mjs`: Node static regression check for tracked `js/env.js` public-anon policy.
+- `tests/run-static.mjs`: one-command static regression suite runner.
 
 `js/env.js` is intentionally trackable for this prototype. Keep it limited to public Supabase anon/dev-safe values only.
 
@@ -77,7 +89,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - The map carries mock Lore nodes with Supabase fallback/integration, checks proximity in the GPS callback, and persists local fallback unlocks in `tam_roi_lore_unlocked`.
 - The database seed in `supabase/schema.sql` currently seeds a smaller Bangkok district set than `js/map.js`.
 - `js/map.js` no longer blocks fog check-in on support progress; support progress gates Legendary Encounter instead.
-- Support Node Visit buttons call `DB.Districts.updateNodeVisit()` and use a local visited set to prevent double taps in a session.
+- Support Node Visit buttons call `DB.Districts.updateNodeVisit(userId, districtId, nodeType, nodeId)`, persist exact node IDs in `user_support_node_visits`, and use a loaded/local visited set to prevent duplicate taps across reloads and current session.
 - `js/map.js` validates non-localhost Watchtower check-ins within a 500m Haversine radius from the district watchtower/center.
 - `js/map.js` renders C-Class/S-Class figure markers in cleared districts and opens DB-backed quiz flows.
 - `js/map.js` computes live DB map discovery percentage when Supabase is available.
@@ -85,7 +97,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - Home/base district state uses `tam_roi_home`; `js/map.js` migrates the legacy home key if present.
 - Real-time GPS uses `navigator.geolocation.watchPosition`; failures should degrade silently and keep the app usable.
 - Collection, missions, notifications, and leaderboard use mock fallback data when Supabase calls fail.
-- `window.DB` groups `Auth`, `Profiles`, `Districts`, `Figures`, `Artifacts`, `Leaderboard`, `Lore`, `Quiz`, and `Notifications`; `Notifications.subscribe()` wraps Supabase Realtime.
+- `window.DB` groups `Auth`, `Profiles`, `Districts`, `Figures`, `Artifacts`, `Leaderboard`, `Lore`, `Quiz`, and `Notifications`; `Districts.getVisitedSupportNodes()` loads persisted support-node IDs and `Notifications.subscribe()` wraps Supabase Realtime.
 - `window.AppCore` groups `App`, `switchTab`, `openSheet`, `closeAllSheets`, `openLoreSheet`, `openLoreChainSheet`, `showFloatPts`, and `showToast`.
 
 ## Development Setup
@@ -101,8 +113,9 @@ Supabase first-time setup:
 1. Run `supabase/schema.sql`.
 2. Run `supabase/patch_auth_fix.sql`.
 3. Run `supabase/patch_lore.sql`.
-4. Disable email confirmation for development if needed.
-5. Add `http://127.0.0.1:5500/**` and `http://localhost:5500/**` to Auth redirect URLs.
+4. Run `supabase/patch_district_seed.sql`.
+5. Disable email confirmation for development if needed.
+6. Add `http://127.0.0.1:5500/**` and `http://localhost:5500/**` to Auth redirect URLs.
 
 Vercel setup:
 
@@ -188,22 +201,21 @@ There is no formal test runner in this MVP. For changes:
 ## Known Gaps
 
 ### Core Loop (broken or mock-only)
-- Support node visits are session-de-duped only; persistent per-node visit IDs are not stored in DB yet.
 - Map discovery % uses DB count when Supabase is available, but falls back to local mock state offline.
 
 ### Missing DB / Infrastructure
 - BTS/MRT bonus uses seeded station radius points, not full station polygons.
 
 ### Content / Data
-- Full Thailand district coverage: only Bangkok/Nonthaburi mock data
+- Full Thailand district coverage: MVP Bangkok/Nonthaburi seed patch exists, but national coverage is not complete
 - Quiz and Lore content are seeded only for the current mock Bangkok figures/nodes.
-- Production email-confirmation: disabled for dev, needs re-enable before NSC demo
+- Production email confirmation still requires Supabase Dashboard enablement during deploy.
 
 ## Documentation Rule (MANDATORY for all agents)
 
 After completing ANY task — no matter how small — update these three files BEFORE moving on:
 
-1. **`progress.md`** — mark the task ✅ Done, move from Known Gaps to What's Working, update date
+1. **`docs/progress.md`** — mark the task ✅ Done, move from Known Gaps to What's Working, update date
 2. **`CLAUDE.md`** — update Key Gameplay Mechanics if system changed; update File Structure if new file added
 3. **`AGENTS.md`** (this file) — remove the gap from Known Gaps; update Repository Map and Current Implementation Notes if `window.DB` or `window.AppCore` API changed
 
@@ -222,7 +234,7 @@ Follow a Karpathy-style engineering discipline for this repo:
 - When uncertain, instrument lightly, inspect the DOM/runtime state, and remove temporary debugging before finishing.
 - Do not rewrite working UI or documents just to make them cleaner.
 - Respect the educational/travel-game product intent when naming, copywriting, and arranging UI.
-- Constantly keep Markdown project documents updated as work changes the repo or agent guidance. Documentation files include `README.md`, `CLAUDE.md`, `CODING_INSTRUCTIONS.md`, `progress.md`, `dev-plan.md`, `AGENTS.md`, and proposal files. Keep `dev-plan-prompt.xml` and the development plan in `dev-plan.md` updated to match the agent's current progress, decisions, blockers, and next steps. If the agent realizes it is approaching the context or execution limit, update the relevant Markdown files, `dev-plan-prompt.xml`, and `dev-plan.md` with current status, decisions, and next steps, then stop instead of continuing.
+- Constantly keep Markdown project documents updated as work changes the repo or agent guidance. Documentation files include `README.md`, `CLAUDE.md`, `docs/CODING_INSTRUCTIONS.md`, `docs/progress.md`, `docs/dev-plan.md`, `AGENTS.md`, and proposal files. Keep `docs/dev-plan-prompt.xml` and the development plan in `docs/dev-plan.md` updated to match the agent's current progress, decisions, blockers, and next steps. If the agent realizes it is approaching the context or execution limit, update the relevant Markdown files, `docs/dev-plan-prompt.xml`, and `docs/dev-plan.md` with current status, decisions, and next steps, then stop instead of continuing.
 
 ## Do Not Do
 

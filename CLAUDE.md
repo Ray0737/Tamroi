@@ -56,9 +56,25 @@
 └── supabase/
     ├── schema.sql        Full DB schema + Bangkok district seed data
     ├── patch_auth_fix.sql Auth trigger fix + RLS INSERT policy
-    └── patch_lore.sql    Lore/quiz tables + legacy score trigger
+    ├── patch_lore.sql    Lore/support-node visit/quiz tables + legacy score trigger
+    └── patch_district_seed.sql MVP district seed parity with map.js
+└── docs/
+    ├── CODING_INSTRUCTIONS.md Design system and implementation rules
+    ├── dev-plan.md      Phase 1 development plan
+    ├── dev-plan-prompt.xml Planning prompt and task history
+    ├── progress.md      Current implementation progress
+    ├── production-smoke.md Supabase/Vercel smoke-test checklist
+    └── proposal/
+        └── tam_roi_nsc_proposal.md NSC proposal
+└── document/
+    └── NSC assets, screenshots, and generated documents
 └── tests/
-    └── lore-static.test.mjs Static regression check for Lore integration
+    ├── lore-static.test.mjs Static regression check for Lore integration
+    ├── remaining-static.test.mjs Static regression check for gameplay loop work
+    ├── prod-readiness-static.test.mjs Static regression check for deploy readiness
+    ├── district-seed-static.test.mjs Static regression check for DB/map district parity
+    ├── env-policy-static.test.mjs Static regression check for tracked env policy
+    └── run-static.mjs One-command static regression suite runner
 ```
 
 **`js/env.js` is trackable in this prototype.** Keep it limited to public Supabase anon/dev-safe values. Never put service-role keys or private credentials in client code.
@@ -142,9 +158,10 @@ cd NSC_2026
 2. SQL Editor → run `supabase/schema.sql`
 3. SQL Editor → run `supabase/patch_auth_fix.sql`
 4. SQL Editor → run `supabase/patch_lore.sql`
-5. Authentication → Email → **disable "Confirm email"** for dev
-6. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
-7. Settings → API → copy URL + anon key into `js/env.js`
+5. SQL Editor → run `supabase/patch_district_seed.sql`
+6. Authentication → Email → **disable "Confirm email"** for dev
+7. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
+8. Settings → API → copy URL + anon key into `js/env.js`
 
 ---
 
@@ -167,6 +184,7 @@ cd NSC_2026
   - `otops_visited >= 1` → *Relic*
   - `landmarks_visited >= 3` → *Historical Knowledge*
 - Support Node visit: tap node info card → Visit button → increments counter in `user_districts`
+- Exact Support Node visits persist in `user_support_node_visits` with one row per `(user_id, node_id)`, so reloads and second devices cannot double-count the same node
 - Progress bars shown per counter while locked; Encounter button appears when all met
 - Watchtower fog check-in is independent of support progress; support progress gates only S/A encounters
 
@@ -205,6 +223,7 @@ cd NSC_2026
 |---|---|
 | `lore_nodes` | GPS lore points with radius, content, chain info |
 | `user_lore` | Which lore nodes user has unlocked (RLS: own rows) |
+| `user_support_node_visits` | Exact Support Node IDs visited by each user; unique per `(user_id, node_id)` |
 | `quiz_questions` | Location-specific MCQ questions per figure (public SELECT) |
 | `on_capture_update_score` trigger | Auto-updates `profiles.legacy_score` on `user_captures` insert |
 
@@ -212,6 +231,8 @@ cd NSC_2026
 
 - `window.DB.Lore`: `getAll()`, `getUserUnlocked(userId)`, `unlock(userId, loreId)`
 - `window.DB.Quiz`: `getForFigure(figureId, count)`
+- `window.DB.Districts.getVisitedSupportNodes(userId)`: returns persisted Support Node IDs for reload-safe visit dedupe
+- `window.DB.Districts.updateNodeVisit(userId, districtId, nodeType, nodeId)`: records exact node visit and idempotently increments district support counters
 - `window.DB.Profiles.addLegacyPoints(userId, pts)`: lore-only score increment
 - `window.DB.Leaderboard.subscribe(callback)`: wrapped Supabase Realtime subscription
 - `window.DB.Notifications.subscribe(userId, callback)`: live notification inserts

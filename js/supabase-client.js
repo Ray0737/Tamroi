@@ -15,7 +15,10 @@ const Auth = {
   async signUp(email, password, username) {
     const { data, error } = await _sb.auth.signUp({
       email, password,
-      options: { data: { username } }
+      options: {
+        data: { username },
+        emailRedirectTo: window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/login.html')
+      }
     });
     if (error) throw error;
     return data;
@@ -146,13 +149,40 @@ const Districts = {
     return data;
   },
 
-  async updateNodeVisit(userId, districtId, nodeType) {
+  async getVisitedSupportNodes(userId) {
+    const { data, error } = await _sb
+      .from('user_support_node_visits')
+      .select('node_id')
+      .eq('user_id', userId);
+    if (error) throw error;
+    return (data || []).map(row => row.node_id).filter(Boolean);
+  },
+
+  async updateNodeVisit(userId, districtId, nodeType, nodeId) {
     const { data: rpcData, error: rpcError } = await _sb.rpc('increment_node_visit', {
       p_user_id: userId,
       p_district_id: districtId,
-      p_node_type: nodeType
+      p_node_type: nodeType,
+      p_node_id: nodeId
     });
     if (!rpcError) return rpcData;
+
+    if (nodeId) {
+      const { error: visitError } = await _sb
+        .from('user_support_node_visits')
+        .insert({ user_id: userId, district_id: districtId, node_type: nodeType, node_id: nodeId });
+      if (visitError?.code === '23505') {
+        const { data: state, error: stateError } = await _sb
+          .from('user_districts')
+          .select('*')
+          .eq('user_id', userId)
+          .eq('district_id', districtId)
+          .single();
+        if (stateError) throw stateError;
+        return state;
+      }
+      if (visitError) throw visitError;
+    }
 
     const col = nodeType === 'cafe' ? 'cafes_visited'
               : nodeType === 'otop' ? 'otops_visited'
