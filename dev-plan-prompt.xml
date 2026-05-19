@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project_context>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       HOW TO USE THIS FILE
+       Paste the entire contents of this file as the system prompt
+       (or first user message) at the start of a new Claude session.
+       The AI will then have full project context and can jump straight
+       into implementing the current session objective below.
+       ═══════════════════════════════════════════════════════════ -->
+
+  <meta>
+    <name>Tamroi (ตามรอย)</name>
+    <contest>NSC 2026</contest>
+    <team>ปลามึกยักษ์</team>
+    <phase>Phase 1 — Web MVP</phase>
+    <generated>2026-05-19</generated>
+    <description>
+      Mobile-first gamified Thailand travel web app. Players travel to real Thai districts,
+      check in at Watchtower landmarks to clear Fog of War, visit Support Nodes (local cafes,
+      OTOP shops, landmarks) to unlock encounters, capture historical figures via quiz
+      challenges, and collect Lore by physically visiting GPS-defined Lore points.
+      The app teaches Thai history through Situated Learning and Experiential Learning.
+    </description>
+  </meta>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CURRENT SESSION OBJECTIVE
+       What to build RIGHT NOW in this coding session.
+       ═══════════════════════════════════════════════════════════ -->
+
+  <current_session_objective>
+    <priority_1>Complete the full Lore system (T11 → T15 + T23 + T24) end-to-end:
+      GPS proximity check → Lore unlock bottom sheet → Lore Journal DB persistence →
+      multi-site Lore chain consolidation → Lore Points write.
+    </priority_1>
+    <priority_2>Add the missing infrastructure the Word doc specifies but the code lacks:
+      Supabase DB trigger for Legacy Score, GPS tolerance radius for check-ins,
+      Supabase Realtime leaderboard subscription, quiz data table in DB.
+    </priority_2>
+    <priority_3>Fix fog clearing persistence (T01) — the single most visually broken thing
+      because cleared districts reset on every page reload.
+    </priority_3>
+    <note>Do NOT start new features until the current priority is fully working and tested.
+      Implement one task at a time. After each task, state what file was changed and what
+      the user should see/test to verify it works.
+    </note>
+  </current_session_objective>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       IMPLEMENTATION INSTRUCTIONS FOR AI
+       Follow these when writing code for this project.
+       ═══════════════════════════════════════════════════════════ -->
+
+  <ai_instructions>
+
+    <before_coding>
+      <step>Read the file you are about to edit FIRST. Never write code from memory.</step>
+      <step>Check js/supabase-client.js before adding any DB call — the method may already exist.</step>
+      <step>Check supabase/schema.sql before adding a new table — the column may already exist.</step>
+      <step>For any new bottom sheet, copy the exact HTML pattern from the existing sheets in app.html.</step>
+    </before_coding>
+
+    <lore_system_instructions>
+      <!-- Follow these exact steps to build the Lore system -->
+
+      <step id="L1" task="T11">
+        In js/map.js, add a haversineDistance(lat1, lng1, lat2, lng2) private helper function
+        that returns distance in metres. Formula: standard Haversine. Do NOT use a library.
+        Then define a LORE_NODES array (mock data for now, 3–5 entries) where each entry is:
+        { id, name_th, name_en, lat, lng, radius_m: 100, lore_pts: 30, content_type: 'text',
+          content_th: '...', content_en: '...', chain_id: null, chain_part: null }.
+        chain_id and chain_part are for multi-site lore chains (see L5).
+      </step>
+
+      <step id="L2" task="T11">
+        Inside the GPS watchPosition callback in MapModule, after updating the user dot,
+        call a private function checkLoreProximity(userLat, userLng). This function iterates
+        LORE_NODES, computes haversineDistance, and if distance is less than node.radius_m
+        AND the node is not already in the user's unlockedLoreIds set → call unlockLore(node).
+        Keep unlockedLoreIds as a module-level Set, populated from DB on init.
+      </step>
+
+      <step id="L3" task="T12">
+        In app.html, add a new bottom sheet with id="lore-sheet" using the EXACT same
+        .bottom-sheet + .bottom-sheet-overlay pattern as the existing sheets. Include:
+        - A lore type badge (pill showing content_type)
+        - A Thai title (h3, Kanit font)
+        - A scrollable narrative text block (max-height: 40vh, overflow-y: auto)
+        - Optional: img tag (hidden by default, shown when content_type === 'image')
+        - Optional: audio element with custom play/pause button (hidden by default, shown when content_type === 'audio')
+        - A "บันทึกลง Journal" (Save to Journal) confirm button — primary style
+        - Lore points badge showing how many points were earned
+        Populate and open this sheet from unlockLore(node) in map.js via AppCore.openLoreSheet(node).
+      </step>
+
+      <step id="L4" task="T13 + T14">
+        In supabase/schema.sql, add these tables (write as a new patch SQL file
+        at supabase/patch_lore.sql — do NOT edit schema.sql directly):
+          CREATE TABLE IF NOT EXISTS lore_nodes (
+            id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+            name_th text, name_en text,
+            lat numeric, lng numeric, radius_m integer DEFAULT 100,
+            lore_pts integer DEFAULT 20,
+            content_type text DEFAULT 'text',
+            content_th text, content_en text,
+            chain_id uuid, chain_part integer,
+            district_id uuid REFERENCES districts(id),
+            is_active boolean DEFAULT true
+          );
+          CREATE TABLE IF NOT EXISTS user_lore (
+            user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+            lore_id uuid REFERENCES lore_nodes(id),
+            unlocked_at timestamptz DEFAULT now(),
+            PRIMARY KEY (user_id, lore_id)
+          );
+          ALTER TABLE user_lore ENABLE ROW LEVEL SECURITY;
+          CREATE POLICY "own lore" ON user_lore FOR ALL USING (user_id = auth.uid());
+        Then in js/supabase-client.js, add a Lore namespace:
+          Lore: {
+            getAll: async () → fetch all active lore_nodes
+            getUserUnlocked: async (userId) → fetch all user_lore rows for this user
+            unlock: async (userId, loreId) → INSERT INTO user_lore (upsert, ignore conflict)
+          }
+        After saving to DB, call DB.Profiles.addLegacyPoints(userId, node.lore_pts).
+      </step>
+
+      <step id="L5" task="T24">
+        Multi-site Lore chain: some Lore nodes share a chain_id. A chain has 3 parts.
+        When the last part of a chain is unlocked (chain_part === 3, or all parts for that
+        chain_id are in user_lore), trigger a special "Chain Complete" sheet that combines
+        all 3 narrative pieces into a single scrollable story. Show a bonus of +50 pts.
+        In the Lore Journal UI (Collection tab), display chained entries grouped together
+        under the chain title with a "Complete / X/3 parts" badge.
+        Implement chain completion check inside unlockLore() after the DB write.
+      </step>
+
+      <step id="L6" task="T13 — Journal UI">
+        In js/collection.js, add a "Journal" tab pill alongside the existing filter pills
+        (All / S-Class / A-Class / C-Class / Artifacts / Journal).
+        When "Journal" is selected, hide the figure grid and show a lore journal list instead.
+        Each journal entry: lore name (Thai), district name, unlock date, content_type badge,
+        first 80 characters of content_th as preview, tap to expand full narrative inline.
+        Chained entries show under a chain header card with a progress bar (e.g. 2/3 parts).
+        Fetch from DB.Lore.getUserUnlocked(userId) joined with lore_nodes data.
+      </step>
+
+    </lore_system_instructions>
+
+    <missing_systems_instructions>
+      <!-- Word doc specifies these — they are NOT yet in the code -->
+
+      <step id="M1" task="T20 — GPS Tolerance Radius for check-in">
+        The Word doc specifies a Tolerance Radius to prevent false check-ins at district boundaries.
+        In js/map.js, when the user taps the Watchtower check-in button, validate that
+        haversineDistance(userLat, userLng, districtCenter.lat, districtCenter.lng) is less than
+        CHECKIN_TOLERANCE_M (set to 500 metres for now — adjustable).
+        If the user is outside range, show a toast: "คุณอยู่ไกลเกินไป — เดินทางให้ใกล้กว่านี้"
+        and block the check-in. Do NOT block for debug/localhost — add an isDev() guard.
+      </step>
+
+      <step id="M2" task="T21 — Supabase DB Trigger for Legacy Score">
+        The Word doc explicitly states Legacy Score should be calculated by a Supabase DB trigger,
+        not by client-side code. Add this to supabase/patch_lore.sql:
+          CREATE OR REPLACE FUNCTION update_legacy_score()
+          RETURNS TRIGGER AS $$
+          BEGIN
+            UPDATE profiles
+            SET legacy_score = legacy_score + (
+              SELECT legacy_pts FROM figures WHERE id = NEW.figure_id
+            )
+            WHERE user_id = NEW.user_id;
+            RETURN NEW;
+          END;
+          $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+          CREATE TRIGGER on_capture_update_score
+          AFTER INSERT ON user_captures
+          FOR EACH ROW EXECUTE FUNCTION update_legacy_score();
+        After adding this trigger, remove the client-side DB.Profiles.addLegacyPoints() call
+        that happens after figure capture — the trigger handles it server-side.
+        Keep the client call ONLY for lore points (lore_nodes don't have a capture trigger).
+      </step>
+
+      <step id="M3" task="T22 — Supabase Realtime leaderboard">
+        The Word doc specifies real-time leaderboard updates via Supabase Realtime Subscriptions.
+        In js/leaderboard.js, after initial load, subscribe to:
+          supabase.channel('leaderboard-updates')
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles' },
+                payload => LeaderboardModule.onScoreUpdate(payload))
+            .subscribe()
+        onScoreUpdate() should update only the affected player row in the DOM (find by user_id)
+        rather than re-fetching the entire list. Re-sort and re-render only if rank order changed.
+        Unsubscribe when the leaderboard tab is left (store channel reference, call .unsubscribe()
+        in the tab switch handler in app.js).
+      </step>
+
+      <step id="M4" task="T25 — Quiz data as DB table">
+        Currently quiz questions are hardcoded or nonexistent. The Word doc says quiz content
+        must be location-specific and validated server-side. Add to supabase/patch_lore.sql:
+          CREATE TABLE IF NOT EXISTS quiz_questions (
+            id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+            figure_id uuid REFERENCES figures(id),
+            district_id uuid REFERENCES districts(id),
+            question_th text NOT NULL,
+            option_a text, option_b text, option_c text, option_d text,
+            correct_option char(1) NOT NULL,
+            difficulty text DEFAULT 'C'
+          );
+          ALTER TABLE quiz_questions ENABLE ROW LEVEL SECURITY;
+          CREATE POLICY "public read quiz" ON quiz_questions FOR SELECT USING (true);
+        Seed at least 2 questions per mock figure in the patch file.
+        In js/supabase-client.js add:
+          Quiz: {
+            getForFigure: async (figureId) → fetch quiz_questions WHERE figure_id = figureId LIMIT 1
+          }
+        In the C-Class quiz modal (T04), fetch the question from DB.Quiz.getForFigure() instead
+        of using hardcoded questions. Validate the selected option client-side (correct_option
+        is safe to read — it's not a secret, only the score write matters and that is server-side).
+      </step>
+
+    </missing_systems_instructions>
+
+    <core_loop_fix_instructions>
+
+      <step id="C1" task="T01 — Fog persistence fix">
+        In js/map.js inside MapModule.init(), after the map is created and before markers load:
+          const clearedDistricts = await DB.Districts.getUserState(userId);
+          clearedDistricts
+            .filter(row => row.fogged === false)
+            .forEach(row => MapModule.punchFogHole(row.district_id));
+        punchFogHole() must look up the district polygon by id (from the DISTRICTS array
+        or from DB if loading from DB) and remove that polygon from the fog layer.
+        This ensures fog state survives page reload.
+      </step>
+
+      <step id="C2" task="T02 — Support Node visit tracking">
+        In js/map.js, the node info card bottom sheet has a "เยี่ยมชมสถานที่นี้" (Visit) button.
+        When the user taps it, call DB.Districts.updateNodeVisit(userId, districtId, nodeType)
+        where nodeType is 'cafe', 'otop', or 'landmark'. This increments the correct counter
+        in user_districts. Show a toast confirming the visit. Disable the Visit button for
+        already-visited nodes (check against the current user_districts row on sheet open).
+      </step>
+
+      <step id="C3" task="T03 — Support Node gate">
+        In the Watchtower check-in sheet, after the check-in write succeeds, fetch the
+        user_districts row for this district and evaluate:
+          const canUnlock = row.cafes_visited >= 2 && row.otops_visited >= 1 && row.landmarks_visited >= 3;
+        If canUnlock is true, show an "ปลดล็อค Encounter" button (primary orange) that opens
+        the Legendary encounter flow.
+        If false, show a progress section: three rows (Café X/2, OTOP X/1, Landmark X/3)
+        each with a small progress bar. Style as a locked card with --color-muted text.
+      </step>
+
+    </core_loop_fix_instructions>
+
+    <after_each_task>
+      <rule>State exactly which files were modified.</rule>
+      <rule>State what the user should open/tap in the browser to verify the feature works.</rule>
+      <rule>If you added a SQL patch file, remind the user to run it in Supabase SQL Editor.</rule>
+      <rule>Do not move to the next task until verification steps are listed.</rule>
+    </after_each_task>
+
+  </ai_instructions>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TECH STACK & HARD CONSTRAINTS
+       ═══════════════════════════════════════════════════════════ -->
+
+  <tech_stack>
+    <frontend>HTML5, Bootstrap 5.3, Vanilla JS (ES6 modules — NO npm, NO build tools)</frontend>
+    <map>Leaflet.js + CartoDB Dark tiles</map>
+    <backend>Supabase (PostgreSQL + Auth + RLS + Realtime)</backend>
+    <deployment>Vercel (static + Node.js build.js for env injection)</deployment>
+    <constraints>
+      <item>No npm install, no webpack, no framework — serve with VS Code Live Server</item>
+      <item>All JS follows IIFE module pattern: const ModuleName = (() => { ... })()</item>
+      <item>All Supabase calls go through js/supabase-client.js only — never call supabase directly</item>
+      <item>Always use utils.escapeHtml() for any user-visible string rendered into DOM</item>
+      <item>No hardcoded hex colors — use CSS variables from css/variables.css only</item>
+      <item>Max content width 430px, mobile-first, fixed top bar 56px, fixed footer nav 60px</item>
+      <item>No comments explaining what code does — only write comments for non-obvious WHY</item>
+      <item>Never commit js/env.js — credentials live in Vercel env vars only</item>
+      <item>Bottom sheets always use the .bottom-sheet + .bottom-sheet-overlay pattern from app.html</item>
+    </constraints>
+  </tech_stack>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FILE MAP
+       ═══════════════════════════════════════════════════════════ -->
+
+  <file_structure>
+    <file path="index.html">Splash / landing page with animated blob and CTA</file>
+    <file path="login.html">Email + password + Google OAuth login and register</file>
+    <file path="onboarding.html">Location permission request + home district picker</file>
+    <file path="app.html">Main 4-tab app shell: Map, Collection, Missions, Leaderboard</file>
+    <file path="build.js">Vercel build script — injects SUPABASE_URL and SUPABASE_ANON_KEY</file>
+    <file path="vercel.json">Security headers (CSP, HSTS, X-Frame, Permissions-Policy)</file>
+    <file path="css/variables.css">Design tokens — colors, spacing, radii, shadows, transitions</file>
+    <file path="css/layout.css">Top bar, bottom nav, tab shell structure</file>
+    <file path="css/components.css">Buttons, cards, inputs, bottom sheets, badges, pills</file>
+    <file path="css/map.css">Leaflet overrides, fog layer, markers, GPS dot, node info card</file>
+    <file path="css/animations.css">Keyframes: blobMorph, floatY, locationPulse, fadeIn, slideUp</file>
+    <file path="js/config.js">Reads window.ENV → exports window.APP_CONFIG</file>
+    <file path="js/env.example.js">Credential template — copy to env.js (gitignored) for local dev</file>
+    <file path="js/utils.js">escapeHtml() XSS prevention utility</file>
+    <file path="js/supabase-client.js">All DB and Auth abstraction: Auth, Profiles, Districts, Figures, Artifacts, Leaderboard, Notifications, Lore, Quiz</file>
+    <file path="js/app.js">Boot sequence, auth guard, tab navigation, toast notifications, openLoreSheet()</file>
+    <file path="js/map.js">Leaflet map, Fog of War inverted polygon, live GPS dot, watchtower markers, node info card, lore proximity check, haversine distance</file>
+    <file path="js/collection.js">Historical figures + artifacts grid, filter pills, search, capture states, Lore Journal tab</file>
+    <file path="js/missions.js">Active quest steps display + daily challenge list</file>
+    <file path="js/leaderboard.js">Podium + ranked list, 3 metric toggles, period filter, Realtime subscription</file>
+    <file path="supabase/schema.sql">Full DB schema + Bangkok district seed data — DO NOT EDIT, add patches instead</file>
+    <file path="supabase/patch_auth_fix.sql">Auth trigger fix + RLS INSERT policy</file>
+    <file path="supabase/patch_lore.sql">NEW — lore_nodes, user_lore, quiz_questions tables + legacy score trigger</file>
+  </file_structure>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       DATABASE SCHEMA (current + pending additions)
+       ═══════════════════════════════════════════════════════════ -->
+
+  <database_schema>
+    <table name="profiles" status="exists">user_id, username, avatar_url, legacy_score, created_at, updated_at</table>
+    <table name="districts" status="exists">id, name_th, name_en, province, center_lat, center_lng, polygon_coords, is_active</table>
+    <table name="user_districts" status="exists">user_id, district_id, fogged, checked_in_at, cafes_visited, otops_visited, landmarks_visited</table>
+    <table name="figures" status="exists">id, name_th, name_en, class (S/A/C), legacy_pts, image_emoji, district_id, is_active</table>
+    <table name="user_captures" status="exists">user_id, figure_id, captured_at</table>
+    <table name="artifacts" status="exists">id, name_th, name_en, rarity, icon_emoji</table>
+    <table name="user_artifacts" status="exists">user_id, artifact_id, obtained_at</table>
+    <table name="notifications" status="exists">user_id, title, message, is_read, created_at</table>
+    <view name="leaderboard" status="exists">Aggregates legacy_score, map discovery %, archive count per user</view>
+    <table name="lore_nodes" status="ADD via patch_lore.sql">id, name_th, name_en, lat, lng, radius_m, lore_pts, content_type, content_th, content_en, chain_id, chain_part, district_id, is_active</table>
+    <table name="user_lore" status="ADD via patch_lore.sql">user_id, lore_id, unlocked_at — RLS: own rows only</table>
+    <table name="quiz_questions" status="ADD via patch_lore.sql">id, figure_id, district_id, question_th, option_a–d, correct_option, difficulty — RLS: public SELECT</table>
+    <trigger name="on_capture_update_score" status="ADD via patch_lore.sql">AFTER INSERT on user_captures → UPDATE profiles.legacy_score += figures.legacy_pts</trigger>
+  </database_schema>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       GAME MECHANICS REFERENCE
+       From ตามรอย_NSC_2026_v12.docx
+       ═══════════════════════════════════════════════════════════ -->
+
+  <game_mechanics>
+
+    <mechanic name="Fog of War">
+      Thailand map starts fully fogged. Fog lifts per district when user GPS-checks in.
+      Cleared state persists in user_districts.fogged = false.
+      Discovery % = (cleared districts / total active districts) * 100.
+      Fog polygon is inverted — one giant polygon covering the world with holes punched per district.
+    </mechanic>
+
+    <mechanic name="GPS Check-in Validation">
+      Use haversineDistance() to verify user is within CHECKIN_TOLERANCE_M (500m) of district center.
+      watchPosition() for continuous monitoring. Block check-in if outside tolerance.
+      Bypass tolerance check on localhost/dev to allow desktop testing.
+    </mechanic>
+
+    <mechanic name="Support Node Gate (Phase Lock)">
+      C-Class figures: capturable immediately after check-in quiz. No Support Node required.
+      S/A-Class (Legendary): LOCKED until user visits minimum Support Nodes in that district:
+        - 2 cafes visited (cafes_visited >= 2)
+        - 1 OTOP shop visited (otops_visited >= 1)
+        - 3 landmarks visited (landmarks_visited >= 3)
+      Show progress bars for each counter. When all met: show Encounter unlock button.
+    </mechanic>
+
+    <mechanic name="Capture Flow">
+      1. GPS proximity → node tapped OR Watchtower check-in completes
+      2. Quiz modal appears (question fetched from quiz_questions table)
+      3. User selects answer → validated client-side
+      4. Correct: INSERT into user_captures → DB trigger auto-updates legacy_score
+      5. Show capture success animation (figure card flips in)
+      6. Update collection grid (re-render captured figure card)
+      7. Refresh leaderboard row for current user
+    </mechanic>
+
+    <mechanic name="Lore System">
+      Lore nodes are GPS points (NOT district-wide). Each has a radius_m proximity trigger.
+      When user enters radius: unlock Lore → show bottom sheet → save to user_lore → award lore_pts.
+      Lore Points written client-side (no trigger) via DB.Profiles.addLegacyPoints().
+      Multi-site Lore chains: 3 lore_nodes share a chain_id. Collecting all 3 reveals
+      the full historical story and awards a +50 chain completion bonus.
+      Journal: all unlocked lore visible in Collection tab → Journal filter.
+    </mechanic>
+
+    <mechanic name="Legacy Score">
+      Figure capture points: auto-calculated by Supabase DB trigger on user_captures insert.
+      Lore points: added client-side after user_lore insert.
+      BTS/MRT bonus: ×2 multiplier on check-in points if user is near a station polygon.
+      Leaderboard updates via Supabase Realtime subscription — no full page reload needed.
+    </mechanic>
+
+    <mechanic name="Leaderboard Metrics">
+      1. Legacy Score — total points from captures + lore (primary ranking)
+      2. Map Discovery % — (cleared districts / total) * 100
+      3. Archive Count — total figures captured + artifacts owned
+      Filters: Weekly / Monthly / All-Time. Updates in real time via Supabase Realtime.
+    </mechanic>
+
+    <mechanic name="Quiz System">
+      Questions stored in quiz_questions table (location/figure-specific).
+      Format: Multiple Choice (4 options A/B/C/D). correct_option field.
+      C-Class: 1 question required. S/A-Class Master Quiz: 3 questions required (all must be correct).
+      Fetch via DB.Quiz.getForFigure(figureId). Validate client-side (correct_option is not secret).
+      Score write is server-side (trigger), so client-side validation is safe.
+    </mechanic>
+
+  </game_mechanics>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       COMPLETED FEATURES (do not rebuild these)
+       ═══════════════════════════════════════════════════════════ -->
+
+  <completed_features>
+    <feature id="F01">Authentication — email/password + Google OAuth via Supabase, session management, auth guard</feature>
+    <feature id="F02">Onboarding — location permission request, home district selection</feature>
+    <feature id="F03">4-tab app shell with smooth tab transitions and lazy-load per tab</feature>
+    <feature id="F04">Leaflet map with CartoDB Dark tiles centered on Bangkok</feature>
+    <feature id="F05">Fog of War — inverted polygon clears per district on Watchtower check-in (UI + DB write)</feature>
+    <feature id="F06">Live GPS tracking dot + accuracy ring, auto-updates on device movement</feature>
+    <feature id="F07">Watchtower check-in bottom sheet UI with district preview and unlock requirements list</feature>
+    <feature id="F08">Map nodes (café / OTOP / landmark) with type-specific icons and node info card bottom sheet</feature>
+    <feature id="F09">Collection grid — historical figures with class badges (S/A/C), capture ribbons, lock overlays</feature>
+    <feature id="F10">Artifacts horizontal scroll with rarity tiers (legendary / rare / common)</feature>
+    <feature id="F11">Collection filter pills (All / S-Class / A-Class / C-Class / Artifacts) + search bar</feature>
+    <feature id="F12">Figure detail modal — portrait, class badge, Thai/English name, legacy points</feature>
+    <feature id="F13">Active quest display with 4-step progress chain (mock data)</feature>
+    <feature id="F14">Daily challenges list (mock data)</feature>
+    <feature id="F15">Leaderboard — podium top-3, ranked list, 3 metric toggles, period filter (mock data)</feature>
+    <feature id="F16">Notification system — top-bar badge, offcanvas panel, unread state tracking</feature>
+    <feature id="F17">Full CSS design system — variables, layout, components, map, animations</feature>
+    <feature id="F18">Supabase schema with RLS + auth trigger</feature>
+    <feature id="F19">Vercel deployment with env var injection and security headers</feature>
+  </completed_features>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       REMAINING TASKS (full backlog)
+       ═══════════════════════════════════════════════════════════ -->
+
+  <remaining_tasks>
+
+    <group name="Lore System (FC2 — Lore/Proximity Loop)" current_focus="true">
+      <task id="T11" priority="high" affects="js/map.js">GPS proximity trigger — haversineDistance helper + LORE_NODES array + checkLoreProximity() in watchPosition callback. See ai_instructions L1 + L2.</task>
+      <task id="T12" priority="high" affects="app.html, js/map.js, css/components.css">Lore unlock bottom sheet — title, narrative, optional image/audio, Save button, lore pts badge. See ai_instructions L3.</task>
+      <task id="T13" priority="high" affects="supabase/patch_lore.sql, js/supabase-client.js, js/collection.js">Lore Journal DB persistence (user_lore table) + Journal filter tab in Collection. See ai_instructions L4 + L6.</task>
+      <task id="T14" priority="high" affects="js/map.js, js/supabase-client.js">Lore Points — client-side write to profiles.legacy_score after user_lore insert. See ai_instructions L4.</task>
+      <task id="T15" priority="medium" affects="js/map.js, app.html">Rich lore content types — image (lazy img), audio (custom play/pause), document (scrollable block). See ai_instructions L3.</task>
+      <task id="T24" priority="medium" affects="js/map.js, js/collection.js">Multi-site Lore chain — 3-node chain, chain completion detection, combined story sheet, +50 bonus, chain progress in Journal. See ai_instructions L5.</task>
+    </group>
+
+    <group name="Missing Systems (from Word doc)">
+      <task id="T20" priority="high" affects="js/map.js">GPS tolerance radius for check-in — 500m Haversine gate, toast if too far, bypass on localhost. See ai_instructions M1.</task>
+      <task id="T21" priority="high" affects="supabase/patch_lore.sql">Supabase DB trigger for Legacy Score on user_captures insert. Remove client-side score write for captures. See ai_instructions M2.</task>
+      <task id="T22" priority="medium" affects="js/leaderboard.js">Supabase Realtime subscription on profiles table — update leaderboard DOM on score change, unsubscribe on tab leave. See ai_instructions M3.</task>
+      <task id="T25" priority="medium" affects="supabase/patch_lore.sql, js/supabase-client.js">Quiz questions DB table — figure-specific questions, seed 2 per mock figure, DB.Quiz.getForFigure(). See ai_instructions M4.</task>
+    </group>
+
+    <group name="Core Loop Fixes (FC1 — District Encounter Loop)">
+      <task id="T01" priority="critical" affects="js/map.js, js/supabase-client.js">Fog clearing persistence — re-read user_districts on MapModule.init() and re-punch all cleared holes. See ai_instructions C1.</task>
+      <task id="T02" priority="critical" affects="js/map.js, js/supabase-client.js">Support Node visit tracking — Visit button in node info card increments cafes/otops/landmarks counter in DB. See ai_instructions C2.</task>
+      <task id="T03" priority="critical" affects="js/map.js">Support Node completion gate — check counters after check-in, show Encounter button or progress bars. See ai_instructions C3.</task>
+      <task id="T04" priority="critical" affects="js/map.js, js/collection.js, js/supabase-client.js">C-Class quiz modal — fetch from DB.Quiz.getForFigure(), 4-option MCQ, on correct → DB.Figures.capture() → capture animation.</task>
+      <task id="T05" priority="high" affects="js/map.js, js/missions.js">Legendary encounter flow — Master Quiz (3 questions, all correct required) after Support Node gate passes, then S-Class capture.</task>
+      <task id="T06" priority="high" affects="js/supabase-client.js, js/app.js">Legacy Points client write — only for Lore Points now (figure capture handled by DB trigger T21). Expose DB.Profiles.addLegacyPoints().</task>
+      <task id="T07" priority="high" affects="js/map.js, js/supabase-client.js">Real map discovery % — compute from user_districts count in DB, show in stats bar on init and after each check-in.</task>
+      <task id="T08" priority="medium" affects="js/collection.js">Collection refresh after capture — re-render only the affected figure card (green ribbon, remove lock).</task>
+      <task id="T09" priority="medium" affects="js/leaderboard.js">Leaderboard refresh after score update — handled by Realtime subscription (T22), fallback to LeaderboardModule.load().</task>
+      <task id="T10" priority="medium" affects="js/map.js">BTS/MRT bonus ×2 — station polygons in map.js, check GPS on check-in, apply multiplier before lore_pts write.</task>
+    </group>
+
+    <group name="Infrastructure">
+      <task id="T16" priority="medium" affects="supabase/schema.sql, js/map.js">Full Thailand district coverage — load polygon_coords from DB instead of hardcode, seed remaining Bangkok districts.</task>
+      <task id="T17" priority="medium" affects="Supabase Dashboard">Email verification — re-enable Confirm email in Supabase before NSC demo, test full signup→verify flow.</task>
+      <task id="T18" priority="low" affects="vercel.json">Vercel production smoke test — full flow with real env vars.</task>
+      <task id="T19" priority="low" affects="js/supabase-client.js, js/app.js">Real-time notifications — Supabase Realtime channel on notifications table, live badge update.</task>
+    </group>
+
+  </remaining_tasks>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       BUILD ORDER (4-week sprint)
+       ═══════════════════════════════════════════════════════════ -->
+
+  <build_order>
+    <week number="1" goal="Lore system end-to-end + fog fix">
+      <step>T11 — haversine helper + LORE_NODES + checkLoreProximity()</step>
+      <step>T12 — Lore unlock bottom sheet UI</step>
+      <step>T21 — patch_lore.sql: lore_nodes + user_lore + quiz_questions + legacy_score trigger</step>
+      <step>T13 — user_lore DB write + Journal tab in Collection</step>
+      <step>T14 — Lore Points client write</step>
+      <step>T01 — Fog clearing persistence on reload</step>
+    </week>
+    <week number="2" goal="Core game loop (check-in → capture → score)">
+      <step>T20 — GPS tolerance radius for check-in</step>
+      <step>T02 — Support Node visit tracking (Visit button → DB)</step>
+      <step>T03 — Support Node gate (progress bars → Encounter unlock)</step>
+      <step>T25 — Quiz questions seeding + DB.Quiz.getForFigure()</step>
+      <step>T04 — C-Class quiz modal end-to-end</step>
+      <step>T06 — DB.Profiles.addLegacyPoints() for lore (trigger handles captures)</step>
+      <step>T07 — Map discovery % from DB</step>
+    </week>
+    <week number="3" goal="Legendary path + social + lore polish">
+      <step>T05 — Legendary encounter + Master Quiz (3 questions)</step>
+      <step>T08 — Collection refresh after capture</step>
+      <step>T22 — Supabase Realtime leaderboard subscription</step>
+      <step>T09 — Leaderboard refresh (via Realtime)</step>
+      <step>T24 — Multi-site Lore chain (3-node, consolidation, bonus)</step>
+      <step>T15 — Rich lore content types (image, audio)</step>
+    </week>
+    <week number="4" goal="Polish + demo prep">
+      <step>T10 — BTS/MRT bonus ×2</step>
+      <step>T16 — Thailand district data from DB</step>
+      <step>T17 — Email verify re-enable</step>
+      <step>T19 — Real-time notifications</step>
+      <step>T18 — Vercel production smoke test</step>
+    </week>
+  </build_order>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       DESIGN TOKENS (never hardcode these values)
+       ═══════════════════════════════════════════════════════════ -->
+
+  <design_tokens>
+    <color name="bg" css-var="--color-bg">#2B2D35</color>
+    <color name="primary" css-var="--color-primary">#FF7E55</color>
+    <color name="success" css-var="--color-success">#7BC67E</color>
+    <color name="surface" css-var="--color-surface">#E1F0E3</color>
+    <color name="card-dark" css-var="--color-card-dark">#33363F</color>
+    <color name="muted" css-var="--color-muted">#9DA3AE</color>
+    <color name="white" css-var="--color-white">#FFFFFF</color>
+    <font name="body">Inter (400/500/600/700)</font>
+    <font name="thai-heading">Kanit (400/600/700)</font>
+    <layout max-width="430px" top-bar="56px" footer-nav="60px" base-font="14px"/>
+    <rarity-colors>
+      <tier name="S-Class / Legendary" color="var(--color-primary)"/>
+      <tier name="A-Class / Rare" color="var(--color-success)"/>
+      <tier name="C-Class / Common" color="var(--color-muted)"/>
+    </rarity-colors>
+  </design_tokens>
+
+</project_context>
