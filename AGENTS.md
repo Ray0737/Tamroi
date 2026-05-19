@@ -234,7 +234,7 @@ Follow a Karpathy-style engineering discipline for this repo:
 - When uncertain, instrument lightly, inspect the DOM/runtime state, and remove temporary debugging before finishing.
 - Do not rewrite working UI or documents just to make them cleaner.
 - Respect the educational/travel-game product intent when naming, copywriting, and arranging UI.
-- Constantly keep Markdown project documents updated as work changes the repo or agent guidance. Documentation files include `README.md`, `CLAUDE.md`, `CODING_INSTRUCTIONS.md`, `progress.md`, `AGENTS.md`, and proposal files. If the agent realizes it is approaching the context or execution limit, update the relevant Markdown files with current status, decisions, and next steps, then stop instead of continuing.
+- Constantly keep Markdown project documents updated as work changes the repo or agent guidance. Documentation files include `README.md`, `CLAUDE.md`, `CODING_INSTRUCTIONS.md`, `progress.md`, `dev-plan.md`, `AGENTS.md`, and proposal files. Keep `dev-plan-prompt.xml` and the development plan in `dev-plan.md` updated to match the agent's current progress, decisions, blockers, and next steps. If the agent realizes it is approaching the context or execution limit, update the relevant Markdown files, `dev-plan-prompt.xml`, and `dev-plan.md` with current status, decisions, and next steps, then stop instead of continuing.
 
 ## Do Not Do
 
