@@ -37,7 +37,8 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 | File | Status | Notes |
 |---|---|---|
 | `js/config.js` | ✅ Done | Reads `window.ENV` → exports `window.APP_CONFIG` |
-| `js/env.example.js` | ✅ Done | Credential template (gitignored actual `env.js`) |
+| `js/env.js` | ✅ Done | Tracked public Supabase anon config for local/static runtime |
+| `js/env.example.js` | ✅ Done | Credential template for resetting `env.js` |
 | `js/utils.js` | ✅ Done | `escapeHtml()` XSS utility |
 | `js/supabase-client.js` | ✅ Done | Full DB & Auth abstraction — Auth, Profiles, Districts, Figures, Leaderboard, Lore, Quiz |
 | `js/app.js` | ✅ Done | Boot sequence, auth guard, tab navigation, bottom sheets, toast notifications |

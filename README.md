@@ -122,7 +122,8 @@ Three metrics determine the most influential traveler in Thailand:
 │   ├── map.css         Leaflet overrides, fog layer, markers, node info card, GPS dot
 │   └── animations.css  Keyframes (blobMorph, floatY, locationPulse, …)
 ├── js/
-│   ├── env.example.js  Credentials template — copy to env.js for local dev
+│   ├── env.js          Public Supabase anon config for local/static runtime
+│   ├── env.example.js  Credentials template for resetting env.js
 │   ├── config.js       Reads window.ENV → window.APP_CONFIG
 │   ├── utils.js        escapeHtml() XSS utility
 │   ├── supabase-client.js  DB & Auth helpers (Auth · Profiles · Districts · Figures · Leaderboard)
@@ -145,9 +146,9 @@ Three metrics determine the most influential traveler in Thailand:
 git clone https://github.com/Ray0737/NSC_2026.git
 cd NSC_2026
 
-# 2. Set up credentials (js/env.js is gitignored — never committed)
-cp js/env.example.js js/env.js
-# Edit js/env.js → paste your Supabase URL and anon key
+# 2. Check local Supabase config
+# js/env.js is tracked; keep it to public anon/dev-safe values only
+# Edit js/env.js if you need a different Supabase URL or anon key
 
 # 3. Serve with VS Code Live Server or any static server
 # No npm install or build step needed for local development
@@ -163,6 +164,8 @@ cp js/env.example.js js/env.js
 4. **Authentication → Providers → Email** → disable *"Confirm email"* for development
 5. **Authentication → URL Configuration** → add `http://127.0.0.1:5500/**` as a redirect URL
 6. **Settings → API** → copy *Project URL* and *anon public key* into `js/env.js`
+
+`js/env.js` is intentionally trackable for this prototype. Only store the Supabase project URL and anon public key there. Never place service-role keys, private tokens, `.env` secrets, or production-only credentials in client-side files.
 
 ---
 

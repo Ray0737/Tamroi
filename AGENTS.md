@@ -52,7 +52,8 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `css/map.css`: Leaflet overrides, fog layer, markers, GPS dot, node card.
 - `css/animations.css`: shared keyframes and transitions.
 - `js/config.js`: reads `window.ENV` and writes `window.APP_CONFIG`.
-- `js/env.example.js`: local credential template; copy to `js/env.js`.
+- `js/env.js`: tracked public Supabase anon config for local/static runtime.
+- `js/env.example.js`: credential template for resetting `js/env.js`.
 - `js/utils.js`: exposes `escapeHtml()`.
 - `js/supabase-client.js`: the only place that should call Supabase directly; exposes `window.DB`.
 - `js/app.js`: boot, auth guard, tabs, sheets, lore sheets, toast, notifications, top bar; exposes `window.AppCore`.
@@ -66,7 +67,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `tests/lore-static.test.mjs`: Node static regression check for Lore integration points.
 - `tests/remaining-static.test.mjs`: Node static regression check for support nodes, quiz, discovery, bonus, and Realtime.
 
-`js/env.js` is gitignored and must never be committed.
+`js/env.js` is intentionally trackable for this prototype. Keep it limited to public Supabase anon/dev-safe values only.
 
 ## Current Implementation Notes
 
@@ -91,11 +92,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 
 Local credentials:
 
-```bash
-cp js/env.example.js js/env.js
-```
-
-Then fill `js/env.js` with the Supabase project URL and anon key. Never commit this file.
+`js/env.js` is tracked. Edit it only when changing the public Supabase project URL or anon key for local/static runtime. Use `js/env.example.js` as the reset template if needed.
 
 Serve locally with VS Code Live Server or a static server from the repo root. There is no npm install step for normal local development.
 
@@ -170,7 +167,7 @@ Layout:
 
 ## Security Rules
 
-- Never commit real Supabase credentials, `.env` files, or generated `js/env.js`.
+- Never commit service-role keys, private Supabase credentials, `.env` files, or production-only tokens.
 - Never use a Supabase service role key in client code.
 - Maintain RLS assumptions: public catalog reads, user-owned writes for profile/progress/captures/artifacts/notifications.
 - Validate URLs before inserting into DOM attributes. Existing avatar handling only accepts `https:`.

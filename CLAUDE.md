@@ -44,7 +44,8 @@
 │   └── animations.css   Keyframes
 ├── js/
 │   ├── config.js        Reads window.ENV → window.APP_CONFIG
-│   ├── env.example.js   Credential template — copy to env.js for local dev
+│   ├── env.js           Public Supabase anon config for local/static runtime
+│   ├── env.example.js   Credential template for resetting env.js
 │   ├── utils.js         escapeHtml() — always use for user-visible strings
 │   ├── supabase-client.js  All DB & Auth calls live here
 │   ├── app.js           Boot · auth guard · tab navigation · notifications
@@ -60,7 +61,7 @@
     └── lore-static.test.mjs Static regression check for Lore integration
 ```
 
-**`js/env.js` is gitignored.** Never commit it. Copy from `env.example.js`.
+**`js/env.js` is trackable in this prototype.** Keep it limited to public Supabase anon/dev-safe values. Never put service-role keys or private credentials in client code.
 
 ---
 
@@ -115,7 +116,7 @@
 ### Security
 
 - XSS: always `escapeHtml()` before `innerHTML`
-- Credentials: only in `js/env.js` (gitignored) or Vercel env vars — never hardcoded
+- Credentials: only public Supabase anon config belongs in `js/env.js`; private credentials stay out of client code and repo files
 - Supabase: RLS policies enforce per-user data isolation — do not bypass with service key on the client
 
 ---
@@ -127,9 +128,8 @@
 git clone https://github.com/Ray0737/NSC_2026.git
 cd NSC_2026
 
-# 2. Set up credentials
-cp js/env.example.js js/env.js
-# Edit js/env.js — paste Supabase URL and anon key
+# 2. Check public Supabase config
+# js/env.js is tracked; edit only for public anon/dev-safe values
 
 # 3. Serve
 # Open with VS Code Live Server (port 5500)
@@ -224,7 +224,7 @@ cp js/env.example.js js/env.js
 
 - Do not add npm dependencies or a build step — this is intentionally zero-tooling
 - Do not use `eval()` or `innerHTML` with unescaped strings
-- Do not commit `js/env.js` or any file with real Supabase credentials
+- Do not commit service-role keys, private Supabase credentials, `.env` secrets, or production-only tokens
 - Do not add `!important` to CSS — use the variable system instead
 - Do not write comments explaining what code does — only write them for non-obvious WHY
 - Do not call Supabase outside of `supabase-client.js`

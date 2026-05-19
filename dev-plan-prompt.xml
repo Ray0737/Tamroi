@@ -471,7 +471,7 @@
       <item>No hardcoded hex colors — use CSS variables from css/variables.css only</item>
       <item>Max content width 430px, mobile-first, fixed top bar 56px, fixed footer nav 60px</item>
       <item>No comments explaining what code does — only write comments for non-obvious WHY</item>
-      <item>Never commit js/env.js — credentials live in Vercel env vars only</item>
+      <item>js/env.js is trackable for public Supabase anon/dev-safe config only; never put service-role keys or private credentials in client files</item>
       <item>Bottom sheets always use the .bottom-sheet + .bottom-sheet-overlay pattern from app.html</item>
     </constraints>
   </tech_stack>
@@ -493,7 +493,8 @@
     <file path="css/map.css">Leaflet overrides, fog layer, markers, GPS dot, node info card</file>
     <file path="css/animations.css">Keyframes: blobMorph, floatY, locationPulse, fadeIn, slideUp</file>
     <file path="js/config.js">Reads window.ENV → exports window.APP_CONFIG</file>
-    <file path="js/env.example.js">Credential template — copy to env.js (gitignored) for local dev</file>
+    <file path="js/env.js">Tracked public Supabase anon config for local/static runtime</file>
+    <file path="js/env.example.js">Credential template for resetting env.js</file>
     <file path="js/utils.js">escapeHtml() XSS prevention utility</file>
     <file path="js/supabase-client.js">All DB and Auth abstraction: Auth, Profiles, Districts, Figures, Artifacts, Leaderboard, Notifications, Lore, Quiz</file>
     <file path="js/app.js">Boot sequence, auth guard, tab navigation, toast notifications, openLoreSheet()</file>
