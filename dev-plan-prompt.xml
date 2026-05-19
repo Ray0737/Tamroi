@@ -25,6 +25,202 @@
   </meta>
 
   <!-- ═══════════════════════════════════════════════════════════
+       DOCUMENTATION RULE — MANDATORY
+       ═══════════════════════════════════════════════════════════ -->
+
+  <documentation_rule>
+    After completing ANY task or sub-task, BEFORE moving to the next one, update all three
+    of these files to reflect the change:
+
+    1. progress.md
+       - Mark the task row as ✅ Done (or 🔄 In Progress)
+       - Move it from "Known Gaps" to "What's Working" once complete
+       - Update "Last updated" date at the top
+
+    2. CLAUDE.md
+       - If a new game system was added: add or update its entry under "Key Gameplay Mechanics"
+       - If a new file was created: add it to the File Structure block
+       - If DB schema changed: note the new table/trigger
+
+    3. AGENTS.md
+       - Update "Known Gaps" section (remove resolved gaps, add any new ones discovered)
+       - Update "Repository Map" if new files were added
+       - Update "Current Implementation Notes" if window.DB or window.AppCore changed
+
+    Failure to update these three files makes the next coding session start with stale context.
+    Do not skip this step even for small changes.
+  </documentation_rule>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       PRODUCT VISION (from ตามรอย_NSC_2026_v12.docx)
+       Full summary — read this before touching any feature.
+       ═══════════════════════════════════════════════════════════ -->
+
+  <product_vision>
+
+    <concept>
+      Tamroi (ตามรอย — "Trace the Footsteps") is an educational location-based game that
+      transforms Thai history learning from passive classroom study into active real-world
+      exploration. The core idea: historical knowledge delivered AT the place where the event
+      occurred creates stronger long-term memory than textbook reading (Situated Learning theory).
+    </concept>
+
+    <learning_frameworks>
+      <framework name="Situated Learning">
+        Knowledge is delivered at real-world locations where historical events occurred.
+        Players must physically travel to Bangkok districts, provinces, and landmarks.
+        Context-based acquisition replaces passive memorization.
+      </framework>
+      <framework name="Experiential Learning Cycle (4 phases)">
+        1. Concrete Experience — travel to and check-in at real-world locations (GPS)
+        2. Reflective Observation — read Lore content tied to that location
+        3. Abstract Conceptualization — complete location-specific quiz questions
+        4. Active Experimentation — capture Historical Figure cards, earn Legacy Score
+      </framework>
+      <framework name="Gamification (5 core mechanics)">
+        1. Collection and Reward — Figure cards with S/A/C rarity tiers
+        2. Social Competition — High Chronicler leaderboard (Legacy Score, Map %, Archive)
+        3. Exploration and Discovery — Fog of War creates curiosity gap driving travel
+        4. Historical Narrative — figures tied to specific regions build mental maps
+        5. Lore System — GPS-proximity unlocks deepen knowledge at each location
+      </framework>
+    </learning_frameworks>
+
+    <target_users>
+      <primary>Ages 14–25 · Thai high school and university students · mobile-first · interested in history and exploration</primary>
+      <secondary_1>Educators and teachers · field-trip organizers · want gamified real-world history learning</secondary_1>
+      <secondary_2>Tour guides and cultural tourism professionals · enhance tours with historical gamification</secondary_2>
+      <design_target>Ages 20–30 · any person interested in Thai history · cultural tourism participants</design_target>
+    </target_users>
+
+    <full_game_systems>
+
+      <system name="Fog of War">
+        - Thailand map initially fully fogged (dark inverted polygon over CartoDB tiles)
+        - Fog lifts per district when user physically checks in via GPS
+        - Polygon Matching: user GPS coords vs GeoJSON district polygon
+        - Tolerance Radius (500m) prevents false check-ins at boundaries
+        - 77 province/district polygons total (GeoJSON, simplified for performance)
+        - Map Discovery % = (cleared districts / 77) × 100 — leaderboard metric
+        - Cleared state persists in Supabase user_districts (fogged = false)
+        - On page reload: re-read user_districts and re-punch all cleared holes
+      </system>
+
+      <system name="Watchtower Check-in">
+        - Watchtower = fixed landmark marker in each district
+        - User travels to real location, taps marker → GPS validates within 500m tolerance
+        - Check-in writes to user_districts, sets fogged = false, triggers fog removal
+        - Check-in sheet shows: district name, fog clearing animation, support node progress,
+          and Encounter button if Support Nodes complete
+        - Watchtower also acts as display hub: shows collected figures for that district
+          in two view modes: All Figures / By Historical Period
+      </system>
+
+      <system name="Support Node Chain (Phase Lock)">
+        - C-Class figures: capturable immediately after check-in + 1-question quiz. No gate.
+        - S/A-Class (Legendary): LOCKED until Support Node requirements met for that district:
+            cafes_visited >= 2  →  Local Rumors gathered
+            otops_visited >= 1  →  Relic obtained
+            landmarks_visited >= 3  →  Historical Knowledge built
+        - Support Nodes = cafes, OTOP shops, local landmarks on the map (tappable markers)
+        - Visiting a Support Node increments the counter in user_districts via DB call
+        - When all counters met: Encounter unlock button appears on check-in sheet
+        - Show progress bars per counter while locked (e.g. Café 1/2, OTOP 0/1, Landmark 2/3)
+      </system>
+
+      <system name="Capture Flow">
+        1. GPS proximity trigger OR Watchtower check-in completes
+        2. Quiz modal appears — question fetched from quiz_questions table (location-specific)
+        3. C-Class: 1 question. S/A-Class Master Quiz: 3 questions, all must be correct.
+        4. Correct answer → INSERT into user_captures
+        5. Supabase DB trigger auto-updates profiles.legacy_score += figures.legacy_pts
+        6. Show capture success animation (figure card flips in, floats up)
+        7. Re-render collection grid — newly captured card gets green ribbon, lock removed
+        8. Leaderboard row for current user updates via Realtime subscription
+      </system>
+
+      <system name="Lore System (GPS Proximity)">
+        - Lore nodes are GPS points with a radius_m field (not district-wide)
+        - On each GPS position update: compute Haversine distance to each lore node
+        - If user enters radius AND lore not yet in user_lore table → fire unlock sequence
+        - Unlock sequence: bottom sheet appears with Thai historical narrative + optional media
+        - Content types: text (default), image (lazy-loaded), audio (custom player), document
+        - After user dismisses sheet: INSERT into user_lore, award lore_pts to legacy_score
+        - Multi-site Lore Chains: 3 lore_nodes share a chain_id
+            Collecting all 3 reveals the full consolidated historical story
+            Chain completion awards +50 bonus pts
+            Journal shows chain progress: e.g. "2/3 parts discovered"
+        - Lore Journal: visible in Collection tab → Journal filter pill
+            Lists all unlocked lore entries with date, district, content preview
+            Chains grouped under a chain header card
+      </system>
+
+      <system name="Quiz System">
+        - Questions stored in quiz_questions table (not hardcoded)
+        - Each question linked to figure_id and district_id
+        - Format: Multiple Choice, 4 options (A/B/C/D), correct_option field
+        - C-Class: fetch 1 question via DB.Quiz.getForFigure(figureId)
+        - S/A Master Quiz: fetch 3 questions, all must be answered correctly in sequence
+        - Validation: client-side (correct_option is readable — score write is server-side trigger)
+        - Failure: show fail state, allow retry (no penalty in Phase 1)
+      </system>
+
+      <system name="Legacy Score and Leaderboard">
+        - Figure capture points: Supabase DB trigger on user_captures INSERT
+            → UPDATE profiles SET legacy_score = legacy_score + figures.legacy_pts
+        - Lore points: client-side call DB.Profiles.addLegacyPoints() after user_lore insert
+        - BTS/MRT bonus: ×2 multiplier applied if user checks in near a station polygon
+        - Leaderboard view (Supabase materialized view) aggregates 3 metrics:
+            Legacy Score (primary), Map Discovery % (secondary), Archive Count (tertiary)
+        - Real-time updates: Supabase Realtime subscription on profiles table
+            → update only the affected row in DOM, re-sort if rank changed
+            → unsubscribe when user leaves leaderboard tab
+      </system>
+
+      <system name="Notification System">
+        - Trigger points: check-in confirmed, figure captured, rank changed, new lore unlocked, legacy score updated
+        - Stored in notifications table (user_id, title, message, is_read)
+        - Real-time delivery via Supabase Realtime channel on notifications table
+        - Top-bar red dot badge for unread count
+        - Offcanvas panel shows all notifications with unread indicator dots
+      </system>
+
+    </full_game_systems>
+
+    <user_journey>
+      Step 1  Login/Sign-in via Google OAuth or Email/Password (Supabase Auth)
+      Step 2  Onboarding: grant location permission, choose home district (stored in localStorage)
+      Step 3  Home district fog cleared automatically as starting base
+      Step 4  Map tab: explore fog-covered Thailand, find Watchtower markers
+      Step 5  Travel to real district → GPS validates within 500m tolerance → check-in
+      Step 6  Fog lifts for that district, encounter options appear
+      Step 7  C-Class: tap figure node → 1-question quiz → capture → +50 pts
+              S/A-Class: visit Support Nodes (café×2, OTOP×1, landmark×3) → all met →
+              Encounter unlocks → Master Quiz (3 questions) → capture → up to +500 pts
+      Step 8  While exploring: walk near Lore nodes → proximity triggers → historical story
+              unlocks → saved to Lore Journal → lore_pts awarded
+      Step 9  Collection tab: view captured figures, artifacts, Lore Journal entries
+      Step 10 Leaderboard tab: see real-time ranking vs other players (3 metrics)
+    </user_journey>
+
+    <known_limitations_from_doc>
+      - GPS accuracy: HTML5 Geolocation API gives 10–50m typically; tolerance radius required
+      - GeoJSON performance: 77 polygons need data simplification and efficient polygon matching
+      - Content management: all historical text, quiz questions, lore narratives need curation
+      - Urban vs rural GPS accuracy variance — may need larger tolerance in rural areas
+      - Desktop lacks native GPS (smartphone is the primary target device)
+    </known_limitations_from_doc>
+
+    <future_phases_summary>
+      Phase 2 (Mobile App): React Native, ARKit/ARCore figure capture, background GPS, QR scanning at OTOP nodes
+      Phase 3 (Co-op): Raid encounters (3+ players), district leaderboards, artifact trading, clan system
+      Phase 4 (Seasonal): Rotating story arcs, era filter toggle (Sukhothai/Ayutthaya/Rattanakosin/Modern), limited-time figures
+      Phase 5 (Business): Film studio tie-ins, certified brand outposts, TAT government sponsorship, green transport XP
+    </future_phases_summary>
+
+  </product_vision>
+
+  <!-- ═══════════════════════════════════════════════════════════
        CURRENT SESSION OBJECTIVE
        What to build RIGHT NOW in this coding session.
        ═══════════════════════════════════════════════════════════ -->

@@ -1,6 +1,6 @@
 # Tamroi (ตามรอย) — Development Progress
 
-> NSC 2026 · Team ปลามึกยักษ์ · Last updated: 2026-05-18
+> NSC 2026 · Team ปลามึกยักษ์ · Last updated: 2026-05-19
 
 ---
 
@@ -86,13 +86,43 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 
 ## Known Gaps / Next Steps Within Phase 1
 
-- [ ] Full Thailand district coverage (currently Bangkok-only mock data — needs Supabase integration for all provinces)
-- [ ] C-Class figure quiz flow (quiz modal UI exists, backend answer validation needs testing)
-- [ ] Fog clearing persistence (Supabase `districts_explored` table write + re-read on reload)
-- [ ] BTS/MRT transport bonus detection (×2 points buff logic)
-- [ ] Proximity lore triggers (GPS range → contextual narration popup)
-- [ ] QA pass on all auth edge cases (email confirm off for dev, production email confirm needed)
-- [ ] Vercel production deployment + live environment variable smoke test
+### Core Loop Fixes
+- [ ] **T01** — Fog clearing persistence — re-read `user_districts` on `MapModule.init()`, re-punch cleared holes
+- [ ] **T02** — Support Node visit tracking — Visit button in node card increments `cafes/otops/landmarks_visited` in DB
+- [ ] **T03** — Support Node completion gate — check counters after check-in, show progress bars or Encounter button
+- [ ] **T04** — C-Class quiz modal — fetch from `quiz_questions` table, 4-option MCQ, capture on correct answer
+- [ ] **T05** — Legendary encounter + Master Quiz (3 questions, all correct) after Support Node gate
+- [ ] **T06** — `DB.Profiles.addLegacyPoints()` — client-side write for lore pts only (captures handled by DB trigger)
+- [ ] **T07** — Real map discovery % from DB instead of mock value
+- [ ] **T08** — Collection grid refresh after capture (re-render card, no full reload)
+- [ ] **T09** — Leaderboard refresh after score update (via Realtime or explicit reload)
+- [ ] **T10** — BTS/MRT ×2 bonus — station polygon check on check-in
+
+### Lore System (new — not yet built)
+- [ ] **T11** — `haversineDistance()` helper + `LORE_NODES` array + `checkLoreProximity()` in GPS callback
+- [ ] **T12** — Lore unlock bottom sheet UI (title, narrative, image/audio optional, Save button)
+- [ ] **T13** — `user_lore` table (patch_lore.sql) + `DB.Lore.unlock()` + Journal tab in Collection
+- [ ] **T14** — Lore Points client-side write after `user_lore` insert
+- [ ] **T15** — Rich lore content types: image (lazy img), audio (custom play/pause)
+- [ ] **T24** — Multi-site Lore chain: 3-node, consolidated story sheet, +50 chain bonus, journal grouping
+
+### Missing Infrastructure (from NSC doc)
+- [ ] **T20** — GPS tolerance radius 500m on check-in, bypass on localhost
+- [ ] **T21** — Supabase DB trigger `on_capture_update_score` on `user_captures` → `patch_lore.sql`
+- [ ] **T22** — Supabase Realtime subscription on `profiles` table for live leaderboard
+- [ ] **T25** — `quiz_questions` table + seed 2 questions per mock figure + `DB.Quiz.getForFigure()`
+
+### Infrastructure / Polish
+- [ ] **T16** — Full Thailand district coverage (load polygons from DB, not hardcode)
+- [ ] **T17** — Re-enable email confirmation for production
+- [ ] **T18** — Vercel production smoke test with real env vars
+- [ ] **T19** — Real-time notifications via Supabase Realtime on `notifications` table
+
+### New Files to Add
+| File | Purpose |
+|---|---|
+| `supabase/patch_lore.sql` | `lore_nodes`, `user_lore`, `quiz_questions` tables + legacy score trigger |
+| `js/lore.js` (optional) | Lore proximity module if map.js gets too large |
 
 ---
 

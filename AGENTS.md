@@ -180,13 +180,46 @@ There is no formal test runner in this MVP. For changes:
 
 ## Known Gaps
 
-- Full Thailand district coverage is not implemented; the app currently relies on Bangkok/Nonthaburi mock data plus partial Supabase seeds.
-- C-Class quiz flow and backend answer validation still need completion/testing.
-- Fog clearing persistence via `user_districts` needs end-to-end verification.
-- BTS/MRT x2 transport bonus detection is represented in UI/context but not fully implemented.
-- Proximity lore triggers are planned but not complete.
-- Production auth/email-confirmation behavior needs QA.
-- Vercel production deployment needs env-var smoke testing.
+### Core Loop (broken or mock-only)
+- **Fog persistence**: fog holes re-punched on reload is NOT implemented — `MapModule.init()` does not re-read `user_districts`
+- **Support Node visit tracking**: `cafes_visited / otops_visited / landmarks_visited` columns exist but are never incremented by Visit button
+- **Support Node gate**: Encounter unlock check not wired — always shows as unlocked in current code
+- **C-Class quiz**: modal UI exists but question fetching from DB and capture write are incomplete
+- **Legendary Master Quiz**: not implemented — 3-question sequence for S/A figures missing
+- **Legacy Score write**: no DB trigger yet; client-side write may exist but DB trigger (`on_capture_update_score`) not deployed
+- **Map discovery %**: currently mock value, not computed from `user_districts`
+
+### Lore System (not yet built)
+- `haversineDistance()` helper function: missing
+- Lore proximity check in GPS callback: missing
+- Lore unlock bottom sheet: missing
+- `lore_nodes` and `user_lore` tables: not yet in DB (need `patch_lore.sql`)
+- Lore Journal tab in Collection: missing
+- Multi-site Lore chain consolidation: missing
+
+### Missing DB / Infrastructure
+- `quiz_questions` table: not yet in DB
+- `on_capture_update_score` Supabase trigger: not yet deployed
+- Supabase Realtime leaderboard subscription: not implemented
+- GPS tolerance radius on check-in: not implemented
+- BTS/MRT ×2 bonus polygon check: not implemented
+- Real-time notifications via Supabase Realtime: not implemented
+
+### Content / Data
+- Full Thailand district coverage: only Bangkok/Nonthaburi mock data
+- Quiz question content: no seeded data
+- Lore node content: no seeded data
+- Production email-confirmation: disabled for dev, needs re-enable before NSC demo
+
+## Documentation Rule (MANDATORY for all agents)
+
+After completing ANY task — no matter how small — update these three files BEFORE moving on:
+
+1. **`progress.md`** — mark the task ✅ Done, move from Known Gaps to What's Working, update date
+2. **`CLAUDE.md`** — update Key Gameplay Mechanics if system changed; update File Structure if new file added
+3. **`AGENTS.md`** (this file) — remove the gap from Known Gaps; update Repository Map and Current Implementation Notes if `window.DB` or `window.AppCore` API changed
+
+Skipping this step causes the next coding session to start with stale context and duplicate work.
 
 ## Agent Working Style
 

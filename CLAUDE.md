@@ -150,21 +150,56 @@ cp js/env.example.js js/env.js
 
 - Entire map starts covered by a dark inverted polygon (`fogLayer` in `map.js`)
 - Check-in at a Watchtower punches a hole in the polygon for that district
-- Cleared state persists via Supabase `districts_explored` table
+- GPS Tolerance Radius: 500m Haversine check before allowing check-in (bypass on localhost)
+- Cleared state persists in Supabase `user_districts` (fogged = false)
+- On page reload: re-read `user_districts` in `MapModule.init()` and re-punch all holes
+- Map Discovery % = (cleared districts / total active) × 100, computed from DB
 
 ### Support Node Chain (Phase Lock)
 
-Legendary S-Class figures require before unlock:
-- 2 Local Cafés visited → *Local Rumors*
-- 1 OTOP/Workshop visited → *Relic*
-- 3 Nature/Minor Landmarks checked in → *Historical Knowledge*
+- **C-Class figures**: capturable immediately after check-in + 1-question quiz (no gate)
+- **S/A-Class (Legendary)**: LOCKED until Support Node requirements met for that district:
+  - `cafes_visited >= 2` → *Local Rumors*
+  - `otops_visited >= 1` → *Relic*
+  - `landmarks_visited >= 3` → *Historical Knowledge*
+- Support Node visit: tap node info card → Visit button → increments counter in `user_districts`
+- Progress bars shown per counter while locked; Encounter button appears when all met
+
+### Capture Flow
+
+1. Quiz modal fetches question from `quiz_questions` DB table (location-specific)
+2. C-Class: 1 question. S/A Master Quiz: 3 questions, all correct required
+3. Correct → `INSERT INTO user_captures` → **Supabase DB trigger** auto-updates `profiles.legacy_score`
+4. Capture success animation → collection grid re-renders affected card
+5. Leaderboard row updates via Supabase Realtime subscription
+
+### Lore System (GPS Proximity)
+
+- Lore nodes: GPS points with `radius_m` field (not district-wide)
+- `haversineDistance()` helper checks user position vs each lore node on every GPS update
+- Entering radius → Lore unlock bottom sheet (Thai narrative, optional image/audio)
+- Persisted in `user_lore` table; `lore_pts` added client-side to `profiles.legacy_score`
+- **Multi-site chains**: 3 nodes share `chain_id`; completing all 3 → consolidated story + 50 bonus pts
+- **Lore Journal**: Collection tab → Journal filter pill; chains show progress (e.g. 2/3 parts)
 
 ### Scoring
 
-- C-Class figure captured: ~50 pts
-- S-Class/Legendary: up to 500 pts (King Taksin = 500)
-- BTS/MRT transport bonus: ×2 points multiplier
+- C-Class figure captured: ~50 pts (via DB trigger on `user_captures`)
+- S-Class/Legendary: up to 500 pts (King Taksin = 500) (via DB trigger)
+- Lore node unlocked: defined per node in `lore_nodes.lore_pts` (client-side write)
+- Lore chain complete bonus: +50 pts
+- BTS/MRT transport bonus: ×2 points multiplier on check-in
 - Leaderboard metrics: Map Discovery % · Archive count · Legacy Score
+- Real-time leaderboard: Supabase Realtime subscription on `profiles` table
+
+### New DB Tables / Patches (add via `supabase/patch_lore.sql`)
+
+| Table / Object | Purpose |
+|---|---|
+| `lore_nodes` | GPS lore points with radius, content, chain info |
+| `user_lore` | Which lore nodes user has unlocked (RLS: own rows) |
+| `quiz_questions` | Location-specific MCQ questions per figure (public SELECT) |
+| `on_capture_update_score` trigger | Auto-updates `profiles.legacy_score` on `user_captures` insert |
 
 ---
 
