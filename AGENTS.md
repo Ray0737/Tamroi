@@ -234,10 +234,10 @@ Follow a Karpathy-style engineering discipline for this repo:
 - When uncertain, instrument lightly, inspect the DOM/runtime state, and remove temporary debugging before finishing.
 - Do not rewrite working UI or documents just to make them cleaner.
 - Respect the educational/travel-game product intent when naming, copywriting, and arranging UI.
+- Constantly keep Markdown project documents updated as work changes the repo or agent guidance. Documentation files include `README.md`, `CLAUDE.md`, `CODING_INSTRUCTIONS.md`, `progress.md`, `AGENTS.md`, and proposal files. If the agent realizes it is approaching the context or execution limit, update the relevant Markdown files with current status, decisions, and next steps, then stop instead of continuing.
 
 ## Do Not Do
 
-- Constantly keep Markdown project documents updated as work changes the repo or agent guidance. Documentation files include `README.md`, `CLAUDE.md`, `CODING_INSTRUCTIONS.md`, `progress.md`, `AGENTS.md`, and proposal files. If the agent realizes it is approaching the context or execution limit, update the relevant Markdown files with current status, decisions, and next steps, then stop instead of continuing.
 - Do not add React, TypeScript, Vite, webpack, npm packages, or a package lock.
 - Do not move Supabase calls out of `js/supabase-client.js`.
 - Do not hardcode secrets or commit generated credential files.
