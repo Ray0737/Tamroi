@@ -10,7 +10,7 @@ const MapModule = (() => {
   let _locationWatcher = null;    // watchPosition handle
   let allDistrictsCache = null;
   let homeLocation      = null;
-  const HOME_KEY = 'siamecho_home';
+  const HOME_KEY = 'tam_roi_home';
 
   // ── Bangkok bounding box for the fog overlay ────────
   // Covers entire Greater Bangkok + Nonthaburi

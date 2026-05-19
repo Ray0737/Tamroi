@@ -160,7 +160,7 @@ h1, h2, h3  { font-family: 'Kanit', sans-serif; }
 [Full-screen dark background #2B2D35]
 
   - Centered logo mark (SVG compass / map-pin motif) — 80px
-  - App name: "ลุยไทย" or "SIAM ECHO" — Kanit Bold 32px, white
+  - App name: "ลุยไทย" or "TAM_ROI" — Kanit Bold 32px, white
   - Tagline: "Explore · Capture · Conquer Thailand" — Inter 14px, muted
   - Hero illustration: stylized Thailand map silhouette with glowing pins
     (use CSS clip-path or SVG, sage green glow effect)
