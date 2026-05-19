@@ -22,7 +22,7 @@ if (!url || !key) {
   fs.writeFileSync(
     path.join(__dirname, 'js', 'env.js'),
     `window.ENV = { SUPABASE_URL: '', SUPABASE_ANON_KEY: '' };
-console.error('[Tam_roi] Supabase env vars missing — check Vercel settings.');\n`,
+console.error('[Tamroi] Supabase env vars missing — check Vercel settings.');\n`,
     'utf8'
   );
   process.exit(0); // don't fail the build; app will show config errors at runtime

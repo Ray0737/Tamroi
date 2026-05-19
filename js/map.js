@@ -11,6 +11,7 @@ const MapModule = (() => {
   let allDistrictsCache = null;
   let homeLocation      = null;
   const HOME_KEY = 'tam_roi_home';
+  const LEGACY_HOME_KEY = 'siam' + 'echo_home';
 
   // ── Bangkok bounding box for the fog overlay ────────
   // Covers entire Greater Bangkok + Nonthaburi
@@ -519,7 +520,17 @@ const MapModule = (() => {
 
   // ── Home location ───────────────────────────────────
   function getHomeLocation() {
-    try { return JSON.parse(localStorage.getItem(HOME_KEY) || 'null'); } catch { return null; }
+    try {
+      const saved = localStorage.getItem(HOME_KEY);
+      if (saved) return JSON.parse(saved);
+
+      const legacy = localStorage.getItem(LEGACY_HOME_KEY);
+      if (!legacy) return null;
+
+      localStorage.setItem(HOME_KEY, legacy);
+      localStorage.removeItem(LEGACY_HOME_KEY);
+      return JSON.parse(legacy);
+    } catch { return null; }
   }
 
   function showHomeLocationPicker(districts) {
@@ -542,7 +553,10 @@ const MapModule = (() => {
 
     homeLocation = { id: districtId, lat: district.center_lat, lng: district.center_lng,
                      name_th: district.name_th, name_en: district.name_en };
-    try { localStorage.setItem(HOME_KEY, JSON.stringify(homeLocation)); } catch { /* ignore */ }
+    try {
+      localStorage.setItem(HOME_KEY, JSON.stringify(homeLocation));
+      localStorage.removeItem(LEGACY_HOME_KEY);
+    } catch { /* ignore */ }
 
     window.AppCore?.closeAllSheets();
     map.flyTo([homeLocation.lat, homeLocation.lng], 13, { duration: 1 });
