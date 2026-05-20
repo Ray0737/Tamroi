@@ -129,6 +129,7 @@ Three metrics determine the most influential traveler in Thailand:
 │   ├── supabase-client.js  DB & Auth helpers (Auth · Profiles · Districts · Figures · Leaderboard)
 │   ├── app.js          Boot · auth guard · tab navigation · notifications
 │   ├── map.js          Leaflet · Fog of War (inverted polygon) · watchtowers · GPS dot
+│   ├── fog-grid.js     Reusable Thailand grid helper for future fog work
 │   ├── collection.js   Figures + artifacts grid
 │   ├── missions.js     Active quest + daily challenges
 │   └── leaderboard.js  Podium + rank list

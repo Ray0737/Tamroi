@@ -35,3 +35,9 @@ assert(mapJs.includes('getTransportMultiplier'), 'map.js must apply BTS/MRT poin
 assert(dbJs.includes('user-notifications') && dbJs.includes('subscribe(userId'), 'DB.Notifications must expose Realtime subscription');
 assert(appJs.includes('subscribeNotifications'), 'app.js must subscribe to live notifications');
 assert(leaderboardJs.includes('patchPlayerRow'), 'leaderboard.js must patch changed Realtime rows');
+assert(!leaderboardJs.includes('MOCK_PLAYERS'), 'leaderboard.js must not render mock leaderboard data');
+assert(!leaderboardJs.includes('use mock'), 'leaderboard.js must not fall back to mock leaderboard data');
+assert(leaderboardJs.includes('renderEmptyState'), 'leaderboard.js must render an empty/error state when DB data is unavailable');
+assert(dbJs.includes("from('leaderboard_legacy')"), 'DB.Leaderboard must read the leaderboard view');
+assert(collectionJs.includes('bootstrap.Modal.getOrCreateInstance(modal)'), 'collection figure modal must reuse its Bootstrap instance');
+assert(collectionJs.includes('cleanupModalState'), 'collection figure modal must clean stale backdrop/body state after hiding');

@@ -33,16 +33,16 @@
 | Support Node visit tracking + Encounter gate | `js/map.js` | DB RPC with persistent per-node dedupe and local fallback |
 | C-Class quiz + Legendary Master Quiz | `js/map.js` | Uses `DB.Quiz.getForFigure()` |
 | GPS Lore proximity trigger + unlock flow | `js/map.js` | Mock + Supabase-backed lore nodes |
-| Historical figures + artifacts grid with rarity tiers | `js/collection.js` | Mock data |
+| Historical figures + artifacts grid with rarity tiers | `js/collection.js` | Supabase with local fallback; modal backdrop cleanup fixed |
 | Collection filter (All / S / A / C / Artifacts / Journal) + search | `js/collection.js` | Journal groups chained lore |
 | Collection capture refresh | `js/collection.js` | `markCaptured()` updates affected grid state |
 | Active quest steps display + daily challenges | `js/missions.js` | Mock data, no persistence |
-| Leaderboard (podium + ranked list, 3 metric toggles) | `js/leaderboard.js` | Supabase Realtime profile updates |
+| Leaderboard (podium + ranked list, 3 metric toggles) | `js/leaderboard.js` | DB-backed `leaderboard_legacy` data + Supabase Realtime profile updates |
 | Real-time notification inserts | `js/app.js` + `js/supabase-client.js` | Badge/offcanvas update |
 | All Supabase DB & Auth abstraction | `js/supabase-client.js` | |
 | XSS-safe `escapeHtml()` | `js/utils.js` | |
 | Vercel build + env injection | `build.js` + `vercel.json` | |
-| Thailand grid Fog demo | `js/fog-grid.js` + `demo/` | Demo-first `/demo` page for proposal screenshots; live app fog remains district-polygon based |
+| Thailand grid Fog helper | `js/fog-grid.js` | Reusable helper retained; old `/demo` screenshot page removed |
 
 ### Database (Supabase)
 | Item | File |
@@ -86,6 +86,8 @@
 - [x] **Collection update after capture** — `CollectionModule.markCaptured()` updates captured state and re-renders the grid.
 
 - [x] **Leaderboard refresh after events** — leaderboard subscribes to profile updates via `DB.Leaderboard.subscribe()` and patches/re-sorts rows.
+- [x] **Leaderboard DB data only** — leaderboard reads `leaderboard_legacy` and shows empty/error UI instead of mock rankings.
+- [x] **Collection figure modal backdrop cleanup** — figure detail modal reuses Bootstrap instance and clears stale modal state after close.
 
 - [x] **BTS/MRT transport bonus** — seeded station radius checks apply x2 point multiplier; full station polygons remain future data polish.
 
@@ -119,7 +121,7 @@
 - [x] **Realtime notifications** — `DB.Notifications.subscribe()` listens for inserts and updates badge/offcanvas.
 - [x] **Persistent Support Node visits** — `user_support_node_visits` stores one row per `(user_id, node_id)`, and `increment_node_visit` increments counters only on first visit.
 - [x] **Project structure cleanup** — planning/proposal/support docs live under `docs/`; runnable static app files remain at repo root.
-- [x] **Grid Fog proposal demo** — `window.FogGrid` creates stable Thailand grid cells and `/demo` renders a current-cell unlock mockup for screenshots.
+- [x] **Grid Fog helper retained** — `window.FogGrid` creates stable Thailand grid cells; old `/demo` route removed.
 
 #### Medium
 
@@ -155,12 +157,12 @@ Week 3 — Lore system
   10. Lore unlock UI
   11. Lore Journal persistence + Lore Points
 
-Week 4 — Polish & demo prep
+Week 4 — Polish
   12. BTS/MRT bonus
   13. Rich lore content (image/audio)
   14. Email verify re-enable
   15. Vercel production smoke test
-  16. Grid Fog proposal demo at /demo
+  16. Grid Fog helper retained; /demo route removed
 ```
 
 ---

@@ -7,6 +7,7 @@ const CollectionModule = (() => {
   let loreEntries = [];
   let activeFilter = 'all';
   let loaded = false;
+  let figureModalBound = false;
 
   const MOCK_FIGURES = [
     { id: 'king-taksin',    name_th: 'สมเด็จพระเจ้าตากสิน',      name_en: 'King Taksin the Great',  class: 'S', legacy_pts: 500, image_emoji: '👑', district_id: 'rattanakosin' },
@@ -331,6 +332,7 @@ const CollectionModule = (() => {
     if (!fig) return;
     const modal = document.getElementById('figure-modal');
     if (!modal) return;
+    bindFigureModalCleanup(modal);
 
     document.getElementById('modal-figure-emoji').textContent = fig.image_emoji || '👤';
     document.getElementById('modal-figure-name').textContent  = fig.name_th;
@@ -339,8 +341,25 @@ const CollectionModule = (() => {
     document.getElementById('modal-figure-badge').textContent = `${fig.class}-Class`;
     document.getElementById('modal-figure-pts').textContent   = `+${fig.legacy_pts} Legacy Points`;
 
-    const bsModal = new bootstrap.Modal(modal);
+    cleanupModalState();
+    const bsModal = bootstrap.Modal.getOrCreateInstance(modal);
     bsModal.show();
+  }
+
+  function bindFigureModalCleanup(modal) {
+    if (figureModalBound) return;
+    figureModalBound = true;
+    modal.addEventListener('hidden.bs.modal', cleanupModalState);
+  }
+
+  function cleanupModalState() {
+    window.setTimeout(() => {
+      if (document.querySelector('.modal.show')) return;
+      document.body.classList.remove('modal-open');
+      document.body.style.removeProperty('overflow');
+      document.body.style.removeProperty('padding-right');
+      document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+    }, 0);
   }
 
   function markCaptured(figureId) {
