@@ -42,6 +42,7 @@
 | All Supabase DB & Auth abstraction | `js/supabase-client.js` | |
 | XSS-safe `escapeHtml()` | `js/utils.js` | |
 | Vercel build + env injection | `build.js` + `vercel.json` | |
+| Thailand grid Fog demo | `js/fog-grid.js` + `demo/` | Demo-first `/demo` page for proposal screenshots; live app fog remains district-polygon based |
 
 ### Database (Supabase)
 | Item | File |
@@ -118,6 +119,7 @@
 - [x] **Realtime notifications** — `DB.Notifications.subscribe()` listens for inserts and updates badge/offcanvas.
 - [x] **Persistent Support Node visits** — `user_support_node_visits` stores one row per `(user_id, node_id)`, and `increment_node_visit` increments counters only on first visit.
 - [x] **Project structure cleanup** — planning/proposal/support docs live under `docs/`; runnable static app files remain at repo root.
+- [x] **Grid Fog proposal demo** — `window.FogGrid` creates stable Thailand grid cells and `/demo` renders a current-cell unlock mockup for screenshots.
 
 #### Medium
 
@@ -158,6 +160,7 @@ Week 4 — Polish & demo prep
   13. Rich lore content (image/audio)
   14. Email verify re-enable
   15. Vercel production smoke test
+  16. Grid Fog proposal demo at /demo
 ```
 
 ---

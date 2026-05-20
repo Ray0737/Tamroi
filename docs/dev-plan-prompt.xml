@@ -14,7 +14,7 @@
     <contest>NSC 2026</contest>
     <team>ปลามึกยักษ์</team>
     <phase>Phase 1 — Web MVP</phase>
-    <generated>2026-05-19</generated>
+    <generated>2026-05-20</generated>
     <description>
       Mobile-first gamified Thailand travel web app. Players travel to real Thai districts,
       check in at Watchtower landmarks to clear Fog of War, visit Support Nodes (local cafes,
@@ -104,6 +104,9 @@
         - Map Discovery % = (cleared districts / 77) × 100 — leaderboard metric
         - Cleared state persists in Supabase user_districts (fogged = false)
         - On page reload: re-read user_districts and re-punch all cleared holes
+        - Current prototype also includes a demo-first Thailand grid fog helper
+          (window.FogGrid) and screenshot page at /demo; live app persistence is not
+          wired to the grid model yet
       </system>
 
       <system name="Watchtower Check-in">

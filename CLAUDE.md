@@ -34,6 +34,10 @@
 ├── login.html           Email + Google OAuth login & register
 ├── onboarding.html      First-run: location permission + home district picker
 ├── app.html             Main app shell — Map · Collection · Mission · Leaderboard
+├── demo/
+│   ├── index.html       Proposal screenshot route at /demo
+│   ├── demo.css         Grid fog demo styles
+│   └── demo.js          Grid fog demo Leaflet renderer
 ├── build.js             Vercel build — injects Supabase env vars at deploy time
 ├── vercel.json          Deployment config + security headers
 ├── css/
@@ -50,6 +54,7 @@
 │   ├── supabase-client.js  All DB & Auth calls live here
 │   ├── app.js           Boot · auth guard · tab navigation · notifications
 │   ├── map.js           Leaflet · Fog of War · watchtowers · GPS dot · Lore proximity
+│   ├── fog-grid.js      Reusable Thailand grid Fog helper exposed as window.FogGrid
 │   ├── collection.js    Figures + artifacts grid · Lore Journal
 │   ├── missions.js      Active quest + daily challenges
 │   └── leaderboard.js   Podium + rank list
@@ -74,6 +79,7 @@
     ├── prod-readiness-static.test.mjs Static regression check for deploy readiness
     ├── district-seed-static.test.mjs Static regression check for DB/map district parity
     ├── env-policy-static.test.mjs Static regression check for tracked env policy
+    ├── grid-fog-static.test.mjs Static regression check for grid fog demo assets
     └── run-static.mjs One-command static regression suite runner
 ```
 
@@ -171,6 +177,7 @@ cd NSC_2026
 
 - Entire map starts covered by a dark inverted polygon (`fogLayer` in `map.js`)
 - Check-in at a Watchtower punches a hole in the polygon for that district
+- A separate `/demo` route shows the proposed Thailand-wide grid fog model using `window.FogGrid`; it is demo-first and not yet wired into the live app persistence flow
 - GPS Tolerance Radius: 500m Haversine check before allowing check-in (bypass on localhost)
 - Cleared state persists in Supabase `user_districts` (fogged = false)
 - On page reload: re-read `user_districts` in `MapModule.init()` and re-punch all holes

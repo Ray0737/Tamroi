@@ -21,6 +21,7 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 | `login.html` | ✅ Done | Email + password + Google OAuth, register flow |
 | `onboarding.html` | ✅ Done | Location permission request + home district picker |
 | `app.html` | ✅ Done | 4-tab shell — Map · Collection · Missions · Leaderboard |
+| `demo/index.html` | ✅ Done | Proposal screenshot page for Thailand grid Fog of War at `/demo` |
 
 ### CSS (Design System)
 
@@ -43,6 +44,7 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 | `js/supabase-client.js` | ✅ Done | Full DB & Auth abstraction — Auth, Profiles, Districts, Figures, Leaderboard, Lore, Quiz |
 | `js/app.js` | ✅ Done | Boot sequence, auth guard, tab navigation, bottom sheets, toast notifications |
 | `js/map.js` | ✅ Done | Leaflet map, Fog of War persistence, live GPS dot, watchtower markers, node card, Lore proximity unlocks |
+| `js/fog-grid.js` | ✅ Done | Reusable Thailand grid Fog of War helper for demo-first future map integration |
 | `js/collection.js` | ✅ Done | Historical figures + artifacts grid, collection status display, Lore Journal |
 | `js/missions.js` | ✅ Done | Active quest list + daily challenge display |
 | `js/leaderboard.js` | ✅ Done | Podium + ranked player list with Legacy Score |
@@ -80,6 +82,7 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - **Auth flow** — email/password + Google OAuth via Supabase, auth guard on app pages
 - **Onboarding** — location permission request, home district selection
 - **Fog of War** — inverted Leaflet polygon clears per district on Watchtower check-in
+- **Grid Fog prototype** — reusable `window.FogGrid` helper and `/demo` page show Thailand-wide cell visibility for proposal screenshots
 - **Fog persistence** — `user_districts` is re-read before map render and cleared holes survive reload
 - **Live GPS tracking** — real-time user dot + accuracy ring on map
 - **GPS check-in tolerance** — 500m Haversine gate on Watchtower check-in, bypassed on localhost
@@ -137,6 +140,7 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - [x] **T18** — Vercel production smoke checklist added in `docs/production-smoke.md`
 - [x] **T19** — Real-time notifications via Supabase Realtime on `notifications` table
 - [x] **T27** — Project structure cleanup — moved planning/proposal/support docs into `docs/` while preserving zero-tooling static app paths
+- [x] **T28** — Thailand grid Fog demo — reusable `js/fog-grid.js` plus `/demo` screenshot page for grid-cell visibility prototype
 
 ### New Files Added
 | File | Purpose |
@@ -148,7 +152,14 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 | `tests/prod-readiness-static.test.mjs` | Static regression check for production readiness docs/config |
 | `tests/district-seed-static.test.mjs` | Static regression check that SQL district seeds match MVP map districts |
 | `tests/env-policy-static.test.mjs` | Static regression check for tracked `js/env.js` public-anon policy |
+| `tests/grid-fog-static.test.mjs` | Static regression check for reusable grid fog helper and `/demo` assets |
 | `tests/run-static.mjs` | Runs the local static regression suite in one command |
+| `js/fog-grid.js` | Classic-script helper exposing `window.FogGrid` for Thailand grid cell generation and lookup |
+| `demo/index.html` | Screenshotable grid Fog of War demo route at `/demo` |
+| `demo/demo.css` | Demo-only layout and grid fog cell styling |
+| `demo/demo.js` | Demo-only Leaflet rendering and current-cell unlock simulation |
+| `docs/superpowers/specs/2026-05-20-grid-fog-demo-design.md` | Design note for the approved grid fog demo approach |
+| `docs/superpowers/plans/2026-05-20-grid-fog-demo.md` | Implementation plan for the grid fog demo work |
 
 ---
 
