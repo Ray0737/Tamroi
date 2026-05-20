@@ -177,6 +177,14 @@
 .marker-cafe     { background: rgba(123,198,126,0.85); }
 .marker-otop     { background: rgba(246,193,158,0.85); border-radius: 4px; }
 .marker-landmark { background: rgba(137,134,168,0.25); border-color: #8986A8; }
+.marker-lore {
+  width: 24px;
+  height: 24px;
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  border-color: var(--color-white);
+  box-shadow: 0 0 12px rgba(246,193,158,0.45);
+}
 
 /* ── Dark Leaflet popup ───────────────────────────────── */
 .node-popup .leaflet-popup-content-wrapper {

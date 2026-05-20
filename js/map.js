@@ -434,6 +434,7 @@ const MapModule = (() => {
         if (id) unlockedLoreIds.add(id);
       });
       persistLocalLoreState();
+      if (map) renderLoreMarkers();
     } catch { /* keep mock/local lore state */ }
   }
 
@@ -484,6 +485,7 @@ const MapModule = (() => {
     }
 
     window.AppCore?.openLoreSheet(node);
+    renderLoreMarkers();
   }
 
   async function saveLoreUnlock(loreId) {
@@ -507,6 +509,7 @@ const MapModule = (() => {
     unlockedLoreIds.add(node.id);
     pendingLoreIds.delete(node.id);
     persistLocalLoreState();
+    renderLoreMarkers();
     window.AppCore?.closeAllSheets();
     const earned = (node.lore_pts || 0) * getTransportMultiplier();
     if (earned > (node.lore_pts || 0)) window.AppCore?.showToast('BTS/MRT Bonus! x2 Legacy Points');
@@ -542,6 +545,7 @@ const MapModule = (() => {
     buildFogLayer(districts);
     renderWatchtowers(districts);
     renderNodes();
+    renderLoreMarkers();
     renderFigureNodes();
   }
 
@@ -654,6 +658,49 @@ const MapModule = (() => {
       });
       markers[`figure-${figure.id}`] = marker;
     });
+  }
+
+  function renderLoreMarkers() {
+    Object.keys(markers).forEach(k => {
+      if (k.startsWith('lore-')) { map.removeLayer(markers[k]); delete markers[k]; }
+    });
+
+    getLoreNodes().forEach(node => {
+      const districtId = node.district_id || node.districtId;
+      const state = districtId ? userDistrictState[districtId] : null;
+      const visible = unlockedLoreIds.has(node.id) || pendingLoreIds.has(node.id);
+      if (!visible || state?.fogged) return;
+
+      const icon = L.divIcon({
+        className: '',
+        html: `<div class="marker-node marker-lore" title="${escapeHtml(node.name_th || node.name_en || 'Lore')}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px">
+            <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
+            <path d="M4 4.5A2.5 2.5 0 016.5 2H20v20H6.5A2.5 2.5 0 014 19.5z"/>
+          </svg>
+        </div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+      });
+
+      const marker = L.marker([node.lat, node.lng], { icon }).addTo(map);
+      marker.on('click', () => openVisitedLore(node.id));
+      markers[`lore-${node.id}`] = marker;
+    });
+  }
+
+  function openVisitedLore(loreId) {
+    const node = getLoreNodes().find(item => item.id === loreId);
+    if (!node) return;
+
+    if (!unlockedLoreIds.has(loreId) && !pendingLoreIds.has(loreId)) {
+      window.AppCore?.showToast('เดินทางไปปลดล็อค Lore นี้ก่อน');
+      return;
+    }
+
+    activeLoreNode = node;
+    window.AppCore?.openLoreSheet({ ...node, is_saved: unlockedLoreIds.has(loreId) });
   }
 
   // ── Node info card (above nav, no z-index conflicts) ──

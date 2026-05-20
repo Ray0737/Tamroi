@@ -17,9 +17,14 @@ assert(mapJs.includes('function haversineDistance'), 'map.js must expose a priva
 assert(mapJs.includes('const LORE_NODES'), 'map.js must define mock LORE_NODES');
 assert(mapJs.includes('checkLoreProximity'), 'map.js must check lore proximity from GPS updates');
 assert(mapJs.includes('unlockLore'), 'map.js must unlock lore when user enters a lore radius');
+assert(mapJs.includes('renderLoreMarkers'), 'map.js must render map icons for visited lore places');
+assert(mapJs.includes('openVisitedLore'), 'map.js must reopen visited lore from a lore icon click');
+assert(mapJs.includes("marker.on('click', () => openVisitedLore(node.id))"), 'visited lore markers must open lore on icon click');
+assert(mapJs.includes('renderLoreMarkers();'), 'map.js must refresh lore icons after lore state changes');
 assert(appHtml.includes('id="lore-sheet"'), 'app.html must include the lore unlock bottom sheet');
 assert(appHtml.includes('id="chain-sheet"'), 'app.html must include the chain completion bottom sheet');
 assert(appJs.includes('function openLoreSheet'), 'app.js must expose openLoreSheet');
+assert(appJs.includes('node.is_saved'), 'reopened lore sheets must not offer duplicate Journal saves');
 assert(appJs.includes('function openLoreChainSheet'), 'app.js must expose openLoreChainSheet');
 assert(dbJs.includes('const Lore'), 'supabase-client.js must add DB.Lore');
 assert(dbJs.includes('addLegacyPoints'), 'supabase-client.js must add DB.Profiles.addLegacyPoints');
