@@ -25,11 +25,10 @@ const Auth = {
   },
 
   async signInGoogle() {
+    const base = window.location.href.split('#')[0].replace(/\/[^/]*$/, '');
     const { error } = await _sb.auth.signInWithOAuth({
       provider: 'google',
-      options: { 
-        redirectTo: window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, "/onboarding.html")
-      }
+      options: { redirectTo: base + '/onboarding.html' }
     });
     if (error) throw error;
   },
