@@ -44,6 +44,9 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `login.html`: centered email/password login, register, Google OAuth, and client-side form validation.
 - `onboarding.html`: first-run location permission and home district picker.
 - `app.html`: main app shell with Map, Collection, Missions, Leaderboard tabs, Bootstrap offcanvas panels, lore/check-in/home bottom sheets, and figure modal.
+- `demo/index.html`: proposal screenshot route at `/demo` for Thailand-wide grid Fog of War UI.
+- `demo/demo.css`: demo-only layout and grid-cell visibility styling.
+- `demo/demo.js`: demo-only Leaflet grid renderer and current-cell unlock simulation.
 - `build.js`: Vercel build-time env injection into `js/env.js`.
 - `vercel.json`: deployment config and security headers.
 - `css/variables.css`: authoritative design tokens.
@@ -58,6 +61,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `js/supabase-client.js`: the only place that should call Supabase directly; exposes `window.DB`.
 - `js/app.js`: boot, auth guard, tabs, sheets, lore sheets, toast, notifications, top bar; exposes `window.AppCore`.
 - `js/map.js`: Leaflet map, inverted fog polygon, watchtowers, support nodes, GPS dot/ring, home location picker, GPS Lore proximity checks.
+- `js/fog-grid.js`: reusable classic-script Thailand grid helper; exposes `window.FogGrid`.
 - `js/collection.js`: figures, artifacts grid, Lore Journal, and capture card refresh.
 - `js/missions.js`: active mission and daily challenges.
 - `js/leaderboard.js`: metric tabs, podium, ranked list.
@@ -77,6 +81,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `tests/prod-readiness-static.test.mjs`: Node static regression check for production readiness docs/config.
 - `tests/district-seed-static.test.mjs`: Node static regression check that SQL district seeds match MVP map districts.
 - `tests/env-policy-static.test.mjs`: Node static regression check for tracked `js/env.js` public-anon policy.
+- `tests/grid-fog-static.test.mjs`: Node static regression check for `window.FogGrid` and `/demo` assets.
 - `tests/run-static.mjs`: one-command static regression suite runner.
 
 `js/env.js` is intentionally trackable for this prototype. Keep it limited to public Supabase anon/dev-safe values only.
@@ -85,6 +90,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 
 - The current CSS tokens in `css/variables.css` are authoritative. They differ from older docs: background is `#1C1B2E`, primary is `#F6C19E`, card surfaces are `#252240` / `#201E38`.
 - `window.APP_CONFIG.appName` is `Tamroi`, version `0.6.0`.
+- `window.FogGrid` exposes demo-first Thailand grid cell generation and coordinate lookup for the `/demo` Fog of War prototype.
 - The map currently carries mock Bangkok/Nonthaburi district and node data with Supabase fallback/integration.
 - The map carries mock Lore nodes with Supabase fallback/integration, checks proximity in the GPS callback, and persists local fallback unlocks in `tam_roi_lore_unlocked`.
 - The database seed in `supabase/schema.sql` currently seeds a smaller Bangkok district set than `js/map.js`.
