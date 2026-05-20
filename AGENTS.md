@@ -44,9 +44,6 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `login.html`: centered email/password login, register, Google OAuth, and client-side form validation.
 - `onboarding.html`: first-run location permission and home district picker.
 - `app.html`: main app shell with Map, Collection, Missions, Leaderboard tabs, Bootstrap offcanvas panels, lore/check-in/home bottom sheets, and figure modal.
-- `demo/index.html`: proposal screenshot route at `/demo` for Thailand-wide grid Fog of War UI.
-- `demo/demo.css`: demo-only layout and grid-cell visibility styling.
-- `demo/demo.js`: demo-only Leaflet grid renderer and current-cell unlock simulation.
 - `build.js`: Vercel build-time env injection into `js/env.js`.
 - `vercel.json`: deployment config and security headers.
 - `css/variables.css`: authoritative design tokens.
@@ -81,7 +78,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `tests/prod-readiness-static.test.mjs`: Node static regression check for production readiness docs/config.
 - `tests/district-seed-static.test.mjs`: Node static regression check that SQL district seeds match MVP map districts.
 - `tests/env-policy-static.test.mjs`: Node static regression check for tracked `js/env.js` public-anon policy.
-- `tests/grid-fog-static.test.mjs`: Node static regression check for `window.FogGrid` and `/demo` assets.
+- `tests/grid-fog-static.test.mjs`: Node static regression check for `window.FogGrid`.
 - `tests/run-static.mjs`: one-command static regression suite runner.
 
 `js/env.js` is intentionally trackable for this prototype. Keep it limited to public Supabase anon/dev-safe values only.
@@ -90,7 +87,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 
 - The current CSS tokens in `css/variables.css` are authoritative. They differ from older docs: background is `#1C1B2E`, primary is `#F6C19E`, card surfaces are `#252240` / `#201E38`.
 - `window.APP_CONFIG.appName` is `Tamroi`, version `0.6.0`.
-- `window.FogGrid` exposes demo-first Thailand grid cell generation and coordinate lookup for the `/demo` Fog of War prototype.
+- `window.FogGrid` exposes reusable Thailand grid cell generation and coordinate lookup for future Fog of War work.
 - The map currently carries mock Bangkok/Nonthaburi district and node data with Supabase fallback/integration.
 - The map carries mock Lore nodes with Supabase fallback/integration, checks proximity in the GPS callback, and persists local fallback unlocks in `tam_roi_lore_unlocked`.
 - The database seed in `supabase/schema.sql` currently seeds a smaller Bangkok district set than `js/map.js`.
@@ -102,7 +99,8 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `js/map.js` has seeded BTS/MRT station radius data for x2 point multiplier checks.
 - Home/base district state uses `tam_roi_home`; `js/map.js` migrates the legacy home key if present.
 - Real-time GPS uses `navigator.geolocation.watchPosition`; failures should degrade silently and keep the app usable.
-- Collection, missions, notifications, and leaderboard use mock fallback data when Supabase calls fail.
+- Collection, missions, and notifications use mock fallback data when Supabase calls fail; leaderboard uses the DB-backed `leaderboard_legacy` view and shows an empty/error state instead of mock rankings.
+- Collection figure detail uses a reused Bootstrap modal instance and cleans stale backdrop/body state on close.
 - `window.DB` groups `Auth`, `Profiles`, `Districts`, `Figures`, `Artifacts`, `Leaderboard`, `Lore`, `Quiz`, and `Notifications`; `Districts.getVisitedSupportNodes()` loads persisted support-node IDs and `Notifications.subscribe()` wraps Supabase Realtime.
 - `window.AppCore` groups `App`, `switchTab`, `openSheet`, `closeAllSheets`, `openLoreSheet`, `openLoreChainSheet`, `showFloatPts`, and `showToast`.
 
@@ -231,6 +229,7 @@ Skipping this step causes the next coding session to start with stale context an
 
 Follow a Karpathy-style engineering discipline for this repo:
 
+- Use RTK for every task in this repository. Treat `@/home/papajittan/.codex/RTK.md` as active required guidance before planning, editing, testing, reviewing, or documenting work.
 - Read the surrounding code before changing it. Build a small mental model first.
 - Prefer the simplest working change that fits the existing system.
 - Keep state and control flow explicit. Avoid clever abstractions in this prototype.

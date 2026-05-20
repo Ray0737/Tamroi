@@ -2,29 +2,17 @@
 const LeaderboardModule = (() => {
   let loaded = false;
   let activeMetric = 'legacy';
+  let activePeriod = 'all';
   let currentPlayers = [];
   let realtimeChannel = null;
 
   const MY_ID = '__current_user__';
 
-  const MOCK_PLAYERS = [
-    { id: '1',    username: 'ภูมิ เดินทัพ',      legacy_score: 4200, map_discovery: 68, archive_count: 21, province: 'Bangkok' },
-    { id: '2',    username: 'Nana Explorer',     legacy_score: 3850, map_discovery: 62, archive_count: 18, province: 'Chiang Mai' },
-    { id: '3',    username: 'ไทยเที่ยวไทย',      legacy_score: 3600, map_discovery: 59, archive_count: 17, province: 'Bangkok' },
-    { id: '4',    username: 'WanderingKrit',     legacy_score: 3100, map_discovery: 53, archive_count: 14, province: 'Phuket' },
-    { id: '5',    username: 'แอน ผจญภัย',       legacy_score: 2900, map_discovery: 48, archive_count: 13, province: 'Ayutthaya' },
-    { id: '6',    username: 'SiamSurfer99',      legacy_score: 2750, map_discovery: 45, archive_count: 11, province: 'Pattaya' },
-    { id: '7',    username: 'กมล นักท่องเที่ยว', legacy_score: 2500, map_discovery: 42, archive_count: 10, province: 'Bangkok' },
-    { id: MY_ID,  username: 'You',               legacy_score: 1850, map_discovery: 34, archive_count:  7, province: 'Bangkok' },
-    { id: '9',    username: 'Pat Travels',       legacy_score: 1600, map_discovery: 29, archive_count:  6, province: 'Khon Kaen' },
-    { id: '10',   username: 'สมชาย นักเดิน',    legacy_score: 1400, map_discovery: 24, archive_count:  5, province: 'Sukhothai' },
-  ];
-
   const CROWN_SVG = `<svg viewBox="0 0 24 24" fill="#FFD700" stroke="#FFD700" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M2 19l3-9 5 5 4-9 4 9 3-7v11H2z"/></svg>`;
 
   function load() {
     if (loaded) {
-      render(currentPlayers);
+      render();
       subscribe();
       return;
     }
@@ -57,22 +45,25 @@ const LeaderboardModule = (() => {
     const listEl = document.getElementById('leaderboard-list');
     if (listEl) listEl.innerHTML = `<div style="display:flex;justify-content:center;padding:40px"><div class="spinner"></div></div>`;
 
-    let players = MOCK_PLAYERS;
+    let players = [];
     try {
       const user = window.AppCore?.App?.user;
       const data = await DB.Leaderboard.get(activeMetric);
-      if (data?.length) {
-        players = data.map(p => ({
-          ...p,
-          id: p.id === user?.id ? MY_ID : p.id,
-          province: 'Thailand',
-        }));
-      }
-    } catch { /* use mock */ }
+      players = (data || []).map(p => ({
+        ...p,
+        id: p.id === user?.id ? MY_ID : p.id,
+        province: p.province || 'Thailand',
+      }));
+    } catch (error) {
+      currentPlayers = [];
+      renderEmptyState('โหลด Leaderboard จากฐานข้อมูลไม่ได้');
+      subscribe();
+      return;
+    }
 
     sortPlayers(players);
     currentPlayers = players;
-    render(players);
+    render();
     subscribe();
   }
 
@@ -89,13 +80,31 @@ const LeaderboardModule = (() => {
     return (player.legacy_score || 0).toLocaleString() + ' pts';
   }
 
-  function render(players) {
-    players = players?.length ? players : MOCK_PLAYERS;
+  function render(players = currentPlayers) {
+    if (!players?.length) {
+      renderEmptyState('ยังไม่มีข้อมูล Leaderboard');
+      return;
+    }
     sortPlayers(players);
     currentPlayers = players;
     renderPodium(players.slice(0, 3));
     renderMyRank(players);
     renderList(players);
+  }
+
+  function renderEmptyState(message) {
+    const podium = document.getElementById('leaderboard-podium');
+    const myRank = document.getElementById('my-rank-card');
+    const list = document.getElementById('leaderboard-list');
+    if (podium) podium.innerHTML = '';
+    if (myRank) myRank.innerHTML = '';
+    if (list) {
+      list.innerHTML = `
+        <div style="padding:28px var(--space-md);text-align:center;color:var(--color-muted)">
+          ${escapeHtml(message)}
+        </div>
+      `;
+    }
   }
 
   function subscribe() {
@@ -151,7 +160,8 @@ const LeaderboardModule = (() => {
   // ── Podium (top 3) ────────────────────────────────
   function renderPodium(top3) {
     const el = document.getElementById('leaderboard-podium');
-    if (!el || top3.length < 3) return;
+    if (!el) return;
+    if (top3.length < 3) { el.innerHTML = ''; return; }
     const [first, second, third] = top3;
 
     const podiumItem = (p, pos) => {

@@ -266,7 +266,7 @@ const Leaderboard = {
               : 'legacy_score';
 
     const { data, error } = await _sb
-      .from('profiles')
+      .from('leaderboard_legacy')
       .select('id, username, avatar_url, legacy_score, map_discovery, archive_count')
       .order(col, { ascending: false })
       .limit(limit);

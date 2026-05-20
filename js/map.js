@@ -502,7 +502,7 @@ const MapModule = (() => {
         await DB.Lore.unlock(user.id, node.id);
         await DB.Profiles.addLegacyPoints(user.id, (node.lore_pts || 0) * getTransportMultiplier());
       }
-    } catch { /* offline/demo unlock still persists locally */ }
+    } catch { /* offline unlock still persists locally */ }
 
     unlockedLoreIds.add(node.id);
     pendingLoreIds.delete(node.id);
@@ -728,7 +728,7 @@ const MapModule = (() => {
     const user = window.AppCore?.App?.user;
     try {
       if (user) nextState = await DB.Districts.updateNodeVisit(user.id, node.districtId, node.type, nodeId);
-    } catch { /* offline/demo fallback below */ }
+    } catch { /* offline fallback below */ }
 
     const current = userDistrictState[node.districtId] || { fogged: false, cafes_visited: 0, otops_visited: 0, landmarks_visited: 0 };
     const field = node.type === 'cafe' ? 'cafes_visited'
@@ -953,7 +953,7 @@ const MapModule = (() => {
     const user = window.AppCore?.App?.user;
     try {
       if (user) await DB.Figures.capture(user.id, activeQuiz.figure.id, activeQuiz.questions.length);
-    } catch { /* offline/demo capture below */ }
+    } catch { /* offline capture below */ }
 
     window.CollectionModule?.markCaptured?.(activeQuiz.figure.id);
     window.AppCore?.closeAllSheets();
@@ -979,7 +979,7 @@ const MapModule = (() => {
     try {
       const user = window.AppCore?.App?.user;
       if (user) await DB.Districts.checkIn(user.id, d.id);
-    } catch { /* offline/demo — continue locally */ }
+    } catch { /* offline — continue locally */ }
 
     userDistrictState[d.id] = { ...userDistrictState[d.id], fogged: false };
 

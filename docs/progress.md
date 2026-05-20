@@ -21,7 +21,6 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 | `login.html` | ✅ Done | Email + password + Google OAuth, register flow |
 | `onboarding.html` | ✅ Done | Location permission request + home district picker |
 | `app.html` | ✅ Done | 4-tab shell — Map · Collection · Missions · Leaderboard |
-| `demo/index.html` | ✅ Done | Proposal screenshot page for Thailand grid Fog of War at `/demo` |
 
 ### CSS (Design System)
 
@@ -44,10 +43,10 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 | `js/supabase-client.js` | ✅ Done | Full DB & Auth abstraction — Auth, Profiles, Districts, Figures, Leaderboard, Lore, Quiz |
 | `js/app.js` | ✅ Done | Boot sequence, auth guard, tab navigation, bottom sheets, toast notifications |
 | `js/map.js` | ✅ Done | Leaflet map, Fog of War persistence, live GPS dot, watchtower markers, node card, Lore proximity unlocks |
-| `js/fog-grid.js` | ✅ Done | Reusable Thailand grid Fog of War helper for demo-first future map integration |
+| `js/fog-grid.js` | ✅ Done | Reusable Thailand grid Fog of War helper for future map integration |
 | `js/collection.js` | ✅ Done | Historical figures + artifacts grid, collection status display, Lore Journal |
 | `js/missions.js` | ✅ Done | Active quest list + daily challenge display |
-| `js/leaderboard.js` | ✅ Done | Podium + ranked player list with Legacy Score |
+| `js/leaderboard.js` | ✅ Done | DB-backed podium + ranked player list with Legacy Score |
 
 ### Database (Supabase)
 
@@ -70,6 +69,8 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 | File | Status | Notes |
 |---|---|---|
 | `README.md` | ✅ Done | Full project overview, roadmap, local dev + Supabase + Vercel setup |
+| `AGENTS.md` | ✅ Done | Requires agents to use RTK for every repository task |
+| `CLAUDE.md` | ✅ Done | Mirrors required RTK workflow guidance |
 | `docs/CODING_INSTRUCTIONS.md` | ✅ Done | Design system spec, component patterns, layout rules |
 | `docs/production-smoke.md` | ✅ Done | Production Supabase/Vercel smoke-test checklist |
 | `docs/proposal/tam_roi_nsc_proposal.md` | ✅ Done | Detailed game mechanics proposal |
@@ -82,7 +83,7 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - **Auth flow** — email/password + Google OAuth via Supabase, auth guard on app pages
 - **Onboarding** — location permission request, home district selection
 - **Fog of War** — inverted Leaflet polygon clears per district on Watchtower check-in
-- **Grid Fog prototype** — reusable `window.FogGrid` helper and `/demo` page show Thailand-wide cell visibility for proposal screenshots
+- **Grid Fog helper** — reusable `window.FogGrid` helper remains for future Thailand-wide cell visibility work
 - **Fog persistence** — `user_districts` is re-read before map render and cleared holes survive reload
 - **Live GPS tracking** — real-time user dot + accuracy ring on map
 - **GPS check-in tolerance** — 500m Haversine gate on Watchtower check-in, bypassed on localhost
@@ -93,9 +94,9 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - **Lore proximity system** — GPS range checks unlock lore sheets, persist to `user_lore`, and award lore points
 - **Lore Journal** — Collection → Journal lists unlocked lore, expands entries, and groups 3-part chains
 - **Lore chains** — completing all 3 chain parts shows consolidated story and awards +50 points
-- **Collection grid** — historical figures + artifacts display
+- **Collection grid** — historical figures + artifacts display; figure detail modal reuses a Bootstrap instance and clears stale backdrops after close
 - **Daily missions** — quest list and challenge tracker
-- **Leaderboard** — podium + ranked list with Legacy Score metrics and profile Realtime subscription
+- **Leaderboard** — DB-backed podium + ranked list from `leaderboard_legacy`, with Legacy Score metrics and profile Realtime subscription
 - **Design system** — consistent dark charcoal + orange + sage green palette, mobile-first 430px
 - **Quiz infrastructure and capture flow** — `quiz_questions` table, C-Class quiz, Master Quiz, and capture writes are wired
 - **Legacy score trigger** — `on_capture_update_score` DB trigger awards figure capture points
@@ -103,6 +104,7 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - **Realtime notifications** — notification inserts subscribe through Supabase Realtime and update the offcanvas/badge
 - **Production email redirect** — email/password signup sets `emailRedirectTo` back to `login.html`
 - **MVP district DB seed patch** — DB can be brought up to parity with current map district coverage
+- **Agent RTK workflow guidance** — `AGENTS.md` and `CLAUDE.md` require RTK for every repository task
 - **Clean project structure** — runnable static app files stay at repo root; support docs live under `docs/`
 
 ## Known Gaps / Next Steps Within Phase 1
@@ -117,6 +119,8 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - [x] **T07** — Real map discovery % from DB instead of mock value
 - [x] **T08** — Collection grid refresh after capture (re-render card, no full reload)
 - [x] **T09** — Leaderboard refresh after score update via Realtime profile updates
+- [x] **T29** — Collection figure modal backdrop fix — reuse Bootstrap modal instance and clean stale modal state after close
+- [x] **T30** — Real leaderboard data only — read `leaderboard_legacy` and remove mock ranking fallback
 - [x] **T10** — BTS/MRT ×2 bonus — seeded station-radius check applies point multiplier
 - [x] **T26** — Persistent per-node Support Node visits — `user_support_node_visits` prevents duplicate counter increments after reload or across devices
 
@@ -140,7 +144,7 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - [x] **T18** — Vercel production smoke checklist added in `docs/production-smoke.md`
 - [x] **T19** — Real-time notifications via Supabase Realtime on `notifications` table
 - [x] **T27** — Project structure cleanup — moved planning/proposal/support docs into `docs/` while preserving zero-tooling static app paths
-- [x] **T28** — Thailand grid Fog demo — reusable `js/fog-grid.js` plus `/demo` screenshot page for grid-cell visibility prototype
+- [x] **T28** — Thailand grid Fog helper — reusable `js/fog-grid.js` for future grid-cell visibility work; old `/demo` route removed
 
 ### New Files Added
 | File | Purpose |
@@ -152,14 +156,9 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 | `tests/prod-readiness-static.test.mjs` | Static regression check for production readiness docs/config |
 | `tests/district-seed-static.test.mjs` | Static regression check that SQL district seeds match MVP map districts |
 | `tests/env-policy-static.test.mjs` | Static regression check for tracked `js/env.js` public-anon policy |
-| `tests/grid-fog-static.test.mjs` | Static regression check for reusable grid fog helper and `/demo` assets |
+| `tests/grid-fog-static.test.mjs` | Static regression check for reusable grid fog helper |
 | `tests/run-static.mjs` | Runs the local static regression suite in one command |
 | `js/fog-grid.js` | Classic-script helper exposing `window.FogGrid` for Thailand grid cell generation and lookup |
-| `demo/index.html` | Screenshotable grid Fog of War demo route at `/demo` |
-| `demo/demo.css` | Demo-only layout and grid fog cell styling |
-| `demo/demo.js` | Demo-only Leaflet rendering and current-cell unlock simulation |
-| `docs/superpowers/specs/2026-05-20-grid-fog-demo-design.md` | Design note for the approved grid fog demo approach |
-| `docs/superpowers/plans/2026-05-20-grid-fog-demo.md` | Implementation plan for the grid fog demo work |
 
 ---
 

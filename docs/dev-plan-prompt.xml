@@ -104,9 +104,9 @@
         - Map Discovery % = (cleared districts / 77) × 100 — leaderboard metric
         - Cleared state persists in Supabase user_districts (fogged = false)
         - On page reload: re-read user_districts and re-punch all cleared holes
-        - Current prototype also includes a demo-first Thailand grid fog helper
-          (window.FogGrid) and screenshot page at /demo; live app persistence is not
-          wired to the grid model yet
+        - Current prototype keeps a reusable Thailand grid fog helper
+          (window.FogGrid); the old /demo screenshot route has been removed and
+          live app persistence is not wired to the grid model yet
       </system>
 
       <system name="Watchtower Check-in">
@@ -624,7 +624,7 @@
     <feature id="F12">Figure detail modal — portrait, class badge, Thai/English name, legacy points</feature>
     <feature id="F13">Active quest display with 4-step progress chain (mock data)</feature>
     <feature id="F14">Daily challenges list (mock data)</feature>
-    <feature id="F15">Leaderboard — podium top-3, ranked list, 3 metric toggles, period filter (mock data)</feature>
+    <feature id="F15">Leaderboard — DB-backed podium top-3, ranked list, 3 metric toggles, period filter, Realtime profile updates</feature>
     <feature id="F16">Notification system — top-bar badge, offcanvas panel, unread state tracking</feature>
     <feature id="F17">Full CSS design system — variables, layout, components, map, animations</feature>
     <feature id="F18">Supabase schema with RLS + auth trigger</feature>
