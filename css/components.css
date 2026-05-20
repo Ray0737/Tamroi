@@ -260,13 +260,10 @@
 /* ── Filter Pills ─────────────────────────────────────── */
 .filter-pills {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-sm);
-  overflow-x: auto;
-  scrollbar-width: none;
   padding: 2px 0 8px;
 }
-
-.filter-pills::-webkit-scrollbar { display: none; }
 
 .pill {
   flex-shrink: 0;
