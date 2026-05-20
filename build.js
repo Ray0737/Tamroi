@@ -17,16 +17,8 @@ const url = process.env.SUPABASE_URL      || '';
 const key = process.env.SUPABASE_ANON_KEY || '';
 
 if (!url || !key) {
-  console.error('[build] ERROR: SUPABASE_URL or SUPABASE_ANON_KEY is not set.');
-  console.error('[build] Add them in Vercel → Settings → Environment Variables.');
-  // Write a placeholder that makes the error visible in the browser console
-  fs.writeFileSync(
-    path.join(__dirname, 'js', 'env.js'),
-    `window.ENV = { SUPABASE_URL: '', SUPABASE_ANON_KEY: '' };
-console.error('[Tamroi] Supabase env vars missing — check Vercel settings.');\n`,
-    'utf8'
-  );
-  process.exit(0); // don't fail the build; app will show config errors at runtime
+  console.warn('[build] SUPABASE_URL or SUPABASE_ANON_KEY not set — keeping tracked js/env.js as-is.');
+  process.exit(0);
 }
 
 // Escape single quotes to prevent injection into the JS string literal
