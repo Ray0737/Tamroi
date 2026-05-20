@@ -32,7 +32,7 @@
 | Clickable node info card (café / OTOP / landmark) | `js/map.js` | |
 | Support Node visit tracking + Encounter gate | `js/map.js` | DB RPC with persistent per-node dedupe and local fallback |
 | C-Class quiz + Legendary Master Quiz | `js/map.js` | Uses `DB.Quiz.getForFigure()` |
-| GPS Lore proximity trigger + unlock flow | `js/map.js` | Mock + Supabase-backed lore nodes |
+| GPS Lore proximity trigger + unlock flow | `js/map.js` | Mock + Supabase-backed lore nodes; saved lore places render as tappable map icons |
 | Historical figures + artifacts grid with rarity tiers | `js/collection.js` | Supabase with local fallback; modal backdrop cleanup fixed |
 | Collection filter (All / S / A / C / Artifacts / Journal) + search | `js/collection.js` | Journal groups chained lore |
 | Collection capture refresh | `js/collection.js` | `markCaptured()` updates affected grid state |
@@ -107,6 +107,8 @@
 - [x] **Lore Points** — lore unlocks call `DB.Profiles.addLegacyPoints()` after `user_lore` insert.
 
 #### Medium
+
+- [x] **Visited Lore map icons** — saved/unlocked lore places render as tappable map icons that reopen the lore sheet in saved/read-only state.
 
 - [x] **Rich lore content types** — lore sheet supports `text`, lazy image, and audio play/pause rendering.
 

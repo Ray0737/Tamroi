@@ -228,9 +228,15 @@ function openLoreSheet(node) {
     };
   }
 
-  saveBtn.disabled = false;
-  saveBtn.textContent = 'บันทึกลง Journal';
-  saveBtn.onclick = () => window.MapModule?.saveLoreUnlock(node.id);
+  if (node.is_saved) {
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'บันทึกแล้ว';
+    saveBtn.onclick = null;
+  } else {
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'บันทึกลง Journal';
+    saveBtn.onclick = () => window.MapModule?.saveLoreUnlock(node.id);
+  }
   openSheet('lore-sheet');
 }
 

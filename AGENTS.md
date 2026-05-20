@@ -89,7 +89,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `window.APP_CONFIG.appName` is `Tamroi`, version `0.6.0`.
 - `window.FogGrid` exposes reusable Thailand grid cell generation and coordinate lookup for future Fog of War work.
 - The map currently carries mock Bangkok/Nonthaburi district and node data with Supabase fallback/integration.
-- The map carries mock Lore nodes with Supabase fallback/integration, checks proximity in the GPS callback, and persists local fallback unlocks in `tam_roi_lore_unlocked`.
+- The map carries mock Lore nodes with Supabase fallback/integration, checks proximity in the GPS callback, persists local fallback unlocks in `tam_roi_lore_unlocked`, and renders saved/unlocked lore places as tappable map icons that reopen the lore sheet.
 - The database seed in `supabase/schema.sql` currently seeds a smaller Bangkok district set than `js/map.js`.
 - `js/map.js` no longer blocks fog check-in on support progress; support progress gates Legendary Encounter instead.
 - Support Node Visit buttons call `DB.Districts.updateNodeVisit(userId, districtId, nodeType, nodeId)`, persist exact node IDs in `user_support_node_visits`, and use a loaded/local visited set to prevent duplicate taps across reloads and current session.

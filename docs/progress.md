@@ -41,8 +41,8 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 | `js/env.example.js` | ✅ Done | Credential template for resetting `env.js` |
 | `js/utils.js` | ✅ Done | `escapeHtml()` XSS utility |
 | `js/supabase-client.js` | ✅ Done | Full DB & Auth abstraction — Auth, Profiles, Districts, Figures, Leaderboard, Lore, Quiz |
-| `js/app.js` | ✅ Done | Boot sequence, auth guard, tab navigation, bottom sheets, toast notifications |
-| `js/map.js` | ✅ Done | Leaflet map, Fog of War persistence, live GPS dot, watchtower markers, node card, Lore proximity unlocks |
+| `js/app.js` | ✅ Done | Boot sequence, auth guard, tab navigation, bottom sheets, toast notifications, saved-lore sheet state |
+| `js/map.js` | ✅ Done | Leaflet map, Fog of War persistence, live GPS dot, watchtower markers, node card, Lore proximity unlocks, saved Lore markers |
 | `js/fog-grid.js` | ✅ Done | Reusable Thailand grid Fog of War helper for future map integration |
 | `js/collection.js` | ✅ Done | Historical figures + artifacts grid, collection status display, Lore Journal |
 | `js/missions.js` | ✅ Done | Active quest list + daily challenge display |
@@ -92,6 +92,7 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - **Support Node tracking** — node Visit button persists exact node IDs, increments district support counters idempotently with DB RPC, and keeps local fallback for offline/demo mode
 - **Support Node gate** — Watchtower sheet shows progress bars or the Encounter button when requirements are met
 - **Lore proximity system** — GPS range checks unlock lore sheets, persist to `user_lore`, and award lore points
+- **Visited Lore map icons** — saved/unlocked lore places render on the map and reopen their lore sheet on icon tap without duplicate Journal saves
 - **Lore Journal** — Collection → Journal lists unlocked lore, expands entries, and groups 3-part chains
 - **Lore chains** — completing all 3 chain parts shows consolidated story and awards +50 points
 - **Collection grid** — historical figures + artifacts display; figure detail modal reuses a Bootstrap instance and clears stale backdrops after close
@@ -131,6 +132,7 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - [x] **T14** — Lore Points client-side write after `user_lore` insert
 - [x] **T15** — Rich lore content types: image (lazy img), audio (custom play/pause)
 - [x] **T24** — Multi-site Lore chain: 3-node, consolidated story sheet, +50 chain bonus, journal grouping
+- [x] **T31** — Visited Lore map icons — saved/unlocked lore places render as tappable map icons that reopen the lore sheet in read-only saved state
 
 ### Missing Infrastructure (from NSC doc)
 - [x] **T20** — GPS tolerance radius 500m on check-in, bypass on localhost

@@ -209,6 +209,7 @@ cd NSC_2026
 - `haversineDistance()` helper checks user position vs each lore node on every GPS update
 - Entering radius → Lore unlock bottom sheet (Thai narrative, optional image/audio)
 - Persisted in `user_lore` table; `lore_pts` added client-side to `profiles.legacy_score`
+- Saved/unlocked lore places render as tappable map icons; tapping one reopens the lore sheet in saved/read-only state without awarding points again
 - **Multi-site chains**: 3 nodes share `chain_id`; completing all 3 → consolidated story + 50 bonus pts
 - **Lore Journal**: Collection tab → Journal filter pill; chains show progress (e.g. 2/3 parts)
 
