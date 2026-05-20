@@ -70,6 +70,8 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 | File | Status | Notes |
 |---|---|---|
 | `README.md` | ✅ Done | Full project overview, roadmap, local dev + Supabase + Vercel setup |
+| `AGENTS.md` | ✅ Done | Requires agents to use RTK for every repository task |
+| `CLAUDE.md` | ✅ Done | Mirrors required RTK workflow guidance |
 | `docs/CODING_INSTRUCTIONS.md` | ✅ Done | Design system spec, component patterns, layout rules |
 | `docs/production-smoke.md` | ✅ Done | Production Supabase/Vercel smoke-test checklist |
 | `docs/proposal/tam_roi_nsc_proposal.md` | ✅ Done | Detailed game mechanics proposal |
@@ -103,6 +105,7 @@ Build a mobile-responsive web app that validates the core Watchtower + Fog of Wa
 - **Realtime notifications** — notification inserts subscribe through Supabase Realtime and update the offcanvas/badge
 - **Production email redirect** — email/password signup sets `emailRedirectTo` back to `login.html`
 - **MVP district DB seed patch** — DB can be brought up to parity with current map district coverage
+- **Agent RTK workflow guidance** — `AGENTS.md` and `CLAUDE.md` require RTK for every repository task
 - **Clean project structure** — runnable static app files stay at repo root; support docs live under `docs/`
 
 ## Known Gaps / Next Steps Within Phase 1

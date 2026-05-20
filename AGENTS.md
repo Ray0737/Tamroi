@@ -231,6 +231,7 @@ Skipping this step causes the next coding session to start with stale context an
 
 Follow a Karpathy-style engineering discipline for this repo:
 
+- Use RTK for every task in this repository. Treat `@/home/papajittan/.codex/RTK.md` as active required guidance before planning, editing, testing, reviewing, or documenting work.
 - Read the surrounding code before changing it. Build a small mental model first.
 - Prefer the simplest working change that fits the existing system.
 - Keep state and control flow explicit. Avoid clever abstractions in this prototype.

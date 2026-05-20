@@ -121,6 +121,10 @@
 
 ## Code Conventions
 
+### Agent Workflow
+
+- Use RTK for every task in this repository. Treat `@/home/papajittan/.codex/RTK.md` as active required guidance before planning, editing, testing, reviewing, or documenting work.
+
 ### JavaScript
 
 - All JS is **module pattern** — wrap each file in an IIFE or named module object (e.g., `const MapModule = (() => { ... })()`)
