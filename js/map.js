@@ -488,6 +488,7 @@ const MapModule = (() => {
     const earned = (node.lore_pts || 0) * getTransportMultiplier();
     if (earned > (node.lore_pts || 0)) window.AppCore?.showToast('BTS/MRT Bonus! x2 Legacy Points');
     showFloatPtsOnMap(earned);
+    if (user) DB.Missions?.updateChallengeProgress(user.id, 'lore').catch(() => {});
     checkLoreChainComplete(node, user);
   }
 
@@ -962,23 +963,57 @@ const MapModule = (() => {
     }
 
     const question = activeQuiz.questions[activeQuiz.questionIndex];
-    if (activeQuiz.selected !== question.correct_option) {
-      window.AppCore?.showToast('ยังไม่ถูก ลองใหม่อีกครั้ง');
+    const chosen  = activeQuiz.selected;
+    const correct = question.correct_option;
+
+    if (chosen !== correct) {
+      const opts = document.querySelectorAll('#quiz-options .quiz-option');
+      opts.forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.option === correct) btn.classList.add('quiz-correct');
+        if (btn.dataset.option === chosen)  btn.classList.add('quiz-wrong');
+      });
+      const optionsEl = document.getElementById('quiz-options');
+      let feedbackEl  = document.querySelector('.quiz-feedback');
+      if (!feedbackEl) {
+        feedbackEl = document.createElement('p');
+        feedbackEl.className = 'quiz-feedback';
+        optionsEl?.after(feedbackEl);
+      }
+      feedbackEl.textContent = 'ตอบผิด — ลองใหม่อีกครั้ง';
       activeQuiz.selected = null;
-      renderQuizSheet();
+
+      const fig = activeQuiz.figure;
+      if (fig.class === 'S' || fig.class === 'A') {
+        // S/A: close sheet and force re-open to retry
+        setTimeout(() => { window.AppCore?.closeAllSheets(); activeQuiz = null; }, 2000);
+      } else {
+        // B/C: re-enable buttons after short delay for immediate retry
+        setTimeout(() => {
+          opts.forEach(btn => {
+            btn.disabled = false;
+            btn.classList.remove('quiz-correct', 'quiz-wrong');
+          });
+          feedbackEl.textContent = '';
+        }, 1500);
+      }
       return;
     }
+
+    const user = window.AppCore?.App?.user;
+    // Increment quiz challenge progress on each correct answer
+    if (user) DB.Missions?.updateChallengeProgress(user.id, 'quiz').catch(() => {});
 
     if (activeQuiz.questionIndex + 1 < activeQuiz.questions.length) {
       openQuizForFigure(activeQuiz.figure.id, activeQuiz.questionIndex + 1, activeQuiz.questions);
       return;
     }
 
-    const user = window.AppCore?.App?.user;
     try {
       if (user) await DB.Figures.capture(user.id, activeQuiz.figure.id, activeQuiz.questions.length);
     } catch { /* offline capture below */ }
 
+    if (user) DB.Missions?.updateChallengeProgress(user.id, 'capture').catch(() => {});
     window.CollectionModule?.markCaptured?.(activeQuiz.figure.id);
     window.AppCore?.closeAllSheets();
     showFloatPtsOnMap(activeQuiz.figure.legacy_pts || 0);
@@ -1020,6 +1055,8 @@ const MapModule = (() => {
     updateStatsBar();
     updateDiscoveryPercentFromDB(window.AppCore?.App?.user?.id);
     showFloatPtsOnMap(150 * getTransportMultiplier());
+    const _ciUser = window.AppCore?.App?.user;
+    if (_ciUser) DB.Missions?.updateChallengeProgress(_ciUser.id, 'checkin').catch(() => {});
   }
 
   // ── Check-in eligibility ────────────────────────────

@@ -289,6 +289,9 @@ const Lore = {
       .from('lore_nodes')
       .select('*, districts(name_th,name_en,province)')
       .eq('is_active', true)
+      .eq('review_status', 'approved')
+      .not('source_ref', 'is', null)
+      .neq('source_ref', '')
       .order('chain_id', { ascending: true, nullsFirst: false })
       .order('chain_part', { ascending: true });
     if (error) throw error;
@@ -326,6 +329,8 @@ const Quiz = {
       .from('quiz_questions')
       .select('*')
       .eq('figure_id', figureId)
+      .not('source_ref', 'is', null)
+      .neq('source_ref', '')
       .limit(count);
     if (error) throw error;
     return count === 1 ? (data?.[0] || null) : data;
@@ -366,5 +371,58 @@ const Notifications = {
   }
 };
 
+// ── Missions ───────────────────────────────────────────
+const Missions = {
+  async getDailyChallenges(userId) {
+    const today = new Date().toISOString().split('T')[0];
+    const { data: challenges } = await _sb
+      .from('daily_challenges')
+      .select('*')
+      .eq('is_active', true);
+    if (!challenges) return [];
+
+    await _sb.from('user_daily_progress').upsert(
+      challenges.map(c => ({ user_id: userId, challenge_id: c.id, date: today, current_count: 0, completed: false })),
+      { onConflict: 'user_id,challenge_id,date', ignoreDuplicates: true }
+    );
+
+    const { data: progress } = await _sb
+      .from('user_daily_progress')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('date', today);
+
+    return challenges.map(c => ({
+      ...c,
+      current:   progress?.find(p => p.challenge_id === c.id)?.current_count ?? 0,
+      completed: progress?.find(p => p.challenge_id === c.id)?.completed     ?? false,
+    }));
+  },
+
+  async updateChallengeProgress(userId, type) {
+    const today = new Date().toISOString().split('T')[0];
+    const { data: challenges } = await _sb
+      .from('daily_challenges')
+      .select('id, target_count')
+      .eq('type', type)
+      .eq('is_active', true);
+    if (!challenges?.length) return;
+
+    for (const c of challenges) {
+      const { data: row } = await _sb
+        .from('user_daily_progress')
+        .select('current_count, completed')
+        .eq('user_id', userId).eq('challenge_id', c.id).eq('date', today)
+        .single();
+      if (!row || row.completed) continue;
+      const newCount = (row.current_count || 0) + 1;
+      await _sb.from('user_daily_progress').upsert({
+        user_id: userId, challenge_id: c.id, date: today,
+        current_count: newCount, completed: newCount >= c.target_count,
+      }, { onConflict: 'user_id,challenge_id,date' });
+    }
+  }
+};
+
 // Expose globally
-window.DB = { Auth, Profiles, Districts, Figures, Artifacts, Leaderboard, Lore, Quiz, Notifications };
+window.DB = { Auth, Profiles, Districts, Figures, Artifacts, Leaderboard, Lore, Quiz, Notifications, Missions };

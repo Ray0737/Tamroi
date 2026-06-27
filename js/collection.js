@@ -328,7 +328,7 @@ const CollectionModule = (() => {
     const bioCard = document.getElementById('modal-figure-bio-card');
     const eraEl   = document.getElementById('modal-figure-era');
     const bioEl   = document.getElementById('modal-figure-bio');
-    if (eraEl) eraEl.textContent = fig.era || fig.period || fig.district_id?.replace(/_/g, ' ') || '–';
+    if (eraEl) eraEl.textContent = fig.era || `${fig.class}-Class · ${(fig.district_id || '').replace(/_/g, ' ')}` || '–';
     if (bioEl) bioEl.textContent = fig.description || fig.description_th || '–';
     if (bioCard) bioCard.hidden = !fig.description && !fig.description_th;
 

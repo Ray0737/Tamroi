@@ -28,10 +28,11 @@ const MissionModule = (() => {
     if (!user) { _renderActiveFallback(); _renderDailyFallback(); return; }
 
     try {
-      const [figures, captureRows, districtRows] = await Promise.all([
+      const [figures, captureRows, districtRows, challenges] = await Promise.all([
         DB.Figures.getAll(),
         DB.Figures.getUserCaptures(user.id),
         DB.Districts.getUserState(user.id),
+        DB.Missions.getDailyChallenges(user.id),
       ]);
 
       const capturedIds  = new Set((captureRows || []).map(c => c.figure_id));
@@ -41,7 +42,7 @@ const MissionModule = (() => {
 
       _missionCtx = { figures: figures || [], capturedIds, districtMap };
       renderActive();
-      renderDaily();
+      renderDaily(challenges || []);
     } catch {
       _renderActiveFallback();
       _renderDailyFallback();
@@ -270,15 +271,34 @@ const MissionModule = (() => {
   }
 
   // ── Daily challenges ──────────────────────────────
-  function renderDaily() {
+  const _DAILY_TYPE_STYLE = {
+    lore:    { color: '#7BC67E', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>` },
+    checkin: { color: '#FF7E55', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>` },
+    capture: { color: '#F6C19E', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>` },
+    quiz:    { color: '#4FC3F7', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>` },
+  };
+
+  function _renderDailyFallback() {
+    const el = document.getElementById('daily-challenges');
+    if (!el) return;
+    el.innerHTML = `<div style="padding:var(--space-md);color:var(--color-muted);font-size:12px;text-align:center">
+      กำลังโหลดภารกิจรายวัน...</div>`;
+  }
+
+  function renderDaily(challenges) {
     const el = document.getElementById('daily-challenges');
     if (!el) return;
 
-    const now  = new Date();
-    const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-    const hLeft = Math.max(0, Math.floor((next - now) / 3600000));
+    if (!challenges?.length) {
+      el.innerHTML = `<div style="padding:var(--space-md);color:var(--color-muted);font-size:12px;text-align:center">
+        ไม่สามารถโหลดภารกิจรายวันได้</div>`;
+      return;
+    }
 
-    const donePct = Math.round((MOCK_DAILY.filter(c => c.done).length / MOCK_DAILY.length) * 100);
+    const now   = new Date();
+    const next  = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const hLeft = Math.max(0, Math.floor((next - now) / 3600000));
+    const donePct = Math.round((challenges.filter(c => c.completed).length / challenges.length) * 100);
 
     el.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
@@ -292,31 +312,34 @@ const MissionModule = (() => {
       </div>
 
       <div style="display:flex;flex-direction:column;gap:8px">
-        ${MOCK_DAILY.map(c => `
+        ${challenges.map(c => {
+          const style = _DAILY_TYPE_STYLE[c.type] || _DAILY_TYPE_STYLE.quiz;
+          const color = c.completed ? 'var(--color-success)' : style.color;
+          const showProg = c.target_count > 1 && !c.completed;
+          return `
           <div style="
             display:flex;align-items:center;gap:10px;
             background:var(--color-card-dark);
-            border:1px solid ${c.done ? 'rgba(123,198,126,0.2)' : 'var(--color-border)'};
-            border-left:3px solid ${c.done ? 'var(--color-success)' : c.color};
+            border:1px solid ${c.completed ? 'rgba(123,198,126,0.2)' : 'var(--color-border)'};
+            border-left:3px solid ${color};
             border-radius:var(--radius-md);
             padding:10px 12px;
-            transition:border-color 0.15s;
           ">
             <div style="
               width:32px;height:32px;border-radius:50%;
-              background:${c.color}1A;
+              background:${style.color}1A;
               display:flex;align-items:center;justify-content:center;
-              flex-shrink:0;color:${c.color}">
-              ${c.icon}
+              flex-shrink:0;color:${style.color}">
+              ${style.icon}
             </div>
             <div style="flex:1;min-width:0">
               <p style="margin:0;font-size:12px;font-weight:600;
-                        color:${c.done ? 'var(--color-muted)' : 'var(--color-white)'};
-                        text-decoration:${c.done ? 'line-through' : 'none'};
-                        white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(c.name)}</p>
-              <p style="margin:2px 0 0;font-size:10px;color:var(--color-muted)">${escapeHtml(c.loc)}</p>
+                        color:${c.completed ? 'var(--color-muted)' : 'var(--color-white)'};
+                        text-decoration:${c.completed ? 'line-through' : 'none'};
+                        white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(c.title_th)}</p>
+              ${showProg ? `<p style="margin:2px 0 0;font-size:10px;color:var(--color-muted)">${c.current}/${c.target_count}</p>` : ''}
             </div>
-            ${c.done
+            ${c.completed
               ? `<div style="width:26px;height:26px;border-radius:50%;background:var(--color-success-dim);
                              display:flex;align-items:center;justify-content:center;flex-shrink:0">
                    <svg viewBox="0 0 16 16" fill="none" stroke="var(--color-success)" stroke-width="2.5" style="width:12px;height:12px">
@@ -327,10 +350,10 @@ const MissionModule = (() => {
                    flex-shrink:0;background:var(--color-primary-dim);
                    border:1px solid var(--color-primary);border-radius:var(--radius-full);
                    padding:3px 10px;font-size:10px;font-weight:700;
-                   color:var(--color-primary);white-space:nowrap">+${c.pts}</span>`
+                   color:var(--color-primary);white-space:nowrap">+${c.pts_reward}</span>`
             }
-          </div>
-        `).join('')}
+          </div>`;
+        }).join('')}
       </div>
     `;
   }
