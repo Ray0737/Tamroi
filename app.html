@@ -213,12 +213,12 @@
         </div>
         <div class="map-stat-divider"></div>
         <div class="stat-item">
-          <span class="stat-value text-orange">12</span>
+          <span class="stat-value text-orange" id="map-stat-captured">0</span>
           <span class="stat-label">Captured</span>
         </div>
         <div class="map-stat-divider"></div>
         <div class="stat-item">
-          <span class="stat-value text-white">1,850</span>
+          <span class="stat-value text-white" id="map-stat-legacy">0</span>
           <span class="stat-label">Legacy</span>
         </div>
       </div>
@@ -267,6 +267,7 @@
             <button class="pill active" data-filter="all">ทั้งหมด</button>
             <button class="pill" data-filter="S">S-Class</button>
             <button class="pill" data-filter="A">A-Class</button>
+            <button class="pill" data-filter="B">B-Class</button>
             <button class="pill" data-filter="C">C-Class</button>
             <button class="pill" data-filter="artifacts">Artifacts</button>
             <button class="pill" data-filter="journal">Journal</button>
@@ -306,6 +307,8 @@
     <section id="tab-mission" class="tab-section">
       <div class="section-scroll">
         <div class="section-inner" style="display:flex;flex-direction:column;gap:var(--space-md)">
+          <!-- Seasonal events banner -->
+          <div id="seasonal-events"></div>
           <!-- BKK bonus banner -->
           <div id="bkk-bonus"></div>
           <!-- Active mission -->
@@ -510,6 +513,10 @@
           <div class="card" style="text-align:left">
             <p style="font-size:var(--text-sm);color:var(--color-muted);margin-bottom:4px">Legacy Points Earned</p>
             <p style="font-size:var(--text-lg);font-weight:700;color:var(--color-primary)" id="modal-figure-pts">–</p>
+          </div>
+          <div class="card" id="modal-figure-bio-card" style="text-align:left;margin-top:var(--space-sm)">
+            <p style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--color-muted);margin-bottom:4px" id="modal-figure-era">–</p>
+            <p style="font-size:var(--text-sm);line-height:1.6;margin:0" id="modal-figure-bio">–</p>
           </div>
         </div>
         <div class="modal-footer" style="border:none;justify-content:center;padding-top:0;padding-bottom:var(--space-md)">

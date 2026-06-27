@@ -308,8 +308,8 @@ const Lore = {
   async unlock(userId, loreId) {
     const { data, error } = await _sb
       .from('user_lore')
-      .upsert({ user_id: userId, lore_id: loreId }, {
-        onConflict: 'user_id,lore_id',
+      .upsert({ user_id: userId, lore_node_id: loreId }, {
+        onConflict: 'user_id,lore_node_id',
         ignoreDuplicates: true
       })
       .select()

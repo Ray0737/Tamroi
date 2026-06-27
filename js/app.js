@@ -67,6 +67,7 @@ async function _bootApp(user) {
   }
 
   updateTopBar();
+  updateMapStatsPill();
   bindNavigation();
   bindSheetOverlay();
   loadNotifications();
@@ -103,6 +104,16 @@ function updateTopBar() {
       avatarEl.textContent = initials;
     }
   }
+}
+
+// ── Map Stats Pill ────────────────────────────────────
+function updateMapStatsPill() {
+  const p = App.profile;
+  if (!p) return;
+  const capturedEl = document.getElementById('map-stat-captured');
+  const legacyEl   = document.getElementById('map-stat-legacy');
+  if (capturedEl) capturedEl.textContent = p.archive_count ?? 0;
+  if (legacyEl)   legacyEl.textContent   = (p.legacy_score  || 0).toLocaleString();
 }
 
 // ── Tab Navigation ────────────────────────────────────
@@ -377,4 +388,4 @@ function getMockNotifications() {
 }
 
 // ── Expose globally ───────────────────────────────────
-window.AppCore = { App, switchTab, openSheet, closeAllSheets, openLoreSheet, openLoreChainSheet, showFloatPts, showToast };
+window.AppCore = { App, switchTab, openSheet, closeAllSheets, openLoreSheet, openLoreChainSheet, showFloatPts, showToast, updateMapStatsPill };

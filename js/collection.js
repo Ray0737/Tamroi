@@ -9,26 +9,6 @@ const CollectionModule = (() => {
   let loaded = false;
   let figureModalBound = false;
 
-  const MOCK_FIGURES = [
-    { id: 'king-taksin',    name_th: 'สมเด็จพระเจ้าตากสิน',      name_en: 'King Taksin the Great',  class: 'S', legacy_pts: 500, image_emoji: '👑', district_id: 'rattanakosin' },
-    { id: 'rama-i',         name_th: 'พระบาทสมเด็จพระพุทธยอดฟ้า', name_en: 'King Rama I',            class: 'S', legacy_pts: 500, image_emoji: '⚔️', district_id: 'rattanakosin' },
-    { id: 'sunthon-phu',    name_th: 'สุนทรภู่',                   name_en: 'Sunthorn Phu',           class: 'A', legacy_pts: 200, image_emoji: '📜', district_id: 'rattanakosin' },
-    { id: 'si-suriyothai',  name_th: 'สมเด็จพระศรีสุริโยทัย',     name_en: 'Sri Suriyothai',         class: 'A', legacy_pts: 200, image_emoji: '🛡️', district_id: 'rattanakosin' },
-    { id: 'village-elder',  name_th: 'ขุนนางท้องถิ่น',             name_en: 'Local Village Legend',   class: 'C', legacy_pts:  50, image_emoji: '🎋', district_id: 'silom' },
-    { id: 'otop-master',    name_th: 'ช่างฝีมือ OTOP',              name_en: 'OTOP Craft Master',      class: 'C', legacy_pts:  50, image_emoji: '🪆', district_id: 'chatuchak' },
-    { id: 'river-merchant', name_th: 'พ่อค้าแม่น้ำ',               name_en: 'River Merchant',         class: 'C', legacy_pts:  50, image_emoji: '⚓', district_id: 'silom' },
-  ];
-
-  const MOCK_ARTIFACTS = [
-    { id: 'bronze-sword',  name: 'ดาบโบราณ',    rarity: 'legendary', icon: '⚔️' },
-    { id: 'old-map',       name: 'แผนที่โบราณ', rarity: 'rare',      icon: '🗺️' },
-    { id: 'ceramic-bowl',  name: 'ถ้วยเซรามิก', rarity: 'common',    icon: '🏺' },
-    { id: 'silk-fragment', name: 'ผ้าไหมโบราณ', rarity: 'rare',      icon: '🧵' },
-    { id: 'temple-bell',   name: 'ระฆังวัด',     rarity: 'common',    icon: '🔔' },
-  ];
-
-  const MOCK_CAPTURES   = new Set(['sunthon-phu', 'village-elder']);
-  const MOCK_OWNED_ART  = new Set(['old-map', 'ceramic-bowl']);
 
   async function load() {
     if (loaded) {
@@ -52,11 +32,10 @@ const CollectionModule = (() => {
         loreEntries = normalizeLoreRows(lore);
       }
     } catch {
-      allFigures   = MOCK_FIGURES;
-      allArtifacts = MOCK_ARTIFACTS;
-      captures      = MOCK_CAPTURES;
-      ownedArtifacts = MOCK_OWNED_ART;
-      loreEntries = getLocalLoreEntries();
+      allFigures   = [];
+      allArtifacts = [];
+      loreEntries  = getLocalLoreEntries();
+      window.AppCore?.showToast?.('ไม่สามารถโหลดข้อมูลได้ กรุณาตรวจสอบการเชื่อมต่อ');
     }
 
     bindFilters();
@@ -112,6 +91,11 @@ const CollectionModule = (() => {
       <div class="stat-item"><span class="stat-value text-green">${ownedArtifacts.size}</span><span class="stat-label">Artifacts</span></div>
       <div class="stat-item"><span class="stat-value text-white">${legacy.toLocaleString()}</span><span class="stat-label">Legacy Pts</span></div>
     `;
+    // Keep map stats pill in sync
+    const capturedEl = document.getElementById('map-stat-captured');
+    const legacyEl   = document.getElementById('map-stat-legacy');
+    if (capturedEl) capturedEl.textContent = captured;
+    if (legacyEl)   legacyEl.textContent   = legacy.toLocaleString();
   }
 
   function renderFigures() {
@@ -340,6 +324,13 @@ const CollectionModule = (() => {
     document.getElementById('modal-figure-badge').className   = `badge badge-${fig.class.toLowerCase()}`;
     document.getElementById('modal-figure-badge').textContent = `${fig.class}-Class`;
     document.getElementById('modal-figure-pts').textContent   = `+${fig.legacy_pts} Legacy Points`;
+
+    const bioCard = document.getElementById('modal-figure-bio-card');
+    const eraEl   = document.getElementById('modal-figure-era');
+    const bioEl   = document.getElementById('modal-figure-bio');
+    if (eraEl) eraEl.textContent = fig.era || fig.period || fig.district_id?.replace(/_/g, ' ') || '–';
+    if (bioEl) bioEl.textContent = fig.description || fig.description_th || '–';
+    if (bioCard) bioCard.hidden = !fig.description && !fig.description_th;
 
     cleanupModalState();
     const bsModal = bootstrap.Modal.getOrCreateInstance(modal);

@@ -65,10 +65,15 @@
     ├── dev-plan-prompt.xml Planning prompt and task history
     ├── progress.md      Current implementation progress
     ├── production-smoke.md Supabase/Vercel smoke-test checklist
+    ├── App Plan.md      High-level feature planning
+    ├── FUNCTION_AUDIT.md   Function-by-function audit vs. NSC proposal
+    ├── VERIFYLOGIC.md   Game logic, rules, and verification status
+    ├── PROJECT_SUMMARY.md  Project overview
+    ├── system_architect.md System architecture notes
+    ├── refactor.md      Refactor notes and decisions
+    ├── tamroi_project_context.md Full project context document
     └── proposal/
-        └── tam_roi_nsc_proposal.md NSC proposal
-└── document/
-    └── NSC assets, screenshots, and generated documents
+        └── tam_roi_nsc_proposal.md NSC proposal (ตามรอย_NSC_2026)
 └── tests/
     ├── lore-static.test.mjs Static regression check for Lore integration
     ├── remaining-static.test.mjs Static regression check for gameplay loop work
