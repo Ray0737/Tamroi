@@ -124,7 +124,13 @@
 
 ### Agent Workflow
 
-- Use RTK for every task in this repository. Treat `@/home/papajittan/.codex/RTK.md` as active required guidance before planning, editing, testing, reviewing, or documenting work.
+- **RTK**: Use `rtk` for every shell command in this repo (git, node, find, etc.). The hook rewrites commands automatically; invoke directly when needed. See `~/.claude/RTK.md`.
+- **Ponytail**: Default working mode is ponytail full. Shortest diff that solves the problem. No speculative features, no unrequested abstractions. Stop at the first rung of the ladder that holds.
+- **Karpathy rules** (applied in order before touching code):
+  1. **Think first** — state assumptions explicitly; if multiple interpretations exist, surface them before picking one.
+  2. **Simplicity** — minimum code that solves the problem; if it could be 50 lines, don't write 200.
+  3. **Surgical** — touch only what the request requires; don't "improve" adjacent code; remove only the dead code YOUR change creates.
+  4. **Goal-driven** — define a verifiable success criterion before starting; loop until it passes.
 
 ### JavaScript
 
