@@ -8,6 +8,7 @@ const MapModule = (() => {
   let _locationMarker  = null;    // real-time GPS dot
   let _locationRing    = null;    // GPS accuracy circle
   let _locationWatcher = null;    // watchPosition handle
+  let _posHistory      = [];      // recent positions for speed/teleport detection
   let allDistrictsCache = null;
   let homeLocation      = null;
   let lastKnownPosition = null;
@@ -306,12 +307,35 @@ const MapModule = (() => {
   }
 
   // ── Real-time location dot ─────────────────────────
+  // ── GPS anti-spoof helpers ─────────────────────────
+  // DevTools Sensors always reports accuracy === 0.
+  // Mock-location apps can teleport instantly; real movement is capped at ~50 m/s.
+  function _isPlausiblePosition(lat, lng, accuracy) {
+    if (accuracy === 0) return false; // DevTools spoof signature
+
+    const now = Date.now();
+    if (_posHistory.length) {
+      const prev = _posHistory[_posHistory.length - 1];
+      const dist = haversineDistance(prev.lat, prev.lng, lat, lng);
+      const dt   = (now - prev.ts) / 1000; // seconds
+      if (dt > 0 && dist / dt > 50) return false; // > 50 m/s is impossible on foot/transit
+    }
+
+    _posHistory.push({ lat, lng, ts: now });
+    if (_posHistory.length > 10) _posHistory.shift();
+    return true;
+  }
+
   function startLocationTracking() {
     if (!navigator.geolocation) return;
 
     _locationWatcher = navigator.geolocation.watchPosition(
       pos => {
         const { latitude, longitude, accuracy } = pos.coords;
+        if (!isDev() && !_isPlausiblePosition(latitude, longitude, accuracy)) {
+          console.warn('[GPS] Rejected implausible position (accuracy=' + accuracy + ')');
+          return;
+        }
         lastKnownPosition = { lat: latitude, lng: longitude, accuracy };
         updateLocationDot(latitude, longitude, accuracy);
         checkLoreProximity(latitude, longitude);
@@ -1069,6 +1093,7 @@ const MapModule = (() => {
 
   function isWithinCheckInRange(district) {
     if (!lastKnownPosition) return false;
+    if (lastKnownPosition.accuracy === 0 || lastKnownPosition.accuracy > 2000) return false;
     const lat = district.watchtower_lat || district.center_lat;
     const lng = district.watchtower_lng || district.center_lng;
     return haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, lat, lng) <= CHECKIN_TOLERANCE_M;
