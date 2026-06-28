@@ -1,0 +1,303 @@
+// ── Leaderboard Module ────────────────────────────────
+const LeaderboardModule = (() => {
+  let loaded = false;
+  let activeMetric = 'legacy';
+  let activePeriod = 'all';
+  let currentPlayers = [];
+  let realtimeChannel = null;
+
+  const MY_ID = '__current_user__';
+
+  const CROWN_SVG = `<svg viewBox="0 0 24 24" fill="#FFD700" stroke="#FFD700" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M2 19l3-9 5 5 4-9 4 9 3-7v11H2z"/></svg>`;
+
+  function load() {
+    if (loaded) {
+      render();
+      subscribe();
+      return;
+    }
+    loaded = true;
+    bindControls();
+    fetchAndRender();
+  }
+
+  function bindControls() {
+    document.querySelectorAll('#leaderboard-metric .pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('#leaderboard-metric .pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        activeMetric = pill.dataset.metric;
+        render();
+      });
+    });
+
+    document.querySelectorAll('#leaderboard-period .pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('#leaderboard-period .pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        activePeriod = pill.dataset.period;
+        fetchAndRender();
+      });
+    });
+  }
+
+  async function fetchAndRender() {
+    const listEl = document.getElementById('leaderboard-list');
+    if (listEl) listEl.innerHTML = `<div style="display:flex;justify-content:center;padding:40px"><div class="spinner"></div></div>`;
+
+    let players = [];
+    try {
+      const user = window.AppCore?.App?.user;
+      const data = await DB.Leaderboard.get(activeMetric);
+      players = (data || []).map(p => ({
+        ...p,
+        id: p.id === user?.id ? MY_ID : p.id,
+        province: p.province || 'Thailand',
+      }));
+    } catch (error) {
+      currentPlayers = [];
+      renderEmptyState('โหลด Leaderboard จากฐานข้อมูลไม่ได้');
+      subscribe();
+      return;
+    }
+
+    sortPlayers(players);
+    currentPlayers = players;
+    render();
+    subscribe();
+  }
+
+  function sortPlayers(players) {
+    const col = activeMetric === 'discovery' ? 'map_discovery'
+              : activeMetric === 'archive'   ? 'archive_count'
+              : 'legacy_score';
+    players.sort((a, b) => (b[col] || 0) - (a[col] || 0));
+  }
+
+  function getMetricValue(player) {
+    if (activeMetric === 'discovery') return (player.map_discovery || 0).toFixed(0) + '%';
+    if (activeMetric === 'archive')   return (player.archive_count || 0) + ' items';
+    return (player.legacy_score || 0).toLocaleString() + ' pts';
+  }
+
+  function render(players = currentPlayers) {
+    if (!players?.length) {
+      renderEmptyState('ยังไม่มีข้อมูล Leaderboard');
+      return;
+    }
+    sortPlayers(players);
+    currentPlayers = players;
+    renderPodium(players.slice(0, 3));
+    renderMyRank(players);
+    renderList(players);
+  }
+
+  function renderEmptyState(message) {
+    const podium = document.getElementById('leaderboard-podium');
+    const myRank = document.getElementById('my-rank-card');
+    const list = document.getElementById('leaderboard-list');
+    if (podium) podium.innerHTML = '';
+    if (myRank) myRank.innerHTML = '';
+    if (list) {
+      list.innerHTML = `
+        <div style="padding:28px var(--space-md);text-align:center;color:var(--color-muted)">
+          ${escapeHtml(message)}
+        </div>
+      `;
+    }
+  }
+
+  function subscribe() {
+    if (realtimeChannel || !window.AppCore?.App?.user || !DB.Leaderboard.subscribe) return;
+    try {
+      realtimeChannel = DB.Leaderboard.subscribe(onScoreUpdate);
+    } catch { realtimeChannel = null; }
+  }
+
+  function unsubscribe() {
+    if (!realtimeChannel) return;
+    try { realtimeChannel.unsubscribe(); } catch { /* ignore */ }
+    realtimeChannel = null;
+  }
+
+  function onScoreUpdate(payload) {
+    const updated = payload?.new;
+    if (!updated?.id || !currentPlayers.length) return;
+
+    const user = window.AppCore?.App?.user;
+    const rowId = updated.id === user?.id ? MY_ID : updated.id;
+    const idx = currentPlayers.findIndex(p => p.id === rowId);
+    if (idx === -1) return;
+
+    const before = currentPlayers.map(p => p.id).join('|');
+    currentPlayers[idx] = {
+      ...currentPlayers[idx],
+      legacy_score: updated.legacy_score,
+      map_discovery: updated.map_discovery,
+      archive_count: updated.archive_count,
+    };
+    sortPlayers(currentPlayers);
+    const after = currentPlayers.map(p => p.id).join('|');
+
+    if (before !== after) {
+      render(currentPlayers);
+      return;
+    }
+
+    patchPlayerRow(rowId);
+    renderPodium(currentPlayers.slice(0, 3));
+    renderMyRank(currentPlayers);
+  }
+
+  function patchPlayerRow(playerId) {
+    const safeId = String(playerId).replace(/"/g, '\\"');
+    const row = document.querySelector(`[data-user-id="${safeId}"]`);
+    const player = currentPlayers.find(p => p.id === playerId);
+    const score = row?.querySelector('[data-rank-score]');
+    if (score && player) score.textContent = getMetricValue(player);
+  }
+
+  // ── Podium (top 3) ────────────────────────────────
+  function renderPodium(top3) {
+    const el = document.getElementById('leaderboard-podium');
+    if (!el) return;
+    if (top3.length < 3) { el.innerHTML = ''; return; }
+    const [first, second, third] = top3;
+
+    const podiumItem = (p, pos) => {
+      const colors = { 1: '#FFD700', 2: '#C0C0C0', 3: '#CD7F32' };
+      const heights = { 1: 60, 2: 44, 3: 32 };
+      const sizes   = { 1: 54, 2: 44, 3: 40 };
+      const c = colors[pos];
+      const h = heights[pos];
+      const s = sizes[pos];
+      const init = escapeHtml((p.username || '?').charAt(0).toUpperCase());
+      const name = escapeHtml(p.username || '');
+
+      return `
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1">
+          ${pos === 1 ? `<div style="height:22px;display:flex;align-items:center">${CROWN_SVG}</div>` : '<div style="height:22px"></div>'}
+          <div style="
+            width:${s}px;height:${s}px;border-radius:50%;
+            background:${c}22;border:2.5px solid ${c};
+            display:flex;align-items:center;justify-content:center;
+            font-weight:800;font-size:${pos===1?18:14}px;color:${c}">
+            ${init}
+          </div>
+          <p style="margin:0;font-size:11px;font-weight:600;color:var(--color-white);
+                    max-width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+                    text-align:center">${name}</p>
+          <p style="margin:0;font-size:9px;color:var(--color-muted)">${getMetricValue(p)}</p>
+          <div style="
+            width:100%;height:${h}px;
+            background:${c}18;
+            border-radius:var(--radius-sm) var(--radius-sm) 0 0;
+            border-top:2px solid ${c}40;
+            display:flex;align-items:center;justify-content:center">
+            <span style="font-weight:800;font-size:14px;color:${c}">#${pos}</span>
+          </div>
+        </div>
+      `;
+    };
+
+    el.innerHTML = `
+      <div style="display:flex;align-items:flex-end;gap:var(--space-sm);
+                  padding:var(--space-md) var(--space-sm) 0">
+        ${podiumItem(second, 2)}
+        ${podiumItem(first,  1)}
+        ${podiumItem(third,  3)}
+      </div>
+    `;
+  }
+
+  // ── My rank card ──────────────────────────────────
+  function renderMyRank(players) {
+    const el = document.getElementById('my-rank-card');
+    if (!el) return;
+    const myIdx = players.findIndex(p => p.id === MY_ID);
+    if (myIdx === -1) { el.innerHTML = ''; return; }
+    const me = players[myIdx];
+    const rank = myIdx + 1;
+
+    el.innerHTML = `
+      <div style="
+        display:flex;align-items:center;gap:10px;
+        background:var(--color-primary-dim);
+        border:1.5px solid var(--color-primary);
+        border-radius:var(--radius-md);
+        padding:10px 14px;margin-bottom:var(--space-sm)">
+        <span style="font-size:18px;font-weight:800;font-family:var(--font-heading);
+                     color:var(--color-primary);width:28px;text-align:center;flex-shrink:0">#${rank}</span>
+        <div style="width:34px;height:34px;border-radius:50%;border:2px solid var(--color-primary);
+                    background:var(--color-primary-dim);display:flex;align-items:center;
+                    justify-content:center;font-weight:700;font-size:12px;
+                    color:var(--color-primary);flex-shrink:0">
+          ${escapeHtml((me.username||'Y').substring(0,2).toUpperCase())}
+        </div>
+        <div style="flex:1;min-width:0">
+          <p style="margin:0;font-weight:600;font-size:13px;color:var(--color-white)">
+            ${escapeHtml(me.username)} <span style="font-size:10px;color:var(--color-primary)">(You)</span>
+          </p>
+          <p style="margin:1px 0 0;font-size:10px;color:var(--color-muted)">${escapeHtml(me.province)}</p>
+        </div>
+        <span style="font-weight:700;font-size:14px;color:var(--color-primary);flex-shrink:0">${getMetricValue(me)}</span>
+      </div>
+    `;
+  }
+
+  // ── Full rank list ────────────────────────────────
+  function renderList(players) {
+    const el = document.getElementById('leaderboard-list');
+    if (!el) return;
+
+    const rankColors = { 1: '#FFD700', 2: '#C0C0C0', 3: '#CD7F32' };
+
+    el.innerHTML = players.map((p, idx) => {
+      const rank  = idx + 1;
+      const isMe  = p.id === MY_ID;
+      const c     = rankColors[rank] || null;
+      const init  = escapeHtml((p.username || '?').substring(0, 2).toUpperCase());
+
+      return `
+        <div style="
+          display:flex;align-items:center;gap:10px;
+          padding:10px var(--space-sm);
+          border-radius:var(--radius-md);
+          background:${isMe ? 'var(--color-primary-dim)' : 'transparent'};
+          border-left:${isMe ? '3px solid var(--color-primary)' : '3px solid transparent'};
+          transition:background 0.15s"
+          data-user-id="${escapeHtml(p.id)}">
+          <span style="
+            width:26px;text-align:center;font-size:13px;font-weight:700;flex-shrink:0;
+            color:${c || (isMe ? 'var(--color-primary)' : 'var(--color-muted)')}">
+            ${rank}
+          </span>
+          <div style="
+            width:32px;height:32px;border-radius:50%;flex-shrink:0;
+            background:${c ? c + '20' : isMe ? 'var(--color-primary-dim)' : 'var(--color-card-darker)'};
+            display:flex;align-items:center;justify-content:center;
+            font-size:10px;font-weight:700;
+            color:${c || (isMe ? 'var(--color-primary)' : 'var(--color-muted)')}">
+            ${init}
+          </div>
+          <div style="flex:1;min-width:0">
+            <p style="margin:0;font-size:13px;font-weight:${isMe ? '700' : '500'};
+                      color:${isMe ? 'var(--color-white)' : 'var(--color-white)'};
+                      white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+              ${escapeHtml(p.username)}
+            </p>
+            <p style="margin:1px 0 0;font-size:10px;color:var(--color-muted)">${escapeHtml(p.province)}</p>
+          </div>
+          <span data-rank-score style="font-size:12px;font-weight:700;flex-shrink:0;
+                       color:${isMe ? 'var(--color-primary)' : 'var(--color-white)'}">
+            ${getMetricValue(p)}
+          </span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  return { load, unsubscribe, onScoreUpdate };
+})();
+
+window.LeaderboardModule = LeaderboardModule;

@@ -1,0 +1,155 @@
+/* ── Keyframes ────────────────────────────────────────── */
+
+/* Gentle up-down float for hero badge icons */
+@keyframes floatY {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-7px); }
+}
+
+/* Organic ink-drop blob morphing */
+@keyframes blobMorph {
+  0%,100% { border-radius: 30% 70% 60% 40% / 50% 40% 60% 50%; }
+  25%     { border-radius: 60% 40% 40% 60% / 40% 60% 40% 60%; }
+  50%     { border-radius: 50% 50% 30% 70% / 60% 30% 70% 40%; }
+  75%     { border-radius: 40% 60% 70% 30% / 30% 70% 30% 70%; }
+}
+
+@keyframes badgePulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.3); opacity: 0.7; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes stampDrop {
+  0%   { opacity: 0; transform: scale(1.8) rotate(-8deg); }
+  60%  { transform: scale(0.9) rotate(2deg); opacity: 1; }
+  80%  { transform: scale(1.05) rotate(-1deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes floatUp {
+  0%   { opacity: 1; transform: translateY(0); }
+  70%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-48px); }
+}
+
+@keyframes fogClear {
+  0%   { opacity: 0.75; }
+  100% { opacity: 0; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.04); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes confettiBurst {
+  0%   { transform: scale(0) rotate(0deg); opacity: 1; }
+  100% { transform: scale(1) rotate(720deg); opacity: 0; }
+}
+
+/* ── Animation Classes ────────────────────────────────── */
+.anim-fade-in  { animation: fadeIn 0.3s ease forwards; }
+.anim-fade-up  { animation: fadeUp 0.35s ease forwards; }
+.anim-slide-down { animation: slideDown 0.3s ease forwards; }
+.anim-stamp    { animation: stampDrop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+.anim-pulse    { animation: pulse 2s ease-in-out infinite; }
+
+/* Stagger children */
+.anim-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.anim-stagger > *:nth-child(2) { animation-delay: 60ms; }
+.anim-stagger > *:nth-child(3) { animation-delay: 120ms; }
+.anim-stagger > *:nth-child(4) { animation-delay: 180ms; }
+.anim-stagger > *:nth-child(5) { animation-delay: 240ms; }
+.anim-stagger > *:nth-child(6) { animation-delay: 300ms; }
+
+/* ── Page transitions ─────────────────────────────────── */
+.page-enter {
+  animation: fadeUp 0.25s ease forwards;
+}
+
+/* ── Float-up points ──────────────────────────────────── */
+.float-pts {
+  position: fixed;
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-primary);
+  pointer-events: none;
+  z-index: 9999;
+  animation: floatUp 1.2s ease forwards;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+/* ── Skeleton loader ──────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg, var(--color-card-dark) 25%, var(--color-card-darker) 50%, var(--color-card-dark) 75%);
+  background-size: 400px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Loading spinner ──────────────────────────────────── */
+.spinner {
+  width: 22px;
+  height: 22px;
+  border: 2.5px solid rgba(255,255,255,0.15);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+/* ── Fog clearing animation helper ───────────────────── */
+.fog-clearing {
+  animation: fogClear 0.8s ease forwards;
+}
+
+/* ── Captured ribbon ──────────────────────────────────── */
+.captured-ribbon {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 22px;
+  height: 22px;
+  background: var(--color-success);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.captured-ribbon svg { width: 12px; height: 12px; color: var(--color-bg); }
+
+/* ── Splash hero animation ────────────────────────────── */
+.hero-pin {
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.hero-glow {
+  animation: pulse 2.5s ease-in-out infinite 0.5s;
+}
