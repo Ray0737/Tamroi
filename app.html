@@ -330,6 +330,14 @@
       <div class="section-scroll">
         <div class="section-inner" style="display:flex;flex-direction:column;gap:var(--space-md)">
 
+          <!-- View toggle: Solo / Guild -->
+          <div class="filter-pills" id="leaderboard-view">
+            <button class="pill active" data-view="solo">เดี่ยว</button>
+            <button class="pill" data-view="guild">กลุ่ม</button>
+          </div>
+
+          <!-- Solo leaderboard (existing) -->
+          <div id="solo-leaderboard-section">
           <!-- Period filter -->
           <div class="filter-pills" id="leaderboard-period">
             <button class="pill active" data-period="weekly">Weekly</button>
@@ -355,6 +363,15 @@
             <div id="leaderboard-list">
               <div style="display:flex;justify-content:center;padding:40px"><div class="spinner"></div></div>
             </div>
+          </div>
+          </div><!-- end #solo-leaderboard-section -->
+
+          <!-- Guild panel + leaderboard -->
+          <div id="guild-leaderboard-section" hidden style="display:flex;flex-direction:column;gap:var(--space-md)">
+            <div id="guild-panel">
+              <div style="display:flex;justify-content:center;padding:40px"><div class="spinner"></div></div>
+            </div>
+            <div id="guild-leaderboard-list"></div>
           </div>
 
         </div>
