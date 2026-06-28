@@ -39,6 +39,53 @@ const LeaderboardModule = (() => {
         fetchAndRender();
       });
     });
+
+    // Guild / Solo view toggle
+    document.querySelectorAll('#leaderboard-view .pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('#leaderboard-view .pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        const soloEl  = document.getElementById('solo-leaderboard-section');
+        const guildEl = document.getElementById('guild-leaderboard-section');
+        if (pill.dataset.view === 'guild') {
+          soloEl?.setAttribute('hidden', '');
+          guildEl?.removeAttribute('hidden');
+          window.GuildModule?.renderGuildPanel();
+          _renderGuildLeaderboard();
+        } else {
+          guildEl?.setAttribute('hidden', '');
+          soloEl?.removeAttribute('hidden');
+        }
+      });
+    });
+  }
+
+  async function _renderGuildLeaderboard() {
+    const el = document.getElementById('guild-leaderboard-list');
+    if (!el) return;
+    el.innerHTML = `<div style="display:flex;justify-content:center;padding:20px"><div class="spinner"></div></div>`;
+    try {
+      const guilds = await DB.Coop.getGuildLeaderboard();
+      el.innerHTML = `
+        <div class="card" style="padding:var(--space-sm)">
+          ${!guilds.length
+            ? `<p style="text-align:center;color:var(--color-muted);font-size:12px;padding:var(--space-md)">ยังไม่มีกลุ่ม</p>`
+            : guilds.map((g, i) => `
+                <div style="display:flex;align-items:center;gap:10px;padding:10px var(--space-sm);
+                             border-bottom:1px solid rgba(255,255,255,0.04)">
+                  <span style="font-size:16px;font-weight:800;color:var(--color-muted);width:24px;text-align:center">${i + 1}</span>
+                  <div style="flex:1">
+                    <p style="margin:0;font-size:13px;font-weight:700">${escapeHtml(g.name)}</p>
+                    <p style="margin:2px 0 0;font-size:10px;color:var(--color-muted)">
+                      🗺 ${g.guild_discovery_count} districts · 📖 ${g.guild_captures} captures</p>
+                  </div>
+                  <span style="font-size:14px;font-weight:700;color:var(--color-primary)">
+                    ${(g.guild_legacy_score || 0).toLocaleString()} pts</span>
+                </div>`).join('')}
+        </div>`;
+    } catch {
+      el.innerHTML = '';
+    }
   }
 
   async function fetchAndRender() {

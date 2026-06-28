@@ -7,6 +7,7 @@ const tests = [
   'tests/district-seed-static.test.mjs',
   'tests/env-policy-static.test.mjs',
   'tests/grid-fog-static.test.mjs',
+  'tests/coop-static.test.mjs',
 ];
 
 let failed = false;

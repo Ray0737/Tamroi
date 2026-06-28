@@ -72,6 +72,7 @@ async function _bootApp(user) {
   bindSheetOverlay();
   loadNotifications();
   subscribeNotifications();
+  window.GuildModule?.init(user.id);
   switchTab('map');
 }
 
@@ -167,8 +168,10 @@ function switchTab(tab) {
     window.CollectionModule?.load();
   } else if (tab === 'mission') {
     window.MissionModule?.load();
+    window.CoopModule?.load();
   } else if (tab === 'leaderboard') {
     window.LeaderboardModule?.load();
+    window.GuildModule?.renderGuildPanel();
   }
 }
 
