@@ -24,14 +24,8 @@ const MapModule = (() => {
   const LORE_KEY = 'tam_roi_lore_unlocked';
   const CHECKIN_TOLERANCE_M = 500;
 
-  const BTS_MRT_STATIONS = [
-    { name: 'Siam BTS', lat: 13.7455, lng: 100.5348, radius_m: 300 },
-    { name: 'Asok BTS', lat: 13.7370, lng: 100.5604, radius_m: 300 },
-    { name: 'Mo Chit BTS', lat: 13.8026, lng: 100.5538, radius_m: 300 },
-    { name: 'Sala Daeng BTS', lat: 13.7286, lng: 100.5341, radius_m: 300 },
-    { name: 'Sanam Chai MRT', lat: 13.7437, lng: 100.4941, radius_m: 300 },
-    { name: 'Chatuchak Park MRT', lat: 13.8021, lng: 100.5530, radius_m: 300 },
-  ];
+  // ── BTS/MRT stations — loaded from Supabase bts_mrt_stations ──
+  let btsMrtStations = [];
 
   // ── Bounding box for the fog overlay ────────────────
   // Covers Bangkok, Nonthaburi AND Ayutthaya province
@@ -40,208 +34,17 @@ const MapModule = (() => {
     [14.50, 101.10], [14.50, 100.20],
   ];
 
-  // ── Districts ───────────────────────────────────────
-  const MOCK_DISTRICTS = [
-    { id: 'rattanakosin', name_th: 'รัตนโกสินทร์',      name_en: 'Rattanakosin',        province: 'Bangkok',
-      center_lat: 13.7519, center_lng: 100.4930,
-      polygon_coords: [[13.743,100.485],[13.743,100.502],[13.760,100.502],[13.760,100.485],[13.743,100.485]],
-      required_cafes: 2, required_otops: 1, required_landmarks: 3 },
+  // ── Districts — loaded from Supabase districts table ──
+  // (allDistrictsCache holds the live data after loadDistrictData runs)
 
-    { id: 'dusit',        name_th: 'ดุสิต-พระนคร',      name_en: 'Dusit-Phra Nakhon',   province: 'Bangkok',
-      center_lat: 13.7740, center_lng: 100.5109,
-      polygon_coords: [[13.762,100.500],[13.762,100.523],[13.786,100.523],[13.786,100.500],[13.762,100.500]],
-      required_cafes: 2, required_otops: 1, required_landmarks: 3 },
+  // ── Nodes — loaded from Supabase support_nodes table ──
+  let supportNodes = [];
 
-    { id: 'pathumwan',    name_th: 'ปทุมวัน-สยาม',       name_en: 'Pathumwan-Siam',      province: 'Bangkok',
-      center_lat: 13.7442, center_lng: 100.5320,
-      polygon_coords: [[13.732,100.517],[13.732,100.545],[13.752,100.545],[13.752,100.517],[13.732,100.517]],
-      required_cafes: 2, required_otops: 1, required_landmarks: 2 },
-
-    { id: 'silom',        name_th: 'สีลม-บางรัก',        name_en: 'Silom-Bangrak',       province: 'Bangkok',
-      center_lat: 13.7274, center_lng: 100.5329,
-      polygon_coords: [[13.718,100.518],[13.718,100.540],[13.735,100.540],[13.735,100.518],[13.718,100.518]],
-      required_cafes: 2, required_otops: 1, required_landmarks: 3 },
-
-    { id: 'sukhumvit',    name_th: 'สุขุมวิท',            name_en: 'Sukhumvit',           province: 'Bangkok',
-      center_lat: 13.7339, center_lng: 100.5614,
-      polygon_coords: [[13.720,100.553],[13.720,100.585],[13.745,100.585],[13.745,100.553],[13.720,100.553]],
-      required_cafes: 2, required_otops: 1, required_landmarks: 3 },
-
-    { id: 'watthana',     name_th: 'วัฒนา-ทองหล่อ',       name_en: 'Watthana-Thonglor',   province: 'Bangkok',
-      center_lat: 13.7297, center_lng: 100.5826,
-      polygon_coords: [[13.718,100.568],[13.718,100.596],[13.742,100.596],[13.742,100.568],[13.718,100.568]],
-      required_cafes: 3, required_otops: 1, required_landmarks: 2 },
-
-    { id: 'chatuchak',    name_th: 'จตุจักร',              name_en: 'Chatuchak',           province: 'Bangkok',
-      center_lat: 13.8022, center_lng: 100.5507,
-      polygon_coords: [[13.792,100.540],[13.792,100.570],[13.815,100.570],[13.815,100.540],[13.792,100.540]],
-      required_cafes: 2, required_otops: 1, required_landmarks: 3 },
-
-    { id: 'ladphrao',     name_th: 'ลาดพร้าว',             name_en: 'Ladphrao',            province: 'Bangkok',
-      center_lat: 13.8100, center_lng: 100.5900,
-      polygon_coords: [[13.795,100.570],[13.795,100.610],[13.825,100.610],[13.825,100.570],[13.795,100.570]],
-      required_cafes: 2, required_otops: 1, required_landmarks: 3 },
-
-    { id: 'bang_kapi',    name_th: 'บางกะปิ-มีนบุรี',      name_en: 'Bang Kapi',           province: 'Bangkok',
-      center_lat: 13.7775, center_lng: 100.6392,
-      polygon_coords: [[13.760,100.615],[13.760,100.660],[13.795,100.660],[13.795,100.615],[13.760,100.615]],
-      required_cafes: 2, required_otops: 1, required_landmarks: 2 },
-
-    { id: 'phra_khanong', name_th: 'พระโขนง-อ่อนนุช',     name_en: 'Phra Khanong',        province: 'Bangkok',
-      center_lat: 13.7009, center_lng: 100.5953,
-      polygon_coords: [[13.688,100.582],[13.688,100.612],[13.714,100.612],[13.714,100.582],[13.688,100.582]],
-      required_cafes: 2, required_otops: 1, required_landmarks: 2 },
-
-    { id: 'bang_na',      name_th: 'บางนา-สุวรรณภูมิ',    name_en: 'Bang Na',             province: 'Bangkok',
-      center_lat: 13.6571, center_lng: 100.6123,
-      polygon_coords: [[13.642,100.594],[13.642,100.632],[13.672,100.632],[13.672,100.594],[13.642,100.594]],
-      required_cafes: 2, required_otops: 2, required_landmarks: 2 },
-
-    { id: 'nonthaburi',   name_th: 'นนทบุรี',              name_en: 'Nonthaburi',          province: 'Nonthaburi',
-      center_lat: 13.8621, center_lng: 100.5144,
-      polygon_coords: [[13.848,100.500],[13.848,100.530],[13.876,100.530],[13.876,100.500],[13.848,100.500]],
-      required_cafes: 2, required_otops: 1, required_landmarks: 2 },
-
-    { id: 'ayutthaya',    name_th: 'อยุธยา',               name_en: 'Ayutthaya',           province: 'Ayutthaya',
-      center_lat: 14.3692, center_lng: 100.5878,
-      polygon_coords: [[14.340,100.549],[14.340,100.622],[14.400,100.622],[14.400,100.549],[14.340,100.549]],
-      required_cafes: 2, required_otops: 1, required_landmarks: 3 },
-  ];
-
-  // ── Nodes ───────────────────────────────────────────
-  const MOCK_NODES = [
-    // Rattanakosin
-    { id: 'node-rattanakosin-cafe-1', districtId: 'rattanakosin', type: 'cafe',     lat: 13.748, lng: 100.491, name: 'ร้านกาแฟโบราณ' },
-    { id: 'node-rattanakosin-cafe-2', districtId: 'rattanakosin', type: 'cafe',     lat: 13.752, lng: 100.496, name: 'Café Chakri' },
-    { id: 'node-rattanakosin-otop-1', districtId: 'rattanakosin', type: 'otop',     lat: 13.756, lng: 100.498, name: 'OTOP ผ้าไทย' },
-    { id: 'node-rattanakosin-landmark-1', districtId: 'rattanakosin', type: 'landmark', lat: 13.7510, lng: 100.4930, name: 'วัดพระแก้ว' },
-    { id: 'node-rattanakosin-landmark-2', districtId: 'rattanakosin', type: 'landmark', lat: 13.7565, lng: 100.4925, name: 'พระบรมมหาราชวัง' },
-    { id: 'node-rattanakosin-landmark-3', districtId: 'rattanakosin', type: 'landmark', lat: 13.7459, lng: 100.4883, name: 'วัดโพธิ์' },
-    // Dusit
-    { id: 'node-dusit-landmark-1', districtId: 'dusit', type: 'landmark', lat: 13.775, lng: 100.513, name: 'พระที่นั่งวิมานเมฆ' },
-    { id: 'node-dusit-landmark-2', districtId: 'dusit', type: 'landmark', lat: 13.768, lng: 100.508, name: 'วัดเบญจมบพิตร' },
-    { id: 'node-dusit-cafe-1',     districtId: 'dusit', type: 'cafe',     lat: 13.772, lng: 100.510, name: 'Tha Phra Chan Café' },
-    { id: 'node-dusit-otop-1',     districtId: 'dusit', type: 'otop',     lat: 13.778, lng: 100.515, name: 'OTOP ของที่ระลึก' },
-    // Pathumwan
-    { id: 'node-pathumwan-landmark-1', districtId: 'pathumwan', type: 'landmark', lat: 13.744, lng: 100.535, name: 'ศาลท้าวมหาพรหม' },
-    { id: 'node-pathumwan-cafe-1',     districtId: 'pathumwan', type: 'cafe',     lat: 13.743, lng: 100.528, name: 'Siam Square Coffee' },
-    { id: 'node-pathumwan-otop-1',     districtId: 'pathumwan', type: 'otop',     lat: 13.747, lng: 100.532, name: 'OTOP สยาม' },
-    // Silom
-    { id: 'node-silom-cafe-1',     districtId: 'silom', type: 'cafe',     lat: 13.725, lng: 100.528, name: 'Silom Coffee Roasters' },
-    { id: 'node-silom-otop-1',     districtId: 'silom', type: 'otop',     lat: 13.728, lng: 100.531, name: 'OTOP เครื่องหนัง' },
-    { id: 'node-silom-landmark-1', districtId: 'silom', type: 'landmark', lat: 13.724, lng: 100.535, name: 'ศาลเจ้าพ่อเสือ' },
-    // Sukhumvit
-    { id: 'node-sukhumvit-cafe-1',     districtId: 'sukhumvit', type: 'cafe',     lat: 13.733, lng: 100.558, name: 'Asok Coffee House' },
-    { id: 'node-sukhumvit-otop-1',     districtId: 'sukhumvit', type: 'otop',     lat: 13.736, lng: 100.563, name: 'OTOP Terminal 21' },
-    { id: 'node-sukhumvit-landmark-1', districtId: 'sukhumvit', type: 'landmark', lat: 13.740, lng: 100.570, name: 'บ้านจิม ทอมป์สัน' },
-    // Watthana
-    { id: 'node-watthana-cafe-1',     districtId: 'watthana', type: 'cafe',     lat: 13.728, lng: 100.577, name: 'Thonglor Café' },
-    { id: 'node-watthana-cafe-2',     districtId: 'watthana', type: 'cafe',     lat: 13.722, lng: 100.584, name: 'Ekkamai Coffee Roasters' },
-    { id: 'node-watthana-cafe-3',     districtId: 'watthana', type: 'cafe',     lat: 13.735, lng: 100.573, name: 'Phrom Phong Brew' },
-    { id: 'node-watthana-otop-1',     districtId: 'watthana', type: 'otop',     lat: 13.731, lng: 100.572, name: 'OTOP ของฝาก Thonglor' },
-    // Chatuchak
-    { id: 'node-chatuchak-cafe-1',     districtId: 'chatuchak', type: 'cafe',     lat: 13.800, lng: 100.549, name: 'JJ Market Coffee' },
-    { id: 'node-chatuchak-otop-1',     districtId: 'chatuchak', type: 'otop',     lat: 13.803, lng: 100.553, name: 'ตลาดนัดจตุจักร' },
-    { id: 'node-chatuchak-landmark-1', districtId: 'chatuchak', type: 'landmark', lat: 13.797, lng: 100.544, name: 'สวนจตุจักร' },
-    // Ladphrao
-    { id: 'node-ladphrao-cafe-1',     districtId: 'ladphrao', type: 'cafe',     lat: 13.808, lng: 100.582, name: 'Ladphrao Coffee' },
-    { id: 'node-ladphrao-otop-1',     districtId: 'ladphrao', type: 'otop',     lat: 13.814, lng: 100.588, name: 'OTOP ลาดพร้าว' },
-    { id: 'node-ladphrao-landmark-1', districtId: 'ladphrao', type: 'landmark', lat: 13.820, lng: 100.591, name: 'วัดลาดพร้าว' },
-    // Bang Kapi
-    { id: 'node-bangkapi-landmark-1', districtId: 'bang_kapi', type: 'landmark', lat: 13.774, lng: 100.635, name: 'วัดบางกะปิ' },
-    { id: 'node-bangkapi-cafe-1',     districtId: 'bang_kapi', type: 'cafe',     lat: 13.778, lng: 100.642, name: 'The Mall Café' },
-    { id: 'node-bangkapi-otop-1',     districtId: 'bang_kapi', type: 'otop',     lat: 13.781, lng: 100.628, name: 'OTOP มีนบุรี' },
-    // Phra Khanong
-    { id: 'node-phrakhanong-cafe-1',     districtId: 'phra_khanong', type: 'cafe',     lat: 13.700, lng: 100.593, name: 'On Nut Coffee' },
-    { id: 'node-phrakhanong-otop-1',     districtId: 'phra_khanong', type: 'otop',     lat: 13.703, lng: 100.597, name: 'OTOP On Nut' },
-    { id: 'node-phrakhanong-landmark-1', districtId: 'phra_khanong', type: 'landmark', lat: 13.696, lng: 100.588, name: 'วัดพระโขนง' },
-    // Bang Na
-    { id: 'node-bangna-landmark-1', districtId: 'bang_na', type: 'landmark', lat: 13.658, lng: 100.612, name: 'วัดบางนา' },
-    { id: 'node-bangna-otop-1',     districtId: 'bang_na', type: 'otop',     lat: 13.652, lng: 100.607, name: 'OTOP Bang Na' },
-    { id: 'node-bangna-cafe-1',     districtId: 'bang_na', type: 'cafe',     lat: 13.664, lng: 100.620, name: 'Suvarnabhumi Café' },
-    // Nonthaburi
-    { id: 'node-nonthaburi-landmark-1', districtId: 'nonthaburi', type: 'landmark', lat: 13.862, lng: 100.515, name: 'วัดเฉลิมพระเกียรติ' },
-    { id: 'node-nonthaburi-cafe-1',     districtId: 'nonthaburi', type: 'cafe',     lat: 13.857, lng: 100.510, name: 'Nonthaburi Riverside Café' },
-    { id: 'node-nonthaburi-otop-1',     districtId: 'nonthaburi', type: 'otop',     lat: 13.865, lng: 100.520, name: 'ตลาดนนทบุรี' },
-    // Ayutthaya
-    { id: 'node-ayutthaya-cafe-1',     districtId: 'ayutthaya', type: 'cafe',     lat: 14.357, lng: 100.576, name: 'ร้านกาแฟเกาะเมือง' },
-    { id: 'node-ayutthaya-cafe-2',     districtId: 'ayutthaya', type: 'cafe',     lat: 14.363, lng: 100.590, name: 'Ayutthaya Heritage Café' },
-    { id: 'node-ayutthaya-otop-1',     districtId: 'ayutthaya', type: 'otop',     lat: 14.360, lng: 100.583, name: 'OTOP ของฝากอยุธยา' },
-    { id: 'node-ayutthaya-landmark-1', districtId: 'ayutthaya', type: 'landmark', lat: 14.3505, lng: 100.5648, name: 'วัดพระศรีสรรเพชญ์' },
-    { id: 'node-ayutthaya-landmark-2', districtId: 'ayutthaya', type: 'landmark', lat: 14.3685, lng: 100.5869, name: 'วัดใหญ่ชัยมงคล' },
-    { id: 'node-ayutthaya-landmark-3', districtId: 'ayutthaya', type: 'landmark', lat: 14.3660, lng: 100.5583, name: 'พระราชวังบางปะอิน' },
-  ];
-
-  // Figure map positions — IDs match figures table in Supabase
-  const FIGURE_NODES = [
-    // ── Rattanakosin ───────────────────────────────────
-    { id: 'fig-s-01', districtId: 'rattanakosin', class: 'S', legacy_pts: 500, lat: 13.7479, lng: 100.4918, name_th: 'สมเด็จพระเจ้าตากสินมหาราช',            name_en: 'King Taksin the Great' },
-    { id: 'fig-s-02', districtId: 'rattanakosin', class: 'S', legacy_pts: 500, lat: 13.7510, lng: 100.4927, name_th: 'พระบาทสมเด็จพระพุทธยอดฟ้าจุฬาโลก',    name_en: 'King Rama I' },
-    { id: 'fig-a-01', districtId: 'rattanakosin', class: 'A', legacy_pts: 200, lat: 13.7450, lng: 100.4985, name_th: 'สุนทรภู่',                              name_en: 'Sunthorn Phu' },
-    { id: 'fig-b-04', districtId: 'rattanakosin', class: 'B', legacy_pts: 100, lat: 13.7532, lng: 100.4942, name_th: 'ขุนวิจิตรมาตรา',                       name_en: 'Khun Wichitmatra' },
-    { id: 'fig-c-01', districtId: 'rattanakosin', class: 'C', legacy_pts:  50, lat: 13.7395, lng: 100.5001, name_th: 'ชาวประมงบางกอก',                       name_en: 'Bangkok Fishermen' },
-    { id: 'fig-c-02', districtId: 'rattanakosin', class: 'C', legacy_pts:  50, lat: 13.7412, lng: 100.4978, name_th: 'พ่อค้าชาวจีนในเยาวราช',               name_en: 'Chinese Merchants of Yaowarat' },
-    // ── Dusit ──────────────────────────────────────────
-    { id: 'fig-s-03', districtId: 'dusit',        class: 'S', legacy_pts: 500, lat: 13.7634, lng: 100.5180, name_th: 'พระบาทสมเด็จพระจุลจอมเกล้าเจ้าอยู่หัว', name_en: 'King Rama V' },
-    { id: 'fig-b-01', districtId: 'dusit',        class: 'B', legacy_pts: 100, lat: 13.7700, lng: 100.5150, name_th: 'เจ้าพระยาสุรศักดิ์มนตรี',              name_en: 'Chao Phraya Surasak Montri' },
-    { id: 'fig-c-09', districtId: 'dusit',        class: 'C', legacy_pts:  50, lat: 13.7786, lng: 100.5181, name_th: 'ตำรวจนครบาลยุคแรก',                    name_en: 'Bangkok First Police' },
-    // ── Pathumwan ──────────────────────────────────────
-    { id: 'fig-s-04', districtId: 'pathumwan',    class: 'S', legacy_pts: 500, lat: 13.7406, lng: 100.5322, name_th: 'พระบาทสมเด็จพระมงกุฎเกล้าเจ้าอยู่หัว', name_en: 'King Rama VI' },
-    { id: 'fig-a-03', districtId: 'pathumwan',    class: 'A', legacy_pts: 200, lat: 13.7400, lng: 100.5266, name_th: 'ปรีดี พนมยงค์',                         name_en: 'Pridi Banomyong' },
-    { id: 'fig-c-05', districtId: 'pathumwan',    class: 'C', legacy_pts:  50, lat: 13.7448, lng: 100.5302, name_th: 'ช่างทอผ้าชุมชนบ้านครัว',               name_en: 'Weavers of Ban Krua' },
-    // ── Silom ──────────────────────────────────────────
-    { id: 'fig-s-14', districtId: 'silom',        class: 'S', legacy_pts: 500, lat: 13.7254, lng: 100.5236, name_th: 'สมเด็จเจ้าพระยาบรมมหาศรีสุริยวงศ์',   name_en: 'Somdet Sri Suriyawong' },
-    { id: 'fig-b-06', districtId: 'silom',        class: 'B', legacy_pts: 100, lat: 13.7260, lng: 100.5295, name_th: 'คึกฤทธิ์ ปราโมช',                      name_en: 'MR Kukrit Pramoj' },
-    { id: 'fig-c-08', districtId: 'silom',        class: 'C', legacy_pts:  50, lat: 13.7268, lng: 100.5285, name_th: 'กลุ่มพ่อค้าเส้นทางคลอง',              name_en: 'Canal Trade Communities' },
-    // ── Sukhumvit ──────────────────────────────────────
-    { id: 'fig-a-06', districtId: 'sukhumvit',    class: 'A', legacy_pts: 200, lat: 13.7368, lng: 100.5580, name_th: 'กุหลาบ สายประดิษฐ์ (ศรีบูรพา)',       name_en: 'Kulap Saipradit' },
-    // ── Watthana ───────────────────────────────────────
-    { id: 'fig-b-16', districtId: 'watthana',     class: 'B', legacy_pts: 100, lat: 13.7297, lng: 100.5780, name_th: 'รัตน์ เปสตันยี',                       name_en: 'Ratana Pestonji' },
-    // ── Chatuchak ──────────────────────────────────────
-    { id: 'fig-c-04', districtId: 'chatuchak',    class: 'C', legacy_pts:  50, lat: 13.7990, lng: 100.5500, name_th: 'แม่ค้าตลาดโต้รุ่ง',                   name_en: 'Dawn Market Vendors' },
-    { id: 'fig-b-18', districtId: 'chatuchak',    class: 'B', legacy_pts: 100, lat: 13.8020, lng: 100.5530, name_th: 'ขุนเดช อาชาญยุทธ',                     name_en: 'Khun Det Achanyut' },
-    // ── Bang Kapi ──────────────────────────────────────
-    { id: 'fig-c-13', districtId: 'bang_kapi',    class: 'C', legacy_pts:  50, lat: 13.7640, lng: 100.6100, name_th: 'ผู้หญิงแห่งตลาดน้ำ',                  name_en: 'Women of the Floating Markets' },
-    // ── Bang Na ────────────────────────────────────────
-    { id: 'fig-b-07', districtId: 'bang_na',      class: 'B', legacy_pts: 100, lat: 13.6681, lng: 100.6018, name_th: 'เนียน ณ ถลาง (คุณหญิงจัน)',            name_en: 'Lady Chan of Thalang' },
-    { id: 'fig-c-07', districtId: 'bang_na',      class: 'C', legacy_pts:  50, lat: 13.6590, lng: 100.6130, name_th: 'บรรพบุรุษชุมชนบางนา',                 name_en: 'Ancestors of Bang Na' },
-    // ── Phra Khanong ───────────────────────────────────
-    { id: 'fig-c-16', districtId: 'phra_khanong', class: 'C', legacy_pts:  50, lat: 13.7100, lng: 100.5985, name_th: 'ชุมชนพุทธจีนในพระโขนง',              name_en: 'Chinese Buddhist Community' },
-    // ── Nonthaburi ─────────────────────────────────────
-    { id: 'fig-c-06', districtId: 'nonthaburi',   class: 'C', legacy_pts:  50, lat: 13.8621, lng: 100.5144, name_th: 'ชาวมอญในนนทบุรี',                     name_en: 'Mon Community of Nonthaburi' },
-    // ── Ayutthaya ──────────────────────────────────────
-    { id: 'fig-s-10', districtId: 'ayutthaya',    class: 'S', legacy_pts: 500, lat: 14.3692, lng: 100.5878, name_th: 'สมเด็จพระนเรศวรมหาราช',              name_en: 'King Naresuan the Great' },
-    { id: 'fig-s-09', districtId: 'ayutthaya',    class: 'S', legacy_pts: 500, lat: 14.3505, lng: 100.5648, name_th: 'สมเด็จพระศรีสุริโยทัย',               name_en: 'Queen Sri Suriyothai' },
-  ];
+  // ── Figure nodes — loaded from Supabase figures table ─
+  let figureNodes = [];
 
 
-  // Lore node positions — IDs match lore_nodes table in Supabase
-  const LORE_NODES = [
-    // ── Rattanakosin founding chain ────────────────────
-    { id: 'lore-rk-1', name_th: 'กำแพงเมืองพระนคร',                       name_en: 'City Walls of Rattanakosin',        lat: 13.7526, lng: 100.4892, radius_m: 80,  lore_pts: 30, content_type: 'text', chain_id: 'chain-rattanakosin-founding', chain_part: 1, district_id: 'rattanakosin', content_th: 'กำแพงเมืองพระนครถูกสร้างขึ้นในสมัยรัชกาลที่ 1 เพื่อป้องกันเมืองหลวงใหม่ คูคลองรอบเกาะรัตนโกสินทร์ทำหน้าที่เป็นแนวป้องกันชั้นแรก ก่อนจะกลายเป็นเส้นทางสัญจรของเมืองในเวลาต่อมา', content_en: 'The Rattanakosin city walls were built under Rama I to protect the new capital. The surrounding canals served as the first line of defense before becoming urban waterways.' },
-    { id: 'lore-rk-2', name_th: 'พระบรมมหาราชวัง',                         name_en: 'The Grand Palace',                  lat: 13.7500, lng: 100.4913, radius_m: 100, lore_pts: 40, content_type: 'text', chain_id: 'chain-rattanakosin-founding', chain_part: 2, district_id: 'rattanakosin', content_th: 'พระบรมมหาราชวังสร้างขึ้นในปี พ.ศ. 2325 เพื่อเป็นที่ประทับของพระมหากษัตริย์และศูนย์กลางการปกครองของสยาม ออกแบบตามแบบอย่างของกรุงศรีอยุธยา และยังคงเป็นสัญลักษณ์สำคัญของประเทศจนถึงปัจจุบัน', content_en: 'Built in 1782, the Grand Palace served as the royal residence and administrative center of Siam, modeled on Ayutthaya and remaining a key national symbol to this day.' },
-    { id: 'lore-rk-3', name_th: 'วัดพระศรีรัตนศาสดาราม (วัดพระแก้ว)',     name_en: 'Wat Phra Kaew — Temple of the Emerald Buddha', lat: 13.7514, lng: 100.4925, radius_m: 100, lore_pts: 50, content_type: 'text', chain_id: 'chain-rattanakosin-founding', chain_part: 3, district_id: 'rattanakosin', content_th: 'วัดพระแก้วเป็นที่ประดิษฐานพระแก้วมรกต พระพุทธรูปคู่บ้านคู่เมืองของไทย พระเจ้ารามาที่ 1 ทรงสร้างวัดนี้ภายในพระบรมมหาราชวังเพื่อเป็นสัญลักษณ์แห่งความมั่นคงของราชวงศ์จักรี', content_en: 'Wat Phra Kaew houses the Emerald Buddha, Thailand\'s most sacred image. Rama I built the temple within the Grand Palace as a symbol of Chakri dynasty legitimacy.' },
-    // ── 1932 Revolution chain ──────────────────────────
-    { id: 'lore-rev-1', name_th: 'ลานพระบรมรูปทรงม้า',                     name_en: 'Royal Plaza — Declaration Site',    lat: 13.7697, lng: 100.5137, radius_m: 100, lore_pts: 40, content_type: 'text', chain_id: 'chain-1932-revolution', chain_part: 1, district_id: 'dusit',        content_th: 'ณ ลานพระบรมรูปทรงม้า เมื่อวันที่ 24 มิถุนายน 2475 คณะราษฎรได้อ่านประกาศเปลี่ยนแปลงการปกครอง จากระบอบสมบูรณาญาสิทธิราชมาเป็นระบอบประชาธิปไตย', content_en: 'On June 24, 1932, the Khana Ratsadon (People\'s Party) read the Declaration of Siamese State at Royal Plaza, ending absolute monarchy and beginning constitutional rule.' },
-    { id: 'lore-rev-2', name_th: 'อนุสาวรีย์ประชาธิปไตย',                  name_en: 'Democracy Monument',               lat: 13.7567, lng: 100.5017, radius_m: 80,  lore_pts: 40, content_type: 'text', chain_id: 'chain-1932-revolution', chain_part: 2, district_id: 'rattanakosin', content_th: 'อนุสาวรีย์ประชาธิปไตยสร้างขึ้นในปี พ.ศ. 2482 เพื่อระลึกถึงการปฏิวัติ 2475 ออกแบบโดยศิลป์ พีระศรี กลายเป็นสัญลักษณ์สำคัญของขบวนการประชาธิปไตยไทยในยุคต่อมา', content_en: 'The Democracy Monument was built in 1939 to commemorate the 1932 revolution, designed by Silpa Bhirasri. It became the central symbol of democratic movements.' },
-    { id: 'lore-rev-3', name_th: 'มหาวิทยาลัยธรรมศาสตร์',                 name_en: 'Thammasat University',             lat: 13.7567, lng: 100.4930, radius_m: 120, lore_pts: 50, content_type: 'text', chain_id: 'chain-1932-revolution', chain_part: 3, district_id: 'pathumwan',    content_th: 'ธรรมศาสตร์ก่อตั้งโดยปรีดี พนมยงค์ในปี พ.ศ. 2477 เพื่อผลิตบัณฑิตที่ "กินได้" และเป็นรากฐานของสังคมประชาธิปไตย กลายเป็นศูนย์กลางของขบวนการนักศึกษาในเหตุการณ์ 14 ตุลา และ 6 ตุลา', content_en: 'Founded by Pridi in 1934 for accessible legal education, Thammasat became the center of the October 14, 1973 and October 6, 1976 student democracy movements.' },
-    // ── Standalone lore nodes ──────────────────────────
-    { id: 'lore-dusit',       name_th: 'พระราชวังดุสิต — สยามสมัยใหม่',    name_en: 'Dusit Palace — Symbol of Modern Siam',    lat: 13.7716, lng: 100.5132, radius_m: 120, lore_pts: 35, content_type: 'text', chain_id: null, chain_part: null, district_id: 'dusit',        content_th: 'รัชกาลที่ 5 ทรงสร้างพระราชวังดุสิตในสไตล์ยุโรป เพื่อแสดงให้นานาชาติเห็นว่าสยามมีความทันสมัยเทียบเท่าอารยประเทศ', content_en: 'Rama V built Dusit Palace in European style to demonstrate Siam\'s modernity to international powers.' },
-    { id: 'lore-pathumwan',   name_th: 'สวนลุมพินี — สวนสาธารณะแห่งแรก',  name_en: 'Lumphini Park — The First Public Park',   lat: 13.7306, lng: 100.5450, radius_m: 150, lore_pts: 25, content_type: 'text', chain_id: null, chain_part: null, district_id: 'pathumwan',    content_th: 'สวนลุมพินีเปิดให้สาธารณชนใช้ในปี พ.ศ. 2468 เป็นสวนสาธารณะแห่งแรกของกรุงเทพฯ สร้างขึ้นในพระราชดำริของรัชกาลที่ 6', content_en: 'Lumphini Park opened to the public in 1925, Bangkok\'s first public park, created under the vision of Rama VI.' },
-    { id: 'lore-silom',       name_th: 'ท่าเรือบางรักและการค้าระหว่างประเทศ', name_en: 'Bang Rak Pier — International Trade', lat: 13.7283, lng: 100.5268, radius_m: 100, lore_pts: 25, content_type: 'text', chain_id: null, chain_part: null, district_id: 'silom',        content_th: 'ท่าเรือบางรักเป็นศูนย์กลางการค้าระหว่างประเทศในศตวรรษที่ 19 ชุมชนพ่อค้าจากยุโรป เอเชียใต้ และจีนตั้งถิ่นฐานอยู่ริมแม่น้ำเจ้าพระยาในบริเวณนี้', content_en: 'Bang Rak Pier was a hub of 19th-century international trade, where European, South Asian, and Chinese merchant communities settled along the Chao Phraya.' },
-    { id: 'lore-sukhumvit',   name_th: 'ถนนสุขุมวิท — สัญลักษณ์การพัฒนา', name_en: 'Sukhumvit Road — Symbol of Modernization', lat: 13.7445, lng: 100.5605, radius_m: 120, lore_pts: 25, content_type: 'text', chain_id: null, chain_part: null, district_id: 'sukhumvit',    content_th: 'ถนนสุขุมวิทสร้างขึ้นในทศวรรษ 2490 กลายเป็นสัญลักษณ์การพัฒนาเมืองสมัยใหม่ของกรุงเทพฯ และเป็นย่านนานาชาติที่สำคัญที่สุดในปัจจุบัน', content_en: 'Sukhumvit Road, built in the 1950s, became the symbol of Bangkok\'s modern urban development and is now the city\'s most international corridor.' },
-    { id: 'lore-watthana',    name_th: 'สุขุมวิท ตอน — ชีวิตนานาชาติ',    name_en: 'Watthana — Where Bangkok Went International', lat: 13.7305, lng: 100.5636, radius_m: 100, lore_pts: 25, content_type: 'text', chain_id: null, chain_part: null, district_id: 'watthana',     content_th: 'ย่านทองหล่อ-เอกมัยพัฒนาขึ้นเป็นศูนย์กลางของชุมชนนานาชาติในกรุงเทพฯ ก่อนจะกลายเป็นพื้นที่บันเทิงและไลฟ์สไตล์ชั้นนำ', content_en: 'Thonglor-Ekkamai developed as Bangkok\'s international community hub before evolving into the city\'s premier lifestyle and entertainment district.' },
-    { id: 'lore-chatuchak',   name_th: 'ตลาดนัดจตุจักร — มรดกตลาดสด',    name_en: 'Chatuchak — Legacy of the Green Market', lat: 13.7997, lng: 100.5500, radius_m: 150, lore_pts: 25, content_type: 'text', chain_id: null, chain_part: null, district_id: 'chatuchak',    content_th: 'ตลาดนัดจตุจักรเริ่มต้นเป็นตลาดสดในทศวรรษ 2490 ก่อนพัฒนาเป็นตลาดวันหยุดสุดสัปดาห์ที่ใหญ่ที่สุดในโลก มีร้านค้ากว่า 15,000 ร้าน', content_en: 'Chatuchak began as a fresh market in the 1950s and grew into the world\'s largest weekend market with over 15,000 stalls.' },
-    { id: 'lore-ladphrao',    name_th: 'ลาดพร้าว — ชุมชนชานเมืองแรก',    name_en: 'Lat Phrao — Bangkok First Suburbs',      lat: 13.8136, lng: 100.5765, radius_m: 120, lore_pts: 25, content_type: 'text', chain_id: null, chain_part: null, district_id: 'ladphrao',     content_th: 'ลาดพร้าวพัฒนาจากชุมชนเกษตรกรรมริมคลองในยุค 2500 มาเป็นย่านชานเมืองชั้นกลางยุคแรกของกรุงเทพฯ เมื่อถนนลาดพร้าวสร้างเสร็จ', content_en: 'Lat Phrao evolved from canal-side farming communities in the 1950s into Bangkok\'s first middle-class suburb after Lat Phrao Road was completed.' },
-    { id: 'lore-bangkapi',    name_th: 'บางกะปิ — ชุมชนคลองฝั่งตะวันออก', name_en: 'Bang Kapi — Eastern Canal Community',    lat: 13.7640, lng: 100.6074, radius_m: 100, lore_pts: 25, content_type: 'text', chain_id: null, chain_part: null, district_id: 'bang_kapi',    content_th: 'บางกะปิเป็นชุมชนริมคลองที่เก่าแก่ทางตะวันออกของกรุงเทพฯ ชาวบ้านอาศัยระบบคลองในการสัญจรและค้าขาย ก่อนที่ถนนจะเข้ามาแทนที่', content_en: 'Bang Kapi is one of Bangkok\'s oldest eastern canal communities, where residents relied on waterways for transport and trade before roads arrived.' },
-    { id: 'lore-bangna',      name_th: 'บางนา — ทุ่งนาสู่อุตสาหกรรม',   name_en: 'Bang Na — From Rice Fields to Industry', lat: 13.6681, lng: 100.5997, radius_m: 100, lore_pts: 25, content_type: 'text', chain_id: null, chain_part: null, district_id: 'bang_na',      content_th: 'บางนาเปลี่ยนจากนาข้าวและนาเกลือมาเป็นเขตอุตสาหกรรมชั้นนำภายในเวลาไม่ถึงครึ่งศตวรรษ สะท้อนการเปลี่ยนแปลงทางเศรษฐกิจของกรุงเทพฯ', content_en: 'Bang Na transformed from rice paddies and salt flats to a major industrial zone in under 50 years, reflecting Bangkok\'s rapid economic transformation.' },
-    { id: 'lore-phrakhanong', name_th: 'พระโขนง — ประตูสู่สมุทรปราการ',  name_en: 'Phra Khanong — Gateway to the Gulf',     lat: 13.7088, lng: 100.6010, radius_m: 100, lore_pts: 25, content_type: 'text', chain_id: null, chain_part: null, district_id: 'phra_khanong', content_th: 'พระโขนงเป็นประตูออกสู่ทะเลอ่าวไทยผ่านคลองพระโขนง ชุมชนตกปลาและทำนาเกลือดั้งเดิมผสมผสานกับชุมชนแรงงานในยุคอุตสาหกรรม', content_en: 'Phra Khanong was the gateway to the Gulf of Thailand via Phra Khanong Canal, blending original fishing and salt communities with industrial-era labor communities.' },
-    { id: 'lore-nonthaburi',  name_th: 'นนทบุรี — ศูนย์กลางมอญและสวน',  name_en: 'Nonthaburi — Mon Heritage and Orchards',  lat: 13.8621, lng: 100.5144, radius_m: 120, lore_pts: 25, content_type: 'text', chain_id: null, chain_part: null, district_id: 'nonthaburi',   content_th: 'ชาวมอญอพยพมาตั้งถิ่นฐานในนนทบุรีหลังการล่มสลายของหงสาวดี นำศิลปกรรมวัดและระนาดมอญมาสู่ดินแดนสยาม ควบคู่กับชื่อเสียงสวนผลไม้ที่โด่งดัง', content_en: 'Mon people settled in Nonthaburi after the fall of Pegu, bringing their temple architecture, Mon music, and famous orchards that defined the province\'s identity.' },
-    // ── Ayutthaya chain ────────────────────────────────
-    { id: 'lore-ayt-1', name_th: 'วัดพระศรีสรรเพชญ์',       name_en: 'Wat Phra Si Sanphet',         lat: 14.3505, lng: 100.5648, radius_m: 120, lore_pts: 40, content_type: 'text', chain_id: 'chain-ayutthaya-glory', chain_part: 1, district_id: 'ayutthaya', content_th: 'วัดพระศรีสรรเพชญ์เป็นวัดหลวงสำคัญที่สุดของกรุงศรีอยุธยา สร้างขึ้นในรัชสมัยพระบรมไตรโลกนาถ เดิมเคยเป็นที่ประดิษฐานพระพุทธรูปหุ้มทองคำ ก่อนจะถูกพม่าหลอมละลายในปี พ.ศ. 2310', content_en: 'Wat Phra Si Sanphet was the most sacred royal temple of Ayutthaya. It once housed a gold-covered Buddha, melted by Burmese forces in 1767.' },
-    { id: 'lore-ayt-2', name_th: 'สนามยุทธหัตถี',            name_en: 'Elephant Duel Battlefield',   lat: 14.3692, lng: 100.5878, radius_m: 120, lore_pts: 50, content_type: 'text', chain_id: 'chain-ayutthaya-glory', chain_part: 2, district_id: 'ayutthaya', content_th: 'ณ ที่แห่งนี้ สมเด็จพระนเรศวรทรงกระทำยุทธหัตถีกับมหาอุปราชาแห่งพม่าในปี พ.ศ. 2135 ชัยชนะครั้งนั้นปลดปล่อยอยุธยาจากอำนาจพม่า และเป็นการรบที่ยิ่งใหญ่ที่สุดในประวัติศาสตร์ไทย', content_en: 'In 1593, King Naresuan defeated Burmese Crown Prince Mingyi Swa in an elephant duel here, freeing Ayutthaya from Burmese domination in the greatest battle in Thai history.' },
-    { id: 'lore-ayt-3', name_th: 'วัดใหญ่ชัยมงคล',          name_en: 'Wat Yai Chaimongkol',        lat: 14.3685, lng: 100.5869, radius_m: 120, lore_pts: 30, content_type: 'text', chain_id: 'chain-ayutthaya-glory', chain_part: 3, district_id: 'ayutthaya', content_th: 'วัดใหญ่ชัยมงคลสร้างขึ้นเพื่อเฉลิมฉลองชัยชนะยุทธหัตถีของสมเด็จพระนเรศวร พระเจดีย์ใหญ่ตั้งตระหง่านเป็นสัญลักษณ์ความรุ่งเรืองของอยุธยา ก่อนถูกทำลายในสงครามปี พ.ศ. 2310', content_en: 'Built to celebrate Naresuan\'s victory, Wat Yai Chaimongkol\'s great chedi stood as a symbol of Ayutthaya\'s glory until its destruction in 1767.' },
-  ];
+  // ── Lore nodes — loaded from Supabase lore_nodes table ─
 
   // ── User state ─────────────────────────────────────
   // Default all districts to fogged+zero — DB state loaded at boot overrides these
@@ -376,21 +179,25 @@ const MapModule = (() => {
   }
 
   async function loadDistrictData() {
-    let districts = MOCK_DISTRICTS;
+    let districts = [];
     try {
       const data = await DB.Districts.getAll();
       if (data?.length) districts = data;
 
       const user = window.AppCore?.App?.user;
+      const baseLoaders = [loadSupportNodes(), loadFigureNodes(), loadBtsMrtStations()];
       if (user) {
         const [stateData] = await Promise.all([
           DB.Districts.getUserState(user.id),
           loadVisitedSupportNodes(user.id),
+          ...baseLoaders,
         ]);
         stateData.forEach(s => {
           userDistrictState[s.district_id] = s;
         });
         updateDiscoveryPercentFromDB(user.id);
+      } else {
+        await Promise.all(baseLoaders);
       }
     } catch { /* use mock data */ }
 
@@ -406,6 +213,34 @@ const MapModule = (() => {
     }
   }
 
+  async function loadSupportNodes() {
+    try {
+      const data = await DB.SupportNodes.getAll();
+      if (data?.length) {
+        // normalise district_id → districtId so existing render code works unchanged
+        supportNodes = data.map(n => ({ ...n, districtId: n.district_id }));
+      }
+    } catch { /* supportNodes stays empty — nodes just won't render */ }
+  }
+
+  async function loadFigureNodes() {
+    try {
+      const data = await DB.Figures.getAll();
+      if (data?.length) {
+        figureNodes = data
+          .filter(f => f.lat != null && f.lng != null)
+          .map(f => ({ ...f, districtId: f.district_id }));
+      }
+    } catch { /* figureNodes stays empty */ }
+  }
+
+  async function loadBtsMrtStations() {
+    try {
+      const data = await DB.BtsMrtStations.getAll();
+      if (data?.length) btsMrtStations = data;
+    } catch { /* btsMrtStations stays empty — transport multiplier returns 1 */ }
+  }
+
   async function loadVisitedSupportNodes(userId) {
     if (!DB.Districts.getVisitedSupportNodes) return;
     try {
@@ -415,7 +250,7 @@ const MapModule = (() => {
   }
 
   async function loadLoreData() {
-    loreNodes = LORE_NODES;
+    loreNodes = [];
     loadLocalLoreState();
 
     const user = window.AppCore?.App?.user;
@@ -461,8 +296,6 @@ const MapModule = (() => {
   }
 
   function checkLoreProximity(userLat, userLng) {
-    if (!loreNodes.length) loreNodes = LORE_NODES;
-
     loreNodes.forEach(node => {
       if (unlockedLoreIds.has(node.id) || pendingLoreIds.has(node.id)) return;
       const distance = haversineDistance(userLat, userLng, node.lat, node.lng);
@@ -611,7 +444,7 @@ const MapModule = (() => {
       if (k.startsWith('node-')) { map.removeLayer(markers[k]); delete markers[k]; }
     });
 
-    MOCK_NODES.forEach((node, i) => {
+    supportNodes.forEach((node, i) => {
       const state = userDistrictState[node.districtId] || { fogged: true };
       if (state.fogged) return;
 
@@ -635,7 +468,7 @@ const MapModule = (() => {
       if (k.startsWith('figure-')) { map.removeLayer(markers[k]); delete markers[k]; }
     });
 
-    FIGURE_NODES.forEach(figure => {
+    figureNodes.forEach(figure => {
       const state = userDistrictState[figure.districtId] || { fogged: true };
       if (state.fogged) return;
 
@@ -709,7 +542,7 @@ const MapModule = (() => {
     if (!card || !content) return;
 
     const cfg      = NODE_CFG[node.type] || NODE_CFG.landmark;
-    const district = (allDistrictsCache || MOCK_DISTRICTS).find(d => d.id === node.districtId);
+    const district = (allDistrictsCache || []).find(d => d.id === node.districtId);
     const id = getSupportNodeId(node);
     const visited = visitedSupportNodeIds.has(id);
 
@@ -761,7 +594,7 @@ const MapModule = (() => {
   }
 
   async function visitSupportNode(nodeId) {
-    const node = MOCK_NODES.find(item => getSupportNodeId(item) === nodeId);
+    const node = supportNodes.find(item => getSupportNodeId(item) === nodeId);
     if (!node || visitedSupportNodeIds.has(nodeId)) return;
 
     const btn = document.getElementById('btn-visit-support-node');
@@ -901,15 +734,15 @@ const MapModule = (() => {
   }
 
   function openLegendaryEncounter(districtId, figureId = null) {
-    const district = (allDistrictsCache || MOCK_DISTRICTS).find(item => item.id === districtId);
+    const district = (allDistrictsCache || []).find(item => item.id === districtId);
     if (district && !canCheckIn(districtId, district)) {
       window.AppCore?.showToast('ยังไม่ครบเงื่อนไข Support Nodes');
       return;
     }
 
     const figure = figureId
-      ? FIGURE_NODES.find(item => item.id === figureId)
-      : FIGURE_NODES.find(item => item.districtId === districtId && item.class !== 'C');
+      ? figureNodes.find(item => item.id === figureId)
+      : figureNodes.find(item => item.districtId === districtId && item.class !== 'C');
     if (!figure) {
       window.AppCore?.showToast('ยังไม่มี Legendary Encounter ในย่านนี้');
       return;
@@ -918,7 +751,7 @@ const MapModule = (() => {
   }
 
   async function openQuizForFigure(figureId, questionIndex = 0, questions = null) {
-    const figure = FIGURE_NODES.find(item => item.id === figureId);
+    const figure = figureNodes.find(item => item.id === figureId);
     if (!figure) return;
 
     let quizQuestions = questions;
@@ -1067,13 +900,13 @@ const MapModule = (() => {
     userDistrictState[d.id] = { ...userDistrictState[d.id], fogged: false };
 
     // Rebuild the entire fog layer (removes the old polygon, adds new with extra hole)
-    buildFogLayer(allDistrictsCache || MOCK_DISTRICTS);
+    buildFogLayer(allDistrictsCache || []);
 
     // Reveal nodes in this district
     renderNodes();
 
     // Update watchtower to visited state
-    renderWatchtowers(allDistrictsCache || MOCK_DISTRICTS);
+    renderWatchtowers(allDistrictsCache || []);
 
     window.AppCore?.closeAllSheets();
     updateStatsBar();
@@ -1133,7 +966,7 @@ const MapModule = (() => {
   }
 
   function confirmHome(districtId) {
-    const district = (allDistrictsCache || MOCK_DISTRICTS).find(d => d.id === districtId);
+    const district = (allDistrictsCache || []).find(d => d.id === districtId);
     if (!district) return;
 
     homeLocation = { id: districtId, lat: district.center_lat, lng: district.center_lng,
@@ -1148,14 +981,14 @@ const MapModule = (() => {
     addHomeMarker(homeLocation);
 
     userDistrictState[districtId] = { ...(userDistrictState[districtId] || {}), fogged: false };
-    renderAll(allDistrictsCache || MOCK_DISTRICTS);
+    renderAll(allDistrictsCache || []);
     updateDiscoveryPercentFromDB(window.AppCore?.App?.user?.id);
     window.AppCore?.showFloatPts(50, window.innerWidth / 2, window.innerHeight / 2);
   }
 
   function skipHomePicker() {
     window.AppCore?.closeAllSheets();
-    renderAll(allDistrictsCache || MOCK_DISTRICTS);
+    renderAll(allDistrictsCache || []);
   }
 
   function addHomeMarker(home) {
@@ -1200,7 +1033,7 @@ const MapModule = (() => {
 
   function getTransportMultiplier() {
     if (!lastKnownPosition) return 1;
-    return BTS_MRT_STATIONS.some(station => (
+    return btsMrtStations.some(station => (
       haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, station.lat, station.lng) <= station.radius_m
     )) ? 2 : 1;
   }
@@ -1220,7 +1053,7 @@ const MapModule = (() => {
 
   document.getElementById('btn-checkin')?.addEventListener('click', performCheckIn);
 
-  function getLoreNodes() { return loreNodes.length ? loreNodes : LORE_NODES; }
+  function getLoreNodes() { return loreNodes; }
   function getUnlockedLoreIds() { return [...unlockedLoreIds]; }
 
   return { init, resize, confirmHome, skipHomePicker, saveLoreUnlock, visitSupportNode, openLegendaryEncounter, openQuizForFigure, submitQuizAnswer, getLoreNodes, getUnlockedLoreIds };

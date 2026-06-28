@@ -371,6 +371,27 @@ const Notifications = {
   }
 };
 
+// ── BTS / MRT Stations ────────────────────────────────
+const BtsMrtStations = {
+  async getAll() {
+    const { data, error } = await _sb.from('bts_mrt_stations').select('*');
+    if (error) throw error;
+    return data;
+  }
+};
+
+// ── Support Nodes ─────────────────────────────────────
+const SupportNodes = {
+  async getAll() {
+    const { data, error } = await _sb
+      .from('support_nodes')
+      .select('*')
+      .eq('is_active', true);
+    if (error) throw error;
+    return data;
+  }
+};
+
 // ── Missions ───────────────────────────────────────────
 const Missions = {
   async getDailyChallenges(userId) {
@@ -425,4 +446,4 @@ const Missions = {
 };
 
 // Expose globally
-window.DB = { Auth, Profiles, Districts, Figures, Artifacts, Leaderboard, Lore, Quiz, Notifications, Missions };
+window.DB = { Auth, Profiles, Districts, Figures, SupportNodes, BtsMrtStations, Artifacts, Leaderboard, Lore, Quiz, Notifications, Missions };
