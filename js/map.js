@@ -63,6 +63,7 @@ const MapModule = (() => {
     bang_na:      _blank(),
     nonthaburi:   _blank(),
     ayutthaya:    _blank(),
+    satit_test:   _blank(),
   };
 
   // ── SVG icon helpers ────────────────────────────────
