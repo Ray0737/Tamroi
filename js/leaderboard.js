@@ -5,6 +5,7 @@ const LeaderboardModule = (() => {
   let activePeriod = 'all';
   let currentPlayers = [];
   let realtimeChannel = null;
+  let guildRealtimeChannel = null;
 
   const MY_ID = '__current_user__';
 
@@ -52,6 +53,7 @@ const LeaderboardModule = (() => {
           guildEl?.removeAttribute('hidden');
           window.GuildModule?.renderGuildPanel();
           _renderGuildLeaderboard();
+          _subscribeGuildRealtime();
         } else {
           guildEl?.setAttribute('hidden', '');
           soloEl?.removeAttribute('hidden');
@@ -165,6 +167,16 @@ const LeaderboardModule = (() => {
     if (!realtimeChannel) return;
     try { realtimeChannel.unsubscribe(); } catch { /* ignore */ }
     realtimeChannel = null;
+  }
+
+  function _subscribeGuildRealtime() {
+    if (guildRealtimeChannel) return;
+    try {
+      guildRealtimeChannel = DB.Coop.subscribeGuildChanges(() => {
+        _renderGuildLeaderboard();
+        window.GuildModule?.renderGuildPanel();
+      });
+    } catch { guildRealtimeChannel = null; }
   }
 
   function onScoreUpdate(payload) {

@@ -459,11 +459,13 @@ const Missions = {
 // ── Coop ──────────────────────────────────────────────
 const Coop = {
   async getMyGuild(userId) {
-    const { data: memberRow } = await _sb
+    const { data: rows } = await _sb
       .from('guild_members')
       .select('guild_id, role')
       .eq('user_id', userId)
-      .maybeSingle();
+      .order('joined_at', { ascending: false })
+      .limit(1);
+    const memberRow = rows?.[0];
     if (!memberRow) return null;
 
     const { data: guild, error } = await _sb
@@ -579,6 +581,13 @@ const Coop = {
       .limit(20);
     if (error) throw error;
     return data || [];
+  },
+
+  subscribeGuildChanges(onChange) {
+    return _sb.channel('guild-leaderboard-rt')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'guilds' },       onChange)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'guild_members' }, onChange)
+      .subscribe();
   },
 
   subscribeGuildPresence(guildId, { onSync, onJoin, onLeave } = {}) {
