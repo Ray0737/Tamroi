@@ -172,10 +172,8 @@ const GuildModule = (() => {
                  style="flex:1;background:var(--color-card-darker);border:1px solid var(--color-border);
                         border-radius:var(--radius-md);padding:8px 10px;color:var(--color-white);font-size:12px">
           <button id="btn-create-guild"
-                  style="display:flex;align-items:center;gap:4px;white-space:nowrap;
-                         background:var(--color-primary);color:#000;border:none;
-                         border-radius:var(--radius-md);padding:8px 12px;font-size:12px;
-                         font-weight:600;cursor:pointer">
+                  class="btn btn-primary btn-sm"
+                  style="display:flex;align-items:center;gap:4px;white-space:nowrap">
             ${iconPlus} สร้าง
           </button>
         </div>
@@ -187,11 +185,8 @@ const GuildModule = (() => {
                         border-radius:var(--radius-md);padding:8px 10px;color:var(--color-white);
                         font-size:12px;text-transform:uppercase;letter-spacing:2px">
           <button id="btn-join-guild"
-                  style="display:flex;align-items:center;gap:4px;white-space:nowrap;
-                         background:transparent;color:var(--color-primary);
-                         border:1px solid var(--color-primary);
-                         border-radius:var(--radius-md);padding:8px 12px;font-size:12px;
-                         font-weight:600;cursor:pointer">
+                  class="btn btn-outline btn-sm"
+                  style="display:flex;align-items:center;gap:4px;white-space:nowrap">
             ${iconEnter} เข้าร่วม
           </button>
         </div>
