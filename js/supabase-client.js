@@ -329,8 +329,6 @@ const Quiz = {
       .from('quiz_questions')
       .select('*')
       .eq('figure_id', figureId)
-      .not('source_ref', 'is', null)
-      .neq('source_ref', '')
       .limit(count);
     if (error) throw error;
     return count === 1 ? (data?.[0] || null) : data;
