@@ -139,29 +139,64 @@ const GuildModule = (() => {
   }
 
   function _renderNoGuild() {
+    const iconUsers = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+      stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;color:var(--color-primary)">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+      <circle cx="9" cy="7" r="4"/>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>`;
+    const iconPlus = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px">
+      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>`;
+    const iconEnter = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px">
+      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+      <polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
+    </svg>`;
     return `
       <div style="background:var(--color-card-dark);border-radius:var(--radius-xl);
-                  border:1px dashed var(--color-border);padding:var(--space-lg);text-align:center">
-        <p style="font-size:32px;margin:0 0 var(--space-sm)">🤝</p>
-        <h3 style="font-family:var(--font-heading);font-size:16px;font-weight:700;margin:0 0 6px">
-          ยังไม่มีกลุ่ม</h3>
-        <p style="font-size:12px;color:var(--color-muted);margin:0 0 var(--space-md)">
-          สร้างหรือเข้าร่วมกลุ่มเพื่อเล่นร่วมกับเพื่อน</p>
-        <input id="guild-name-input" type="text" placeholder="ชื่อกลุ่มใหม่..."
-               style="width:100%;background:var(--color-card-darker);border:1px solid var(--color-border);
-                      border-radius:var(--radius-md);padding:10px var(--space-sm);color:var(--color-white);
-                      font-size:13px;margin-bottom:8px">
-        <button class="btn btn-primary btn-full" id="btn-create-guild" style="margin-bottom:var(--space-sm)">
-          สร้างกลุ่มใหม่</button>
-        <div style="display:flex;gap:8px">
+                  border:1px dashed var(--color-border);padding:var(--space-md)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:var(--space-sm)">
+          ${iconUsers}
+          <div>
+            <h3 style="font-family:var(--font-heading);font-size:15px;font-weight:700;margin:0 0 2px">
+              ยังไม่มีกลุ่ม</h3>
+            <p style="font-size:11px;color:var(--color-muted);margin:0">
+              สร้างหรือเข้าร่วมกลุ่มเพื่อเล่นร่วมกับเพื่อน</p>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:6px;margin-bottom:6px">
+          <input id="guild-name-input" type="text" placeholder="ชื่อกลุ่มใหม่..."
+                 style="flex:1;background:var(--color-card-darker);border:1px solid var(--color-border);
+                        border-radius:var(--radius-md);padding:8px 10px;color:var(--color-white);font-size:12px">
+          <button id="btn-create-guild"
+                  style="display:flex;align-items:center;gap:4px;white-space:nowrap;
+                         background:var(--color-primary);color:#000;border:none;
+                         border-radius:var(--radius-md);padding:8px 12px;font-size:12px;
+                         font-weight:600;cursor:pointer">
+            ${iconPlus} สร้าง
+          </button>
+        </div>
+
+        <div style="display:flex;gap:6px">
           <input id="guild-code-input" type="text" placeholder="รหัสเชิญ (6 ตัว)..."
                  maxlength="6"
                  style="flex:1;background:var(--color-card-darker);border:1px solid var(--color-border);
-                        border-radius:var(--radius-md);padding:10px var(--space-sm);color:var(--color-white);
-                        font-size:13px;text-transform:uppercase">
-          <button class="btn btn-outline" id="btn-join-guild" style="white-space:nowrap">เข้าร่วม</button>
+                        border-radius:var(--radius-md);padding:8px 10px;color:var(--color-white);
+                        font-size:12px;text-transform:uppercase;letter-spacing:2px">
+          <button id="btn-join-guild"
+                  style="display:flex;align-items:center;gap:4px;white-space:nowrap;
+                         background:transparent;color:var(--color-primary);
+                         border:1px solid var(--color-primary);
+                         border-radius:var(--radius-md);padding:8px 12px;font-size:12px;
+                         font-weight:600;cursor:pointer">
+            ${iconEnter} เข้าร่วม
+          </button>
         </div>
-        <p id="guild-error" style="font-size:11px;color:#ef5350;margin:6px 0 0;min-height:16px"></p>
+
+        <p id="guild-error" style="font-size:11px;color:#ef5350;margin:6px 0 0;min-height:14px"></p>
       </div>`;
   }
 
