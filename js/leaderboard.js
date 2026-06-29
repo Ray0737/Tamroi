@@ -75,7 +75,7 @@ const LeaderboardModule = (() => {
                              border-bottom:1px solid rgba(255,255,255,0.04)">
                   <span style="font-size:16px;font-weight:800;color:var(--color-muted);width:24px;text-align:center">${i + 1}</span>
                   <div style="flex:1">
-                    <p style="margin:0;font-size:13px;font-weight:700">${escapeHtml(g.name)}</p>
+                    <p style="margin:0;font-size:13px;font-weight:700;color:var(--color-white)">${escapeHtml(g.name)}</p>
                     <p style="margin:2px 0 0;font-size:10px;color:var(--color-muted)">
                       🗺 ${g.guild_discovery_count} districts · 📖 ${g.guild_captures} captures</p>
                   </div>
