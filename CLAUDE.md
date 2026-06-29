@@ -125,7 +125,9 @@
 ### Agent Workflow
 
 - **RTK**: Use `rtk` for every shell command in this repo (git, node, find, etc.). The hook rewrites commands automatically; invoke directly when needed. See `~/.claude/RTK.md`.
+- **Haiku for context lookups**: Use `claude-haiku-4-5-20251001` (via the `Explore` subagent or Agent tool with `model: "haiku"`) for any task that is purely read-only research — finding files, grepping for symbols, reading docs, answering "where is X defined". Reserve the main model for writing and decision-making.
 - **Ponytail**: Default working mode is ponytail full. Shortest diff that solves the problem. No speculative features, no unrequested abstractions. Stop at the first rung of the ladder that holds.
+- **Caveman**: Default communication mode. Terse prose — one sentence max per update. No essays, no summaries, no narration. Code first, explanation only if non-obvious.
 - **Karpathy rules** (applied in order before touching code):
   1. **Think first** — state assumptions explicitly; if multiple interpretations exist, surface them before picking one.
   2. **Simplicity** — minimum code that solves the problem; if it could be 50 lines, don't write 200.

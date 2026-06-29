@@ -14,7 +14,7 @@ const collectionJs = read('js/collection.js');
 
 assert(existsSync(new URL('supabase/patch_lore.sql', root)), 'supabase/patch_lore.sql must exist');
 assert(mapJs.includes('function haversineDistance'), 'map.js must expose a private haversineDistance helper');
-assert(mapJs.includes('const LORE_NODES'), 'map.js must define mock LORE_NODES');
+assert(mapJs.includes('DB.Lore.getAll'), 'map.js must load lore nodes from DB');
 assert(mapJs.includes('checkLoreProximity'), 'map.js must check lore proximity from GPS updates');
 assert(mapJs.includes('unlockLore'), 'map.js must unlock lore when user enters a lore radius');
 assert(mapJs.includes('renderLoreMarkers'), 'map.js must render map icons for visited lore places');

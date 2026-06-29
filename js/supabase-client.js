@@ -334,6 +334,19 @@ const Quiz = {
       .limit(count);
     if (error) throw error;
     return count === 1 ? (data?.[0] || null) : data;
+  },
+
+  async getRaidQuestions(figureId, count = 3) {
+    const { data, error } = await _sb
+      .from('quiz_questions')
+      .select('*')
+      .eq('figure_id', figureId)
+      .eq('is_raid_question', true)
+      .limit(count);
+    if (error) throw error;
+    // Fallback: use any questions for this figure if none flagged as raid-only
+    if (!data?.length) return Quiz.getForFigure(figureId, count);
+    return data;
   }
 };
 
@@ -445,5 +458,261 @@ const Missions = {
   }
 };
 
+// ── Coop ──────────────────────────────────────────────
+const Coop = {
+  async getMyGuild(userId) {
+    const { data: memberRow } = await _sb
+      .from('guild_members')
+      .select('guild_id, role')
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (!memberRow) return null;
+
+    const { data: guild, error } = await _sb
+      .from('guilds')
+      .select('*')
+      .eq('id', memberRow.guild_id)
+      .single();
+    if (error) throw error;
+
+    const members = await Coop.getGuildMembers(guild.id);
+    return { guild: { ...guild, myRole: memberRow.role }, members };
+  },
+
+  async createGuild(name, userId) {
+    const { data, error } = await _sb
+      .from('guilds')
+      .insert({ name, created_by: userId })
+      .select()
+      .single();
+    if (error) throw error;
+
+    await _sb.from('guild_members').insert({ guild_id: data.id, user_id: userId, role: 'leader' });
+    return data;
+  },
+
+  async joinGuild(inviteCode, userId) {
+    const { data: guild, error: gErr } = await _sb
+      .from('guilds')
+      .select('id, max_members')
+      .eq('invite_code', inviteCode.toUpperCase())
+      .single();
+    if (gErr) throw new Error('ไม่พบกลุ่มด้วยรหัสนี้');
+
+    const { count } = await _sb
+      .from('guild_members')
+      .select('*', { count: 'exact', head: true })
+      .eq('guild_id', guild.id);
+    if (count >= guild.max_members) throw new Error('กลุ่มเต็มแล้ว');
+
+    const { data, error } = await _sb
+      .from('guild_members')
+      .insert({ guild_id: guild.id, user_id: userId, role: 'member' })
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async leaveGuild(guildId, userId) {
+    const { error } = await _sb.from('guild_members').delete()
+      .eq('guild_id', guildId).eq('user_id', userId);
+    if (error) throw error;
+  },
+
+  async kickMember(guildId, targetUserId) {
+    const { error } = await _sb.from('guild_members').delete()
+      .eq('guild_id', guildId).eq('user_id', targetUserId);
+    if (error) throw error;
+  },
+
+  async getGuildMembers(guildId) {
+    const { data, error } = await _sb
+      .from('guild_members')
+      .select('user_id, role, joined_at, profiles(username, avatar_url, legacy_score)')
+      .eq('guild_id', guildId)
+      .order('joined_at');
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getCollabMissions() {
+    const { data, error } = await _sb
+      .from('collab_missions')
+      .select('*')
+      .eq('is_active', true);
+    if (error) throw error;
+    return data || [];
+  },
+
+  async checkInToMission(missionId, guildId, userId) {
+    const { data, error } = await _sb
+      .from('collab_mission_checkins')
+      .insert({ mission_id: missionId, guild_id: guildId, user_id: userId })
+      .select().single();
+    if (error && error.code !== '23505') throw error;
+    return data;
+  },
+
+  async getMissionCheckins(missionId, guildId) {
+    const { data, error } = await _sb
+      .from('collab_mission_checkins')
+      .select('user_id, checked_in_at, profiles(username)')
+      .eq('mission_id', missionId)
+      .eq('guild_id', guildId);
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getAllGuildCheckins(guildId) {
+    const { data, error } = await _sb
+      .from('collab_mission_checkins')
+      .select('mission_id, user_id, profiles(username)')
+      .eq('guild_id', guildId);
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getGuildLeaderboard() {
+    const { data, error } = await _sb
+      .from('guild_leaderboard')
+      .select('*')
+      .order('guild_legacy_score', { ascending: false })
+      .limit(20);
+    if (error) throw error;
+    return data || [];
+  },
+
+  subscribeGuildPresence(guildId, { onSync, onJoin, onLeave } = {}) {
+    const ch = _sb.channel(`presence:guild:${guildId}`, {
+      config: { presence: { key: guildId } }
+    });
+    if (onSync)  ch.on('presence', { event: 'sync' },  onSync);
+    if (onJoin)  ch.on('presence', { event: 'join' },  onJoin);
+    if (onLeave) ch.on('presence', { event: 'leave' }, onLeave);
+    ch.subscribe();
+    return ch;
+  },
+
+  subscribeMissionProgress(missionId, guildId, callback) {
+    return _sb
+      .channel(`mission-progress-${missionId}-${guildId}`)
+      .on('postgres_changes', {
+        event: 'INSERT', schema: 'public',
+        table: 'collab_mission_checkins',
+        filter: `mission_id=eq.${missionId}`
+      }, callback)
+      .subscribe();
+  }
+};
+
+// ── Raid ───────────────────────────────────────────────
+const Raid = {
+  async createSession(figureId, guildId, hostUserId) {
+    const { data, error } = await _sb
+      .from('raid_sessions')
+      .insert({ figure_id: figureId, guild_id: guildId, host_user_id: hostUserId })
+      .select().single();
+    if (error) throw error;
+    return data;
+  },
+
+  async joinSession(sessionId, userId) {
+    const { data, error } = await _sb
+      .from('raid_session_members')
+      .insert({ session_id: sessionId, user_id: userId })
+      .select().single();
+    if (error && error.code !== '23505') throw error;
+    return data;
+  },
+
+  async updateSession(sessionId, fields) {
+    const { error } = await _sb.from('raid_sessions').update(fields).eq('id', sessionId);
+    if (error) throw error;
+  },
+
+  async getSessionMembers(sessionId) {
+    const { data, error } = await _sb
+      .from('raid_session_members')
+      .select('user_id, is_ready, joined_at, profiles(username, avatar_url)')
+      .eq('session_id', sessionId)
+      .order('joined_at');
+    if (error) throw error;
+    return data || [];
+  },
+
+  async setReady(sessionId, userId) {
+    const { error } = await _sb.from('raid_session_members')
+      .update({ is_ready: true }).eq('session_id', sessionId).eq('user_id', userId);
+    if (error) throw error;
+  },
+
+  async insertCaptures(figureId, userIds) {
+    if (!userIds?.length) return;
+    const { error } = await _sb.from('user_captures')
+      .insert(userIds.map(uid => ({ user_id: uid, figure_id: figureId, quiz_score: 3 })));
+    if (error && error.code !== '23505') throw error;
+  },
+
+  openBroadcast(sessionId) {
+    return _sb.channel(`broadcast:raid:${sessionId}`, {
+      config: { broadcast: { self: true } }
+    }).subscribe();
+  },
+
+  openPresence(sessionId) {
+    const ch = _sb.channel(`presence:raid:${sessionId}`, {
+      config: { presence: { key: sessionId } }
+    });
+    ch.subscribe();
+    return ch;
+  }
+};
+
+// ── Discussion ────────────────────────────────────────
+const Discussion = {
+  async getComments(figureId) {
+    const { data, error } = await _sb
+      .from('figure_discussions')
+      .select('*, profiles(username, avatar_url)')
+      .eq('figure_id', figureId)
+      .is('parent_id', null)
+      .order('created_at', { ascending: false })
+      .limit(50);
+    if (error) throw error;
+
+    const posts = data || [];
+    if (!posts.length) return posts;
+
+    const ids = posts.map(p => p.id);
+    const { data: replies } = await _sb
+      .from('figure_discussions')
+      .select('*, profiles(username, avatar_url)')
+      .in('parent_id', ids)
+      .order('created_at');
+
+    return posts.map(post => ({
+      ...post,
+      replies: (replies || []).filter(r => r.parent_id === post.id)
+    }));
+  },
+
+  async postComment(figureId, userId, content, parentId = null) {
+    const { data, error } = await _sb
+      .from('figure_discussions')
+      .insert({ figure_id: figureId, user_id: userId, content, parent_id: parentId })
+      .select().single();
+    if (error) throw error;
+    return data;
+  },
+
+  async flagComment(discussionId, userId) {
+    const { error } = await _sb
+      .from('discussion_flags')
+      .insert({ discussion_id: discussionId, user_id: userId });
+    if (error && error.code !== '23505') throw error;
+  }
+};
+
 // Expose globally
-window.DB = { Auth, Profiles, Districts, Figures, SupportNodes, BtsMrtStations, Artifacts, Leaderboard, Lore, Quiz, Notifications, Missions };
+window.DB = { Auth, Profiles, Districts, Figures, SupportNodes, BtsMrtStations, Artifacts, Leaderboard, Lore, Quiz, Notifications, Missions, Coop, Raid, Discussion };

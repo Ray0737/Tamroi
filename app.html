@@ -271,6 +271,7 @@
             <button class="pill" data-filter="C">C-Class</button>
             <button class="pill" data-filter="artifacts">Artifacts</button>
             <button class="pill" data-filter="journal">Journal</button>
+            <button class="pill" data-filter="discuss">💬 ถกเถียง</button>
           </div>
 
           <!-- Stats -->
@@ -290,6 +291,7 @@
           </div>
 
           <div class="lore-journal-list" id="lore-journal" hidden></div>
+          <div id="discussion-panel" hidden style="padding-top:var(--space-sm)"></div>
 
           <!-- Artifacts section -->
           <div id="collection-artifacts-section" class="mt-4">
@@ -309,6 +311,8 @@
         <div class="section-inner" style="display:flex;flex-direction:column;gap:var(--space-md)">
           <!-- Seasonal events banner -->
           <div id="seasonal-events"></div>
+          <!-- Co-op missions -->
+          <div id="coop-missions"></div>
           <!-- BKK bonus banner -->
           <div id="bkk-bonus"></div>
           <!-- Active mission -->
@@ -330,6 +334,14 @@
       <div class="section-scroll">
         <div class="section-inner" style="display:flex;flex-direction:column;gap:var(--space-md)">
 
+          <!-- View toggle: Solo / Guild -->
+          <div class="filter-pills" id="leaderboard-view">
+            <button class="pill active" data-view="solo">เดี่ยว</button>
+            <button class="pill" data-view="guild">กลุ่ม</button>
+          </div>
+
+          <!-- Solo leaderboard (existing) -->
+          <div id="solo-leaderboard-section">
           <!-- Period filter -->
           <div class="filter-pills" id="leaderboard-period">
             <button class="pill active" data-period="weekly">Weekly</button>
@@ -355,6 +367,15 @@
             <div id="leaderboard-list">
               <div style="display:flex;justify-content:center;padding:40px"><div class="spinner"></div></div>
             </div>
+          </div>
+          </div><!-- end #solo-leaderboard-section -->
+
+          <!-- Guild panel + leaderboard -->
+          <div id="guild-leaderboard-section" hidden style="display:flex;flex-direction:column;gap:var(--space-md)">
+            <div id="guild-panel">
+              <div style="display:flex;justify-content:center;padding:40px"><div class="spinner"></div></div>
+            </div>
+            <div id="guild-leaderboard-list"></div>
           </div>
 
         </div>
@@ -566,6 +587,16 @@
     </div>
   </div>
 
+  <!-- ════ RAID MODAL ════ -->
+  <div id="raid-modal" hidden
+       style="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);
+              display:flex;align-items:center;justify-content:center;padding:var(--space-md)">
+    <div style="width:100%;max-width:400px;background:var(--color-card-dark);
+                border-radius:var(--radius-xl);border:1px solid var(--color-border);
+                max-height:90vh;overflow-y:auto" id="raid-modal-content">
+    </div>
+  </div>
+
 </div><!-- end app-wrapper -->
 
 <!-- ════ SCRIPTS ════ -->
@@ -581,6 +612,10 @@
 <script src="js/collection.js"></script>
 <script src="js/missions.js"></script>
 <script src="js/leaderboard.js"></script>
+<script src="js/guild.js"></script>
+<script src="js/coop.js"></script>
+<script src="js/raid.js"></script>
+<script src="js/discussion.js"></script>
 
 <script>
   // Sync settings panel with loaded profile

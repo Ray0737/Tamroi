@@ -30,7 +30,7 @@ assert(mapJs.includes('submitQuizAnswer'), 'map.js must submit quiz answers');
 assert(collectionJs.includes('markCaptured'), 'collection.js must expose card refresh after capture');
 assert(dbJs.includes('getDiscoveryPercent'), 'DB.Districts must expose discovery percent calculation');
 assert(mapJs.includes('updateDiscoveryPercentFromDB'), 'map.js must update map discovery percent from DB');
-assert(mapJs.includes('BTS_MRT_STATIONS'), 'map.js must define BTS/MRT bonus station data');
+assert(mapJs.includes('DB.BtsMrtStations.getAll'), 'map.js must load BTS/MRT stations from DB');
 assert(mapJs.includes('getTransportMultiplier'), 'map.js must apply BTS/MRT point multiplier helper');
 assert(dbJs.includes('user-notifications') && dbJs.includes('subscribe(userId'), 'DB.Notifications must expose Realtime subscription');
 assert(appJs.includes('subscribeNotifications'), 'app.js must subscribe to live notifications');
