@@ -591,6 +591,11 @@ const Coop = {
     return data || [];
   },
 
+  async getMyMemberships(userId) {
+    const { data } = await _sb.from('guild_members').select('guild_id, role').eq('user_id', userId);
+    return Object.fromEntries((data || []).map(m => [m.guild_id, m.role]));
+  },
+
   async deleteGuild(guildId) {
     const { error } = await _sb.from('guilds').delete().eq('id', guildId);
     if (error) throw error;

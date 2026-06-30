@@ -74,9 +74,8 @@ const LeaderboardModule = (() => {
     el.innerHTML = `<div style="display:flex;justify-content:center;padding:20px"><div class="spinner"></div></div>`;
     try {
       const guilds = await DB.Coop.getGuildLeaderboard();
-      const myGuild   = window.GuildModule?.getState();
-      const myGuildId = myGuild?.guild?.id;
-      const isLeader  = myGuild?.guild?.myRole === 'leader';
+      const user       = window.AppCore?.App?.user;
+      const membership = user ? await DB.Coop.getMyMemberships(user.id) : {};
 
       const iconChevron = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;transition:transform .2s">
@@ -94,7 +93,8 @@ const LeaderboardModule = (() => {
       el.innerHTML = !guilds.length
         ? `<p style="text-align:center;color:var(--color-muted);font-size:12px;padding:var(--space-md)">ยังไม่มีกลุ่ม</p>`
         : guilds.map((g, i) => {
-            const isMine = g.guild_id === myGuildId;
+            const isMine   = g.guild_id in membership;
+            const isLeader = membership[g.guild_id] === 'leader';
             return `
             <div class="guild-card card" data-id="${g.guild_id}" data-code="${escapeHtml(g.invite_code || '')}"
                  style="padding:0;cursor:pointer;overflow:hidden;
@@ -136,8 +136,8 @@ const LeaderboardModule = (() => {
                   </div>` : `
                   <p style="margin:0;font-size:11px;color:var(--color-muted)">เข้าร่วมกลุ่มนี้เพื่อดูรหัสเชิญ</p>`}
                 ${isMine && isLeader ? `
-                  <button class="btn-delete-guild btn btn-danger btn-sm"
-                          style="display:flex;align-items:center;gap:4px">
+                  <button class="btn-delete-guild btn btn-danger"
+                          style="display:flex;align-items:center;gap:4px;padding:4px 10px;font-size:11px">
                     ${iconTrash} ลบกลุ่ม
                   </button>` : ''}
               </div>
