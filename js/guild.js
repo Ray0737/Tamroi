@@ -22,6 +22,7 @@ const GuildModule = (() => {
         _state = null;
       }
       if (_state) { subscribePresence(); subscribeMembers(); }
+      if (_state) _refreshGuildFog();
     })();
     return _initPromise;
   }
@@ -63,8 +64,17 @@ const GuildModule = (() => {
       try {
         _state.members = await DB.Coop.getGuildMembers(_state.guild.id);
         _refreshMemberList();
+        _refreshGuildFog();
       } catch {}
     });
+  }
+
+  async function _refreshGuildFog() {
+    if (!_state?.guild?.id) return;
+    try {
+      const ids = await DB.Coop.getGuildClearedDistrictIds(_state.guild.id);
+      window.MapModule?.renderGuildFog(ids);
+    } catch {}
   }
 
   async function renderGuildPanel() {
