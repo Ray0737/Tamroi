@@ -38,6 +38,10 @@ CREATE POLICY "leader can update guild requests"
       AND guild_members.role = 'leader'
   ));
 
+CREATE POLICY "member can delete own request"
+  ON guild_join_requests FOR DELETE
+  USING (auth.uid() = user_id);
+
 -- ── community_posts ────────────────────────────────────
 CREATE TABLE IF NOT EXISTS community_posts (
   id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
