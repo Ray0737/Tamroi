@@ -400,47 +400,44 @@ const LeaderboardModule = (() => {
     const rankColors = { 1: '#FFD700', 2: '#C0C0C0', 3: '#CD7F32' };
 
     el.innerHTML = players.map((p, idx) => {
-      const rank  = idx + 1;
-      const isMe  = p.id === MY_ID;
-      const c     = rankColors[rank] || null;
-      const init  = escapeHtml((p.username || '?').substring(0, 2).toUpperCase());
-      const avatarBg    = c ? `${c}22` : isMe ? 'rgba(255,126,85,0.15)' : 'rgba(255,255,255,0.06)';
-      const avatarColor = c || (isMe ? 'var(--color-primary)' : 'var(--color-muted)');
+      const rank        = idx + 1;
+      const isMe        = p.id === MY_ID;
+      const rankColor   = rankColors[rank] || (isMe ? 'var(--color-primary)' : 'var(--color-muted)');
+      const init        = escapeHtml((p.username || '?').substring(0, 2).toUpperCase());
+      const ringColor   = rankColors[rank] || (isMe ? 'var(--color-primary)' : 'rgba(255,255,255,0.12)');
 
       return `
-        <div style="
-          display:flex;align-items:center;gap:12px;
-          padding:10px 14px;
-          border-radius:var(--radius-lg);
-          background:${isMe ? 'rgba(255,126,85,0.06)' : 'var(--color-card-darker)'};
-          border:1px solid ${isMe ? 'rgba(255,126,85,0.25)' : 'rgba(255,255,255,0.04)'};
-          ${c ? `border-left:3px solid ${c};` : isMe ? 'border-left:3px solid var(--color-primary);' : ''}
-          transition:background .15s,border-color .15s"
-          data-user-id="${escapeHtml(p.id)}">
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;
+                    border-radius:12px;
+                    background:var(--color-card-darker);
+                    border:1px solid rgba(255,255,255,0.07);
+                    transition:background .15s"
+             data-user-id="${escapeHtml(p.id)}">
 
-          <span style="width:20px;text-align:center;font-size:12px;font-weight:800;flex-shrink:0;
-                       color:${c || (isMe ? 'var(--color-primary)' : 'var(--color-muted)')}">
-            ${rank}
+          <span style="width:28px;text-align:center;font-size:13px;font-weight:800;
+                       flex-shrink:0;color:${rankColor}">
+            #${rank}
           </span>
 
-          <div style="width:34px;height:34px;border-radius:50%;flex-shrink:0;
-                      background:${avatarBg};display:flex;align-items:center;justify-content:center;
-                      font-size:11px;font-weight:700;color:${avatarColor};
-                      border:1px solid ${c ? c + '44' : 'rgba(255,255,255,0.08)'}">
+          <div style="width:36px;height:36px;border-radius:50%;flex-shrink:0;
+                      background:rgba(255,255,255,0.06);
+                      display:flex;align-items:center;justify-content:center;
+                      font-size:12px;font-weight:700;color:${rankColor};
+                      box-shadow:0 0 0 2px ${ringColor}">
             ${init}
           </div>
 
           <div style="flex:1;min-width:0">
             <p style="margin:0;font-size:13px;font-weight:600;color:var(--color-white);
                       white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-              ${escapeHtml(p.username)}
+              ${escapeHtml(p.username)}${isMe ? ` <span style="font-size:10px;font-weight:400;color:var(--color-muted)">(You)</span>` : ''}
             </p>
             <p style="margin:2px 0 0;font-size:10px;color:var(--color-muted)">
               ${escapeHtml(p.province || '—')}</p>
           </div>
 
           <span data-rank-score style="font-size:12px;font-weight:700;flex-shrink:0;
-                       color:${c || (isMe ? 'var(--color-primary)' : 'var(--color-muted)')}">
+                       color:${rankColor}">
             ${getMetricValue(p)}
           </span>
         </div>
