@@ -138,11 +138,7 @@ const LeaderboardModule = (() => {
                                   border-radius:8px;padding:6px 12px">
                         <span style="font-size:17px;font-weight:800;color:var(--color-primary);
                                      letter-spacing:5px;font-family:monospace">${escapeHtml(g.invite_code || '—')}</span>
-                        <button class="btn-copy-code"
-                                style="background:none;border:none;cursor:pointer;padding:0;
-                                       color:var(--color-muted);display:flex;align-items:center">
-                          ${iconCopy}
-                        </button>
+                        <button class="btn-copy-code btn-copy-icon">${iconCopy}</button>
                       </div>
                     </div>
                     ${isLeader ? `
@@ -408,39 +404,43 @@ const LeaderboardModule = (() => {
       const isMe  = p.id === MY_ID;
       const c     = rankColors[rank] || null;
       const init  = escapeHtml((p.username || '?').substring(0, 2).toUpperCase());
+      const avatarBg    = c ? `${c}22` : isMe ? 'rgba(255,126,85,0.15)' : 'rgba(255,255,255,0.06)';
+      const avatarColor = c || (isMe ? 'var(--color-primary)' : 'var(--color-muted)');
 
       return `
         <div style="
-          display:flex;align-items:center;gap:10px;
-          padding:10px var(--space-sm);
-          border-radius:var(--radius-md);
-          background:${isMe ? 'var(--color-primary-dim)' : 'transparent'};
-          border-left:${isMe ? '3px solid var(--color-primary)' : '3px solid transparent'};
-          transition:background 0.15s"
+          display:flex;align-items:center;gap:12px;
+          padding:10px 14px;
+          border-radius:var(--radius-lg);
+          background:${isMe ? 'rgba(255,126,85,0.06)' : 'var(--color-card-darker)'};
+          border:1px solid ${isMe ? 'rgba(255,126,85,0.25)' : 'rgba(255,255,255,0.04)'};
+          ${c ? `border-left:3px solid ${c};` : isMe ? 'border-left:3px solid var(--color-primary);' : ''}
+          transition:background .15s,border-color .15s"
           data-user-id="${escapeHtml(p.id)}">
-          <span style="
-            width:26px;text-align:center;font-size:13px;font-weight:700;flex-shrink:0;
-            color:${c || (isMe ? 'var(--color-primary)' : 'var(--color-muted)')}">
+
+          <span style="width:20px;text-align:center;font-size:12px;font-weight:800;flex-shrink:0;
+                       color:${c || (isMe ? 'var(--color-primary)' : 'var(--color-muted)')}">
             ${rank}
           </span>
-          <div style="
-            width:32px;height:32px;border-radius:50%;flex-shrink:0;
-            background:${c ? c + '20' : isMe ? 'var(--color-primary-dim)' : 'var(--color-card-darker)'};
-            display:flex;align-items:center;justify-content:center;
-            font-size:10px;font-weight:700;
-            color:${c || (isMe ? 'var(--color-primary)' : 'var(--color-muted)')}">
+
+          <div style="width:34px;height:34px;border-radius:50%;flex-shrink:0;
+                      background:${avatarBg};display:flex;align-items:center;justify-content:center;
+                      font-size:11px;font-weight:700;color:${avatarColor};
+                      border:1px solid ${c ? c + '44' : 'rgba(255,255,255,0.08)'}">
             ${init}
           </div>
+
           <div style="flex:1;min-width:0">
-            <p style="margin:0;font-size:13px;font-weight:${isMe ? '700' : '500'};
-                      color:${isMe ? 'var(--color-white)' : 'var(--color-white)'};
+            <p style="margin:0;font-size:13px;font-weight:600;color:var(--color-white);
                       white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
               ${escapeHtml(p.username)}
             </p>
-            <p style="margin:1px 0 0;font-size:10px;color:var(--color-muted)">${escapeHtml(p.province)}</p>
+            <p style="margin:2px 0 0;font-size:10px;color:var(--color-muted)">
+              ${escapeHtml(p.province || '—')}</p>
           </div>
+
           <span data-rank-score style="font-size:12px;font-weight:700;flex-shrink:0;
-                       color:${isMe ? 'var(--color-primary)' : 'var(--color-white)'}">
+                       color:${c || (isMe ? 'var(--color-primary)' : 'var(--color-muted)')}">
             ${getMetricValue(p)}
           </span>
         </div>
