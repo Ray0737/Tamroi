@@ -23,22 +23,14 @@ const LeaderboardModule = (() => {
   }
 
   function bindControls() {
-    document.querySelectorAll('#leaderboard-metric .pill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        document.querySelectorAll('#leaderboard-metric .pill').forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-        activeMetric = pill.dataset.metric;
-        render();
-      });
+    document.getElementById('leaderboard-metric')?.addEventListener('change', e => {
+      activeMetric = e.target.value;
+      render();
     });
 
-    document.querySelectorAll('#leaderboard-period .pill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        document.querySelectorAll('#leaderboard-period .pill').forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-        activePeriod = pill.dataset.period;
-        fetchAndRender();
-      });
+    document.getElementById('leaderboard-period')?.addEventListener('change', e => {
+      activePeriod = e.target.value;
+      fetchAndRender();
     });
 
     // Immediate refresh when a guild is created or deleted
@@ -48,23 +40,19 @@ const LeaderboardModule = (() => {
     });
 
     // Guild / Solo view toggle
-    document.querySelectorAll('#leaderboard-view .pill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        document.querySelectorAll('#leaderboard-view .pill').forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-        const soloEl  = document.getElementById('solo-leaderboard-section');
-        const guildEl = document.getElementById('guild-leaderboard-section');
-        if (pill.dataset.view === 'guild') {
-          soloEl?.setAttribute('hidden', '');
-          guildEl?.removeAttribute('hidden');
-          window.GuildModule?.renderGuildPanel();
-          _renderGuildLeaderboard();
-          _subscribeGuildRealtime();
-        } else {
-          guildEl?.setAttribute('hidden', '');
-          soloEl?.removeAttribute('hidden');
-        }
-      });
+    document.getElementById('leaderboard-view')?.addEventListener('change', e => {
+      const soloEl  = document.getElementById('solo-leaderboard-section');
+      const guildEl = document.getElementById('guild-leaderboard-section');
+      if (e.target.value === 'guild') {
+        soloEl?.setAttribute('hidden', '');
+        guildEl?.removeAttribute('hidden');
+        window.GuildModule?.renderGuildPanel();
+        _renderGuildLeaderboard();
+        _subscribeGuildRealtime();
+      } else {
+        guildEl?.setAttribute('hidden', '');
+        soloEl?.removeAttribute('hidden');
+      }
     });
   }
 

@@ -342,20 +342,22 @@
 
           <!-- ── อันดับ ── -->
           <div id="community-rank-section" style="display:flex;flex-direction:column;gap:var(--space-md)">
-            <div class="filter-pills" id="leaderboard-view">
-              <button class="pill active" data-view="solo">เดี่ยว</button>
-              <button class="pill" data-view="guild">กลุ่ม</button>
-            </div>
+            <select id="leaderboard-view" class="lb-select">
+              <option value="solo">เดี่ยว</option>
+              <option value="guild">กลุ่ม</option>
+            </select>
             <div id="solo-leaderboard-section">
-              <div class="filter-pills" id="leaderboard-period">
-                <button class="pill active" data-period="weekly">Weekly</button>
-                <button class="pill" data-period="monthly">Monthly</button>
-                <button class="pill" data-period="alltime">All-Time</button>
-              </div>
-              <div class="filter-pills" id="leaderboard-metric">
-                <button class="pill active" data-metric="legacy">Legacy Score</button>
-                <button class="pill" data-metric="discovery">Map Discovery</button>
-                <button class="pill" data-metric="archive">Archive</button>
+              <div style="display:flex;gap:var(--space-sm);margin-bottom:var(--space-sm)">
+                <select id="leaderboard-period" class="lb-select" style="flex:1">
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="alltime">All-Time</option>
+                </select>
+                <select id="leaderboard-metric" class="lb-select" style="flex:1">
+                  <option value="legacy">Legacy Score</option>
+                  <option value="discovery">Map Discovery</option>
+                  <option value="archive">Archive</option>
+                </select>
               </div>
               <div class="card" id="leaderboard-podium" style="padding:0 var(--space-sm) var(--space-sm)"></div>
               <div id="my-rank-card"></div>
