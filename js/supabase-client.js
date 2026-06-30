@@ -510,7 +510,10 @@ const Coop = {
       .insert({ guild_id: guild.id, user_id: userId, role: 'member' })
       .select()
       .single();
-    if (error) throw error;
+    if (error) {
+      if (error.code === '23505') throw new Error('คุณเป็นสมาชิกกลุ่มนี้อยู่แล้ว');
+      throw error;
+    }
     return data;
   },
 
@@ -628,7 +631,91 @@ const Coop = {
         filter: `mission_id=eq.${missionId}`
       }, callback)
       .subscribe();
-  }
+  },
+
+  subscribeGuildMembers(guildId, callback) {
+    return _sb.channel(`guild-members-${guildId}`)
+      .on('postgres_changes', {
+        event: '*', schema: 'public', table: 'guild_members',
+        filter: `guild_id=eq.${guildId}`
+      }, callback)
+      .subscribe();
+  },
+
+  async searchGuilds(query) {
+    const { data, error } = await _sb
+      .from('guilds')
+      .select('id, name')
+      .ilike('name', `%${query}%`)
+      .limit(10);
+    if (error) throw error;
+    const results = await Promise.all((data || []).map(async g => {
+      const { count } = await _sb
+        .from('guild_members')
+        .select('*', { count: 'exact', head: true })
+        .eq('guild_id', g.id);
+      return { ...g, member_count: count || 0 };
+    }));
+    return results;
+  },
+
+  async sendJoinRequest(guildId, userId) {
+    const { data: existing } = await _sb
+      .from('guild_join_requests')
+      .select('id, status')
+      .eq('guild_id', guildId)
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (existing) return existing;
+    const { data, error } = await _sb
+      .from('guild_join_requests')
+      .insert({ guild_id: guildId, user_id: userId })
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async getMyPendingRequest(userId) {
+    const { data } = await _sb
+      .from('guild_join_requests')
+      .select('id, guild_id, status, guilds(name)')
+      .eq('user_id', userId)
+      .eq('status', 'pending')
+      .maybeSingle();
+    return data || null;
+  },
+
+  async getJoinRequests(guildId) {
+    const { data, error } = await _sb
+      .from('guild_join_requests')
+      .select('id, user_id, created_at, profiles(username)')
+      .eq('guild_id', guildId)
+      .eq('status', 'pending')
+      .order('created_at');
+    if (error) throw error;
+    return data || [];
+  },
+
+  async approveRequest(requestId, guildId, targetUserId) {
+    const { error: memberErr } = await _sb
+      .from('guild_members')
+      .insert({ guild_id: guildId, user_id: targetUserId, role: 'member' });
+    if (memberErr && memberErr.code !== '23505') throw memberErr;
+    const { error } = await _sb
+      .from('guild_join_requests')
+      .update({ status: 'approved' })
+      .eq('id', requestId);
+    if (error) throw error;
+  },
+
+  async rejectRequest(requestId) {
+    const { error } = await _sb
+      .from('guild_join_requests')
+      .update({ status: 'rejected' })
+      .eq('id', requestId);
+    if (error) throw error;
+  },
 };
 
 // ── Raid ───────────────────────────────────────────────
@@ -739,5 +826,46 @@ const Discussion = {
   }
 };
 
+// ── Community ──────────────────────────────────────────
+const Community = {
+  async getPosts() {
+    const { data, error } = await _sb
+      .from('community_posts')
+      .select('*, profiles(username)')
+      .is('parent_id', null)
+      .order('created_at', { ascending: false })
+      .limit(50);
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getReplies(parentId) {
+    const { data, error } = await _sb
+      .from('community_posts')
+      .select('*, profiles(username)')
+      .eq('parent_id', parentId)
+      .order('created_at');
+    if (error) throw error;
+    return data || [];
+  },
+
+  async postMessage(userId, content, parentId = null) {
+    const { data, error } = await _sb
+      .from('community_posts')
+      .insert({ user_id: userId, content, parent_id: parentId })
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async flagPost(postId, userId) {
+    const { error } = await _sb
+      .from('community_post_flags')
+      .insert({ post_id: postId, flagged_by: userId });
+    if (error && error.code !== '23505') throw error;
+  },
+};
+
 // Expose globally
-window.DB = { Auth, Profiles, Districts, Figures, SupportNodes, BtsMrtStations, Artifacts, Leaderboard, Lore, Quiz, Notifications, Missions, Coop, Raid, Discussion };
+window.DB = { Auth, Profiles, Districts, Figures, SupportNodes, BtsMrtStations, Artifacts, Leaderboard, Lore, Quiz, Notifications, Missions, Coop, Raid, Discussion, Community };
