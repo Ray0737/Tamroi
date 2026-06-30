@@ -157,7 +157,7 @@ create policy "authenticated can insert own"
 - `getPosts()` — top-level posts with profiles join + reply count
 - `getReplies(parentId)` — replies for a post
 - `postMessage(userId, content, parentId?)` — insert
-- `flagPost(postId, userId)` — reuse existing `discussion_flags` table or same pattern
+- `flagPost(postId, userId)` — insert into `community_post_flags (post_id, flagged_by, created_at)`, included in `patch_coop_fix.sql`
 
 ---
 
