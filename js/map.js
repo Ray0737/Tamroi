@@ -2,6 +2,7 @@
 const MapModule = (() => {
   let map        = null;
   let fogLayer         = null;    // single unified fog polygon
+  let guildFogLayer    = null;    // tinted overlay for guild-cleared districts
   let markers          = {};
   let activeDistrict   = null;
   let _nodeCardTimer   = null;    // auto-dismiss timer for node info card
@@ -404,6 +405,32 @@ const MapModule = (() => {
       interactive: false,
       fillRule:    'evenodd',
     }).addTo(map);
+  }
+
+  function renderGuildFog(clearedDistrictIds) {
+    if (guildFogLayer) { map.removeLayer(guildFogLayer); guildFogLayer = null; }
+    if (!clearedDistrictIds?.length || !allDistrictsCache) return;
+    const userCleared = new Set(
+      Object.keys(userDistrictState).filter(id => !userDistrictState[id].fogged)
+    );
+    const layers = allDistrictsCache
+      .filter(d => clearedDistrictIds.includes(d.id) && !userCleared.has(d.id))
+      .map(d => {
+        const raw = d.polygon_coords;
+        const coords = typeof raw === 'string' ? JSON.parse(raw) : (raw || []);
+        if (!coords.length) return null;
+        return L.polygon(coords.map(c => [c[0], c[1]]), {
+          fillColor:   '#7BC67E',
+          fillOpacity: 0.22,
+          color:       '#7BC67E',
+          weight:      1,
+          opacity:     0.35,
+          interactive: false,
+        });
+      })
+      .filter(Boolean);
+    if (!layers.length) return;
+    guildFogLayer = L.layerGroup(layers).addTo(map);
   }
 
   // ── Watchtower markers ─────────────────────────────
@@ -1057,7 +1084,7 @@ const MapModule = (() => {
   function getLoreNodes() { return loreNodes; }
   function getUnlockedLoreIds() { return [...unlockedLoreIds]; }
 
-  return { init, resize, confirmHome, skipHomePicker, saveLoreUnlock, visitSupportNode, openLegendaryEncounter, openQuizForFigure, submitQuizAnswer, getLoreNodes, getUnlockedLoreIds };
+  return { init, resize, confirmHome, skipHomePicker, saveLoreUnlock, visitSupportNode, openLegendaryEncounter, openQuizForFigure, submitQuizAnswer, getLoreNodes, getUnlockedLoreIds, renderGuildFog };
 })();
 
 window.MapModule = MapModule;
