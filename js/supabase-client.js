@@ -591,6 +591,11 @@ const Coop = {
     return data || [];
   },
 
+  async deleteGuild(guildId) {
+    const { error } = await _sb.from('guilds').delete().eq('id', guildId);
+    if (error) throw error;
+  },
+
   subscribeGuildChanges(onChange) {
     return _sb.channel('guild-leaderboard-rt')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'guilds' },       onChange)

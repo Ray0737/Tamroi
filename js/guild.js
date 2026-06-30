@@ -48,93 +48,8 @@ const GuildModule = (() => {
   function renderGuildPanel() {
     const el = document.getElementById('guild-panel');
     if (!el) return;
-
-    if (!_state) {
-      el.innerHTML = _renderNoGuild();
-      _bindNoGuildActions(el);
-      return;
-    }
-
-    const { guild, members } = _state;
-    const onlineIds = getOnlineMemberIds();
-
-    const iconCopy = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-      stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px">
-      <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-    </svg>`;
-    const iconShare = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-      stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px">
-      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-    </svg>`;
-
-    const isLeader = guild.myRole === 'leader';
-
-    el.innerHTML = `
-      <div style="background:var(--color-card-dark);border-radius:var(--radius-xl);overflow:hidden;
-                  border:1px solid rgba(255,126,85,0.15)">
-
-        <!-- Header -->
-        <div style="padding:var(--space-md);border-bottom:1px solid rgba(255,126,85,0.1)">
-          <p style="margin:0 0 2px;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;
-                     color:var(--color-primary);font-weight:600">Guild</p>
-          <h3 style="margin:0;font-family:var(--font-heading);font-size:17px;font-weight:700">
-            ${escapeHtml(guild.name)}</h3>
-        </div>
-
-        <!-- Invite code block — always visible, prominent for leader -->
-        <div style="padding:var(--space-sm) var(--space-md);
-                    border-bottom:1px solid rgba(255,255,255,0.04);
-                    background:rgba(255,126,85,0.04)">
-          <p style="margin:0 0 6px;font-size:10px;color:var(--color-muted);text-transform:uppercase;
-                     letter-spacing:1px">รหัสเชิญ</p>
-          <div style="display:flex;align-items:center;gap:8px">
-            <span id="guild-invite-code"
-                  style="flex:1;font-size:${isLeader ? '26px' : '18px'};font-weight:800;
-                         color:var(--color-primary);letter-spacing:${isLeader ? '8px' : '4px'};
-                         font-family:monospace">${escapeHtml(guild.invite_code)}</span>
-            <button id="btn-copy-code" class="btn btn-outline btn-sm"
-                    style="display:flex;align-items:center;gap:4px;padding:6px 10px;font-size:11px">
-              ${iconCopy} คัดลอก
-            </button>
-            ${navigator.share ? `
-            <button id="btn-share-code" class="btn btn-outline btn-sm"
-                    style="display:flex;align-items:center;gap:4px;padding:6px 10px;font-size:11px">
-              ${iconShare} แชร์
-            </button>` : ''}
-          </div>
-          ${isLeader ? `<p style="margin:4px 0 0;font-size:10px;color:var(--color-muted)">
-            แชร์รหัสนี้ให้เพื่อนเข้าร่วมกลุ่ม (สูงสุด ${guild.max_members} คน)</p>` : ''}
-        </div>
-
-        <!-- Member list -->
-        <div id="guild-member-list" style="padding:var(--space-sm) var(--space-md)">
-          ${members.map(m => _memberRow(m, onlineIds)).join('')}
-        </div>
-
-        ${!isLeader ? `
-          <div style="padding:0 var(--space-md) var(--space-md)">
-            <button class="btn btn-ghost btn-full" id="btn-leave-guild"
-                    style="font-size:12px;color:var(--color-muted);border-color:var(--color-border)">
-              ออกจากกลุ่ม
-            </button>
-          </div>` : ''}
-      </div>`;
-
-    el.querySelector('#btn-leave-guild')?.addEventListener('click', _handleLeave);
-    el.querySelectorAll('[data-kick]').forEach(btn =>
-      btn.addEventListener('click', () => _handleKick(btn.dataset.kick))
-    );
-
-    const code = guild.invite_code;
-    el.querySelector('#btn-copy-code')?.addEventListener('click', async (e) => {
-      await navigator.clipboard.writeText(code);
-      e.currentTarget.textContent = '✓ คัดลอกแล้ว';
-      setTimeout(() => renderGuildPanel(), 1800);
-    });
-    el.querySelector('#btn-share-code')?.addEventListener('click', () => {
-      navigator.share({ title: 'เข้าร่วมกลุ่ม Tamroi', text: `รหัสเชิญ: ${code}` }).catch(() => {});
-    });
+    el.innerHTML = _renderNoGuild();
+    _bindNoGuildActions(el);
   }
 
   function _memberRow(m, onlineIds) {
@@ -268,6 +183,17 @@ const GuildModule = (() => {
     }
   }
 
+  async function _handleDelete(guildId) {
+    if (!confirm('ลบกลุ่มนี้? ไม่สามารถกู้คืนได้')) return;
+    try {
+      await DB.Coop.deleteGuild(guildId);
+      if (_state?.guild?.id === guildId) {
+        if (_presenceChannel) { try { _presenceChannel.unsubscribe(); } catch {} _presenceChannel = null; }
+        _state = null;
+      }
+    } catch { window.AppCore?.showToast?.('เกิดข้อผิดพลาด'); }
+  }
+
   async function _handleLeave() {
     if (!confirm('ออกจากกลุ่ม?')) return;
     await DB.Coop.leaveGuild(_state.guild.id, _userId);
@@ -283,7 +209,9 @@ const GuildModule = (() => {
     _refreshMemberList();
   }
 
-  return { init, getState, getOnlineMemberIds, subscribePresence, renderGuildPanel };
+  async function deleteGuild(guildId) { await _handleDelete(guildId); }
+
+  return { init, getState, getOnlineMemberIds, subscribePresence, renderGuildPanel, deleteGuild };
 })();
 
 window.GuildModule = GuildModule;

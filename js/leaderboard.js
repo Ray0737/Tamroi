@@ -68,23 +68,91 @@ const LeaderboardModule = (() => {
     el.innerHTML = `<div style="display:flex;justify-content:center;padding:20px"><div class="spinner"></div></div>`;
     try {
       const guilds = await DB.Coop.getGuildLeaderboard();
+      const myGuild   = window.GuildModule?.getState();
+      const myGuildId = myGuild?.guild?.id;
+      const isLeader  = myGuild?.guild?.myRole === 'leader';
+
+      const iconChevron = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;transition:transform .2s">
+        <polyline points="6 9 12 15 18 9"/></svg>`;
+      const iconCopy = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px">
+        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+      </svg>`;
+      const iconTrash = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px">
+        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+        <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+      </svg>`;
+
       el.innerHTML = `
         <div class="card" style="padding:var(--space-sm)">
           ${!guilds.length
             ? `<p style="text-align:center;color:var(--color-muted);font-size:12px;padding:var(--space-md)">ยังไม่มีกลุ่ม</p>`
-            : guilds.map((g, i) => `
-                <div style="display:flex;align-items:center;gap:10px;padding:10px var(--space-sm);
-                             border-bottom:1px solid rgba(255,255,255,0.04)">
-                  <span style="font-size:16px;font-weight:800;color:var(--color-muted);width:24px;text-align:center">${i + 1}</span>
-                  <div style="flex:1">
-                    <p style="margin:0;font-size:13px;font-weight:700;color:var(--color-white)">${escapeHtml(g.name)}</p>
-                    <p style="margin:2px 0 0;font-size:10px;color:var(--color-muted)">
-                      🗺 ${g.guild_discovery_count} districts · 📖 ${g.guild_captures} captures</p>
+            : guilds.map((g, i) => {
+                const isMine = g.guild_id === myGuildId;
+                return `
+                <div class="guild-card" data-id="${g.guild_id}" data-code="${escapeHtml(g.invite_code || '')}"
+                     data-mine="${isMine}" data-leader="${isMine && isLeader}"
+                     style="border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer">
+                  <div style="display:flex;align-items:center;gap:10px;padding:10px var(--space-sm)">
+                    <span style="font-size:16px;font-weight:800;color:var(--color-muted);width:24px;text-align:center">${i + 1}</span>
+                    <div style="flex:1">
+                      <p style="margin:0;font-size:13px;font-weight:700;color:var(--color-white)">${escapeHtml(g.name)}
+                        ${isMine ? `<span style="font-size:9px;background:rgba(255,126,85,.15);color:var(--color-primary);
+                          border-radius:4px;padding:1px 5px;margin-left:4px;vertical-align:middle">คุณ</span>` : ''}
+                      </p>
+                      <p style="margin:2px 0 0;font-size:10px;color:var(--color-muted)">
+                        🗺 ${g.guild_discovery_count} · 📖 ${g.guild_captures} captures</p>
+                    </div>
+                    <span style="font-size:14px;font-weight:700;color:var(--color-primary)">
+                      ${(g.guild_legacy_score || 0).toLocaleString()} pts</span>
+                    <span class="chevron-icon">${iconChevron}</span>
                   </div>
-                  <span style="font-size:14px;font-weight:700;color:var(--color-primary)">
-                    ${(g.guild_legacy_score || 0).toLocaleString()} pts</span>
-                </div>`).join('')}
+                  <div class="guild-detail" hidden style="padding:0 var(--space-sm) var(--space-sm);
+                       border-top:1px solid rgba(255,255,255,0.04);background:rgba(255,126,85,0.03)">
+                    ${isMine ? `
+                      <p style="margin:8px 0 4px;font-size:10px;color:var(--color-muted);text-transform:uppercase;letter-spacing:1px">รหัสเชิญ</p>
+                      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                        <span style="font-size:22px;font-weight:800;color:var(--color-primary);
+                               letter-spacing:6px;font-family:monospace">${escapeHtml(g.invite_code || '')}</span>
+                        <button class="btn-copy-code btn btn-outline btn-sm"
+                                style="display:flex;align-items:center;gap:3px;padding:5px 8px;font-size:11px">
+                          ${iconCopy} คัดลอก
+                        </button>
+                      </div>` : ''}
+                    ${isMine && isLeader ? `
+                      <button class="btn-delete-guild btn btn-sm"
+                              style="display:flex;align-items:center;gap:4px;font-size:11px;
+                                     color:#ef5350;border:1px solid rgba(239,83,80,.3);
+                                     border-radius:var(--radius-sm);padding:5px 10px;background:rgba(239,83,80,.06)">
+                        ${iconTrash} ลบกลุ่ม
+                      </button>` : ''}
+                  </div>
+                </div>`;
+              }).join('')}
         </div>`;
+
+      el.querySelectorAll('.guild-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('button')) return;
+          const detail  = card.querySelector('.guild-detail');
+          const chevron = card.querySelector('.chevron-icon svg');
+          const open    = !detail.hidden;
+          detail.hidden = open;
+          if (chevron) chevron.style.transform = open ? '' : 'rotate(180deg)';
+        });
+        card.querySelector('.btn-copy-code')?.addEventListener('click', async (e) => {
+          const code = card.dataset.code;
+          await navigator.clipboard.writeText(code);
+          e.currentTarget.innerHTML = '✓ คัดลอกแล้ว';
+          setTimeout(() => _renderGuildLeaderboard(), 1800);
+        });
+        card.querySelector('.btn-delete-guild')?.addEventListener('click', async () => {
+          await window.GuildModule?.deleteGuild(card.dataset.id);
+          _renderGuildLeaderboard();
+        });
+      });
     } catch {
       el.innerHTML = '';
     }
