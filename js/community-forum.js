@@ -6,19 +6,19 @@ const CommunityForumModule = (() => {
     if (!el) return;
     el.innerHTML = `<div style="display:flex;justify-content:center;padding:30px">
       <div class="spinner"></div></div>`;
+    const user = window.AppCore?.App?.user;
     try {
-      const posts = await DB.Community.getPosts();
-      _render(posts);
+      const posts = await DB.Community.getPosts(user?.id);
+      _render(posts, user);
     } catch {
       el.innerHTML = `<p style="text-align:center;color:var(--color-muted);
         font-size:12px;padding:var(--space-md)">โหลดไม่ได้</p>`;
     }
   }
 
-  function _render(posts) {
-    const el   = document.getElementById('community-forum-panel');
+  function _render(posts, user) {
+    const el = document.getElementById('community-forum-panel');
     if (!el) return;
-    const user = window.AppCore?.App?.user;
 
     el.innerHTML = `
       <div style="display:flex;flex-direction:column;gap:var(--space-sm)">
@@ -33,24 +33,36 @@ const CommunityForumModule = (() => {
                     style="font-size:12px;padding:6px 16px">โพสต์</button>
           </div>
         </div>
-        ${!posts.length
-          ? `<p style="text-align:center;color:var(--color-muted);font-size:12px;padding:var(--space-md)">
-               ยังไม่มีโพสต์ — เป็นคนแรก!</p>`
-          : posts.map(p => _postCard(p, user)).join('')}
+        <div id="forum-posts-list">
+          ${!posts.length
+            ? `<p class="no-posts-msg" style="text-align:center;color:var(--color-muted);font-size:12px;padding:var(--space-md)">
+                 ยังไม่มีโพสต์ — เป็นคนแรก!</p>`
+            : posts.map(p => _postCard(p, user)).join('')}
+        </div>
       </div>`;
 
-    document.getElementById('btn-forum-post')?.addEventListener('click', _handlePost);
-    el.querySelectorAll('[data-toggle-replies]').forEach(btn =>
-      btn.addEventListener('click', () => _toggleReplies(btn.dataset.toggleReplies))
+    document.getElementById('btn-forum-post')?.addEventListener('click', () => _handlePost(user));
+    _bindPostsIn(el, user);
+  }
+
+  function _bindPostsIn(root, user) {
+    root.querySelectorAll('[data-toggle-replies]').forEach(btn =>
+      btn.addEventListener('click', () => _toggleReplies(btn.dataset.toggleReplies, user))
     );
-    el.querySelectorAll('[data-flag-post]').forEach(btn =>
+    root.querySelectorAll('[data-flag-post]').forEach(btn =>
       btn.addEventListener('click', () => _flagPost(btn.dataset.flagPost))
+    );
+    root.querySelectorAll('[data-like-post]').forEach(btn =>
+      btn.addEventListener('click', () => _handleLike(btn, user))
     );
   }
 
   function _postCard(p, user) {
-    const name = escapeHtml(p.profiles?.username || 'Anonymous');
-    const ago  = _timeAgo(p.created_at);
+    const name    = escapeHtml(p.profiles?.username || 'Anonymous');
+    const ago     = _timeAgo(p.created_at);
+    const liked   = !!p.likedByMe;
+    const likeCount = p.likeCount ?? 0;
+
     return `
       <div style="background:var(--color-card-dark);border-radius:var(--radius-md);
                   border:1px solid var(--color-border);padding:10px var(--space-sm)">
@@ -68,14 +80,49 @@ const CommunityForumModule = (() => {
                     title="รายงาน">🚩</button>` : ''}
         </div>
         <p style="margin:0 0 6px;font-size:13px;line-height:1.5">${escapeHtml(p.content)}</p>
-        <button data-toggle-replies="${escapeHtml(p.id)}"
-                style="font-size:10px;color:var(--color-muted);background:none;border:none;cursor:pointer">
-          ↩ ตอบกลับ</button>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button data-like-post="${escapeHtml(p.id)}" data-liked="${liked}"
+                  style="font-size:11px;color:${liked ? 'var(--color-primary)' : 'var(--color-muted)'};
+                         background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;gap:4px">
+            👍 <span>${likeCount > 0 ? likeCount : ''}</span>
+          </button>
+          <button data-toggle-replies="${escapeHtml(p.id)}"
+                  style="font-size:10px;color:var(--color-muted);background:none;border:none;cursor:pointer">
+            ↩ ตอบกลับ</button>
+        </div>
         <div id="replies-${escapeHtml(p.id)}" hidden></div>
       </div>`;
   }
 
-  async function _toggleReplies(postId) {
+  async function _handleLike(btn, user) {
+    if (!user) return;
+    const postId = btn.dataset.likePost;
+    const liked  = btn.dataset.liked === 'true';
+    const countEl = btn.querySelector('span');
+    const current = parseInt(countEl.textContent || '0', 10) || 0;
+
+    // Optimistic update
+    const newLiked = !liked;
+    btn.dataset.liked = newLiked;
+    btn.style.color = newLiked ? 'var(--color-primary)' : 'var(--color-muted)';
+    const newCount = newLiked ? current + 1 : Math.max(0, current - 1);
+    countEl.textContent = newCount > 0 ? newCount : '';
+
+    try {
+      if (newLiked) {
+        await DB.Community.likePost(postId, user.id);
+      } else {
+        await DB.Community.unlikePost(postId, user.id);
+      }
+    } catch {
+      // Revert on failure
+      btn.dataset.liked = liked;
+      btn.style.color = liked ? 'var(--color-primary)' : 'var(--color-muted)';
+      countEl.textContent = current > 0 ? current : '';
+    }
+  }
+
+  async function _toggleReplies(postId, user) {
     const el = document.getElementById(`replies-${postId}`);
     if (!el) return;
     if (!el.hidden) { el.hidden = true; return; }
@@ -107,39 +154,47 @@ const CommunityForumModule = (() => {
                     data-send-reply="${escapeHtml(postId)}">ส่ง</button>
           </div>
         </div>`;
-      el.querySelector('[data-send-reply]')?.addEventListener('click', () => _handleReply(postId));
+      el.querySelector('[data-send-reply]')?.addEventListener('click', () => _handleReply(postId, user));
     } catch {
       el.hidden = true;
     }
   }
 
-  async function _handlePost() {
+  async function _handlePost(user) {
     const ta   = document.getElementById('forum-compose');
     const text = ta?.value?.trim();
-    if (!text) return;
-    const user = window.AppCore?.App?.user;
-    if (!user) return;
+    if (!text || !user) return;
     try {
-      await DB.Community.postMessage(user.id, text);
+      const newPost = await DB.Community.postMessage(user.id, text);
       ta.value = '';
-      await load();
+
+      // Prepend the new card — no full reload, no flash
+      newPost.profiles  = { username: window.AppCore?.App?.profile?.username };
+      newPost.likeCount = 0;
+      newPost.likedByMe = false;
+
+      const listEl = document.getElementById('forum-posts-list');
+      if (listEl) {
+        listEl.querySelector('.no-posts-msg')?.remove();
+        const div = document.createElement('div');
+        div.innerHTML = _postCard(newPost, user);
+        _bindPostsIn(div, user);
+        listEl.prepend(div.firstElementChild);
+      }
     } catch (e) {
       alert(e.message || 'โพสต์ไม่สำเร็จ');
     }
   }
 
-  async function _handleReply(parentId) {
+  async function _handleReply(parentId, user) {
     const input = document.getElementById(`reply-input-${parentId}`);
     const text  = input?.value?.trim();
-    if (!text) return;
-    const user = window.AppCore?.App?.user;
-    if (!user) return;
+    if (!text || !user) return;
     try {
       await DB.Community.postMessage(user.id, text, parentId);
-      // close and reopen to reload replies
       const el = document.getElementById(`replies-${parentId}`);
       if (el) { el.hidden = true; el.innerHTML = ''; }
-      await _toggleReplies(parentId);
+      await _toggleReplies(parentId, user);
     } catch (e) {
       alert(e.message || 'ตอบกลับไม่สำเร็จ');
     }

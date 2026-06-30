@@ -649,7 +649,7 @@ const Coop = {
     const q = query?.trim() ?? '';
     const { data, error } = await _sb
       .from('guilds')
-      .select('id, name')
+      .select('id, name, announcement')
       .ilike('name', `%${q}%`)
       .limit(20);
     if (error) throw error;
@@ -666,6 +666,7 @@ const Coop = {
       ...g,
       member_count:       lbMap[g.id]?.member_count       ?? 0,
       guild_legacy_score: lbMap[g.id]?.guild_legacy_score ?? 0,
+      announcement:       g.announcement ?? null,
     }));
   },
 
@@ -750,6 +751,26 @@ const Coop = {
       .update({ status: 'rejected' })
       .eq('id', requestId);
     if (error) throw error;
+  },
+
+  async cancelRequest(requestId) {
+    const { error } = await _sb.from('guild_join_requests').delete().eq('id', requestId);
+    if (error) throw error;
+  },
+
+  async transferLeader(guildId, newLeaderId, oldLeaderId) {
+    const { error: e1 } = await _sb.from('guild_members').update({ role: 'leader' })
+      .eq('guild_id', guildId).eq('user_id', newLeaderId);
+    if (e1) throw e1;
+    const { error: e2 } = await _sb.from('guild_members').update({ role: 'member' })
+      .eq('guild_id', guildId).eq('user_id', oldLeaderId);
+    if (e2) throw e2;
+  },
+
+  async getGuildScore(guildId) {
+    const { data } = await _sb.from('guild_leaderboard').select('guild_legacy_score')
+      .eq('guild_id', guildId).maybeSingle();
+    return data?.guild_legacy_score ?? 0;
   },
 };
 
@@ -863,7 +884,7 @@ const Discussion = {
 
 // ── Community ──────────────────────────────────────────
 const Community = {
-  async getPosts() {
+  async getPosts(userId = null) {
     const { data, error } = await _sb
       .from('community_posts')
       .select('*, profiles(username)')
@@ -871,7 +892,26 @@ const Community = {
       .order('created_at', { ascending: false })
       .limit(50);
     if (error) throw error;
-    return data || [];
+    const posts = data || [];
+    if (!posts.length) return posts;
+
+    const { data: likes } = await _sb
+      .from('community_post_likes')
+      .select('post_id, user_id')
+      .in('post_id', posts.map(p => p.id));
+
+    const likesByPost = {};
+    (likes || []).forEach(l => {
+      if (!likesByPost[l.post_id]) likesByPost[l.post_id] = { count: 0, likedByMe: false };
+      likesByPost[l.post_id].count++;
+      if (l.user_id === userId) likesByPost[l.post_id].likedByMe = true;
+    });
+
+    return posts.map(p => ({
+      ...p,
+      likeCount:  likesByPost[p.id]?.count     ?? 0,
+      likedByMe:  likesByPost[p.id]?.likedByMe ?? false,
+    }));
   },
 
   async getReplies(parentId) {
@@ -899,6 +939,17 @@ const Community = {
       .from('community_post_flags')
       .insert({ post_id: postId, flagged_by: userId });
     if (error && error.code !== '23505') throw error;
+  },
+
+  async likePost(postId, userId) {
+    const { error } = await _sb.from('community_post_likes').insert({ post_id: postId, user_id: userId });
+    if (error && error.code !== '23505') throw error;
+  },
+
+  async unlikePost(postId, userId) {
+    const { error } = await _sb.from('community_post_likes').delete()
+      .eq('post_id', postId).eq('user_id', userId);
+    if (error) throw error;
   },
 };
 
