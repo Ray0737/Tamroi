@@ -646,20 +646,27 @@ const Coop = {
   },
 
   async searchGuilds(query) {
+    const q = query?.trim() ?? '';
     const { data, error } = await _sb
       .from('guilds')
       .select('id, name')
-      .ilike('name', `%${query}%`)
-      .limit(10);
+      .ilike('name', `%${q}%`)
+      .limit(20);
     if (error) throw error;
-    const results = await Promise.all((data || []).map(async g => {
-      const { count } = await _sb
-        .from('guild_members')
-        .select('*', { count: 'exact', head: true })
-        .eq('guild_id', g.id);
-      return { ...g, member_count: count || 0 };
+    if (!data?.length) return [];
+
+    const ids = data.map(g => g.id);
+    const { data: lb } = await _sb
+      .from('guild_leaderboard')
+      .select('guild_id, member_count, guild_legacy_score')
+      .in('guild_id', ids);
+    const lbMap = Object.fromEntries((lb || []).map(r => [r.guild_id, r]));
+
+    return data.map(g => ({
+      ...g,
+      member_count:       lbMap[g.id]?.member_count       ?? 0,
+      guild_legacy_score: lbMap[g.id]?.guild_legacy_score ?? 0,
     }));
-    return results;
   },
 
   async sendJoinRequest(guildId, userId) {
@@ -670,13 +677,38 @@ const Coop = {
       .eq('user_id', userId)
       .maybeSingle();
     if (existing) return existing;
+
     const { data, error } = await _sb
       .from('guild_join_requests')
       .insert({ guild_id: guildId, user_id: userId })
       .select()
       .single();
     if (error) throw error;
+
+    // Notify the guild leader — non-critical, don't throw
+    try {
+      const [{ data: leaderRows }, { data: guildRow }, { data: profile }] = await Promise.all([
+        _sb.from('guild_members').select('user_id').eq('guild_id', guildId).eq('role', 'leader').limit(1),
+        _sb.from('guilds').select('name').eq('id', guildId).single(),
+        _sb.from('profiles').select('username').eq('id', userId).single(),
+      ]);
+      const leaderId = leaderRows?.[0]?.user_id;
+      if (leaderId) {
+        await Notifications.push(
+          leaderId,
+          'join_request',
+          'คำขอเข้าร่วมกลุ่ม',
+          `${profile?.username || 'ผู้ใช้'} ขอเข้าร่วม ${guildRow?.name || ''}`
+        );
+      }
+    } catch { /* notification failure is non-critical */ }
+
     return data;
+  },
+
+  async updateGuild(guildId, fields) {
+    const { error } = await _sb.from('guilds').update(fields).eq('id', guildId);
+    if (error) throw error;
   },
 
   async getMyPendingRequest(userId) {

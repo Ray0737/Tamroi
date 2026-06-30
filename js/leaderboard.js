@@ -80,15 +80,6 @@ const LeaderboardModule = (() => {
       const iconChevron = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;transition:transform .2s">
         <polyline points="6 9 12 15 18 9"/></svg>`;
-      const iconCopy = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px">
-        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-      </svg>`;
-      const iconTrash = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px">
-        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-        <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-      </svg>`;
 
       el.innerHTML = !guilds.length
         ? `<p style="text-align:center;color:var(--color-muted);font-size:12px;padding:var(--space-md)">ยังไม่มีกลุ่ม</p>`
@@ -129,23 +120,14 @@ const LeaderboardModule = (() => {
                    style="border-top:1px solid rgba(255,255,255,0.05);padding:10px 14px;
                           background:rgba(0,0,0,0.15)">
                 ${isMine ? `
-                  <div style="display:flex;align-items:center;gap:10px">
-                    <div style="flex:1">
-                      <p style="margin:0 0 5px;font-size:9px;color:var(--color-muted);
-                                 text-transform:uppercase;letter-spacing:1.5px">รหัสเชิญ</p>
-                      <div style="display:inline-flex;align-items:center;gap:10px;
-                                  background:rgba(255,126,85,0.08);border:1px solid rgba(255,126,85,0.2);
-                                  border-radius:8px;padding:6px 12px">
-                        <span style="font-size:17px;font-weight:800;color:var(--color-primary);
-                                     letter-spacing:5px;font-family:monospace">${escapeHtml(g.invite_code || '—')}</span>
-                        <button class="btn-copy-code btn-copy-icon">${iconCopy}</button>
-                      </div>
+                  <div>
+                    <p style="margin:0 0 5px;font-size:9px;color:var(--color-muted);
+                               text-transform:uppercase;letter-spacing:1.5px">รหัสเชิญ</p>
+                    <div style="display:inline-block;background:rgba(255,126,85,0.08);
+                                border:1px solid rgba(255,126,85,0.2);border-radius:8px;padding:6px 12px">
+                      <span style="font-size:17px;font-weight:800;color:var(--color-primary);
+                                   letter-spacing:5px;font-family:monospace">${escapeHtml(g.invite_code || '—')}</span>
                     </div>
-                    ${isLeader ? `
-                    <button class="btn-delete-guild btn btn-danger"
-                            style="display:flex;align-items:center;gap:4px;padding:5px 10px;font-size:11px;flex-shrink:0">
-                      ${iconTrash} ลบ
-                    </button>` : ''}
                   </div>` : `
                   <p style="margin:0;font-size:11px;color:var(--color-muted)">
                     เข้าร่วมกลุ่มนี้เพื่อดูรหัสเชิญ</p>`}
@@ -161,16 +143,6 @@ const LeaderboardModule = (() => {
           const open    = !detail.hidden;
           detail.hidden = open;
           if (chevron) chevron.style.transform = open ? '' : 'rotate(180deg)';
-        });
-        card.querySelector('.btn-copy-code')?.addEventListener('click', async (e) => {
-          const code = card.dataset.code;
-          await navigator.clipboard.writeText(code);
-          e.currentTarget.innerHTML = '✓ คัดลอกแล้ว';
-          setTimeout(() => _renderGuildLeaderboard(), 1800);
-        });
-        card.querySelector('.btn-delete-guild')?.addEventListener('click', async () => {
-          await window.GuildModule?.deleteGuild(card.dataset.id);
-          _renderGuildLeaderboard();
         });
       });
     } catch {

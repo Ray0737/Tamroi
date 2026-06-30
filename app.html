@@ -336,6 +336,7 @@
           <div class="filter-pills" id="community-sub-tabs">
             <button class="pill active" data-community-tab="rank">อันดับ</button>
             <button class="pill" data-community-tab="mygroup">กลุ่มของฉัน</button>
+            <button class="pill" data-community-tab="findgroup">หากลุ่ม</button>
             <button class="pill" data-community-tab="discuss">ถกเถียง</button>
           </div>
 
@@ -374,6 +375,11 @@
             <div id="guild-panel">
               <div style="display:flex;justify-content:center;padding:40px"><div class="spinner"></div></div>
             </div>
+          </div>
+
+          <!-- ── หากลุ่ม ── -->
+          <div id="community-findgroup-section" hidden>
+            <div id="findgroup-panel"></div>
           </div>
 
           <!-- ── ถกเถียง ── -->
@@ -600,20 +606,6 @@
     </div>
   </div>
 
-  <!-- ── Guild Search Sheet ── -->
-  <div class="bottom-sheet" id="guild-search-sheet" hidden>
-    <div class="bottom-sheet-handle"></div>
-    <h3 style="font-family:var(--font-heading);font-size:16px;font-weight:700;
-               margin:0 0 var(--space-sm)">ค้นหากลุ่ม</h3>
-    <div style="display:flex;gap:var(--space-sm);margin-bottom:var(--space-sm)">
-      <input id="guild-search-input" type="text" placeholder="ชื่อกลุ่ม..."
-             style="flex:1;background:var(--color-card-darker);border:1px solid var(--color-border);
-                    border-radius:var(--radius-md);padding:10px var(--space-sm);
-                    color:var(--color-white);font-size:13px">
-      <button class="btn btn-primary" id="btn-guild-search" style="white-space:nowrap">ค้นหา</button>
-    </div>
-    <div id="guild-search-results" style="display:flex;flex-direction:column;gap:var(--space-sm)"></div>
-  </div>
 
 </div><!-- end app-wrapper -->
 
