@@ -608,7 +608,8 @@ const GuildModule = (() => {
           }
         });
       });
-    } catch {
+    } catch (e) {
+      console.error('[findgroup]', e);
       resultsEl.innerHTML = `<p style="text-align:center;color:var(--color-muted);font-size:12px">เกิดข้อผิดพลาด</p>`;
     }
   }
