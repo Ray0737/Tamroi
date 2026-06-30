@@ -145,6 +145,135 @@
 
 .captured-ribbon svg { width: 12px; height: 12px; color: var(--color-bg); }
 
+/* ── Capture reveal overlay ───────────────────────────── */
+@keyframes captureOverlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes captureCardIn {
+  0%   { opacity: 0; transform: scale(1.5) rotate(-6deg); }
+  60%  { transform: scale(0.93) rotate(2deg); opacity: 1; }
+  80%  { transform: scale(1.03) rotate(0deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes captureGlowPulse {
+  0%, 100% { transform: scale(1);    opacity: 0.5; }
+  50%       { transform: scale(1.18); opacity: 0.9; }
+}
+
+@keyframes captureShimmer {
+  from { left: -120%; }
+  to   { left: 160%; }
+}
+
+@keyframes capturePtsFloat {
+  0%   { opacity: 0; transform: translateY(10px); }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+
+.capture-reveal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.82);
+  animation: captureOverlayIn 0.25s ease forwards;
+  cursor: pointer;
+}
+
+.capture-reveal-card {
+  position: relative;
+  background: var(--color-card-dark);
+  border-radius: var(--radius-2xl);
+  padding: 32px 28px 28px;
+  width: min(320px, 85vw);
+  text-align: center;
+  box-shadow: var(--shadow-card);
+  animation: captureCardIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  overflow: hidden;
+}
+
+.capture-reveal-card.capture-reveal-legendary {
+  border: 1.5px solid var(--glow-color, var(--color-primary));
+  box-shadow: 0 0 40px rgba(246, 193, 158, 0.25), var(--shadow-card);
+}
+
+.capture-glow-ring {
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--glow-color, var(--color-primary)) 0%, transparent 70%);
+  opacity: 0.15;
+  animation: captureGlowPulse 1.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.capture-shimmer {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 60%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  animation: captureShimmer 1.4s ease 0.5s forwards;
+  pointer-events: none;
+}
+
+.capture-header {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.capture-emoji {
+  font-size: 72px;
+  line-height: 1;
+  margin-bottom: 16px;
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+}
+
+.capture-name-th {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--color-white);
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.capture-name-en {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  margin-bottom: 14px;
+}
+
+.capture-reveal-card .badge {
+  margin-bottom: 14px;
+}
+
+.capture-pts {
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  font-weight: 700;
+  animation: capturePtsFloat 2s ease 0.6s both;
+}
+
+.capture-confetti {
+  position: absolute;
+  border-radius: 2px;
+  pointer-events: none;
+  animation: confettiBurst 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
 /* ── Splash hero animation ────────────────────────────── */
 .hero-pin {
   animation: pulse 3s ease-in-out infinite;

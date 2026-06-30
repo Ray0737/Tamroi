@@ -875,7 +875,7 @@ const MapModule = (() => {
     window.CollectionModule?.markCaptured?.(activeQuiz.figure.id);
     window.AppCore?.closeAllSheets();
     showFloatPtsOnMap(activeQuiz.figure.legacy_pts || 0);
-    window.AppCore?.showToast('จับบุคคลสำเร็จ');
+    window.AppCore?.showCaptureReveal(activeQuiz.figure);
     activeQuiz = null;
   }
 

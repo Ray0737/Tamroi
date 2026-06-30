@@ -446,5 +446,43 @@ function getMockNotifications() {
   ];
 }
 
+// ── Capture Reveal Animation ──────────────────────────
+function showCaptureReveal(figure) {
+  const cls = figure.class || 'C';
+  const isLegendary = cls === 'S' || cls === 'A';
+  const headerText  = cls === 'S' ? 'LEGENDARY CAPTURE!' : cls === 'A' ? 'RARE CAPTURE!' : 'CAPTURED!';
+  const glowColor   = cls === 'S' ? 'var(--color-class-s)' : cls === 'A' ? '#C0A060' : 'var(--color-success)';
+  const holdMs      = isLegendary ? 3200 : 2200;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'capture-reveal-overlay';
+
+  overlay.innerHTML = `
+    <div class="capture-reveal-card${isLegendary ? ' capture-reveal-legendary' : ''}" style="${isLegendary ? `--glow-color:${glowColor}` : ''}">
+      ${isLegendary ? '<div class="capture-glow-ring"></div><div class="capture-shimmer"></div>' : ''}
+      <div class="capture-header" style="color:${glowColor}">${headerText}</div>
+      <span class="capture-emoji">${escapeHtml(figure.image_emoji || '👤')}</span>
+      <div class="capture-name-th">${escapeHtml(figure.name_th || '')}</div>
+      <div class="capture-name-en">${escapeHtml(figure.name_en || '')}</div>
+      <span class="badge badge-${cls.toLowerCase()}">${cls}-Class</span>
+      <div class="capture-pts" style="color:${glowColor}">+${figure.legacy_pts || 0} Legacy Points</div>
+    </div>`;
+
+  if (isLegendary) {
+    const colors = ['#F6C19E', '#7BC67E', '#ffffff', '#C0A060', '#F6C19E', '#7BC67E'];
+    for (let i = 0; i < 14; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'capture-confetti';
+      dot.style.cssText = `left:${15+Math.random()*70}%;top:${15+Math.random()*70}%;width:${5+Math.random()*7}px;height:${5+Math.random()*7}px;background:${colors[i%colors.length]};animation-delay:${(Math.random()*0.5).toFixed(2)}s`;
+      overlay.appendChild(dot);
+    }
+  }
+
+  document.body.appendChild(overlay);
+  const dismiss = () => { overlay.style.cssText += 'opacity:0;transition:opacity 0.3s'; setTimeout(() => overlay.remove(), 300); };
+  overlay.addEventListener('click', dismiss);
+  setTimeout(dismiss, holdMs);
+}
+
 // ── Expose globally ───────────────────────────────────
-window.AppCore = { App, switchTab, openSheet, closeAllSheets, openLoreSheet, openLoreChainSheet, showFloatPts, showToast, showConfirm, updateMapStatsPill };
+window.AppCore = { App, switchTab, openSheet, closeAllSheets, openLoreSheet, openLoreChainSheet, showFloatPts, showToast, showConfirm, updateMapStatsPill, showCaptureReveal };
