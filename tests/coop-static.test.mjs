@@ -40,7 +40,7 @@ assert(guildJs.includes('renderGuildPanel'), 'GuildModule must have renderGuildP
 assert(guildJs.includes('subscribePresence'), 'GuildModule must have subscribePresence');
 const appHtml = read('app.html');
 assert(appHtml.includes('id="guild-panel"'), 'app.html must include #guild-panel');
-assert(appHtml.includes('data-view="guild"'), 'leaderboard tab must have guild pill');
+assert(appHtml.includes('data-community-tab="mygroup"'), 'community tab must have guild sub-tab pill');
 console.log('✓ Task 3: Guild module checks passed');
 
 // ── Task 4: Coop module ───────────────────────────────
@@ -72,8 +72,8 @@ assert(discJs.includes('const DiscussionModule'), 'discussion.js must define Dis
 assert(discJs.includes('window.DiscussionModule'), 'DiscussionModule must be exposed on window');
 assert(discJs.includes('renderThread'), 'DiscussionModule must have renderThread');
 assert(discJs.includes('flagPost'), 'DiscussionModule must have flagPost');
-assert(appHtml.includes('id="discussion-panel"'), 'app.html must include #discussion-panel');
-assert(appHtml.includes('data-filter="discuss"'), 'collection filters must include discuss pill');
+assert(appHtml.includes('id="community-forum-panel"'), 'app.html must include #community-forum-panel');
+assert(appHtml.includes('data-community-tab="discuss"'), 'community tab must have discuss sub-tab pill');
 console.log('✓ Task 6: DiscussionModule checks passed');
 
 // ── Task 7: Wire-up ───────────────────────────────────
@@ -86,5 +86,28 @@ assert(appHtml.includes('js/discussion.js'), 'app.html must load discussion.js')
 const runMjs = read('tests/run-static.mjs');
 assert(runMjs.includes('coop-static'), 'run-static.mjs must include coop-static test');
 console.log('✓ Task 7: Wire-up checks passed');
+
+// ── New: community-forum.js ───────────────────────────
+assert(existsSync(new URL('js/community-forum.js', root)), 'js/community-forum.js must exist');
+const forumJs = read('js/community-forum.js');
+assert(forumJs.includes('const CommunityForumModule'), 'community-forum.js must define CommunityForumModule');
+assert(forumJs.includes('window.CommunityForumModule'), 'CommunityForumModule must be exposed on window');
+assert(appHtml.includes('js/community-forum.js'), 'app.html must load community-forum.js');
+console.log('✓ CommunityForumModule checks passed');
+
+// ── New: DB additions ─────────────────────────────────
+assert(dbJs.includes('subscribeGuildMembers'), 'DB.Coop must have subscribeGuildMembers');
+assert(dbJs.includes('sendJoinRequest'), 'DB.Coop must have sendJoinRequest');
+assert(dbJs.includes('const Community'), 'supabase-client.js must define Community namespace');
+assert(dbJs.includes('Community'), 'window.DB must expose Community');
+console.log('✓ DB additions checks passed');
+
+// ── New: patch_coop_fix.sql ───────────────────────────
+assert(existsSync(new URL('supabase/patch_coop_fix.sql', root)), 'patch_coop_fix.sql must exist');
+const fixSql = read('supabase/patch_coop_fix.sql');
+assert(fixSql.includes('guild_join_requests'), 'patch_coop_fix.sql must define guild_join_requests');
+assert(fixSql.includes('community_posts'), 'patch_coop_fix.sql must define community_posts');
+assert(fixSql.includes('community_post_flags'), 'patch_coop_fix.sql must define community_post_flags');
+console.log('✓ patch_coop_fix.sql checks passed');
 
 console.log('\n✅ All coop-static checks passed');
