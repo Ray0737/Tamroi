@@ -550,6 +550,16 @@ const Coop = {
     return members.map(m => ({ ...m, profiles: profileMap[m.user_id] || {} }));
   },
 
+  async getGuildClearedDistrictIds(guildId) {
+    const { data: members } = await _sb
+      .from('guild_members').select('user_id').eq('guild_id', guildId);
+    if (!members?.length) return [];
+    const { data } = await _sb
+      .from('user_districts').select('district_id')
+      .eq('fogged', false).in('user_id', members.map(m => m.user_id));
+    return [...new Set((data || []).map(r => r.district_id))];
+  },
+
   async getCollabMissions() {
     const { data, error } = await _sb
       .from('collab_missions')

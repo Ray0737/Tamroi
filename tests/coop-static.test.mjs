@@ -110,4 +110,13 @@ assert(fixSql.includes('community_posts'), 'patch_coop_fix.sql must define commu
 assert(fixSql.includes('community_post_flags'), 'patch_coop_fix.sql must define community_post_flags');
 console.log('✓ patch_coop_fix.sql checks passed');
 
+// ── Guild Fog ─────────────────────────────────────────
+assert(dbJs.includes('getGuildClearedDistrictIds'), 'DB.Coop must have getGuildClearedDistrictIds');
+const mapJs = read('js/map.js');
+assert(mapJs.includes('renderGuildFog'), 'map.js must expose renderGuildFog');
+assert(mapJs.includes('guildFogLayer'), 'map.js must track guildFogLayer');
+const guildJsNew = read('js/guild.js');
+assert(guildJsNew.includes('_refreshGuildFog'), 'guild.js must call _refreshGuildFog after init');
+console.log('✓ Guild Fog checks passed');
+
 console.log('\n✅ All coop-static checks passed');
