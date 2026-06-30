@@ -61,12 +61,6 @@ const CollectionModule = (() => {
         document.querySelectorAll('#collection-filters .pill').forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
         activeFilter = pill.dataset.filter;
-        const discPanel = document.getElementById('discussion-panel');
-        if (activeFilter === 'discuss') {
-          discPanel?.removeAttribute('hidden');
-        } else {
-          discPanel?.setAttribute('hidden', '');
-        }
         render();
       });
     });
@@ -119,7 +113,7 @@ const CollectionModule = (() => {
     });
 
     if (!grid) return;
-    grid.hidden = activeFilter === 'journal' || activeFilter === 'discuss';
+    grid.hidden = activeFilter === 'journal';
     if (journal) journal.hidden = activeFilter !== 'journal';
 
     grid.innerHTML = filtered.map(f => {
@@ -318,10 +312,6 @@ const CollectionModule = (() => {
   }
 
   function showDetail(figureId) {
-    if (activeFilter === 'discuss') {
-      window.DiscussionModule?.init(figureId);
-      return;
-    }
     const fig = allFigures.find(f => f.id === figureId);
     if (!fig) return;
     const modal = document.getElementById('figure-modal');
