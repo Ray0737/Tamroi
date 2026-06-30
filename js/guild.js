@@ -78,8 +78,9 @@ const GuildModule = (() => {
           <div style="display:flex;align-items:center;justify-content:space-between">
             <div>
               <p style="margin:0;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;
-                         color:var(--color-primary);font-weight:600">Guild</p>
-              <h3 style="margin:2px 0 0;font-family:var(--font-heading);font-size:17px;font-weight:700">
+                         color:var(--color-primary);font-weight:600">Team</p>
+              <h3 style="margin:2px 0 0;font-family:var(--font-heading);font-size:17px;font-weight:700;
+                         color:var(--color-white)">
                 ${escapeHtml(guild.name)}</h3>
             </div>
             <div style="text-align:right">
@@ -296,7 +297,7 @@ const GuildModule = (() => {
       _state = await DB.Coop.getMyGuild(_userId);
       subscribePresence();
       subscribeMembers();
-      renderGuildPanel();
+      await renderGuildPanel();
       document.dispatchEvent(new CustomEvent('guild-changed'));
     } catch (e) {
       if (errEl) errEl.textContent = e.message || 'เกิดข้อผิดพลาด';

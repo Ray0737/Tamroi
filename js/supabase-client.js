@@ -487,7 +487,9 @@ const Coop = {
       .single();
     if (error) throw error;
 
-    await _sb.from('guild_members').insert({ guild_id: data.id, user_id: userId, role: 'leader' });
+    const { error: memberErr } = await _sb
+      .from('guild_members').insert({ guild_id: data.id, user_id: userId, role: 'leader' });
+    if (memberErr) throw memberErr;
     return data;
   },
 
