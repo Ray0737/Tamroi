@@ -325,6 +325,11 @@ const MapModule = (() => {
     const node = loreNodes.find(item => item.id === loreId) || activeLoreNode;
     if (!node) return;
 
+    if (!isDev() && lastKnownPosition && haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, node.lat, node.lng) > (node.radius_m || 100)) {
+      window.AppCore?.showToast('คุณอยู่ไกลเกินไป — เดินทางให้ใกล้กว่านี้');
+      return;
+    }
+
     const btn = document.getElementById('btn-save-lore');
     if (btn) {
       btn.disabled = true;
@@ -624,6 +629,11 @@ const MapModule = (() => {
   async function visitSupportNode(nodeId) {
     const node = supportNodes.find(item => getSupportNodeId(item) === nodeId);
     if (!node || visitedSupportNodeIds.has(nodeId)) return;
+
+    if (!isDev() && lastKnownPosition && haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, node.lat, node.lng) > CHECKIN_TOLERANCE_M) {
+      window.AppCore?.showToast('คุณอยู่ไกลเกินไป — เดินทางให้ใกล้กว่านี้');
+      return;
+    }
 
     const btn = document.getElementById('btn-visit-support-node');
     if (btn) {
@@ -1084,7 +1094,7 @@ const MapModule = (() => {
   function getLoreNodes() { return loreNodes; }
   function getUnlockedLoreIds() { return [...unlockedLoreIds]; }
 
-  return { init, resize, confirmHome, skipHomePicker, saveLoreUnlock, visitSupportNode, openLegendaryEncounter, openQuizForFigure, submitQuizAnswer, getLoreNodes, getUnlockedLoreIds, renderGuildFog };
+  return { init, resize, confirmHome, skipHomePicker, saveLoreUnlock, visitSupportNode, openLegendaryEncounter, openQuizForFigure, submitQuizAnswer, getLoreNodes, getUnlockedLoreIds, renderGuildFog, getLastKnownPosition: () => lastKnownPosition };
 })();
 
 window.MapModule = MapModule;

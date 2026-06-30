@@ -48,11 +48,30 @@ const CoopModule = (() => {
     }
   }
 
+  function _haversine(lat1, lng1, lat2, lng2) {
+    const R = 6371000, r = Math.PI / 180;
+    const dLat = (lat2 - lat1) * r, dLng = (lng2 - lng1) * r;
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * r) * Math.cos(lat2 * r) * Math.sin(dLng / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  function _isDev() { return ['localhost', '127.0.0.1', ''].includes(window.location.hostname); }
+
   async function _doCheckin(mission, guild, user, wrapperEl) {
+    const pos = window.MapModule?.getLastKnownPosition?.();
+    const d   = mission.districts;
+    if (!_isDev() && pos && d) {
+      const lat = d.watchtower_lat || d.center_lat;
+      const lng = d.watchtower_lng || d.center_lng;
+      if (_haversine(pos.lat, pos.lng, lat, lng) > 500) {
+        window.AppCore?.showToast('คุณอยู่ไกลเกินไป — เดินทางให้ใกล้กว่านี้');
+        return;
+      }
+    }
     try {
       await DB.Coop.checkInToMission(mission.id, guild.guild.id, user.id);
       // UI update comes from the postgres_changes subscription
-    } catch { /* duplicate or distance error — ignore */ }
+    } catch { /* duplicate checkin — ignore */ }
   }
 
   function renderMissionCard(mission, checkinCount, myCheckin) {

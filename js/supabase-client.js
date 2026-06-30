@@ -563,7 +563,7 @@ const Coop = {
   async getCollabMissions() {
     const { data, error } = await _sb
       .from('collab_missions')
-      .select('*')
+      .select('*, districts(center_lat, center_lng, watchtower_lat, watchtower_lng)')
       .eq('is_active', true);
     if (error) throw error;
     return data || [];

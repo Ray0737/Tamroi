@@ -46,12 +46,14 @@ Tam Roi's core game loop — fog-of-war reveal, lore unlock, and legendary encou
 ### Accuracy threshold — blocks DevTools (Vector 1)
 
 ```js
-// In _isPlausiblePosition() and isWithinCheckInRange()
+// In _isPlausiblePosition() — rejects before updating lastKnownPosition
 if (accuracy === 0) return false;         // DevTools exact-zero signature
-if (accuracy > 2000) return false;        // unusably coarse reading
+
+// In isWithinCheckInRange() — rejects at the check-in gate
+if (lastKnownPosition.accuracy === 0 || lastKnownPosition.accuracy > 2000) return false;
 ```
 
-Real mobile GPS returns `accuracy` in the range 5–100 m. Desktop DevTools always returns `0`. This single check silently rejects all DevTools spoofs before `lastKnownPosition` is updated.
+Real mobile GPS returns `accuracy` in the range 5–100 m. Desktop DevTools always returns `0`. The `accuracy === 0` check in `_isPlausiblePosition` silently rejects all DevTools spoofs before `lastKnownPosition` is updated. The `> 2000` coarse-reading guard is a second line of defence at the check-in call site.
 
 ### Speed / teleport check — blocks mock location apps (Vector 2)
 
@@ -65,6 +67,18 @@ if (dt > 0 && dist / dt > 50) return false; // 50 m/s ≈ 180 km/h
 Position history (last 10 readings) is kept in `_posHistory`. Any jump exceeding 50 m/s between consecutive `watchPosition` callbacks is rejected. The threshold covers BTS/MRT travel (~30 m/s max) with margin while blocking instant teleportation.
 
 Both checks are bypassed on `localhost` / `127.0.0.1` via the existing `isDev()` guard so development is unaffected.
+
+### Support node visit distance check (added 2026-07-01)
+
+`visitSupportNode()` now rejects if `haversineDistance > CHECKIN_TOLERANCE_M (500 m)` before writing to DB.
+
+### Lore unlock proximity re-check (added 2026-07-01)
+
+`saveLoreUnlock()` re-checks `haversineDistance > node.radius_m` at save time, blocking direct console calls like `MapModule.saveLoreUnlock('any-id')`.
+
+### Collab mission GPS gate (added 2026-07-01)
+
+`_doCheckin()` in `coop.js` now checks `haversineDistance > 500 m` against the mission's district `watchtower_lat/lng` (joined via `getCollabMissions()` query). Blocked in dev mode.
 
 ---
 
@@ -93,13 +107,11 @@ IF NOT ST_Within(
 END IF;
 ```
 
+Same pattern applies to `DB.Lore.unlock()` and `DB.Coop.checkInToMission()` — both send no coordinates to the server.
+
 ### Rate limiting (not yet implemented)
 
 No cap on check-ins per user per day. With coordinates validated server-side this matters less, but a rate limit (e.g. 5 new districts per 24 h) is cheap insurance.
-
-### Lore unlock server validation (not yet implemented)
-
-`DB.Lore.unlock(user.id, node.id)` in `saveLoreUnlock()` also sends no coordinates. Same fix pattern as check-in applies.
 
 ---
 
@@ -109,6 +121,9 @@ No cap on check-ins per user per day. With coordinates validated server-side thi
 |---|---|---|
 | Chrome DevTools Sensors | **Yes** | `accuracy === 0` rejection |
 | Android mock location (basic) | **Yes** | 50 m/s teleport detection |
+| Console call to `saveLoreUnlock` | **Yes** | GPS re-check at save time (2026-07-01) |
+| Console call to `visitSupportNode` | **Yes** | Distance guard added (2026-07-01) |
+| Co-op mission checkin without travel | **Yes** | GPS gate in `_doCheckin` (2026-07-01) |
 | JS prototype override | Partial | Mitigated if override happens after our script loads |
 | Root/OS-level GPS spoof | **No** | Requires server-side coordinate validation |
 | Replay / proxy attack | **No** | Requires server-side coordinate validation |
