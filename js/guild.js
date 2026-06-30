@@ -159,6 +159,14 @@ const GuildModule = (() => {
           ยังไม่มีกลุ่ม</h3>
         <p style="font-size:12px;color:var(--color-muted);margin:0 0 var(--space-md)">
           สร้างหรือเข้าร่วมกลุ่มเพื่อเล่นร่วมกับเพื่อน</p>
+        ${pendingRequest ? `
+          <div style="padding:var(--space-sm);background:rgba(255,126,85,0.08);
+                      border-radius:var(--radius-md);border:1px solid rgba(255,126,85,0.2);
+                      margin-bottom:var(--space-sm)">
+            <p style="margin:0;font-size:12px;color:var(--color-primary)">
+              ⏳ รอการอนุมัติจาก <strong>${escapeHtml(pendingRequest.guilds?.name || '...')}</strong>
+            </p>
+          </div>` : ''}
         <input id="guild-name-input" type="text" placeholder="ชื่อกลุ่มใหม่..."
                style="width:100%;background:var(--color-card-darker);border:1px solid var(--color-border);
                       border-radius:var(--radius-md);padding:10px var(--space-sm);color:var(--color-white);
@@ -177,6 +185,9 @@ const GuildModule = (() => {
             ${iconEnter} เข้าร่วม
           </button>
         </div>
+        <button class="btn btn-ghost btn-full" id="btn-search-guild"
+                style="font-size:12px;color:var(--color-muted);border-color:var(--color-border)">
+          ค้นหากลุ่ม</button>
         <p id="guild-error" style="font-size:11px;color:#ef5350;margin:6px 0 0;min-height:16px"></p>
       </div>`;
   }
@@ -245,7 +256,13 @@ const GuildModule = (() => {
 
   async function _handleCopyInvite() {
     if (!_state?.guild?.invite_code) return;
-    await navigator.clipboard.writeText(_state.guild.invite_code);
+    try {
+      await navigator.clipboard.writeText(_state.guild.invite_code);
+    } catch {
+      // clipboard unavailable — show code in prompt as fallback
+      window.prompt('รหัสเชิญ:', _state.guild.invite_code);
+      return;
+    }
     const btn = document.getElementById('btn-copy-invite');
     if (!btn) return;
     btn.textContent = 'คัดลอกแล้ว!';

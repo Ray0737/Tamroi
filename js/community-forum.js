@@ -89,7 +89,7 @@ const CommunityForumModule = (() => {
       el.innerHTML = `
         <div style="margin-top:6px;display:flex;flex-direction:column;gap:6px">
           ${replies.map(r => `
-            <div style="margin-left:16px;border-left:2px solid rgba(255,126,85,0.3);
+            <div style="margin-left:16px;border-left:2px solid rgba(246,193,158,0.3);
                         padding-left:10px;padding-top:4px">
               <span style="font-size:11px;font-weight:600">
                 ${escapeHtml(r.profiles?.username || 'Anonymous')}</span>
