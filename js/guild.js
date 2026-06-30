@@ -150,7 +150,7 @@ const GuildModule = (() => {
     );
   }
 
-  function _renderNoGuild() {
+  function _renderNoGuild(pendingRequest = null) {
     return `
       <div style="background:var(--color-card-dark);border-radius:var(--radius-xl);
                   border:1px dashed var(--color-border);padding:var(--space-lg);text-align:center">
