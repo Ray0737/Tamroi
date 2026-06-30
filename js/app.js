@@ -69,6 +69,7 @@ async function _bootApp(user) {
   updateTopBar();
   updateMapStatsPill();
   bindNavigation();
+  bindCommunitySubTabs();
   bindSheetOverlay();
   loadNotifications();
   subscribeNotifications();
@@ -132,7 +133,7 @@ function switchTab(tab) {
   const previousTab = App.currentTab;
   App.currentTab = tab;
 
-  if (previousTab === 'leaderboard' && tab !== 'leaderboard') {
+  if (previousTab === 'community' && tab !== 'community') {
     window.LeaderboardModule?.unsubscribe?.();
   }
 
@@ -152,7 +153,7 @@ function switchTab(tab) {
   }
 
   // Update top bar page title for non-map tabs
-  const titles = { map: '', collection: 'Collection', mission: 'Missions', leaderboard: 'Leaderboard' };
+  const titles = { map: '', collection: 'Collection', mission: 'Missions', community: 'Community' };
   const titleEl = document.querySelector('.top-bar__center .page-title');
   if (titleEl) titleEl.textContent = titles[tab] || '';
 
@@ -169,10 +170,36 @@ function switchTab(tab) {
   } else if (tab === 'mission') {
     window.MissionModule?.load();
     window.CoopModule?.load();
-  } else if (tab === 'leaderboard') {
-    window.LeaderboardModule?.load();
-    window.GuildModule?.renderGuildPanel();
+  } else if (tab === 'community') {
+    const activePill = document.querySelector('[data-community-tab].active');
+    _switchCommunityTab(activePill?.dataset.communityTab || 'rank');
   }
+}
+
+function _switchCommunityTab(view) {
+  ['community-rank-section', 'community-guild-section', 'community-forum-section']
+    .forEach(id => document.getElementById(id)?.setAttribute('hidden', ''));
+
+  if (view === 'rank') {
+    document.getElementById('community-rank-section')?.removeAttribute('hidden');
+    window.LeaderboardModule?.load();
+  } else if (view === 'mygroup') {
+    document.getElementById('community-guild-section')?.removeAttribute('hidden');
+    window.GuildModule?.renderGuildPanel();
+  } else if (view === 'discuss') {
+    document.getElementById('community-forum-section')?.removeAttribute('hidden');
+    window.CommunityForumModule?.load();
+  }
+}
+
+function bindCommunitySubTabs() {
+  document.querySelectorAll('[data-community-tab]').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('[data-community-tab]').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      _switchCommunityTab(pill.dataset.communityTab);
+    });
+  });
 }
 
 // ── Bottom Sheet & Overlay ────────────────────────────
