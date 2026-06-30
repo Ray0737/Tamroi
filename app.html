@@ -271,7 +271,6 @@
             <button class="pill" data-filter="C">C-Class</button>
             <button class="pill" data-filter="artifacts">Artifacts</button>
             <button class="pill" data-filter="journal">Journal</button>
-            <button class="pill" data-filter="discuss">💬 ถกเถียง</button>
           </div>
 
           <!-- Stats -->
@@ -291,7 +290,6 @@
           </div>
 
           <div class="lore-journal-list" id="lore-journal" hidden></div>
-          <div id="discussion-panel" hidden style="padding-top:var(--space-sm)"></div>
 
           <!-- Artifacts section -->
           <div id="collection-artifacts-section" class="mt-4">
@@ -329,53 +327,58 @@
       </div>
     </section>
 
-    <!-- ── TAB: LEADERBOARD ──────────────────────── -->
-    <section id="tab-leaderboard" class="tab-section">
+    <!-- ── TAB: COMMUNITY ──────────────────────── -->
+    <section id="tab-community" class="tab-section">
       <div class="section-scroll">
         <div class="section-inner" style="display:flex;flex-direction:column;gap:var(--space-md)">
 
-          <!-- View toggle: Solo / Guild -->
-          <div class="filter-pills" id="leaderboard-view">
-            <button class="pill active" data-view="solo">เดี่ยว</button>
-            <button class="pill" data-view="guild">กลุ่ม</button>
+          <!-- Community sub-tab pills -->
+          <div class="filter-pills" id="community-sub-tabs">
+            <button class="pill active" data-community-tab="rank">อันดับ</button>
+            <button class="pill" data-community-tab="mygroup">กลุ่มของฉัน</button>
+            <button class="pill" data-community-tab="discuss">ถกเถียง</button>
           </div>
 
-          <!-- Solo leaderboard (existing) -->
-          <div id="solo-leaderboard-section">
-          <!-- Period filter -->
-          <div class="filter-pills" id="leaderboard-period">
-            <button class="pill active" data-period="weekly">Weekly</button>
-            <button class="pill" data-period="monthly">Monthly</button>
-            <button class="pill" data-period="alltime">All-Time</button>
-          </div>
-
-          <!-- Metric tabs -->
-          <div class="filter-pills" id="leaderboard-metric">
-            <button class="pill active" data-metric="legacy">Legacy Score</button>
-            <button class="pill" data-metric="discovery">Map Discovery</button>
-            <button class="pill" data-metric="archive">Archive</button>
-          </div>
-
-          <!-- Podium -->
-          <div class="card" id="leaderboard-podium" style="padding:0 var(--space-sm) var(--space-sm)"></div>
-
-          <!-- My rank -->
-          <div id="my-rank-card"></div>
-
-          <!-- Full list -->
-          <div class="card" style="padding:var(--space-sm)">
-            <div id="leaderboard-list">
-              <div style="display:flex;justify-content:center;padding:40px"><div class="spinner"></div></div>
+          <!-- ── อันดับ ── -->
+          <div id="community-rank-section" style="display:flex;flex-direction:column;gap:var(--space-md)">
+            <div class="filter-pills" id="leaderboard-view">
+              <button class="pill active" data-view="solo">เดี่ยว</button>
+              <button class="pill" data-view="guild">กลุ่ม</button>
+            </div>
+            <div id="solo-leaderboard-section">
+              <div class="filter-pills" id="leaderboard-period">
+                <button class="pill active" data-period="weekly">Weekly</button>
+                <button class="pill" data-period="monthly">Monthly</button>
+                <button class="pill" data-period="alltime">All-Time</button>
+              </div>
+              <div class="filter-pills" id="leaderboard-metric">
+                <button class="pill active" data-metric="legacy">Legacy Score</button>
+                <button class="pill" data-metric="discovery">Map Discovery</button>
+                <button class="pill" data-metric="archive">Archive</button>
+              </div>
+              <div class="card" id="leaderboard-podium" style="padding:0 var(--space-sm) var(--space-sm)"></div>
+              <div id="my-rank-card"></div>
+              <div class="card" style="padding:var(--space-sm)">
+                <div id="leaderboard-list">
+                  <div style="display:flex;justify-content:center;padding:40px"><div class="spinner"></div></div>
+                </div>
+              </div>
+            </div>
+            <div id="guild-leaderboard-section" hidden style="display:flex;flex-direction:column;gap:var(--space-md)">
+              <div id="guild-leaderboard-list"></div>
             </div>
           </div>
-          </div><!-- end #solo-leaderboard-section -->
 
-          <!-- Guild panel + leaderboard -->
-          <div id="guild-leaderboard-section" hidden style="display:flex;flex-direction:column;gap:var(--space-md)">
+          <!-- ── กลุ่มของฉัน ── -->
+          <div id="community-guild-section" hidden>
             <div id="guild-panel">
               <div style="display:flex;justify-content:center;padding:40px"><div class="spinner"></div></div>
             </div>
-            <div id="guild-leaderboard-list"></div>
+          </div>
+
+          <!-- ── ถกเถียง ── -->
+          <div id="community-forum-section" hidden>
+            <div id="community-forum-panel"></div>
           </div>
 
         </div>
@@ -404,11 +407,11 @@
       </svg>
       <span class="nav-label">Mission</span>
     </button>
-    <button class="nav-item" data-tab="leaderboard">
+    <button class="nav-item" data-tab="community">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polyline points="18 20 18 10"/><polyline points="12 20 12 4"/><polyline points="6 20 6 14"/>
       </svg>
-      <span class="nav-label">Rank</span>
+      <span class="nav-label">Community</span>
     </button>
   </nav>
 
@@ -616,6 +619,22 @@
 <script src="js/coop.js"></script>
 <script src="js/raid.js"></script>
 <script src="js/discussion.js"></script>
+<script src="js/community-forum.js"></script>
+
+  <!-- ── Guild Search Sheet ── -->
+  <div class="bottom-sheet" id="guild-search-sheet" hidden>
+    <div class="bottom-sheet-handle"></div>
+    <h3 style="font-family:var(--font-heading);font-size:16px;font-weight:700;
+               margin:0 0 var(--space-sm)">ค้นหากลุ่ม</h3>
+    <div style="display:flex;gap:8px;margin-bottom:var(--space-sm)">
+      <input id="guild-search-input" type="text" placeholder="ชื่อกลุ่ม..."
+             style="flex:1;background:var(--color-card-darker);border:1px solid var(--color-border);
+                    border-radius:var(--radius-md);padding:10px var(--space-sm);
+                    color:var(--color-white);font-size:13px">
+      <button class="btn btn-primary" id="btn-guild-search" style="white-space:nowrap">ค้นหา</button>
+    </div>
+    <div id="guild-search-results" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
 
 <script>
   // Sync settings panel with loaded profile
