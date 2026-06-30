@@ -6,7 +6,7 @@
 
 ## Project Context
 
-**Tamroi** is a mobile-first web app for the National Software Contest 2026. Players travel to real Thai districts, check in at landmark Watchtowers to clear Fog of War, and capture historical figures by visiting local outposts. The app is currently in **Phase 1 (Web MVP)** — no native mobile code, no React, no build tooling.
+**Tamroi** is a mobile-first web app for the National Software Contest 2026. Players travel to real Thai districts, check in at landmark Watchtowers to clear Fog of War, and capture historical figures by visiting local outposts. **Phase 1 (Web MVP) and Phase 3 (Co-op Mode) are both fully implemented.** No native mobile code, no React, no build tooling.
 
 **Primary User:** Tourist / traveler, age 20–30  
 **Platform:** Mobile web, max content width 430px  
@@ -49,39 +49,56 @@
 │   ├── utils.js         escapeHtml() — always use for user-visible strings
 │   ├── supabase-client.js  All DB & Auth calls live here
 │   ├── app.js           Boot · auth guard · tab navigation · notifications
-│   ├── map.js           Leaflet · Fog of War · watchtowers · GPS dot · Lore proximity
+│   ├── map.js           Leaflet · Fog of War · watchtowers · GPS dot · Lore proximity · Guild fog
 │   ├── fog-grid.js      Reusable Thailand grid Fog helper exposed as window.FogGrid
 │   ├── collection.js    Figures + artifacts grid · Lore Journal
 │   ├── missions.js      Active quest + daily challenges
-│   └── leaderboard.js   Podium + rank list
+│   ├── leaderboard.js   Podium + rank list (solo + guild tabs)
+│   ├── guild.js         Guild create/join/manage · Presence · Find Group panel
+│   ├── coop.js          Collaborative mission cards + real-time checkin progress
+│   ├── raid.js          Raid lobby · Broadcast quiz · host failover
+│   ├── discussion.js    Figure discussion threads (1-level replies + auto-flag)
+│   └── community-forum.js  Community feed · likes · replies · flag
 └── supabase/
-    ├── schema.sql        Full DB schema + Bangkok district seed data
-    ├── patch_auth_fix.sql Auth trigger fix + RLS INSERT policy
-    ├── patch_lore.sql    Lore/support-node visit/quiz tables + legacy score trigger
-    └── patch_district_seed.sql MVP district seed parity with map.js
+    ├── schema.sql              Full DB schema + Bangkok district seed data
+    ├── patch_auth_fix.sql      Auth trigger fix + RLS INSERT policy
+    ├── patch_lore.sql          Lore/support-node visit/quiz tables + legacy score trigger
+    ├── patch_district_seed.sql MVP district seed parity with map.js
+    ├── patch_era.sql           era column on figures
+    ├── patch_daily_challenges.sql daily_challenges + user_daily_progress tables
+    ├── patch_support_nodes.sql figure lat/lng coords + support_nodes + bts_mrt_stations tables
+    ├── patch_coop.sql          Phase 3: guilds, raids, discussions, triggers, views, RLS
+    ├── patch_coop_fix.sql      guild_join_requests table + split notification RLS
+    ├── patch_group_management.sql guilds.announcement column
+    ├── patch_notifications_rls.sql split notifications policy (insert for others)
+    ├── patch_community.sql     community_posts table + RLS + flag trigger
+    ├── patch_community_likes.sql community_post_likes table + RLS
+    └── patch_mock_satit.sql    Test-only seed data — REMOVE before production
 └── docs/
-    ├── CODING_INSTRUCTIONS.md Design system and implementation rules
-    ├── dev-plan.md      Phase 1 development plan
-    ├── dev-plan-prompt.xml Planning prompt and task history
-    ├── progress.md      Current implementation progress
-    ├── production-smoke.md Supabase/Vercel smoke-test checklist
-    ├── App Plan.md      High-level feature planning
-    ├── FUNCTION_AUDIT.md   Function-by-function audit vs. NSC proposal
-    ├── VERIFYLOGIC.md   Game logic, rules, and verification status
-    ├── PROJECT_SUMMARY.md  Project overview
-    ├── system_architect.md System architecture notes
-    ├── refactor.md      Refactor notes and decisions
-    ├── tamroi_project_context.md Full project context document
+    ├── CODING_INSTRUCTIONS.md  Design system and implementation rules
+    ├── COOP.md                 Phase 3 Co-op design spec (guilds, raids, discussions)
+    ├── dev-plan.md             Phase 1 development plan
+    ├── FUNCTION_AUDIT.md       Function-by-function audit vs. NSC proposal
+    ├── FUNCTION_LOG.md         Live log of all gameplay/DB functions; update each session
+    ├── gps-spoofing.md         GPS anti-cheat threat analysis + mitigation status
+    ├── production-smoke.md     Supabase/Vercel smoke-test checklist
+    ├── progress.md             Current implementation progress
+    ├── PROJECT_SUMMARY.md      Project overview
+    ├── system_architect.md     System architecture notes
+    ├── VERIFYLOGIC.md          Game logic, rules, and verification status
+    ├── used/                   One-time-use docs (fix guides, beta test scripts)
     └── proposal/
-        └── tam_roi_nsc_proposal.md NSC proposal (ตามรอย_NSC_2026)
+        └── ตามรอย_NSC_2026_v20.md NSC proposal
 └── tests/
-    ├── lore-static.test.mjs Static regression check for Lore integration
-    ├── remaining-static.test.mjs Static regression check for gameplay loop work
-    ├── prod-readiness-static.test.mjs Static regression check for deploy readiness
+    ├── coop-static.test.mjs     Static regression check for Co-op module
     ├── district-seed-static.test.mjs Static regression check for DB/map district parity
     ├── env-policy-static.test.mjs Static regression check for tracked env policy
-    ├── grid-fog-static.test.mjs Static regression check for window.FogGrid
-    └── run-static.mjs One-command static regression suite runner
+    ├── grid-fog-static.test.mjs  Static regression check for window.FogGrid
+    ├── guild.spec.mjs            Guild module unit tests
+    ├── lore-static.test.mjs      Static regression check for Lore integration
+    ├── prod-readiness-static.test.mjs Static regression check for deploy readiness
+    ├── remaining-static.test.mjs Static regression check for gameplay loop work
+    └── run-static.mjs            One-command static regression suite runner
 ```
 
 **`js/env.js` is trackable in this prototype.** Keep it limited to public Supabase anon/dev-safe values. Never put service-role keys or private credentials in client code.
@@ -174,14 +191,26 @@ cd NSC_2026
 
 ### Supabase Setup (first time)
 
+Run patches in this order:
+
 1. Create project at supabase.com
-2. SQL Editor → run `supabase/schema.sql`
-3. SQL Editor → run `supabase/patch_auth_fix.sql`
-4. SQL Editor → run `supabase/patch_lore.sql`
-5. SQL Editor → run `supabase/patch_district_seed.sql`
-6. Authentication → Email → **disable "Confirm email"** for dev
-7. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
-8. Settings → API → copy URL + anon key into `js/env.js`
+2. SQL Editor → `supabase/schema.sql`
+3. SQL Editor → `supabase/patch_auth_fix.sql`
+4. SQL Editor → `supabase/patch_lore.sql`
+5. SQL Editor → `supabase/patch_district_seed.sql`
+6. SQL Editor → `supabase/patch_era.sql`
+7. SQL Editor → `supabase/patch_daily_challenges.sql`
+8. SQL Editor → `supabase/patch_support_nodes.sql`
+9. SQL Editor → `supabase/patch_coop.sql`
+10. SQL Editor → `supabase/patch_coop_fix.sql`
+11. SQL Editor → `supabase/patch_group_management.sql`
+12. SQL Editor → `supabase/patch_notifications_rls.sql`
+13. SQL Editor → `supabase/patch_community.sql`
+14. SQL Editor → `supabase/patch_community_likes.sql`
+15. *(Optional, dev/test only)* SQL Editor → `supabase/patch_mock_satit.sql`
+16. Authentication → Email → **disable "Confirm email"** for dev
+17. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
+18. Settings → API → copy URL + anon key into `js/env.js`
 
 ---
 
@@ -239,27 +268,57 @@ cd NSC_2026
 - Real-time leaderboard: Supabase Realtime subscription on `profiles` table
 - Real-time notifications: Supabase Realtime subscription on `notifications` inserts updates the badge/offcanvas
 
-### New DB Tables / Patches (add via `supabase/patch_lore.sql`)
+### DB Tables
 
-| Table / Object | Purpose |
-|---|---|
-| `lore_nodes` | GPS lore points with radius, content, chain info |
-| `user_lore` | Which lore nodes user has unlocked (RLS: own rows) |
-| `user_support_node_visits` | Exact Support Node IDs visited by each user; unique per `(user_id, node_id)` |
-| `quiz_questions` | Location-specific MCQ questions per figure (public SELECT) |
-| `on_capture_update_score` trigger | Auto-updates `profiles.legacy_score` on `user_captures` insert |
+| Table / Object | Patch | Purpose |
+|---|---|---|
+| `lore_nodes` | patch_lore | GPS lore points with radius, content, chain info |
+| `user_lore` | patch_lore | Which lore nodes user has unlocked (RLS: own rows) |
+| `user_support_node_visits` | patch_lore | Exact Support Node IDs visited; unique per `(user_id, node_id)` |
+| `quiz_questions` | patch_lore | Location-specific MCQ questions per figure (public SELECT) |
+| `daily_challenges` | patch_daily_challenges | Challenge definitions (checkin/capture/lore/quiz types) |
+| `user_daily_progress` | patch_daily_challenges | Per-user daily challenge progress |
+| `support_nodes` | patch_support_nodes | Cafe/OTOP/landmark node definitions with lat/lng |
+| `bts_mrt_stations` | patch_support_nodes | Station coords for ×2 transport bonus |
+| `guilds` | patch_coop | Guild records (name, invite_code, max_members, announcement) |
+| `guild_members` | patch_coop | Guild membership + role (leader/member) |
+| `guild_join_requests` | patch_coop_fix | Join request flow (pending/approved/rejected) |
+| `collab_missions` | patch_coop | Seeded co-op missions per district |
+| `collab_mission_checkins` | patch_coop | GPS checkins per user per mission + guild |
+| `collab_mission_completions` | patch_coop | Auto-inserted by trigger when threshold met |
+| `raid_sessions` | patch_coop | Raid session state (waiting/active/completed/failed) |
+| `raid_session_members` | patch_coop | Players in a raid + ready state + joined_at for failover |
+| `figure_discussions` | patch_coop | Per-figure comment threads (1-level replies) |
+| `discussion_flags` | patch_coop | Flag votes; trigger auto-hides at 3 flags |
+| `community_posts` | patch_community | Global community feed posts + replies |
+| `community_post_likes` | patch_community_likes | Like/unlike tracking per post per user |
+| `guild_leaderboard` VIEW | patch_coop | Aggregated guild stats (discovery, captures, score) |
+| `on_capture_update_score` trigger | patch_lore | Auto-updates `profiles.legacy_score` on `user_captures` insert |
+| `on_collab_checkin_threshold` trigger | patch_coop | Auto-completes mission + awards pts when checkin count ≥ required |
+| `on_discussion_flag_count` trigger | patch_coop | Sets `is_flagged = true` when flag count ≥ 3 |
 
-### Runtime APIs Added
+### Runtime APIs
 
+**Phase 1**
 - `window.DB.Lore`: `getAll()`, `getUserUnlocked(userId)`, `unlock(userId, loreId)`
 - `window.DB.Quiz`: `getForFigure(figureId, count)`
-- `window.DB.Districts.getVisitedSupportNodes(userId)`: returns persisted Support Node IDs for reload-safe visit dedupe
-- `window.DB.Districts.updateNodeVisit(userId, districtId, nodeType, nodeId)`: records exact node visit and idempotently increments district support counters
-- `window.DB.Profiles.addLegacyPoints(userId, pts)`: lore-only score increment
-- `window.DB.Leaderboard.subscribe(callback)`: wrapped Supabase Realtime subscription
-- `window.DB.Notifications.subscribe(userId, callback)`: live notification inserts
-- `window.AppCore.openLoreSheet(node)` and `openLoreChainSheet(chain)`: lore bottom sheets
-- `window.AppCore.showToast(message)`: app-level toast for check-in distance errors
+- `window.DB.Districts.getVisitedSupportNodes(userId)`, `updateNodeVisit(userId, districtId, nodeType, nodeId)`
+- `window.DB.Profiles.addLegacyPoints(userId, pts)`
+- `window.DB.Leaderboard.subscribe(callback)`
+- `window.DB.Notifications.subscribe(userId, callback)`
+- `window.AppCore.openLoreSheet(node)`, `openLoreChainSheet(chain)`, `showToast(message)`
+- `window.MapModule.renderGuildFog(clearedDistrictIds)`: overlays tinted fog for guild territory
+
+**Phase 3 — Co-op**
+- `window.DB.Coop`: `getMyGuild(userId)`, `getGuildMembers(guildId)`, `getGuildClearedDistrictIds(guildId)`, `createGuild(name, userId)`, `leaveGuild(guildId, userId)`, `kickMember(guildId, targetUserId)`, `deleteGuild(guildId)`, `updateGuild(guildId, fields)`, `searchGuilds(query)`, `sendJoinRequest(guildId, userId)`, `getMyPendingRequest(userId)`, `getJoinRequests(guildId)`, `approveRequest(requestId, guildId, targetUserId)`, `rejectRequest(requestId)`, `getCollabMissions()`, `checkInToMission(missionId, guildId, userId)`, `getMissionCheckins(missionId, guildId)`, `getAllGuildCheckins(guildId)`, `getGuildLeaderboard()`, `subscribeGuildPresence(guildId, {onSync, onJoin, onLeave})`, `subscribeGuildMembers(guildId, callback)`, `subscribeGuildChanges(callback)`, `subscribeMissionProgress(missionId, guildId, callback)`, `getMyMemberships(userId)`
+- `window.DB.Raid`: `createSession(figureId, guildId, hostUserId)`, `joinSession(sessionId, userId)`, `updateSessionStatus(sessionId, status)`, `insertCaptures(sessionId, participantUserIds, figureId)`, `openBroadcast(sessionId)`, `openPresence(sessionId)`
+- `window.DB.Discussion`: `getComments(figureId)`, `postComment(figureId, userId, content, parentId)`, `flagComment(discussionId, userId)`
+- `window.DB.Community`: `getPosts(userId)`, `getReplies(parentId)`, `postMessage(userId, content, parentId)`, `flagPost(postId, userId)`, `likePost(postId, userId)`, `unlikePost(postId, userId)`
+- `window.GuildModule`: `init(userId)`, `getState()`, `getOnlineMemberIds()`, `renderGuildPanel()`, `renderFindGroupPanel()`
+- `window.CoopModule`: `init()`
+- `window.RaidModule`: `init(figureId)`
+- `window.DiscussionModule`: `init(figureId)`, `load(figureId)`
+- `window.CommunityForumModule`: `load()`
 
 ---
 

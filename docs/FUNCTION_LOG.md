@@ -23,6 +23,7 @@
 | `getTransportMultiplier(lat, lng)` | js/map.js | Returns ×2 if user GPS is within 300m of a BTS/MRT station | — (seeded station list) | ✅ Working |
 | `confirmHome(districtId)` | js/map.js | Sets home district during onboarding; clears fog for home district; grants +50 pts | user_districts, profiles | ✅ Working |
 | `updateStatsBar()` | js/map.js | Updates the map stats pill (Explored %, Captured count, Legacy score) from live DB profile | profiles | ✅ Working |
+| `renderGuildFog(clearedDistrictIds)` | js/map.js | Overlays tinted polygon for guild territory (union of all members' cleared districts); called from GuildModule after init and on member change | — (client-side Leaflet) | ✅ Added 2026-07-01 |
 
 ---
 
@@ -95,6 +96,70 @@
 | `DB.Notifications.subscribe(userId, cb)` | notifications (realtime) | ✅ Working |
 | `DB.Missions.getDailyChallenges(userId)` | daily_challenges, user_daily_progress | ✅ Added 2026-06-27 |
 | `DB.Missions.updateChallengeProgress(userId, type)` | user_daily_progress | ✅ Added 2026-06-27; called from saveLoreUnlock, submitQuizAnswer, performCheckIn |
+| `DB.Coop.getMyGuild(userId)` | guilds, guild_members | ✅ Working |
+| `DB.Coop.getGuildMembers(guildId)` | guild_members, profiles | ✅ Working |
+| `DB.Coop.getGuildClearedDistrictIds(guildId)` | guild_members, user_districts | ✅ Added 2026-07-01 |
+| `DB.Coop.createGuild(name, userId)` | guilds, guild_members | ✅ Working |
+| `DB.Coop.leaveGuild(guildId, userId)` | guild_members | ✅ Working |
+| `DB.Coop.kickMember(guildId, targetUserId)` | guild_members | ✅ Working |
+| `DB.Coop.deleteGuild(guildId)` | guilds | ✅ Working |
+| `DB.Coop.updateGuild(guildId, fields)` | guilds | ✅ Working |
+| `DB.Coop.searchGuilds(query)` | guilds, guild_leaderboard | ✅ Working |
+| `DB.Coop.sendJoinRequest(guildId, userId)` | guild_join_requests, notifications | ✅ Working |
+| `DB.Coop.getMyPendingRequest(userId)` | guild_join_requests | ✅ Working |
+| `DB.Coop.getJoinRequests(guildId)` | guild_join_requests, profiles | ✅ Working |
+| `DB.Coop.approveRequest(requestId, guildId, targetUserId)` | guild_join_requests, guild_members | ✅ Working |
+| `DB.Coop.rejectRequest(requestId)` | guild_join_requests | ✅ Working |
+| `DB.Coop.getCollabMissions()` | collab_missions | ✅ Working |
+| `DB.Coop.checkInToMission(missionId, guildId, userId)` | collab_mission_checkins | ✅ Working |
+| `DB.Coop.getMissionCheckins(missionId, guildId)` | collab_mission_checkins | ✅ Working |
+| `DB.Coop.getAllGuildCheckins(guildId)` | collab_mission_checkins | ✅ Working |
+| `DB.Coop.getGuildLeaderboard()` | guild_leaderboard (VIEW) | ✅ Working |
+| `DB.Coop.getMyMemberships(userId)` | guild_members | ✅ Working |
+| `DB.Coop.subscribeGuildPresence(guildId, callbacks)` | — (Supabase Presence) | ✅ Working |
+| `DB.Coop.subscribeGuildMembers(guildId, callback)` | guild_members (realtime) | ✅ Working |
+| `DB.Coop.subscribeGuildChanges(callback)` | guilds, guild_members (realtime) | ✅ Working |
+| `DB.Coop.subscribeMissionProgress(missionId, guildId, callback)` | collab_mission_checkins (realtime) | ✅ Working |
+| `DB.Raid.createSession(figureId, guildId, hostUserId)` | raid_sessions | ✅ Working |
+| `DB.Raid.joinSession(sessionId, userId)` | raid_session_members | ✅ Working |
+| `DB.Raid.updateSessionStatus(sessionId, status)` | raid_sessions | ✅ Working |
+| `DB.Raid.insertCaptures(sessionId, participantUserIds, figureId)` | user_captures | ✅ Working |
+| `DB.Raid.openBroadcast(sessionId)` | — (Supabase Broadcast) | ✅ Working |
+| `DB.Raid.openPresence(sessionId)` | — (Supabase Presence) | ✅ Working |
+| `DB.Discussion.getComments(figureId)` | figure_discussions, profiles | ✅ Working |
+| `DB.Discussion.postComment(figureId, userId, content, parentId)` | figure_discussions | ✅ Working |
+| `DB.Discussion.flagComment(discussionId, userId)` | discussion_flags | ✅ Working |
+| `DB.Community.getPosts(userId)` | community_posts, community_post_likes, profiles | ✅ Working |
+| `DB.Community.getReplies(parentId)` | community_posts, profiles | ✅ Working |
+| `DB.Community.postMessage(userId, content, parentId)` | community_posts | ✅ Working |
+| `DB.Community.flagPost(postId, userId)` | community_post_flags | ✅ Working |
+| `DB.Community.likePost(postId, userId)` | community_post_likes | ✅ Working |
+| `DB.Community.unlikePost(postId, userId)` | community_post_likes | ✅ Working |
+
+---
+
+## Co-op / Guild Module Functions
+
+| Function | File | Purpose | Supabase Tables | Status |
+|----------|------|---------|-----------------|--------|
+| `init(userId)` | js/guild.js | Boot: loads user's guild, subscribes Presence + member changes, renders panel, triggers guild fog refresh | guilds, guild_members | ✅ Working |
+| `getState()` | js/guild.js | Returns current `{guild, members}` snapshot for other modules | — | ✅ Working |
+| `getOnlineMemberIds()` | js/guild.js | Returns Set of user_ids currently online via Presence | — (Presence) | ✅ Working |
+| `renderGuildPanel()` | js/guild.js | Renders guild hub or no-guild CTA in Leaderboard tab | guilds, guild_members, guild_join_requests | ✅ Working |
+| `renderFindGroupPanel()` | js/guild.js | Renders searchable guild browser + join request flow | guilds, guild_leaderboard, guild_join_requests | ✅ Working |
+| `init()` | js/coop.js | Loads collab missions for current district and renders cards | collab_missions, collab_mission_checkins | ✅ Working |
+| `renderMissionCard(mission, checkins, myCheckin)` | js/coop.js | Renders co-op mission card with progress bar and checkin CTA | — | ✅ Working |
+| `subscribeProgress(missionId, guildId)` | js/coop.js | Real-time progress bar updates via postgres_changes on checkins | collab_mission_checkins (realtime) | ✅ Working |
+| `init(figureId)` | js/raid.js | Attaches click handlers to raid-only figure; validates party size + online count | raid_sessions, profiles | ✅ Working |
+| `startSession(figureId)` | js/raid.js | Creates raid session, notifies guild, opens lobby modal | raid_sessions, notifications | ✅ Working |
+| `renderLobbyModal()` | js/raid.js | Lobby overlay: member avatars, ready states, start button | — (Presence) | ✅ Working |
+| `renderQuizScreen(question)` | js/raid.js | Quiz UI: question + 4 options + 30s countdown ring | — | ✅ Working |
+| `handleHostFailover()` | js/raid.js | On Presence leave: earliest joined_at member becomes host | raid_sessions | ✅ Working |
+| `init(figureId)` | js/discussion.js | Loads and renders comment thread for a figure | figure_discussions, profiles | ✅ Working |
+| `postComment(figureId, content)` | js/discussion.js | Inserts top-level comment | figure_discussions | ✅ Working |
+| `postReply(parentId, content)` | js/discussion.js | Inserts reply to a comment | figure_discussions | ✅ Working |
+| `flagPost(discussionId)` | js/discussion.js | Flags a post; trigger auto-hides at 3 flags | discussion_flags | ✅ Working |
+| `load()` | js/community-forum.js | Loads community feed posts (top-level), renders with likes + reply counts | community_posts, community_post_likes | ✅ Working |
 
 ---
 

@@ -1,6 +1,6 @@
 # Tamroi — Implementation Progress
 
-> Last updated: 2026-06-28
+> Last updated: 2026-07-01
 
 ---
 
@@ -55,11 +55,32 @@
 
 | Patch | Purpose |
 |---|---|
-| `supabase/patch_coop.sql` | All Phase 3 schema: guilds, raids, discussions, triggers, views, RLS |
+| `supabase/patch_coop.sql` | Phase 3 base: guilds, raids, discussions, triggers, views, RLS |
+| `supabase/patch_coop_fix.sql` | `guild_join_requests` table + RLS; split notification INSERT policy |
+| `supabase/patch_group_management.sql` | `guilds.announcement` column |
+| `supabase/patch_notifications_rls.sql` | Allow cross-user notification inserts (join request alerts) |
+| `supabase/patch_community.sql` | `community_posts` table + RLS + flag trigger |
+| `supabase/patch_community_likes.sql` | `community_post_likes` table + RLS |
+
+---
+
+## Post-Phase-3 Additions (2026-07-01)
+
+| Feature | Status | Notes |
+|---|---|---|
+| Guild fog overlay on map | ✅ Done | `MapModule.renderGuildFog()` + `DB.Coop.getGuildClearedDistrictIds()` wired in `GuildModule.init()` |
+| Guild join request flow | ✅ Done | Search → request → leader approve/reject; `guild_join_requests` table |
+| Guild announcements | ✅ Done | `guilds.announcement` column; shown in guild hub + find-group cards |
+| Find Group panel | ✅ Done | Search by name, shows member count + score; `DB.Coop.searchGuilds()` |
+| Guild management overhaul | ✅ Done | Transfer leadership, edit name/announcement, pending requests list |
+| Community forum | ✅ Done | `js/community-forum.js` · `community_posts` + `community_post_likes` · likes + replies + flag |
+| Class-tiered capture animation | ✅ Done | CSS reveal animation varies by figure class (C/B/A/S) |
+| Themed dialogs | ✅ Done | Native `confirm`/`alert` replaced with styled modals throughout |
+| Leaderboard filter dropdowns | ✅ Done | Replaced filter pills with `<select>` dropdowns |
+| Guild leaderboard realtime | ✅ Done | `subscribeGuildChanges()` on guilds + guild_members tables |
 
 ### Known Gaps (Deferred)
 
-- Guild fog union polygon on Leaflet map (MapModule patch needed)
 - Raid figure ⚔️ icon on map + Encounter button gate (MapModule patch needed)
 - CoopModule GPS gate for mission checkin (currently DB-only, no distance check)
 - Raid notification deep-link to open modal
