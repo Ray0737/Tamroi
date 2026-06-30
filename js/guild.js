@@ -3,6 +3,7 @@ const GuildModule = (() => {
   let _state = null;        // { guild, members } | null
   let _presenceMap = {};    // userId → presence entries
   let _presenceChannel = null;
+  let _membersChannel = null;
   let _userId = null;
 
   async function init(userId) {
@@ -12,7 +13,7 @@ const GuildModule = (() => {
     } catch {
       _state = null;
     }
-    if (_state) subscribePresence();
+    if (_state) { subscribePresence(); subscribeMembers(); }
   }
 
   function getState() { return _state; }
@@ -45,11 +46,67 @@ const GuildModule = (() => {
     _presenceChannel.track({ user_id: _userId, online_at: new Date().toISOString() });
   }
 
-  function renderGuildPanel() {
+  function subscribeMembers() {
+    if (!_state?.guild?.id) return;
+    if (_membersChannel) { try { _membersChannel.unsubscribe(); } catch {} }
+    _membersChannel = DB.Coop.subscribeGuildMembers(_state.guild.id, async () => {
+      try {
+        _state.members = await DB.Coop.getGuildMembers(_state.guild.id);
+        _refreshMemberList();
+      } catch {}
+    });
+  }
+
+  async function renderGuildPanel() {
     const el = document.getElementById('guild-panel');
     if (!el) return;
-    el.innerHTML = _renderNoGuild();
-    _bindNoGuildActions(el);
+
+    if (!_state) {
+      el.innerHTML = _renderNoGuild();
+      _bindNoGuildActions(el);
+      return;
+    }
+
+    const { guild, members } = _state;
+    const onlineIds = getOnlineMemberIds();
+
+    el.innerHTML = `
+      <div style="background:var(--color-card-dark);border-radius:var(--radius-xl);overflow:hidden;
+                  border:1px solid rgba(255,126,85,0.15)">
+        <div style="background:linear-gradient(135deg,rgba(255,126,85,0.12),rgba(255,126,85,0.04));
+                    padding:var(--space-md);border-bottom:1px solid rgba(255,126,85,0.1)">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <p style="margin:0;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;
+                         color:var(--color-primary);font-weight:600">Guild</p>
+              <h3 style="margin:2px 0 0;font-family:var(--font-heading);font-size:17px;font-weight:700">
+                ${escapeHtml(guild.name)}</h3>
+            </div>
+            <div style="text-align:right">
+              <p style="margin:0;font-size:10px;color:var(--color-muted)">รหัสเชิญ</p>
+              <p style="margin:2px 0 0;font-size:15px;font-weight:700;color:var(--color-primary);
+                         letter-spacing:3px;font-family:monospace">${escapeHtml(guild.invite_code)}</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="guild-member-list" style="padding:var(--space-sm) var(--space-md)">
+          ${members.map(m => _memberRow(m, onlineIds)).join('')}
+        </div>
+
+        ${guild.myRole !== 'leader' ? `
+          <div style="padding:0 var(--space-md) var(--space-md)">
+            <button class="btn btn-ghost btn-full" id="btn-leave-guild"
+                    style="font-size:12px;color:var(--color-muted);border-color:var(--color-border)">
+              ออกจากกลุ่ม
+            </button>
+          </div>` : ''}
+      </div>`;
+
+    el.querySelector('#btn-leave-guild')?.addEventListener('click', _handleLeave);
+    el.querySelectorAll('[data-kick]').forEach(btn =>
+      btn.addEventListener('click', () => _handleKick(btn.dataset.kick))
+    );
   }
 
   function _memberRow(m, onlineIds) {
@@ -94,46 +151,21 @@ const GuildModule = (() => {
   }
 
   function _renderNoGuild() {
-    const iconUsers = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-      stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;color:var(--color-primary)">
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-      <circle cx="9" cy="7" r="4"/>
-      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-    </svg>`;
-    const iconPlus = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-      stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px">
-      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-    </svg>`;
-    const iconEnter = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-      stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px">
-      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-      <polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
-    </svg>`;
     return `
       <div style="background:var(--color-card-dark);border-radius:var(--radius-xl);
-                  border:1px dashed var(--color-border);padding:var(--space-md)">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:var(--space-sm)">
-          ${iconUsers}
-          <div>
-            <h3 style="font-family:var(--font-heading);font-size:15px;font-weight:700;margin:0 0 2px">
-              ยังไม่มีกลุ่ม</h3>
-            <p style="font-size:11px;color:var(--color-muted);margin:0">
-              สร้างหรือเข้าร่วมกลุ่มเพื่อเล่นร่วมกับเพื่อน</p>
-          </div>
-        </div>
-
-        <div style="display:flex;gap:6px;margin-bottom:6px">
-          <input id="guild-name-input" type="text" placeholder="ชื่อกลุ่มใหม่..."
-                 style="flex:1;background:var(--color-card-darker);border:1px solid var(--color-border);
-                        border-radius:var(--radius-md);padding:8px 10px;color:var(--color-white);font-size:12px">
-          <button id="btn-create-guild"
-                  class="btn btn-primary btn-sm"
-                  style="display:flex;align-items:center;gap:4px;white-space:nowrap">
-            ${iconPlus} สร้าง
-          </button>
-        </div>
-
-        <div style="display:flex;gap:6px">
+                  border:1px dashed var(--color-border);padding:var(--space-lg);text-align:center">
+        <p style="font-size:32px;margin:0 0 var(--space-sm)">🤝</p>
+        <h3 style="font-family:var(--font-heading);font-size:16px;font-weight:700;margin:0 0 6px">
+          ยังไม่มีกลุ่ม</h3>
+        <p style="font-size:12px;color:var(--color-muted);margin:0 0 var(--space-md)">
+          สร้างหรือเข้าร่วมกลุ่มเพื่อเล่นร่วมกับเพื่อน</p>
+        <input id="guild-name-input" type="text" placeholder="ชื่อกลุ่มใหม่..."
+               style="width:100%;background:var(--color-card-darker);border:1px solid var(--color-border);
+                      border-radius:var(--radius-md);padding:10px var(--space-sm);color:var(--color-white);
+                      font-size:13px;margin-bottom:8px">
+        <button class="btn btn-primary btn-full" id="btn-create-guild" style="margin-bottom:var(--space-sm)">
+          สร้างกลุ่มใหม่</button>
+        <div style="display:flex;gap:8px">
           <input id="guild-code-input" type="text" placeholder="รหัสเชิญ (6 ตัว)..."
                  maxlength="6"
                  style="flex:1;background:var(--color-card-darker);border:1px solid var(--color-border);
@@ -145,14 +177,97 @@ const GuildModule = (() => {
             ${iconEnter} เข้าร่วม
           </button>
         </div>
-
-        <p id="guild-error" style="font-size:11px;color:#ef5350;margin:6px 0 0;min-height:14px"></p>
+        <p id="guild-error" style="font-size:11px;color:#ef5350;margin:6px 0 0;min-height:16px"></p>
       </div>`;
   }
 
   function _bindNoGuildActions(el) {
     el.querySelector('#btn-create-guild')?.addEventListener('click', _handleCreate);
     el.querySelector('#btn-join-guild')?.addEventListener('click', _handleJoin);
+    el.querySelector('#btn-search-guild')?.addEventListener('click', _openSearchSheet);
+  }
+
+  function _openSearchSheet() {
+    window.AppCore?.openSheet('guild-search-sheet');
+    // bind search button (re-bind each open to avoid stale closures)
+    const searchBtn = document.getElementById('btn-guild-search');
+    if (searchBtn) {
+      const clone = searchBtn.cloneNode(true);
+      searchBtn.replaceWith(clone);
+      clone.addEventListener('click', _handleGuildSearch);
+    }
+  }
+
+  async function _handleGuildSearch() {
+    const query     = document.getElementById('guild-search-input')?.value?.trim();
+    const resultsEl = document.getElementById('guild-search-results');
+    if (!query || !resultsEl) return;
+
+    resultsEl.innerHTML = `<div style="display:flex;justify-content:center;padding:20px">
+      <div class="spinner"></div></div>`;
+    try {
+      const guilds = await DB.Coop.searchGuilds(query);
+      if (!guilds.length) {
+        resultsEl.innerHTML = `<p style="text-align:center;color:var(--color-muted);
+          font-size:12px;padding:var(--space-md)">ไม่พบกลุ่ม</p>`;
+        return;
+      }
+      resultsEl.innerHTML = guilds.map(g => `
+        <div style="display:flex;align-items:center;gap:10px;padding:10px;
+                    background:var(--color-card-darker);border-radius:var(--radius-md)">
+          <div style="flex:1">
+            <p style="margin:0;font-size:13px;font-weight:600">${escapeHtml(g.name)}</p>
+            <p style="margin:0;font-size:11px;color:var(--color-muted)">${g.member_count} สมาชิก</p>
+          </div>
+          <button class="btn btn-primary"
+                  style="font-size:11px;padding:6px 12px;white-space:nowrap"
+                  data-request-guild="${escapeHtml(g.id)}">ขอเข้าร่วม</button>
+        </div>`).join('');
+
+      resultsEl.querySelectorAll('[data-request-guild]').forEach(btn =>
+        btn.addEventListener('click', () => _handleRequestJoin(btn.dataset.requestGuild, btn))
+      );
+    } catch {
+      resultsEl.innerHTML = `<p style="text-align:center;color:var(--color-muted);font-size:12px">
+        เกิดข้อผิดพลาด</p>`;
+    }
+  }
+
+  async function _handleRequestJoin(guildId, btn) {
+    try {
+      await DB.Coop.sendJoinRequest(guildId, _userId);
+      btn.textContent = 'รอการอนุมัติ';
+      btn.disabled = true;
+    } catch (e) {
+      alert(e.message || 'ส่งคำขอไม่สำเร็จ');
+    }
+  }
+
+  async function _handleCopyInvite() {
+    if (!_state?.guild?.invite_code) return;
+    await navigator.clipboard.writeText(_state.guild.invite_code);
+    const btn = document.getElementById('btn-copy-invite');
+    if (!btn) return;
+    btn.textContent = 'คัดลอกแล้ว!';
+    setTimeout(() => { if (btn) btn.textContent = 'คัดลอก'; }, 1500);
+  }
+
+  async function _handleApprove(requestId, guildId, targetUserId) {
+    try {
+      await DB.Coop.approveRequest(requestId, guildId, targetUserId);
+      await renderGuildPanel();
+    } catch (e) {
+      alert(e.message || 'อนุมัติไม่สำเร็จ');
+    }
+  }
+
+  async function _handleReject(requestId) {
+    try {
+      await DB.Coop.rejectRequest(requestId);
+      await renderGuildPanel();
+    } catch (e) {
+      alert(e.message || 'เกิดข้อผิดพลาด');
+    }
   }
 
   async function _handleCreate() {
@@ -163,6 +278,7 @@ const GuildModule = (() => {
       await DB.Coop.createGuild(name, _userId);
       _state = await DB.Coop.getMyGuild(_userId);
       subscribePresence();
+      subscribeMembers();
       renderGuildPanel();
       document.dispatchEvent(new CustomEvent('guild-changed'));
     } catch (e) {
@@ -178,6 +294,7 @@ const GuildModule = (() => {
       await DB.Coop.joinGuild(code, _userId);
       _state = await DB.Coop.getMyGuild(_userId);
       subscribePresence();
+      subscribeMembers();
       renderGuildPanel();
     } catch (e) {
       if (errEl) errEl.textContent = e.message || 'รหัสไม่ถูกต้อง';
@@ -200,6 +317,7 @@ const GuildModule = (() => {
     if (!confirm('ออกจากกลุ่ม?')) return;
     await DB.Coop.leaveGuild(_state.guild.id, _userId);
     if (_presenceChannel) { try { _presenceChannel.unsubscribe(); } catch {} _presenceChannel = null; }
+    if (_membersChannel) { try { _membersChannel.unsubscribe(); } catch {} _membersChannel = null; }
     _state = null;
     renderGuildPanel();
   }
@@ -211,9 +329,7 @@ const GuildModule = (() => {
     _refreshMemberList();
   }
 
-  async function deleteGuild(guildId) { await _handleDelete(guildId); }
-
-  return { init, getState, getOnlineMemberIds, subscribePresence, renderGuildPanel, deleteGuild };
+  return { init, getState, getOnlineMemberIds, subscribePresence, renderGuildPanel };
 })();
 
 window.GuildModule = GuildModule;
