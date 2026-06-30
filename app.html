@@ -600,6 +600,21 @@
     </div>
   </div>
 
+  <!-- ── Guild Search Sheet ── -->
+  <div class="bottom-sheet" id="guild-search-sheet" hidden>
+    <div class="bottom-sheet-handle"></div>
+    <h3 style="font-family:var(--font-heading);font-size:16px;font-weight:700;
+               margin:0 0 var(--space-sm)">ค้นหากลุ่ม</h3>
+    <div style="display:flex;gap:var(--space-sm);margin-bottom:var(--space-sm)">
+      <input id="guild-search-input" type="text" placeholder="ชื่อกลุ่ม..."
+             style="flex:1;background:var(--color-card-darker);border:1px solid var(--color-border);
+                    border-radius:var(--radius-md);padding:10px var(--space-sm);
+                    color:var(--color-white);font-size:13px">
+      <button class="btn btn-primary" id="btn-guild-search" style="white-space:nowrap">ค้นหา</button>
+    </div>
+    <div id="guild-search-results" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+
 </div><!-- end app-wrapper -->
 
 <!-- ════ SCRIPTS ════ -->
@@ -620,21 +635,6 @@
 <script src="js/raid.js"></script>
 <script src="js/discussion.js"></script>
 <script src="js/community-forum.js"></script>
-
-  <!-- ── Guild Search Sheet ── -->
-  <div class="bottom-sheet" id="guild-search-sheet" hidden>
-    <div class="bottom-sheet-handle"></div>
-    <h3 style="font-family:var(--font-heading);font-size:16px;font-weight:700;
-               margin:0 0 var(--space-sm)">ค้นหากลุ่ม</h3>
-    <div style="display:flex;gap:8px;margin-bottom:var(--space-sm)">
-      <input id="guild-search-input" type="text" placeholder="ชื่อกลุ่ม..."
-             style="flex:1;background:var(--color-card-darker);border:1px solid var(--color-border);
-                    border-radius:var(--radius-md);padding:10px var(--space-sm);
-                    color:var(--color-white);font-size:13px">
-      <button class="btn btn-primary" id="btn-guild-search" style="white-space:nowrap">ค้นหา</button>
-    </div>
-    <div id="guild-search-results" style="display:flex;flex-direction:column;gap:8px"></div>
-  </div>
 
 <script>
   // Sync settings panel with loaded profile
