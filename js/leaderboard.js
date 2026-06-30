@@ -41,6 +41,12 @@ const LeaderboardModule = (() => {
       });
     });
 
+    // Immediate refresh when a guild is created or deleted
+    document.addEventListener('guild-changed', () => {
+      _renderGuildLeaderboard();
+      window.GuildModule?.renderGuildPanel();
+    });
+
     // Guild / Solo view toggle
     document.querySelectorAll('#leaderboard-view .pill').forEach(pill => {
       pill.addEventListener('click', () => {
@@ -122,10 +128,8 @@ const LeaderboardModule = (() => {
                         </button>
                       </div>` : ''}
                     ${isMine && isLeader ? `
-                      <button class="btn-delete-guild btn btn-sm"
-                              style="display:flex;align-items:center;gap:4px;font-size:11px;
-                                     color:#ef5350;border:1px solid rgba(239,83,80,.3);
-                                     border-radius:var(--radius-sm);padding:5px 10px;background:rgba(239,83,80,.06)">
+                      <button class="btn-delete-guild btn btn-danger btn-sm"
+                              style="display:flex;align-items:center;gap:4px">
                         ${iconTrash} ลบกลุ่ม
                       </button>` : ''}
                   </div>

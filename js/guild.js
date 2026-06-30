@@ -164,6 +164,7 @@ const GuildModule = (() => {
       _state = await DB.Coop.getMyGuild(_userId);
       subscribePresence();
       renderGuildPanel();
+      document.dispatchEvent(new CustomEvent('guild-changed'));
     } catch (e) {
       if (errEl) errEl.textContent = e.message || 'เกิดข้อผิดพลาด';
     }
@@ -191,6 +192,7 @@ const GuildModule = (() => {
         if (_presenceChannel) { try { _presenceChannel.unsubscribe(); } catch {} _presenceChannel = null; }
         _state = null;
       }
+      document.dispatchEvent(new CustomEvent('guild-changed'));
     } catch { window.AppCore?.showToast?.('เกิดข้อผิดพลาด'); }
   }
 
