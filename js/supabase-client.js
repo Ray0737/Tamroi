@@ -459,12 +459,13 @@ const Missions = {
 // ── Coop ──────────────────────────────────────────────
 const Coop = {
   async getMyGuild(userId) {
-    const { data: rows } = await _sb
+    const { data: rows, error: rowsErr } = await _sb
       .from('guild_members')
       .select('guild_id, role')
       .eq('user_id', userId)
       .order('joined_at', { ascending: false })
       .limit(1);
+    if (rowsErr) throw rowsErr;
     const memberRow = rows?.[0];
     if (!memberRow) return null;
 
