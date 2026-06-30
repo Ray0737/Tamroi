@@ -454,7 +454,7 @@ const GuildModule = (() => {
   }
 
   async function _handleDelete(guildId) {
-    if (!confirm('ลบกลุ่มนี้? ไม่สามารถกู้คืนได้')) return;
+    if (!await window.AppCore.showConfirm('ลบกลุ่มนี้? ไม่สามารถกู้คืนได้', { destructive: true, confirmLabel: 'ลบ' })) return;
     try {
       await DB.Coop.deleteGuild(guildId);
       if (_state?.guild?.id === guildId) {
@@ -467,7 +467,7 @@ const GuildModule = (() => {
   }
 
   async function _handleLeave() {
-    if (!confirm('ออกจากกลุ่ม?')) return;
+    if (!await window.AppCore.showConfirm('ออกจากกลุ่ม?', { destructive: true, confirmLabel: 'ออก' })) return;
     await DB.Coop.leaveGuild(_state.guild.id, _userId);
     if (_presenceChannel) { try { _presenceChannel.unsubscribe(); } catch {} _presenceChannel = null; }
     if (_membersChannel)  { try { _membersChannel.unsubscribe();  } catch {} _membersChannel  = null; }
@@ -476,14 +476,14 @@ const GuildModule = (() => {
   }
 
   async function _handleKick(targetUserId) {
-    if (!confirm('เอาสมาชิกคนนี้ออก?')) return;
+    if (!await window.AppCore.showConfirm('เอาสมาชิกคนนี้ออก?', { destructive: true, confirmLabel: 'นำออก' })) return;
     await DB.Coop.kickMember(_state.guild.id, targetUserId);
     _state = await DB.Coop.getMyGuild(_userId);
     _refreshMemberList();
   }
 
   async function _handleTransfer(targetUserId, guildId) {
-    if (!confirm('โอนตำแหน่ง Leader ให้สมาชิกคนนี้?')) return;
+    if (!await window.AppCore.showConfirm('โอนตำแหน่ง Leader ให้สมาชิกคนนี้?', { confirmLabel: 'โอน' })) return;
     try {
       await DB.Coop.transferLeader(guildId, targetUserId, _userId);
       _state = await DB.Coop.getMyGuild(_userId);
@@ -498,7 +498,7 @@ const GuildModule = (() => {
       await DB.Coop.approveRequest(requestId, guildId, targetUserId);
       await renderGuildPanel();
     } catch (e) {
-      alert(e.message || 'อนุมัติไม่สำเร็จ');
+      window.AppCore?.showToast?.(e.message || 'อนุมัติไม่สำเร็จ');
     }
   }
 
@@ -507,7 +507,7 @@ const GuildModule = (() => {
       await DB.Coop.rejectRequest(requestId);
       await renderGuildPanel();
     } catch (e) {
-      alert(e.message || 'เกิดข้อผิดพลาด');
+      window.AppCore?.showToast?.(e.message || 'เกิดข้อผิดพลาด');
     }
   }
 
@@ -604,7 +604,7 @@ const GuildModule = (() => {
             btn.textContent = 'รอการอนุมัติ';
             btn.disabled = true;
           } catch (e) {
-            alert(e.message || 'ส่งคำขอไม่สำเร็จ');
+            window.AppCore?.showToast?.(e.message || 'ส่งคำขอไม่สำเร็จ');
           }
         });
       });

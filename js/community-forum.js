@@ -182,7 +182,7 @@ const CommunityForumModule = (() => {
         listEl.prepend(div.firstElementChild);
       }
     } catch (e) {
-      alert(e.message || 'โพสต์ไม่สำเร็จ');
+      window.AppCore?.showToast?.(e.message || 'โพสต์ไม่สำเร็จ');
     }
   }
 
@@ -196,7 +196,7 @@ const CommunityForumModule = (() => {
       if (el) { el.hidden = true; el.innerHTML = ''; }
       await _toggleReplies(parentId, user);
     } catch (e) {
-      alert(e.message || 'ตอบกลับไม่สำเร็จ');
+      window.AppCore?.showToast?.(e.message || 'ตอบกลับไม่สำเร็จ');
     }
   }
 

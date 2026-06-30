@@ -87,7 +87,7 @@ const RaidModule = (() => {
       renderLobbyModal(figure);
     } catch (e) {
       _close();
-      alert('ไม่สามารถเริ่ม Raid ได้: ' + (e.message || ''));
+      window.AppCore?.showToast?.('ไม่สามารถเริ่ม Raid ได้: ' + (e.message || ''));
     }
   }
 

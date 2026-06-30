@@ -404,6 +404,32 @@ function showToast(message) {
   showToast._timer = setTimeout(() => toast.classList.remove('show'), 2600);
 }
 
+// ── Themed confirm dialog ─────────────────────────────
+function showConfirm(message, { destructive = false, confirmLabel = 'ยืนยัน', cancelLabel = 'ยกเลิก' } = {}) {
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:var(--color-overlay);z-index:9999;display:flex;align-items:center;justify-content:center;padding:var(--space-md)';
+
+    const confirmBg  = destructive ? 'var(--color-danger)' : 'var(--color-primary)';
+    const confirmClr = destructive ? '#fff' : 'var(--color-on-primary)';
+
+    overlay.innerHTML = `
+      <div style="background:var(--color-card-dark);border-radius:var(--radius-lg);padding:var(--space-lg);width:100%;max-width:300px;box-shadow:var(--shadow-card)">
+        <p style="color:var(--color-white);font-family:var(--font-body);font-size:var(--text-md);font-weight:600;margin:0 0 var(--space-lg);line-height:1.5">${message}</p>
+        <div style="display:flex;gap:var(--space-sm)">
+          <button data-cancel style="flex:1;padding:12px;border-radius:var(--radius-md);border:1px solid var(--color-border);background:transparent;color:var(--color-muted);font-size:var(--text-base);font-weight:600;cursor:pointer;font-family:var(--font-body)">${cancelLabel}</button>
+          <button data-ok style="flex:1;padding:12px;border-radius:var(--radius-md);border:none;background:${confirmBg};color:${confirmClr};font-size:var(--text-base);font-weight:600;cursor:pointer;font-family:var(--font-body)">${confirmLabel}</button>
+        </div>
+      </div>`;
+
+    document.body.appendChild(overlay);
+    const done = r => { overlay.remove(); resolve(r); };
+    overlay.addEventListener('click', e => { if (e.target === overlay) done(false); });
+    overlay.querySelector('[data-cancel]').onclick = () => done(false);
+    overlay.querySelector('[data-ok]').onclick    = () => done(true);
+  });
+}
+
 // ── Sign Out ──────────────────────────────────────────
 document.getElementById('btn-signout')?.addEventListener('click', async () => {
   try { await App.notifChannel?.unsubscribe?.(); } catch { /* ignore */ }
@@ -421,4 +447,4 @@ function getMockNotifications() {
 }
 
 // ── Expose globally ───────────────────────────────────
-window.AppCore = { App, switchTab, openSheet, closeAllSheets, openLoreSheet, openLoreChainSheet, showFloatPts, showToast, updateMapStatsPill };
+window.AppCore = { App, switchTab, openSheet, closeAllSheets, openLoreSheet, openLoreChainSheet, showFloatPts, showToast, showConfirm, updateMapStatsPill };

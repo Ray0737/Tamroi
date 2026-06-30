@@ -115,7 +115,7 @@ const DiscussionModule = (() => {
       ta.value = '';
       await init(_currentFigureId);
     } catch (e) {
-      alert(e.message || 'โพสต์ไม่สำเร็จ');
+      window.AppCore?.showToast?.(e.message || 'โพสต์ไม่สำเร็จ');
     }
   }
 
@@ -131,7 +131,7 @@ const DiscussionModule = (() => {
       await DB.Discussion.postComment(_currentFigureId, user.id, text, parentId);
       await init(_currentFigureId);
     } catch (e) {
-      alert(e.message || 'ตอบกลับไม่สำเร็จ');
+      window.AppCore?.showToast?.(e.message || 'ตอบกลับไม่สำเร็จ');
     }
   }
 
