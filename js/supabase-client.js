@@ -527,13 +527,21 @@ const Coop = {
   },
 
   async getGuildMembers(guildId) {
-    const { data, error } = await _sb
+    const { data: members, error } = await _sb
       .from('guild_members')
-      .select('user_id, role, joined_at, profiles(username, avatar_url, legacy_score)')
+      .select('user_id, role, joined_at')
       .eq('guild_id', guildId)
       .order('joined_at');
     if (error) throw error;
-    return data || [];
+    if (!members?.length) return [];
+
+    const ids = members.map(m => m.user_id);
+    const { data: profiles } = await _sb
+      .from('profiles')
+      .select('id, username, avatar_url, legacy_score')
+      .in('id', ids);
+    const profileMap = Object.fromEntries((profiles || []).map(p => [p.id, p]));
+    return members.map(m => ({ ...m, profiles: profileMap[m.user_id] || {} }));
   },
 
   async getCollabMissions() {
