@@ -82,7 +82,6 @@ CREATE TABLE IF NOT EXISTS figures (
 
 INSERT INTO figures (id, name_th, name_en, class, legacy_pts, district_id, description, image_emoji) VALUES
 ('king-taksin',    'สมเด็จพระเจ้าตากสิน',   'King Taksin the Great',  'S', 500, 'rattanakosin', 'กษัตริย์ผู้กอบกู้อาณาจักรไทยหลังเสียกรุงครั้งที่สอง', '👑'),
-('rama-i',         'พระบาทสมเด็จพระพุทธยอดฟ้า', 'King Rama I',           'S', 500, 'rattanakosin', 'ปฐมกษัตริย์แห่งราชวงศ์จักรี ผู้สร้างกรุงรัตนโกสินทร์', '⚔️'),
 ('sunthon-phu',    'สุนทรภู่',               'Sunthorn Phu',           'A', 200, 'rattanakosin', 'กวีเอกแห่งรัตนโกสินทร์ ผู้แต่งพระอภัยมณี',            '📜'),
 ('si-suriyothai',  'สมเด็จพระศรีสุริโยทัย', 'Sri Suriyothai',          'A', 200, 'rattanakosin', 'วีรสตรีไทยผู้เสียสละพระชนม์ชีพเพื่อปกป้องพระเจ้าตากสิน','🛡️'),
 ('village-elder',  'ขุนนางท้องถิ่น',         'Local Village Legend',   'C',  50, 'silom',        'ผู้นำชุมชนริมแม่น้ำเจ้าพระยาในยุคต้นรัตนโกสินทร์',    '🎋'),
