@@ -147,6 +147,7 @@
 - **Ponytail**: Default working mode is ponytail full. Shortest diff that solves the problem. No speculative features, no unrequested abstractions. Stop at the first rung of the ladder that holds.
 - **Caveman**: Default communication mode. Terse prose — one sentence max per update. No essays, no summaries, no narration. Code first, explanation only if non-obvious.
 - **Commits**: Never commit when a task is done. Output the suggested commit message and let the user run it.
+- **Docs sync**: After any change that alters gameplay mechanics, DB schema, file structure, or runtime APIs, update the affected markdown docs in the same task — `docs/progress.md` (implementation status), `docs/FUNCTION_LOG.md` (function/DB object log), `docs/VERIFYLOGIC.md` (game logic/rules), `docs/COOP.md` (Co-op spec), and this `CLAUDE.md` (File Structure / DB Tables / Runtime APIs tables) — so they match current project state, not the state as of the last doc pass. Skip docs a change doesn't touch.
 - **Karpathy rules** (applied in order before touching code):
   1. **Think first** — state assumptions explicitly; if multiple interpretations exist, surface them before picking one.
   2. **Simplicity** — minimum code that solves the problem; if it could be 50 lines, don't write 200.
