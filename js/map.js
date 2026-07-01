@@ -533,8 +533,35 @@ const MapModule = (() => {
     getLoreNodes().forEach(node => {
       const districtId = node.district_id || node.districtId;
       const state = districtId ? userDistrictState[districtId] : null;
-      const visible = unlockedLoreIds.has(node.id) || pendingLoreIds.has(node.id);
-      if (!visible || state?.fogged) return;
+      if (state?.fogged) return;
+
+      const discovered = unlockedLoreIds.has(node.id) || pendingLoreIds.has(node.id);
+
+      if (!discovered) {
+        // Radius ring so players can see how close they need to be
+        const ring = L.circle([node.lat, node.lng], {
+          radius: node.radius_m || 100,
+          color: '#8986A8',
+          weight: 1,
+          dashArray: '4,4',
+          fillColor: '#8986A8',
+          fillOpacity: 0.05,
+          interactive: false,
+        }).addTo(map);
+        markers[`lore-ring-${node.id}`] = ring;
+
+        const mysteryIcon = L.divIcon({
+          className: '',
+          html: `<div class="marker-node marker-lore-mystery" title="???">???</div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
+        });
+
+        const mysteryMarker = L.marker([node.lat, node.lng], { icon: mysteryIcon }).addTo(map);
+        mysteryMarker.on('click', () => openVisitedLore(node.id));
+        markers[`lore-${node.id}`] = mysteryMarker;
+        return;
+      }
 
       const icon = L.divIcon({
         className: '',

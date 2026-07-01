@@ -83,7 +83,7 @@ ON CONFLICT (id) DO UPDATE SET
 -- ── 4. Lore chain (3 nodes) ───────────────────────────────────────────────────
 -- chain_id  : 'chain-satit-history'
 -- chain_part: 1 → 2 → 3  (must all unlock for the full story to appear)
--- radius_m  : 80 m — tight enough to require being on campus, not just nearby.
+-- radius_m  : 100 m — loose enough to forgive normal phone GPS drift on campus.
 
 INSERT INTO lore_nodes (
   id, name_th, name_en,
@@ -96,7 +96,7 @@ INSERT INTO lore_nodes (
   'กำเนิดวิทยาลัยประสานมิตร',
   'The Birth of Prasarnmit College',
   13.74333, 100.56597,   -- near support-1 (north canteen)
-  80, 25, 'text',
+  100, 25, 'text',
   'ในปี พ.ศ. 2492 รัฐบาลไทยได้ก่อตั้ง "วิทยาลัยประสานมิตร" ขึ้นในย่านสุขุมวิท เพื่อเป็นสถาบันฝึกหัดครูระดับอุดมศึกษาแห่งแรกของประเทศ '
   'ชื่อ "ประสานมิตร" มาจากแนวคิดการประสานมิตรภาพระหว่างผู้เรียนและผู้สอน ซึ่งสะท้อนปรัชญาการศึกษาที่ให้ความสำคัญกับความสัมพันธ์มนุษย์มากกว่าการท่องจำ',
   'In 1949, the Thai government founded Prasarnmit College in the Sukhumvit area as the nation''s first university-level teacher-training institution. '
@@ -108,7 +108,7 @@ INSERT INTO lore_nodes (
   'ก้าวสู่มหาวิทยาลัยศรีนครินทรวิโรฒ',
   'Becoming Srinakharinwirot University',
   13.74342, 100.56561,   -- near support-2 (faculty building)
-  80, 25, 'text',
+  100, 25, 'text',
   'ปี พ.ศ. 2517 วิทยาลัยวิชาการศึกษาทั่วประเทศได้รวมตัวกันยกฐานะเป็น "มหาวิทยาลัยศรีนครินทรวิโรฒ" — ชื่อที่พระบาทสมเด็จพระเจ้าอยู่หัวรัชกาลที่ 9 '
   'พระราชทานให้เป็นเกียรติแก่สมเด็จพระศรีนครินทราบรมราชชนนี (สมเด็จย่า) "ศรีนครินทรวิโรฒ" แปลว่า "เจริญรุ่งเรืองแห่งเมือง" '
   'มหาวิทยาลัยแห่งนี้จึงเป็นสัญลักษณ์ของความก้าวหน้าทางการศึกษาและความจงรักภักดีต่อสถาบัน',
@@ -121,7 +121,7 @@ INSERT INTO lore_nodes (
   'โรงเรียนสาธิตฯ: ห้องทดลองทางการศึกษา',
   'The Demonstration School as Living Lab',
   13.74292, 100.56594,   -- near support-3 (co-op / bookshop)
-  80, 30, 'text',
+  100, 30, 'text',
   'โรงเรียนสาธิตมหาวิทยาลัยศรีนครินทรวิโรฒ ประสานมิตร ไม่ได้เป็นเพียงโรงเรียนทั่วไป แต่ทำหน้าที่เป็น "ห้องทดลองทางการศึกษา" '
   'ให้นิสิตคณะศึกษาศาสตร์ได้ฝึกสอนในสภาพแวดล้อมจริง ขณะเดียวกันก็รับนักเรียนตั้งแต่ชั้นประถมจนถึงมัธยมปลาย '
   'แนวคิดนี้สอดคล้องกับทฤษฎี Situated Learning ที่เชื่อว่าความรู้จะฝังแน่นก็ต่อเมื่อเกิดขึ้นในบริบทจริง ไม่ใช่ในห้องเรียนจำลอง',
@@ -133,7 +133,8 @@ INSERT INTO lore_nodes (
 ON CONFLICT (id) DO UPDATE SET
   content_th = EXCLUDED.content_th,
   content_en = EXCLUDED.content_en,
-  is_active  = EXCLUDED.is_active;
+  is_active  = EXCLUDED.is_active,
+  radius_m   = EXCLUDED.radius_m;
 
 -- ── 5. Quiz questions (B-tier difficulty) ────────────────────────────────────
 -- 3 questions tied to the mock figure and satit_test district.
