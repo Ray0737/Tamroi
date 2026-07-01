@@ -716,12 +716,16 @@ const Coop = {
   async getJoinRequests(guildId) {
     const { data, error } = await _sb
       .from('guild_join_requests')
-      .select('id, user_id, created_at, profiles(username)')
+      .select('id, user_id, created_at')
       .eq('guild_id', guildId)
       .eq('status', 'pending')
       .order('created_at');
     if (error) throw error;
-    return data || [];
+    if (!data?.length) return [];
+    const ids = data.map(r => r.user_id);
+    const { data: profiles } = await _sb.from('profiles').select('id, username').in('id', ids);
+    const map = Object.fromEntries((profiles || []).map(p => [p.id, p]));
+    return data.map(r => ({ ...r, profiles: map[r.user_id] || null }));
   },
 
   async approveRequest(requestId) {

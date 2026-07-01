@@ -109,66 +109,68 @@ const GuildModule = (() => {
     const onlineCount = members.filter(m => onlineIds.has(m.user_id)).length;
 
     return `
-      <div style="display:flex;flex-direction:column;gap:var(--space-sm)">
+      <div style="display:flex;flex-direction:column;gap:12px">
 
         ${isLeader ? `
         <!-- Join Requests -->
         <div id="guild-requests-top"
-             style="background:var(--color-card-dark);border-radius:var(--radius-xl);
-                    border:1px solid rgba(255,126,85,0.2);padding:var(--space-md)">
-          <p style="margin:0 0 var(--space-sm);font-size:10px;color:var(--color-primary);
-                     text-transform:uppercase;letter-spacing:1px;font-weight:600">📥 คำขอเข้าร่วม</p>
-          <div style="display:flex;justify-content:center;padding:8px"><div class="spinner"></div></div>
+             style="background:linear-gradient(135deg,rgba(255,126,85,0.1),rgba(255,126,85,0.04));
+                    border-radius:16px;border:1px solid rgba(255,126,85,0.3);padding:14px 16px">
+          <p style="margin:0 0 10px;font-size:10px;color:var(--color-primary);
+                     text-transform:uppercase;letter-spacing:1.5px;font-weight:700">📥 คำขอเข้าร่วม</p>
+          <div style="display:flex;justify-content:center;padding:6px"><div class="spinner"></div></div>
         </div>` : ''}
 
-        <!-- Header -->
-        <div style="background:var(--color-card-dark);border-radius:var(--radius-xl);
-                    border:1px solid rgba(255,126,85,0.15);overflow:hidden">
-          <div style="background:linear-gradient(135deg,rgba(255,126,85,0.12),rgba(255,126,85,0.04));
-                      padding:var(--space-md);border-bottom:1px solid rgba(255,126,85,0.1)">
-            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+        <!-- Hero Header -->
+        <div style="border-radius:16px;overflow:hidden;background:var(--color-card-dark);
+                    border:1px solid rgba(255,126,85,0.2)">
+          <div style="background:linear-gradient(135deg,rgba(255,126,85,0.18) 0%,rgba(255,126,85,0.05) 60%,transparent 100%);
+                      padding:18px 16px 14px">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
               <div style="min-width:0">
-                <p style="margin:0;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;
-                           color:var(--color-primary);font-weight:600">Team</p>
-                <h3 style="margin:2px 0;font-family:var(--font-heading);font-size:17px;font-weight:700;
-                           color:var(--color-white);word-break:break-word">${escapeHtml(guild.name)}</h3>
-                <p style="margin:0;font-size:11px;color:var(--color-muted)">${onlineCount}/${members.length} ออนไลน์</p>
-                <p style="margin:2px 0 0;font-size:11px;color:var(--color-muted)">
-                  <span id="guild-score-display">—</span></p>
+                <p style="margin:0 0 2px;font-size:9px;text-transform:uppercase;letter-spacing:2px;
+                           color:var(--color-primary);font-weight:700">TEAM</p>
+                <h3 style="margin:0 0 6px;font-family:var(--font-heading);font-size:20px;font-weight:800;
+                           color:var(--color-white);word-break:break-word;line-height:1.2">${escapeHtml(guild.name)}</h3>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                  <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-muted)">
+                    <span style="width:7px;height:7px;border-radius:50%;background:var(--color-success);display:inline-block"></span>
+                    ${onlineCount}/${members.length} ออนไลน์
+                  </span>
+                  <span style="font-size:11px;color:var(--color-muted)">·</span>
+                  <span id="guild-score-display" style="font-size:11px;color:var(--color-muted)">—</span>
+                </div>
               </div>
               <div style="text-align:right;flex-shrink:0">
-                <p style="margin:0;font-size:9px;color:var(--color-muted);text-transform:uppercase;letter-spacing:1px">รหัสเชิญ</p>
-                <p style="margin:2px 0 0;font-size:14px;font-weight:700;color:var(--color-primary);
-                           letter-spacing:3px;font-family:monospace">${escapeHtml(guild.invite_code)}</p>
+                <p style="margin:0 0 2px;font-size:9px;color:var(--color-muted);text-transform:uppercase;letter-spacing:1px">รหัสเชิญ</p>
+                <p style="margin:0 0 6px;font-size:16px;font-weight:800;color:var(--color-primary);
+                           letter-spacing:4px;font-family:monospace">${escapeHtml(guild.invite_code)}</p>
                 <button id="btn-copy-invite"
-                        style="margin-top:4px;font-size:10px;color:var(--color-muted);background:none;
-                               border:1px solid var(--color-border);border-radius:var(--radius-sm);
-                               padding:3px 8px;cursor:pointer">คัดลอก</button>
+                        style="font-size:10px;color:var(--color-muted);background:rgba(255,255,255,0.06);
+                               border:1px solid var(--color-border);border-radius:6px;
+                               padding:4px 10px;cursor:pointer;transition:background .2s">คัดลอก</button>
               </div>
             </div>
             ${isLeader ? `
               <button id="btn-edit-guild"
-                      style="margin-top:var(--space-sm);font-size:11px;color:var(--color-muted);
-                             background:none;border:1px solid var(--color-border);
-                             border-radius:var(--radius-sm);padding:4px 10px;cursor:pointer">แก้ไขกลุ่ม</button>` : ''}
+                      style="margin-top:12px;font-size:11px;color:var(--color-muted);
+                             background:rgba(255,255,255,0.05);border:1px solid var(--color-border);
+                             border-radius:6px;padding:5px 12px;cursor:pointer">✏️ แก้ไขกลุ่ม</button>` : ''}
           </div>
 
           ${isLeader ? `
           <div id="guild-edit-form" hidden
-               style="padding:var(--space-md);border-bottom:1px solid rgba(255,255,255,0.05);
-                      background:rgba(0,0,0,0.1)">
-            <p style="margin:0 0 6px;font-size:10px;color:var(--color-muted);
-                       text-transform:uppercase;letter-spacing:1px">ชื่อกลุ่ม</p>
+               style="padding:14px 16px;border-top:1px solid rgba(255,255,255,0.07);background:rgba(0,0,0,0.15)">
+            <p style="margin:0 0 5px;font-size:10px;color:var(--color-muted);text-transform:uppercase;letter-spacing:1px">ชื่อกลุ่ม</p>
             <input id="edit-guild-name" type="text" value="${escapeHtml(guild.name)}"
-                   style="width:100%;background:var(--color-card-darker);border:1px solid var(--color-border);
-                          border-radius:var(--radius-md);padding:8px 10px;color:var(--color-white);
-                          font-size:13px;margin-bottom:var(--space-sm);box-sizing:border-box">
-            <p style="margin:0 0 6px;font-size:10px;color:var(--color-muted);
-                       text-transform:uppercase;letter-spacing:1px">ประกาศ</p>
+                   style="width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--color-border);
+                          border-radius:10px;padding:9px 12px;color:var(--color-white);
+                          font-size:13px;margin-bottom:10px;box-sizing:border-box">
+            <p style="margin:0 0 5px;font-size:10px;color:var(--color-muted);text-transform:uppercase;letter-spacing:1px">ประกาศ</p>
             <textarea id="edit-guild-announcement" rows="3"
-                      style="width:100%;background:var(--color-card-darker);border:1px solid var(--color-border);
-                             border-radius:var(--radius-md);padding:8px 10px;color:var(--color-white);
-                             font-size:13px;resize:vertical;margin-bottom:var(--space-sm);box-sizing:border-box"
+                      style="width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--color-border);
+                             border-radius:10px;padding:9px 12px;color:var(--color-white);
+                             font-size:13px;resize:vertical;margin-bottom:10px;box-sizing:border-box"
               >${escapeHtml(guild.announcement || '')}</textarea>
             <div style="display:flex;gap:8px">
               <button id="btn-save-guild" class="btn btn-primary" style="flex:1;font-size:12px">บันทึก</button>
@@ -176,50 +178,56 @@ const GuildModule = (() => {
                       style="flex:1;font-size:12px;border-color:var(--color-border)">ยกเลิก</button>
             </div>
           </div>` : ''}
+
+          <!-- Announcement inline -->
+          ${guild.announcement ? `
+          <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.06);
+                      display:flex;align-items:flex-start;gap:8px">
+            <span style="font-size:14px;flex-shrink:0">📢</span>
+            <p style="margin:0;font-size:12px;color:var(--color-muted);line-height:1.6">${escapeHtml(guild.announcement)}</p>
+          </div>` : ''}
         </div>
 
-        <!-- Announcements -->
-        <div style="background:var(--color-card-dark);border-radius:var(--radius-xl);
-                    border:1px solid rgba(255,255,255,0.06);padding:var(--space-md)">
-          <p style="margin:0 0 6px;font-size:10px;color:var(--color-muted);text-transform:uppercase;
-                     letter-spacing:1px;font-weight:600">📢 ประกาศ</p>
-          ${guild.announcement
-            ? `<p style="margin:0;font-size:13px;color:var(--color-white);line-height:1.6">${escapeHtml(guild.announcement)}</p>`
-            : `<p style="margin:0;font-size:12px;color:var(--color-muted)">ยังไม่มีประกาศ</p>`}
-        </div>
-
-        <!-- Party / Members -->
-        <div style="background:var(--color-card-dark);border-radius:var(--radius-xl);
-                    border:1px solid rgba(255,255,255,0.06);padding:var(--space-md)">
-          <p style="margin:0 0 var(--space-sm);font-size:10px;color:var(--color-muted);
-                     text-transform:uppercase;letter-spacing:1px;font-weight:600">สมาชิก (${members.length})</p>
-          <div id="guild-member-list">
+        <!-- Members -->
+        <div style="background:var(--color-card-dark);border-radius:16px;
+                    border:1px solid rgba(255,255,255,0.07);overflow:hidden">
+          <div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06);
+                      display:flex;align-items:center;justify-content:space-between">
+            <p style="margin:0;font-size:10px;color:var(--color-muted);text-transform:uppercase;
+                       letter-spacing:1.5px;font-weight:700">สมาชิก</p>
+            <span style="font-size:11px;color:var(--color-muted);background:rgba(255,255,255,0.07);
+                          padding:2px 8px;border-radius:20px">${members.length} / 6</span>
+          </div>
+          <div id="guild-member-list" style="padding:4px 0">
             ${members.map(m => _memberRow(m, onlineIds)).join('')}
           </div>
         </div>
 
         <!-- Collab Missions -->
-        <div style="background:var(--color-card-dark);border-radius:var(--radius-xl);
-                    border:1px solid rgba(255,255,255,0.06);padding:var(--space-md)">
-          <p style="margin:0 0 var(--space-sm);font-size:10px;color:var(--color-muted);
-                     text-transform:uppercase;letter-spacing:1px;font-weight:600">ภารกิจกลุ่ม</p>
-          <div id="guild-hub-missions">
-            <div style="display:flex;justify-content:center;padding:16px"><div class="spinner"></div></div>
+        <div style="background:var(--color-card-dark);border-radius:16px;
+                    border:1px solid rgba(255,255,255,0.07);overflow:hidden">
+          <div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06)">
+            <p style="margin:0;font-size:10px;color:var(--color-muted);text-transform:uppercase;
+                       letter-spacing:1.5px;font-weight:700">⚔️ ภารกิจกลุ่ม</p>
+          </div>
+          <div id="guild-hub-missions" style="padding:12px 16px">
+            <div style="display:flex;justify-content:center;padding:12px"><div class="spinner"></div></div>
           </div>
         </div>
 
-        <!-- Discussion link -->
-        <button id="btn-open-discuss" class="btn btn-ghost btn-full"
-                style="font-size:12px;color:var(--color-muted);border-color:var(--color-border)">
-          เปิดการถกเถียง →</button>
-
-        <!-- Footer -->
-        ${!isLeader ? `
-          <button class="btn btn-ghost btn-full" id="btn-leave-guild"
-                  style="font-size:12px;color:var(--color-muted);border-color:var(--color-border)">
-            ออกจากกลุ่ม</button>` : `
-          <button class="btn btn-danger btn-full" id="btn-delete-guild"
-                  style="font-size:12px">ลบกลุ่ม</button>`}
+        <!-- Actions row -->
+        <div style="display:flex;gap:8px">
+          <button id="btn-open-discuss" class="btn btn-ghost"
+                  style="flex:1;font-size:12px;color:var(--color-muted);border-color:var(--color-border)">
+            💬 ถกเถียง</button>
+          ${!isLeader ? `
+            <button class="btn btn-ghost" id="btn-leave-guild"
+                    style="flex:1;font-size:12px;color:#ef5350;border-color:rgba(239,83,80,0.3)">
+              ออกจากกลุ่ม</button>` : `
+            <button class="btn btn-ghost" id="btn-delete-guild"
+                    style="flex:1;font-size:12px;color:#ef5350;border-color:rgba(239,83,80,0.3)">
+              ลบกลุ่ม</button>`}
+        </div>
 
       </div>`;
   }
@@ -276,7 +284,7 @@ const GuildModule = (() => {
     const iAmLeader = _state.guild.myRole === 'leader';
 
     return `
-      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;
                   border-bottom:1px solid rgba(255,255,255,0.04)">
         <div style="position:relative;flex-shrink:0">
           <div class="avatar-sm" style="width:36px;height:36px;font-size:13px">${initials}</div>
