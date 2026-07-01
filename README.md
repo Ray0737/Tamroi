@@ -1,7 +1,7 @@
 # ตามรอย · Tamroi
 
 > แอปพลิเคชันเพื่อการให้ความรู้ทางประวัติศาสตร์ผ่านเกมแผนที่แบบ Open World  
-> Active Learning · History · Exploration · Travelling · Edutainment
+> Active Learning · History · Exploration · Travelling · Edutainment · NSC 2026
 
 **NSC 2026** — National Software Contest  
 ทีม **ปลามึกยักษ์** · โรงเรียนสาธิตมหาวิทยาลัยศรีนครินทรวิโรฒ ประสานมิตร (ฝ่ายมัธยม)  
