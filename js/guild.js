@@ -163,10 +163,11 @@ const GuildModule = (() => {
                  style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--color-border);
                         border-radius:8px;padding:8px 12px;color:var(--color-white);
                         font-size:13px;margin-bottom:10px;box-sizing:border-box">
-          <div style="display:flex;gap:8px">
-            <button id="btn-save-guild" class="btn btn-primary" style="flex:1;font-size:12px">บันทึก</button>
+          <div style="display:flex;justify-content:flex-end;gap:6px">
             <button id="btn-cancel-edit" class="btn btn-ghost"
-                    style="flex:1;font-size:12px;border-color:var(--color-border)">ยกเลิก</button>
+                    style="font-size:11px;padding:5px 14px;border-color:var(--color-border)">ยกเลิก</button>
+            <button id="btn-save-guild" class="btn btn-primary"
+                    style="font-size:11px;padding:5px 16px">บันทึก</button>
           </div>
         </div>` : ''}
 
@@ -303,7 +304,7 @@ const GuildModule = (() => {
       const user = window.AppCore?.App?.user;
       await DB.Coop.postAnnouncement(guildId, content, user?.id);
       if (input) input.value = '';
-      await _loadAnnouncements(guildId, true);
+      await _loadAnnouncements(guildId, _state?.guild?.myRole === 'leader');
     } catch (e) {
       window.AppCore?.showToast?.(e.message || 'โพสต์ไม่สำเร็จ');
     } finally {

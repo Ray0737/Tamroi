@@ -442,15 +442,34 @@ function showConfirm(message, { destructive = false, confirmLabel = 'ยืน�
     const overlay = document.createElement('div');
     overlay.style.cssText = 'position:fixed;inset:0;background:var(--color-overlay);z-index:9999;display:flex;align-items:center;justify-content:center;padding:var(--space-md)';
 
-    const confirmBg  = destructive ? 'var(--color-danger)' : 'var(--color-primary)';
-    const confirmClr = destructive ? '#fff' : 'var(--color-on-primary)';
+    const confirmBg  = destructive ? '#ef5350' : 'var(--color-primary)';
+    const confirmClr = '#fff';
 
     overlay.innerHTML = `
-      <div style="background:var(--color-card-dark);border-radius:var(--radius-lg);padding:var(--space-lg);width:100%;max-width:300px;box-shadow:var(--shadow-card)">
-        <p style="color:var(--color-white);font-family:var(--font-body);font-size:var(--text-md);font-weight:600;margin:0 0 var(--space-lg);line-height:1.5">${message}</p>
-        <div style="display:flex;gap:var(--space-sm)">
-          <button data-cancel style="flex:1;padding:12px;border-radius:var(--radius-md);border:1px solid var(--color-border);background:transparent;color:var(--color-muted);font-size:var(--text-base);font-weight:600;cursor:pointer;font-family:var(--font-body)">${cancelLabel}</button>
-          <button data-ok style="flex:1;padding:12px;border-radius:var(--radius-md);border:none;background:${confirmBg};color:${confirmClr};font-size:var(--text-base);font-weight:600;cursor:pointer;font-family:var(--font-body)">${confirmLabel}</button>
+      <div style="background:var(--color-card-dark);border-radius:var(--radius-lg);
+                  padding:20px;width:100%;max-width:280px;
+                  border:1px solid rgba(255,255,255,0.08);box-shadow:var(--shadow-card)">
+        ${destructive ? `
+        <div style="width:36px;height:36px;border-radius:50%;margin:0 0 12px;
+                    background:rgba(239,83,80,0.12);
+                    display:flex;align-items:center;justify-content:center;
+                    color:#ef5350;font-size:16px">
+          <i class="bi bi-exclamation-triangle"></i>
+        </div>` : ''}
+        <p style="color:var(--color-white);font-family:var(--font-body);font-size:14px;
+                  font-weight:600;margin:0 0 18px;line-height:1.5">${message}</p>
+        <div style="display:flex;justify-content:flex-end;gap:8px">
+          <button data-cancel
+                  style="padding:6px 16px;border-radius:var(--radius-md);
+                         border:1px solid var(--color-border);background:transparent;
+                         color:var(--color-muted);font-size:12px;font-weight:600;
+                         cursor:pointer;font-family:var(--font-body);
+                         transition:background 0.15s,color 0.15s">${cancelLabel}</button>
+          <button data-ok
+                  style="padding:6px 16px;border-radius:var(--radius-md);border:none;
+                         background:${confirmBg};color:${confirmClr};font-size:12px;
+                         font-weight:600;cursor:pointer;font-family:var(--font-body);
+                         transition:opacity 0.15s">${confirmLabel}</button>
         </div>
       </div>`;
 
