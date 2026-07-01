@@ -2,6 +2,7 @@
 -- Purpose: field-test the full watchtower → support node → quiz → capture loop
 --          using the actual school campus as the test arena.
 -- Safe to re-run: all statements are idempotent.
+-- NOTE: Re-run after the guild_join_requests approve/reject fix (73cb513).
 -- Remove this file (and the rows it inserts) before production deploy.
 -- ════════════════════════════════════════════════════════════════════════════
 
