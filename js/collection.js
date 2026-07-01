@@ -4,10 +4,22 @@ const CollectionModule = (() => {
   let allArtifacts = [];
   let captures     = new Set();
   let ownedArtifacts = new Set();
+  let newCaptures  = new Set();
   let loreEntries = [];
   let activeFilter = 'all';
   let loaded = false;
   let figureModalBound = false;
+
+  function loadNewCaptures() {
+    try {
+      const ids = JSON.parse(localStorage.getItem('tamroi_new_captures') || '[]');
+      newCaptures = new Set(ids.filter(id => captures.has(id)));
+    } catch { newCaptures = new Set(); }
+  }
+
+  function saveNewCaptures() {
+    localStorage.setItem('tamroi_new_captures', JSON.stringify([...newCaptures]));
+  }
 
 
   async function load() {
@@ -30,6 +42,7 @@ const CollectionModule = (() => {
         caps.forEach(c => captures.add(c.figure_id));
         arts.forEach(a => ownedArtifacts.add(a.artifact_id));
         loreEntries = normalizeLoreRows(lore);
+        loadNewCaptures();
       }
     } catch {
       allFigures   = [];
@@ -116,13 +129,20 @@ const CollectionModule = (() => {
     grid.hidden = activeFilter === 'journal';
     if (journal) journal.hidden = activeFilter !== 'journal';
 
-    grid.innerHTML = filtered.map(f => {
+    const newOnes = filtered.filter(f => newCaptures.has(f.id));
+    const rest    = filtered.filter(f => !newCaptures.has(f.id));
+
+    const renderCard = (f, isNew) => {
       const isCaptured = captures.has(f.id);
       const isLocked   = f.class === 'S' && !isCaptured;
+      const onclick = isNew
+        ? `CollectionModule.dismissNew('${f.id}')`
+        : isCaptured ? `CollectionModule.showDetail('${f.id}')` : '';
 
       return `
         <div class="figure-card ${isCaptured ? `captured-${f.class.toLowerCase()}` : ''} ${isLocked ? 'locked' : ''}"
-             onclick="${isCaptured ? `CollectionModule.showDetail('${f.id}')` : ''}">
+             style="position:relative" onclick="${onclick}">
+          ${isNew ? `<span style="position:absolute;top:4px;left:4px;width:8px;height:8px;border-radius:50%;background:#FF3B30;z-index:2;display:block"></span>` : ''}
           ${isCaptured ? `<div class="captured-ribbon">${checkSVG()}</div>` : ''}
           ${isLocked   ? `<div class="lock-overlay">${lockSVG()}</div>` : ''}
           <div class="figure-portrait" style="color:var(--color-muted)">${personSVG}</div>
@@ -135,7 +155,12 @@ const CollectionModule = (() => {
           }
         </div>
       `;
-    }).join('');
+    };
+
+    grid.innerHTML = [
+      ...newOnes.map(f => renderCard(f, true)),
+      ...rest.map(f => renderCard(f, false)),
+    ].join('');
   }
 
   // SVG icons for each artifact type — fixed-size container prevents overflow
@@ -355,7 +380,16 @@ const CollectionModule = (() => {
 
   function markCaptured(figureId) {
     captures.add(figureId);
+    newCaptures.add(figureId);
+    saveNewCaptures();
     render();
+  }
+
+  function dismissNew(figureId) {
+    newCaptures.delete(figureId);
+    saveNewCaptures();
+    render();
+    showDetail(figureId);
   }
 
   function checkSVG() {
@@ -371,7 +405,7 @@ const CollectionModule = (() => {
     </svg>`;
   }
 
-  return { load, showDetail, markCaptured };
+  return { load, showDetail, markCaptured, dismissNew };
 })();
 
 window.CollectionModule = CollectionModule;
