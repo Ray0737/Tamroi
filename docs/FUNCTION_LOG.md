@@ -108,8 +108,8 @@
 | `DB.Coop.sendJoinRequest(guildId, userId)` | guild_join_requests, notifications | ✅ Working |
 | `DB.Coop.getMyPendingRequest(userId)` | guild_join_requests | ✅ Working |
 | `DB.Coop.getJoinRequests(guildId)` | guild_join_requests, profiles | ✅ Working |
-| `DB.Coop.approveRequest(requestId)` | guild_join_requests, guild_members | ✅ Updated 2026-07-01: derives guild_id/user_id from the request row instead of caller args |
-| `DB.Coop.rejectRequest(requestId)` | guild_join_requests | ✅ Working |
+| `DB.Coop.approveRequest(requestId)` | guild_join_requests, guild_members | ✅ Updated 2026-07-01: derives guild_id/user_id from the request row, deletes the request row (instead of marking it approved) after inserting the member |
+| `DB.Coop.rejectRequest(requestId)` | guild_join_requests | ✅ Updated 2026-07-01: deletes the request row (instead of marking it rejected) |
 | `DB.Coop.getCollabMissions()` | collab_missions | ✅ Working |
 | `DB.Coop.checkInToMission(missionId, guildId, userId)` | collab_mission_checkins | ✅ Working |
 | `DB.Coop.getMissionCheckins(missionId, guildId)` | collab_mission_checkins | ✅ Working |
