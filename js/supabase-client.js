@@ -695,26 +695,6 @@ const Coop = {
       .select()
       .single();
     if (error) throw error;
-
-    // Notify the guild leader — non-critical, don't throw
-    try {
-      const [{ data: leaderRows }, { data: guildRow }, { data: profile }] = await Promise.all([
-        _sb.from('guild_members').select('user_id').eq('guild_id', guildId).eq('role', 'leader').limit(1),
-        _sb.from('guilds').select('name').eq('id', guildId).single(),
-        _sb.from('profiles').select('username').eq('id', userId).single(),
-      ]);
-      const leaderId = leaderRows?.[0]?.user_id;
-      if (leaderId) {
-        await Notifications.push(
-          leaderId,
-          'join_request',
-          'คำขอเข้าร่วมกลุ่ม',
-          `${profile?.username || 'ผู้ใช้'} ขอเข้าร่วม ${guildRow?.name || ''}`,
-          data.id
-        );
-      }
-    } catch { /* notification failure is non-critical */ }
-
     return data;
   },
 
