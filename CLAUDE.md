@@ -73,6 +73,7 @@
     ├── patch_notifications_rls.sql split notifications policy (insert for others)
     ├── patch_community.sql     community_posts table + RLS + flag trigger
     ├── patch_community_likes.sql community_post_likes table + RLS
+    ├── patch_guild_leader_rls.sql lets non-members see who a guild's leader is (join-request notify)
     └── patch_mock_satit.sql    Test-only seed data — REMOVE before production
 └── docs/
     ├── CODING_INSTRUCTIONS.md  Design system and implementation rules
@@ -207,10 +208,11 @@ Run patches in this order:
 12. SQL Editor → `supabase/patch_notifications_rls.sql`
 13. SQL Editor → `supabase/patch_community.sql`
 14. SQL Editor → `supabase/patch_community_likes.sql`
-15. *(Optional, dev/test only)* SQL Editor → `supabase/patch_mock_satit.sql`
-16. Authentication → Email → **disable "Confirm email"** for dev
-17. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
-18. Settings → API → copy URL + anon key into `js/env.js`
+15. SQL Editor → `supabase/patch_guild_leader_rls.sql`
+16. *(Optional, dev/test only)* SQL Editor → `supabase/patch_mock_satit.sql`
+17. Authentication → Email → **disable "Confirm email"** for dev
+18. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
+19. Settings → API → copy URL + anon key into `js/env.js`
 
 ---
 
