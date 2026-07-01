@@ -5,6 +5,10 @@
   height: calc(100dvh - var(--top-bar-height) - var(--bottom-nav-height));
 }
 
+#map-view .leaflet-tile-pane {
+  filter: brightness(1.35) contrast(1.05);
+}
+
 /* Override Leaflet default controls */
 .leaflet-control-zoom {
   border: none !important;

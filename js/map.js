@@ -97,6 +97,8 @@ const MapModule = (() => {
       subdomains: 'abcd',
     }).addTo(map);
 
+    renderThailandGrid();
+
     loadDistrictData();
     loadLoreData();
     updateStatsBar();
@@ -410,6 +412,17 @@ const MapModule = (() => {
       interactive: false,
       fillRule:    'evenodd',
     }).addTo(map);
+  }
+
+  function renderThailandGrid() {
+    if (!window.FogGrid) return;
+    const layers = window.FogGrid.createGridCells().map(cell => L.polygon(cell.bounds, {
+      color:       'rgba(255,255,255,0.15)',
+      weight:      1,
+      fill:        false,
+      interactive: false,
+    }));
+    L.layerGroup(layers).addTo(map);
   }
 
   function renderGuildFog(clearedDistrictIds) {
