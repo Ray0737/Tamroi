@@ -93,6 +93,7 @@ Website - Tamroi - Coop/
 │
 └── docs/
     ├── PROJECT_SUMMARY.md         This file
+    ├── GAME_LOGIC.md               ⭐ Gameplay loop, design rationale, function-to-game-logic map
     ├── COOP.md                    Co-op feature design (guilds/missions/raids/discussions)
     ├── dev-plan.md / progress.md  Phase tracking — Phase 1 + Phase 3 complete, see progress.md for the latest batch
     ├── VERIFYLOGIC.md             ⚠️ Stale (2026-06-27) — 3 of its 4 open tasks are actually already fixed, see Feature Status
@@ -109,33 +110,9 @@ Website - Tamroi - Coop/
 
 ---
 
-## Gameplay Loop
+## Gameplay Loop & Game Logic
 
-### Solo core loop (unchanged since Phase 1)
-
-```
-Login → Onboarding (pick home district, fog clears, +50 pts)
- → Travel to district → Watchtower check-in (500m GPS gate) → fog clears
- → GPS proximity → Lore narration unlocks (80–150m)
- → visit Support Nodes: 2 cafés + 1 OTOP + 3 landmarks per district
- → gate lifts for S/A figures → Legendary Encounter
- → Quiz: B/C = 1Q · S/A = 3Q all correct → figure captured
- → DB trigger adds Legacy Points → leaderboard rank up
-```
-
-| Class | Unlock | Legacy Points |
-|---|---|---|
-| **S-Class** | Support-node gate + 3-question quiz (or Raid, see below) | 500 |
-| **A-Class** | Support-node gate + 3-question quiz | 200 |
-| **B-Class** | 1-question quiz only (no support gate) | 100 |
-| **C-Class** | 1-question quiz | 50 |
-
-### Co-op additions (Phase 3)
-
-- **Guild** (≤6 members): create/join via invite code or searchable join-request, presence-tracked online members, leader tools (kick/transfer/announcements/delete). Guild fog on the map = union of all members' cleared districts.
-- **Collaborative missions**: guild members independently GPS check-in at a shared target within a time window; progress bar updates live via Realtime; a DB trigger auto-completes the mission and awards lore + points to every participant once the threshold is met.
-- **Raid encounters**: reserved for `raid_only` S-tier figures. Leader opens a synchronous lobby (Presence ready-up) → 3-question quiz broadcast simultaneously to all members (Broadcast channel, 30s/question) → majority (>50%) correct passes the round → one retry per question → host failover to the next-earliest-joined member if the host disconnects → capture awarded to every member who answered ≥1 question.
-- **Discussion threads** (per figure) and a **community forum** (site-wide feed): async social layers — post/reply (1 level), like/unlike, flag-to-report (auto-flags at 3 reports). Not gameplay-gating.
+> Moved to **[`docs/GAME_LOGIC.md`](GAME_LOGIC.md)** — full solo + co-op gameplay loop, design rationale from the NSC proposal (theories, tier classification, content review pipeline, anti-spoofing, motivation system, roadmap), and the `window.DB` function reference mapped to the game logic each function implements.
 
 ---
 
@@ -150,29 +127,6 @@ Login → Onboarding (pick home district, fog clears, +50 pts)
 | Quiz questions | 164 | Thai MCQ, 4-option; `is_raid_question` flag added for raid mode |
 | BTS/MRT stations | 6 | 300m radius bonus zones |
 | Mock/test data | +1 district, +1 figure, +1 lore chain (3 nodes), +3 quiz Qs | `patch_mock_satit.sql` — **scoped to a school field test, remove before production** |
-
----
-
-## `window.DB` API — `js/supabase-client.js`
-
-All Supabase calls route through `window.DB`. Feature modules never call `supabase` directly.
-
-| Namespace | Tables | Status |
-|---|---|---|
-| `DB.Auth.*` | auth.users | ✅ |
-| `DB.Profiles.*` | profiles | ✅ |
-| `DB.Districts.*` | districts, user_districts | ✅ |
-| `DB.Figures.*` | figures, user_captures | ✅ |
-| `DB.Lore.getAll()` | lore_nodes | ⚠️ Filters `is_active`/etc. but **not** `review_status='approved'` or `source_ref` — content-gating still missing despite FUNCTION_LOG.md claiming it's fixed |
-| `DB.Lore.unlock()` | user_lore | ✅ |
-| `DB.Quiz.getForFigure()` | quiz_questions | ⚠️ Same missing `source_ref` gate as above |
-| `DB.Leaderboard.get()` | leaderboard_legacy | ✅ |
-| `DB.Notifications.*` | notifications | ✅ incl. `ref_id` deep-link, Accept/Ignore actions |
-| `DB.Missions.getActiveMission / getDailyChallenges / updateChallengeProgress` | figures, user_districts, user_captures, daily_challenges, user_daily_progress | ✅ Real DB-driven, no mocks (built client-side as `_missionCtx`, not a single RPC) |
-| `DB.Coop.*` (~25 methods) | guilds, guild_members, guild_join_requests, guild_announcements, collab_missions, collab_mission_checkins, guild_leaderboard (view) | ✅ |
-| `DB.Raid.*` (7 methods) | raid_sessions, raid_session_members, quiz_questions, user_captures | ✅ |
-| `DB.Discussion.*` | figure_discussions, discussion_flags | ✅ |
-| `DB.Community.*` | community_posts, community_post_likes, community_post_flags | ✅ |
 
 ---
 
@@ -230,6 +184,7 @@ PWA offline support · GeoJSON district polygons (currently approximate) · serv
 
 | What | Where |
 |---|---|
+| Gameplay loop + game design logic + function map | `docs/GAME_LOGIC.md` |
 | All DB/Auth calls | `js/supabase-client.js` (`window.DB`) |
 | Guild / party system | `js/guild.js` |
 | Raid encounters | `js/raid.js` |
