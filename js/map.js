@@ -23,6 +23,7 @@ const MapModule = (() => {
   const HOME_KEY = 'tam_roi_home';
   const LEGACY_HOME_KEY = 'siam' + 'echo_home';
   const LORE_KEY = 'tam_roi_lore_unlocked';
+  const LORE_SEEN_KEY = 'tam_roi_lore_seen';
   const CHECKIN_TOLERANCE_M = 500;
 
   // ── BTS/MRT stations — loaded from Supabase bts_mrt_stations ──
@@ -277,14 +278,17 @@ const MapModule = (() => {
 
   function loadLocalLoreState() {
     try {
-      const saved = JSON.parse(localStorage.getItem(LORE_KEY) || '[]');
-      saved.forEach(id => unlockedLoreIds.add(id));
+      JSON.parse(localStorage.getItem(LORE_KEY) || '[]').forEach(id => unlockedLoreIds.add(id));
+      // Lore already shown once (arrived + auto-opened) but not necessarily saved —
+      // must survive reload or the proximity trigger fires again on re-entry.
+      JSON.parse(localStorage.getItem(LORE_SEEN_KEY) || '[]').forEach(id => pendingLoreIds.add(id));
     } catch { /* ignore */ }
   }
 
   function persistLocalLoreState() {
     try {
       localStorage.setItem(LORE_KEY, JSON.stringify([...unlockedLoreIds]));
+      localStorage.setItem(LORE_SEEN_KEY, JSON.stringify([...pendingLoreIds]));
     } catch { /* ignore */ }
   }
 
@@ -312,6 +316,7 @@ const MapModule = (() => {
   function unlockLore(node) {
     activeLoreNode = node;
     pendingLoreIds.add(node.id);
+    persistLocalLoreState();
 
     const banner = document.getElementById('proximity-banner');
     const name = document.getElementById('proximity-name');

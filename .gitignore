@@ -46,3 +46,6 @@ logs/
 
 .vercel
 .env*
+
+# ── graphify knowledge graph output ───────────────────
+graphify-out/

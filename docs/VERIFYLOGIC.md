@@ -110,9 +110,9 @@ This is per-district. Once all 3 thresholds are met, the **"Legendary Encounter"
 
 | Rule | Detail |
 |------|--------|
-| **Trigger** | GPS proximity — player must be within `radius_m` (80–150m) of the lore node's coordinates |
-| **UI** | Proximity banner appears: "Nearby Historic Place" |
-| **Action** | Tap to read → "Save to Journal" button |
+| **Trigger** | GPS proximity — player must be within `radius_m` (80–150m) of the lore node's coordinates. Auto-opens **once per lore node** on first arrival, even across page reloads — a "seen" flag persists to `tam_roi_lore_seen` in localStorage so lingering or re-entering the radius does not reopen the sheet. |
+| **UI** | Proximity banner appears: "Nearby Historic Place" (first arrival only) |
+| **Action** | Tap to read → "Save to Journal" button. After the first auto-open, the lore node renders as a tappable map marker — re-open it any time by tapping the marker (`openVisitedLore()`) instead of walking back into the radius. |
 | **Persistence** | Saved to `user_lore` in Supabase + `tam_roi_lore_unlocked` in localStorage |
 | **Chain lore** | Some lore is part of a 3-part series (`chain_id`, `chain_part`). Each part unlocks independently by proximity. |
 | **Chain bonus** | Completing all 3 parts of a chain grants +50 pts bonus on top of individual node points |
