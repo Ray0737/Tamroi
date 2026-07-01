@@ -10,7 +10,8 @@ const CommunityForumModule = (() => {
     try {
       const posts = await DB.Community.getPosts(user?.id);
       _render(posts, user);
-    } catch {
+    } catch (err) {
+      console.error('[CommunityForum] load failed:', err);
       el.innerHTML = `<p style="text-align:center;color:var(--color-muted);
         font-size:12px;padding:var(--space-md)">โหลดไม่ได้</p>`;
     }
