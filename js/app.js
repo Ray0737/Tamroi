@@ -447,29 +447,34 @@ function showConfirm(message, { destructive = false, confirmLabel = 'ยืน�
 
     overlay.innerHTML = `
       <div style="background:var(--color-card-dark);border-radius:var(--radius-lg);
-                  padding:20px;width:100%;max-width:280px;
+                  padding:24px 20px 20px;width:100%;max-width:272px;text-align:center;
                   border:1px solid rgba(255,255,255,0.08);box-shadow:var(--shadow-card)">
         ${destructive ? `
-        <div style="width:36px;height:36px;border-radius:50%;margin:0 0 12px;
+        <div style="width:44px;height:44px;border-radius:50%;margin:0 auto 14px;
                     background:rgba(239,83,80,0.12);
                     display:flex;align-items:center;justify-content:center;
-                    color:#ef5350;font-size:16px">
-          <i class="bi bi-exclamation-triangle"></i>
-        </div>` : ''}
+                    color:#ef5350;font-size:20px">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>` : `
+        <div style="width:44px;height:44px;border-radius:50%;margin:0 auto 14px;
+                    background:rgba(255,255,255,0.06);
+                    display:flex;align-items:center;justify-content:center;
+                    color:var(--color-muted);font-size:20px">
+          <i class="bi bi-question-circle"></i>
+        </div>`}
         <p style="color:var(--color-white);font-family:var(--font-body);font-size:14px;
-                  font-weight:600;margin:0 0 18px;line-height:1.5">${message}</p>
-        <div style="display:flex;justify-content:flex-end;gap:8px">
-          <button data-cancel
-                  style="padding:6px 16px;border-radius:var(--radius-md);
-                         border:1px solid var(--color-border);background:transparent;
-                         color:var(--color-muted);font-size:12px;font-weight:600;
-                         cursor:pointer;font-family:var(--font-body);
-                         transition:background 0.15s,color 0.15s">${cancelLabel}</button>
+                  font-weight:600;margin:0 0 20px;line-height:1.5">${message}</p>
+        <div style="display:flex;flex-direction:column;gap:8px">
           <button data-ok
-                  style="padding:6px 16px;border-radius:var(--radius-md);border:none;
-                         background:${confirmBg};color:${confirmClr};font-size:12px;
-                         font-weight:600;cursor:pointer;font-family:var(--font-body);
+                  style="width:100%;padding:10px;border-radius:var(--radius-md);border:none;
+                         background:${confirmBg};color:${confirmClr};font-size:13px;
+                         font-weight:700;cursor:pointer;font-family:var(--font-body);
                          transition:opacity 0.15s">${confirmLabel}</button>
+          <button data-cancel
+                  style="width:100%;padding:9px;border-radius:var(--radius-md);
+                         border:1px solid var(--color-border);background:transparent;
+                         color:var(--color-muted);font-size:12px;font-weight:500;
+                         cursor:pointer;font-family:var(--font-body)">${cancelLabel}</button>
         </div>
       </div>`;
 
