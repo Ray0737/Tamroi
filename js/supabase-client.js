@@ -742,7 +742,7 @@ const Coop = {
     if (memberErr && memberErr.code !== '23505') throw memberErr;
     const { error } = await _sb
       .from('guild_join_requests')
-      .update({ status: 'approved' })
+      .delete()
       .eq('id', requestId);
     if (error) throw error;
   },
@@ -750,7 +750,7 @@ const Coop = {
   async rejectRequest(requestId) {
     const { error } = await _sb
       .from('guild_join_requests')
-      .update({ status: 'rejected' })
+      .delete()
       .eq('id', requestId);
     if (error) throw error;
   },
