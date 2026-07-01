@@ -1,8 +1,8 @@
-# ตามรอย · Tamroi — Project Summary (Edited / main branch)
+# ตามรอย · Tamroi — Project Summary (Co-op branch)
 
-> **Folder role:** Current active development version. Same HTML5/Bootstrap/Vanilla JS stack as the base prototype, but with a fully expanded dataset (26 figures, 20 lore nodes, 40 support nodes), all IDs wired to real Supabase rows, and the B-class tier added.
-> For the full Next.js/TypeScript production rewrite, see **Website - Tamroi - Round2**.
-> Last accurate as of: 2026-06-27
+> **Folder role:** Active co-op development branch. Builds on the expanded solo dataset (26 figures, 20 lore nodes, 47 support nodes) with a full guild/party layer: guilds, collaborative missions, synchronous raid encounters, discussion threads, and a community forum.
+> For the solo/base state see the `main`/`Co-op` history before 2026-06-28. For the Next.js/TypeScript production rewrite, see **Website - Tamroi - Round2**.
+> Last accurate as of: 2026-07-01
 
 ---
 
@@ -10,14 +10,10 @@
 
 | | |
 |---|---|
-| **GitHub** | https://github.com/Ray0737/Tamroi.git |
-| **Branch** | `main` |
-| **Status** | 🔧 Active development — core loop complete; 4 open tasks remain (see VERIFYLOGIC.md) |
-
-All three Tamroi folders share the same repo. Branch mapping:
-- `base` → Website - Tamroi (original prototype, small seed)
-- `main` → this folder (expanded data, all 26 figures wired to real Supabase)
-- `refactored-2` → Website - Tamroi - Round2 (Next.js/TypeScript full rewrite)
+| **GitHub (primary)** | https://github.com/Ray0737/Tamroi.git — branch `Co-op` |
+| **GitHub (mirror)** | https://github.com/Ray0737/tam_roi.git — branch `main` |
+| **Local branch** | `coop`, tracks `origin/Co-op`; both remotes currently point at the same commit |
+| **Status** | 🔧 Active development — Phase 1 (solo) + Phase 3 (co-op) complete; see Feature Status below for open gaps |
 
 ---
 
@@ -27,102 +23,99 @@ All three Tamroi folders share the same repo. Branch mapping:
 |---|---|
 | Frontend | HTML5 · Bootstrap 5.3 · Vanilla JS (ES6 IIFEs, no bundler) |
 | Map engine | Leaflet.js 1.9.4 + CartoDB Dark Matter tiles |
-| GPS | `navigator.geolocation.watchPosition` + Haversine |
+| GPS | `navigator.geolocation.watchPosition` + Haversine distance gating |
 | Auth | Supabase Auth — email/password + Google OAuth |
 | Database | Supabase PostgreSQL with Row Level Security |
-| Realtime | Supabase Realtime — leaderboard + notifications |
+| Realtime | Supabase Realtime `postgres_changes` (leaderboard, notifications, mission progress) + **Presence** (guild online members, raid lobby) + **Broadcast** (raid quiz sync) |
 | Build/deploy | Vercel static + `build.js` env injection |
-| Security | `escapeHtml()` XSS guard + Vercel security headers |
-| Tests | Node.js static regression suite (6 test files) |
+| Security | `escapeHtml()` XSS guard + Vercel security headers + RLS on every table |
+| Tests | Node.js static regression suite (10 test files) + 1 Playwright browser e2e spec |
 
-**Zero tooling:** no npm install, no webpack. Run with VS Code Live Server on port 5500.
+**Zero tooling for the app itself:** no npm install, no webpack. Run with VS Code Live Server on port 5500. Playwright tests need `npm install` for the `playwright` package.
 
 ---
 
 ## Folder Structure
 
 ```
-Website - Tamroi - Edited/      ← main branch root
+Website - Tamroi - Coop/
 │
-├── index.html                  Splash / landing page (animated blob, CTA)
+├── index.html                  Splash / landing page
 ├── login.html                  Email + Google OAuth + register flow
-├── onboarding.html             First-run: location permission + home district picker
-├── app.html                    Main app shell — 4 tabs: Map · Collection · Mission · Leaderboard
+├── onboarding.html              First-run: location permission + home district picker
+├── app.html                    Main app shell — tabs: Map · Collection · Mission · Leaderboard (+ community/discussion panels)
 │
-├── build.js                    Vercel build: injects SUPABASE_URL + SUPABASE_ANON_KEY into env.js
-├── vercel.json                 Vercel config: static build + CSP/security headers
+├── build.js / vercel.json      Vercel build + env injection + CSP headers
+├── playwright.config.mjs       Browser e2e config (⚠️ hardcoded Linux path, see Known Issues)
 │
-├── README.md                   Setup guide (local dev, Supabase, Vercel)
-├── AGENTS.md                   Agent coding rules, repository map, known gaps
-├── CLAUDE.md                   Claude Code project guide
-│
-├── css/
-│   ├── variables.css           All --color-* design tokens + Google Fonts import
-│   ├── layout.css              Top bar (56px), bottom nav (60px), tab shell, desktop frame
-│   ├── components.css          Buttons, cards, inputs, bottom sheets, badges, rarity chips
-│   ├── map.css                 Leaflet overrides, fog, markers (S/A/B/C), GPS dot, node card
-│   └── animations.css          Keyframes: fog-clear, badgePulse, floatY, locationPulse
+├── css/                        variables · layout · components · map · animations
 │
 ├── js/
-│   ├── env.js                  Public Supabase URL + anon key (tracked, dev-safe)
-│   ├── env.example.js          Credential reset template
-│   ├── config.js               window.ENV → window.APP_CONFIG
-│   ├── utils.js                escapeHtml() — required for all innerHTML (XSS guard)
-│   ├── supabase-client.js      window.DB — ALL Supabase DB + Auth calls live here
-│   ├── app.js                  window.AppCore — boot, auth guard, tabs, toast, lore sheets, notifications
-│   ├── map.js                  window.MapModule — fog, GPS, watchtowers, support nodes, quiz, capture
+│   ├── env.js / env.example.js / config.js
+│   ├── utils.js                escapeHtml() XSS guard
+│   ├── supabase-client.js      window.DB — Auth, Profiles, Districts, Figures, Lore, Quiz,
+│   │                           Leaderboard, Notifications, Missions, Coop, Raid, Discussion, Community
+│   ├── app.js                  window.AppCore — boot, auth guard, tabs, toast, notifications (incl. actionable Accept/Ignore)
+│   ├── map.js                  window.MapModule — fog, GPS, watchtowers, support nodes, quiz, capture, guild fog overlay
 │   ├── fog-grid.js             window.FogGrid — Thailand 1km grid cell generator
-│   ├── collection.js           window.CollectionModule — figures grid (S/A/B/C filter), lore journal
-│   ├── missions.js             window.MissionsModule — active mission (❌ MOCK), daily (❌ MOCK), seasonal ✅
-│   └── leaderboard.js          window.LeaderboardModule — podium, ranked list, Realtime subscription
+│   ├── collection.js           window.CollectionModule — figures grid, lore journal, era display
+│   ├── missions.js             window.MissionsModule — active mission + daily challenges, all real DB (no mocks)
+│   ├── leaderboard.js          window.LeaderboardModule — podium, ranked list, Realtime
+│   ├── coop.js                 window.CoopModule — collaborative mission cards, GPS check-in (haversine gate), live progress
+│   ├── guild.js                window.GuildModule — guild CRUD, invite codes, join requests, presence, announcements, find-group search
+│   ├── raid.js                 window.RaidModule — synchronous multiplayer raid: lobby, broadcast quiz, host failover
+│   ├── community-forum.js      window.CommunityForumModule — site-wide post/reply/like/flag feed
+│   └── discussion.js           window.DiscussionModule — per-figure discussion thread
 │
 ├── supabase/
-│   ├── schema.sql              Full schema: all tables, RLS policies, views, triggers
-│   ├── patch_auth_fix.sql      Auth trigger hardening (run after schema.sql)
-│   ├── patch_lore.sql          Lore nodes, support nodes, quiz questions, score trigger
-│   └── patch_district_seed.sql 13 district rows matching map.js DISTRICT_CONFIG constants
+│   ├── schema.sql                      Base schema: tables, RLS, views, triggers
+│   ├── patch_auth_fix.sql              Auth trigger hardening
+│   ├── patch_lore.sql                  Lore/support/quiz seed + score trigger
+│   ├── patch_district_seed.sql         13 district rows
+│   ├── patch_coop.sql                  Guilds, collab missions, raid sessions, discussions (Phase 3 base)
+│   ├── patch_coop_fix.sql              guild_join_requests + (superseded) community tables
+│   ├── patch_group_management.sql      guilds.announcement column
+│   ├── patch_community.sql             Canonical community_posts/community_post_flags
+│   ├── patch_community_likes.sql       community_post_likes
+│   ├── patch_guild_leader_rls.sql      Fix: leaders weren't visible to non-members (broke join-request notifications)
+│   ├── patch_notification_ref.sql      notifications.ref_id — deep-link to source row
+│   ├── patch_notifications_rls.sql     Allow cross-user notification INSERT (needed for join requests)
+│   ├── patch_era.sql                   figures.era column + seed
+│   ├── patch_daily_challenges.sql      daily_challenges + user_daily_progress
+│   ├── patch_support_nodes.sql         figures.lat/lng, support_nodes (47 nodes), bts_mrt_stations
+│   └── patch_mock_satit.sql            ⚠️ Test-only district/figure/lore/quiz for field test — remove before production
 │
 ├── tests/
-│   ├── run-static.mjs                    Test runner: node tests/run-static.mjs
-│   ├── lore-static.test.mjs              Lore node IDs match Supabase
-│   ├── remaining-static.test.mjs         Support nodes, BTS/MRT, Realtime
-│   ├── prod-readiness-static.test.mjs    Production readiness checks
-│   ├── district-seed-static.test.mjs     SQL seed ↔ map.js district parity
-│   ├── env-policy-static.test.mjs        Public anon key policy
-│   └── grid-fog-static.test.mjs          window.FogGrid helper
+│   ├── run-static.mjs                  Runner: node tests/run-static.mjs
+│   ├── *-static.test.mjs               String/DOM-presence assertions (lore, district-seed, env-policy, grid-fog,
+│   │                                   remaining, prod-readiness, coop) — no browser, no runtime checks
+│   └── guild.spec.mjs                  Playwright e2e — mocks window.DB, drives real app.html in a browser
 │
 └── docs/
     ├── PROJECT_SUMMARY.md         This file
-    ├── VERIFYLOGIC.md             ⭐ Primary agent task board — open tasks + implementation instructions
-    ├── FUNCTION_LOG.md            All functions: purpose, Supabase tables, ✅/⚠️/❌ status
+    ├── COOP.md                    Co-op feature design (guilds/missions/raids/discussions)
+    ├── dev-plan.md / progress.md  Phase tracking — Phase 1 + Phase 3 complete, see progress.md for the latest batch
+    ├── VERIFYLOGIC.md             ⚠️ Stale (2026-06-27) — 3 of its 4 open tasks are actually already fixed, see Feature Status
+    ├── FUNCTION_LOG.md            Function inventory — mostly current, but overstates lore/quiz content-gating as done
     ├── FUNCTION_AUDIT.md          Phase 1 + Phase 2 audit history
-    ├── CODING_INSTRUCTIONS.md     Design system, component patterns, layout rules
+    ├── CODING_INSTRUCTIONS.md     Design system, component patterns
+    ├── gps-spoofing.md            GPS anti-cheat notes
     ├── production-smoke.md        Vercel + Supabase smoke-test checklist
     ├── system_architect.md        Architecture overview
-    └── proposal/
-        └── ตามรอย_NSC_2026_v20.md  ⭐ Official NSC 2026 proposal (Thai, 993 lines) — source of truth
+    ├── superpowers/               Dated design specs behind COOP.md (coop-mode, coop-community, guild-fog)
+    ├── used/                      Archived, already-applied task briefs
+    └── proposal/ตามรอย_NSC_2026_v20.md   ⭐ Official NSC 2026 proposal (Thai) — source of truth for game rules
 ```
-
----
-
-## Design Tokens (`css/variables.css`)
-
-| Token | Value | Usage |
-|---|---|---|
-| `--color-bg` | `#1C1B2E` | Deep indigo background |
-| `--color-primary` | `#F6C19E` | Warm peach — CTA, active tab, S-Class |
-| `--color-success` | `#7BC67E` | Sage green — captured, progress |
-| `--color-card-dark` | `#252240` | Elevated card surfaces |
-| `--color-muted` | `#8986A8` | Secondary text, inactive |
-
-**Layout:** max-width 430px · fixed top bar 56px · fixed bottom nav 60px
 
 ---
 
 ## Gameplay Loop
 
+### Solo core loop (unchanged since Phase 1)
+
 ```
-Travel to district → Watchtower check-in (500m GPS gate) → fog clears
+Login → Onboarding (pick home district, fog clears, +50 pts)
+ → Travel to district → Watchtower check-in (500m GPS gate) → fog clears
  → GPS proximity → Lore narration unlocks (80–150m)
  → visit Support Nodes: 2 cafés + 1 OTOP + 3 landmarks per district
  → gate lifts for S/A figures → Legendary Encounter
@@ -130,26 +123,33 @@ Travel to district → Watchtower check-in (500m GPS gate) → fog clears
  → DB trigger adds Legacy Points → leaderboard rank up
 ```
 
-### Figure class system (all 4 tiers: S / A / B / C)
-
 | Class | Unlock | Legacy Points |
 |---|---|---|
-| **S-Class** | Support-node gate + 3-question quiz | 500 |
+| **S-Class** | Support-node gate + 3-question quiz (or Raid, see below) | 500 |
 | **A-Class** | Support-node gate + 3-question quiz | 200 |
 | **B-Class** | 1-question quiz only (no support gate) | 100 |
 | **C-Class** | 1-question quiz | 50 |
 
+### Co-op additions (Phase 3)
+
+- **Guild** (≤6 members): create/join via invite code or searchable join-request, presence-tracked online members, leader tools (kick/transfer/announcements/delete). Guild fog on the map = union of all members' cleared districts.
+- **Collaborative missions**: guild members independently GPS check-in at a shared target within a time window; progress bar updates live via Realtime; a DB trigger auto-completes the mission and awards lore + points to every participant once the threshold is met.
+- **Raid encounters**: reserved for `raid_only` S-tier figures. Leader opens a synchronous lobby (Presence ready-up) → 3-question quiz broadcast simultaneously to all members (Broadcast channel, 30s/question) → majority (>50%) correct passes the round → one retry per question → host failover to the next-earliest-joined member if the host disconnects → capture awarded to every member who answered ≥1 question.
+- **Discussion threads** (per figure) and a **community forum** (site-wide feed): async social layers — post/reply (1 level), like/unlike, flag-to-report (auto-flags at 3 reports). Not gameplay-gating.
+
 ---
 
-## Current Data (expanded real dataset)
+## Current Data
 
 | Object | Count | Notes |
 |---|---|---|
 | Districts | 13 | Bangkok (12) + Ayutthaya (1) |
-| Figures | **26** | All wired to real Supabase `figures.id` values |
-| Support nodes | **40** | All have real `node_id` for deduplication |
-| Lore nodes | **20** | All wired to real `lore_nodes.id` values |
-| Quiz questions | **164** | Thai MCQ, 4-option, mapped to real `figure_id` values |
+| Figures | 26 | All wired to real Supabase `figures.id`; `era` field seeded via `patch_era.sql` |
+| Support nodes | **47** | Up from 40 — expanded by `patch_support_nodes.sql` |
+| Lore nodes | 20 | All wired to real `lore_nodes.id` |
+| Quiz questions | 164 | Thai MCQ, 4-option; `is_raid_question` flag added for raid mode |
+| BTS/MRT stations | 6 | 300m radius bonus zones |
+| Mock/test data | +1 district, +1 figure, +1 lore chain (3 nodes), +3 quiz Qs | `patch_mock_satit.sql` — **scoped to a school field test, remove before production** |
 
 ---
 
@@ -157,24 +157,22 @@ Travel to district → Watchtower check-in (500m GPS gate) → fog clears
 
 All Supabase calls route through `window.DB`. Feature modules never call `supabase` directly.
 
-| Method | Tables | Status |
+| Namespace | Tables | Status |
 |---|---|---|
 | `DB.Auth.*` | auth.users | ✅ |
-| `DB.Profiles.get(userId)` | profiles | ✅ |
-| `DB.Profiles.addLegacyPoints(userId, pts)` | profiles | ✅ |
-| `DB.Districts.getAll()` | districts | ✅ |
-| `DB.Districts.getUserState(userId)` | user_districts | ✅ |
-| `DB.Districts.checkin(userId, districtId)` | user_districts | ✅ |
-| `DB.Districts.updateNodeVisit(userId, districtId, type, nodeId)` | user_support_node_visits, user_districts | ✅ |
-| `DB.Figures.getAll()` | figures | ✅ |
-| `DB.Figures.capture(userId, figureId)` | user_captures | ✅ |
-| `DB.Lore.getNodes()` | lore_nodes | ⚠️ Missing `review_status` + `source_ref` filter |
-| `DB.Lore.unlock(userId, nodeId)` | user_lore | ✅ |
-| `DB.Quiz.getQuestion(figureId)` | quiz_questions | ⚠️ Missing `source_ref` filter |
+| `DB.Profiles.*` | profiles | ✅ |
+| `DB.Districts.*` | districts, user_districts | ✅ |
+| `DB.Figures.*` | figures, user_captures | ✅ |
+| `DB.Lore.getAll()` | lore_nodes | ⚠️ Filters `is_active`/etc. but **not** `review_status='approved'` or `source_ref` — content-gating still missing despite FUNCTION_LOG.md claiming it's fixed |
+| `DB.Lore.unlock()` | user_lore | ✅ |
+| `DB.Quiz.getForFigure()` | quiz_questions | ⚠️ Same missing `source_ref` gate as above |
 | `DB.Leaderboard.get()` | leaderboard_legacy | ✅ |
-| `DB.Notifications.getAll(userId)` | notifications | ✅ |
-| `DB.Missions.getActiveMission(userId)` | — | ❌ Not built yet (Task A) |
-| `DB.Missions.getDailyChallenges(userId)` | — | ❌ Not built yet (Task B) |
+| `DB.Notifications.*` | notifications | ✅ incl. `ref_id` deep-link, Accept/Ignore actions |
+| `DB.Missions.getActiveMission / getDailyChallenges / updateChallengeProgress` | figures, user_districts, user_captures, daily_challenges, user_daily_progress | ✅ Real DB-driven, no mocks (built client-side as `_missionCtx`, not a single RPC) |
+| `DB.Coop.*` (~25 methods) | guilds, guild_members, guild_join_requests, guild_announcements, collab_missions, collab_mission_checkins, guild_leaderboard (view) | ✅ |
+| `DB.Raid.*` (7 methods) | raid_sessions, raid_session_members, quiz_questions, user_captures | ✅ |
+| `DB.Discussion.*` | figure_discussions, discussion_flags | ✅ |
+| `DB.Community.*` | community_posts, community_post_likes, community_post_flags | ✅ |
 
 ---
 
@@ -182,27 +180,21 @@ All Supabase calls route through `window.DB`. Feature modules never call `supaba
 
 ### ✅ Working
 
-Fog of War · GPS watchPosition · Watchtower check-in (500m) · Support node tracking (DB) · S/A encounter gate · B/C quiz capture · S/A 3-question capture · Legacy Score (DB trigger) · Map stats pill · Archive figure grid · Lore Journal + chains · Lore proximity (all 20 nodes) · Leaderboard (Realtime) · Notifications (Realtime) · Seasonal date bonuses · BTS/MRT ×2 bonus · All 26 figures / 20 lore nodes / 40 support nodes wired to real Supabase IDs
+Fog of War · GPS watchPosition · Watchtower check-in · Support node tracking · S/A encounter gate · Quiz capture (all tiers) · Legacy Score trigger · Archive grid · Lore Journal + proximity · Leaderboard (Realtime) · Notifications (Realtime, actionable) · Seasonal/BTS-MRT bonuses · Active Mission + Daily Challenges (real DB) · Guild create/join/leave/kick/delete/transfer · Invite-code + join-request flow · Guild presence · Guild fog overlay on map · Guild leaderboard (Realtime) · Guild announcements · Collaborative missions with live progress + auto-complete trigger · Raid encounters (lobby/broadcast quiz/host failover) core logic · Discussion threads · Community forum
 
-### ⚠️ Broken — needs fix
+### ⚠️ Broken / incomplete
 
-| Fix | File | Issue |
+| Issue | File | Detail |
 |---|---|---|
-| Fix 1 — `era` field | `js/collection.js` `showDetail()` | Shows raw `district_id` slug not a human-readable era |
-| Fix 2 — Quiz fail state | `js/map.js` `submitQuizAnswer()` | Wrong answer does nothing; no feedback shown |
-| Fix 3 — `review_status` filter | `js/supabase-client.js` | Missing `.eq('review_status','approved')` on lore queries |
-| Fix 4 — `source_ref` gate | `js/supabase-client.js` | Missing `.not('source_ref','is',null)` on lore + quiz queries |
+| Lore/quiz content gating | `js/supabase-client.js` | Missing `.eq('review_status','approved')` and `.not('source_ref','is',null)` on `DB.Lore.getAll()` / `DB.Quiz.getForFigure()` — `FUNCTION_LOG.md` incorrectly marks this as done; `VERIFYLOGIC.md` (stale, 2026-06-27) still has full fix instructions for it |
+| Raid map affordance | `js/map.js` | `raid_only` figures aren't yet given a distinct ⚔️ map icon or an "Encounter" button gate — noted as a known gap in `docs/progress.md` |
+| Raid notification deep-link | `js/app.js` / `js/raid.js` | Raid-start notification doesn't yet open the raid modal directly |
+| Playwright portability | `playwright.config.mjs` | Hardcoded Linux paths (`/home/papajittan/...`) for both the static server root and the `playwright` import — won't run as-is on this Windows machine without editing |
+| Mock Satit test data | `supabase/patch_mock_satit.sql` | Field-test-only district/figure/lore/quiz seed; must be removed before production deploy per its own header comment |
 
-### ❌ Not yet built
+### ❌ Out of scope / deferred
 
-| Task | File | What's needed |
-|---|---|---|
-| Task A — Active Mission | `js/missions.js` | Replace `MOCK_ACTIVE` with real `DB.Missions.getActiveMission()` |
-| Task B — Daily Challenges | `js/missions.js` | `daily_challenges` + `user_daily_progress` tables; replace `MOCK_DAILY` |
-| Task C — Lore read depth | `js/app.js` | Track ≥30s open time + ≥70% scroll before counting as "read" |
-| Task D — Account deletion | Settings offcanvas | PDPA §2.7 — confirm modal → delete all user rows → sign out |
-
-See **`docs/VERIFYLOGIC.md`** for full step-by-step code instructions for each task above.
+PWA offline support · GeoJSON district polygons (currently approximate) · server-side GPS validation (anti-spoofing beyond client haversine, see `docs/gps-spoofing.md`) · cross-guild competition modes · voice chat
 
 ---
 
@@ -211,19 +203,26 @@ See **`docs/VERIFYLOGIC.md`** for full step-by-step code instructions for each t
 | Table | Purpose |
 |---|---|
 | `profiles` | username, legacy_score, map_discovery, archive_count |
-| `districts` | name_th/en, watchtower coords, support thresholds, polygon_coords |
-| `figures` | name_th/en, class S/A/B/C, legacy_pts, district_id, description |
-| `user_districts` | per-user fog state + cafes/otops/landmarks counters |
-| `user_captures` | captured figures + quiz_score |
-| `lore_nodes` | lat/lng, radius_m, content, chain_id, **review_status** |
-| `user_lore` | unlocked lore per user |
-| `user_support_node_visits` | deduplicated visit tracking per node |
-| `quiz_questions` | figure_id, question_th, A–D options, correct_option, **source_ref** |
-| `leaderboard_legacy` | VIEW: RANK() over legacy_score / map_discovery / archive_count |
+| `districts` / `user_districts` | Watchtower coords, support thresholds, polygon coords, per-user fog + node counters |
+| `figures` | name_th/en, class S/A/B/C, era, legacy_pts, district_id, lat/lng, `raid_only`, `raid_min_players` |
+| `user_captures` | Captured figures + quiz_score |
+| `lore_nodes` / `user_lore` | Lore content (lat/lng/radius/chain_id/review_status) + per-user unlock state |
+| `user_support_node_visits` | Deduplicated visit tracking |
+| `quiz_questions` | figure_id, Thai question/options, correct answer, `source_ref`, `is_raid_question` |
+| `support_nodes` / `bts_mrt_stations` | 47 support nodes + 6 transit bonus stations |
+| `leaderboard_legacy` (view) | Solo ranking |
+| `guilds` / `guild_members` / `guild_join_requests` / `guild_announcements` | Party system: membership, invite codes, pending requests, leader posts |
+| `guild_leaderboard` (view) | Guild ranking (discovery, captures, summed score) |
+| `collab_missions` / `collab_mission_checkins` / `collab_mission_completions` | Async group missions + auto-complete trigger |
+| `raid_sessions` / `raid_session_members` | Synchronous multiplayer raid state |
+| `figure_discussions` / `discussion_flags` | Per-figure comment threads + auto-flag trigger |
+| `community_posts` / `community_post_likes` / `community_post_flags` | Site-wide forum |
+| `daily_challenges` / `user_daily_progress` | Daily challenge tracking |
+| `notifications` | Includes `ref_id` for deep-linking (e.g. to a join request) |
 
-**SQL run order:** `schema.sql` → `patch_auth_fix.sql` → `patch_lore.sql` → `patch_district_seed.sql`
+**SQL run order:** `schema.sql` → `patch_auth_fix.sql` → `patch_lore.sql` → `patch_district_seed.sql` → `patch_coop.sql` → `patch_coop_fix.sql` → `patch_group_management.sql` → `patch_community.sql` → `patch_community_likes.sql` → `patch_guild_leader_rls.sql` → `patch_notification_ref.sql` → `patch_notifications_rls.sql` → `patch_era.sql` / `patch_daily_challenges.sql` / `patch_support_nodes.sql` (order-independent) → `patch_mock_satit.sql` (test only, skip in production)
 
-**Key triggers:** `handle_new_user` (profile on signup) · `on_capture_update_score` (legacy_pts + archive_count) · `increment_legacy_score(userId, pts)` · `increment_node_visit(userId, districtId, type, nodeId)`
+**Key triggers:** `handle_new_user` · `on_capture_update_score` · `increment_legacy_score` · `increment_node_visit` · `check_collab_mission_threshold` (auto-completes collab missions) · `check_discussion_flag_count` (auto-flags at 3 reports)
 
 ---
 
@@ -232,10 +231,14 @@ See **`docs/VERIFYLOGIC.md`** for full step-by-step code instructions for each t
 | What | Where |
 |---|---|
 | All DB/Auth calls | `js/supabase-client.js` (`window.DB`) |
+| Guild / party system | `js/guild.js` |
+| Raid encounters | `js/raid.js` |
+| Collaborative missions | `js/coop.js` |
+| Discussion + community forum | `js/discussion.js`, `js/community-forum.js` |
 | Map / fog / GPS / quiz / capture | `js/map.js` |
-| Theme tokens | `css/variables.css` |
-| Schema | `supabase/schema.sql` |
-| Lore / quiz / triggers | `supabase/patch_lore.sql` |
-| Open task instructions | `docs/VERIFYLOGIC.md` |
-| Function inventory | `docs/FUNCTION_LOG.md` |
+| Schema + patches | `supabase/schema.sql`, `supabase/patch_*.sql` |
+| Co-op feature design | `docs/COOP.md`, `docs/superpowers/` |
+| Phase tracking | `docs/dev-plan.md`, `docs/progress.md` |
+| Static tests | `tests/run-static.mjs` |
+| Browser e2e test | `tests/guild.spec.mjs` (via `playwright.config.mjs`) |
 | Game rules (authoritative) | `docs/proposal/ตามรอย_NSC_2026_v20.md` |
