@@ -1017,6 +1017,18 @@ const MapModule = (() => {
 
     if (user) DB.Missions?.updateChallengeProgress(user.id, 'capture').catch(() => {});
     window.CollectionModule?.markCaptured?.(activeQuiz.figure.id);
+
+    // Clear district fog when capturing — the encounter proves physical presence.
+    // Handles the case where the user opens "ปลดล็อค Encounter" before clicking
+    // "Check In & Clear Fog", leaving the district fogged after capture.
+    const capturedDistrictId = activeQuiz.figure.districtId;
+    if (capturedDistrictId && userDistrictState[capturedDistrictId]?.fogged !== false) {
+      if (user) DB.Districts.checkIn(user.id, capturedDistrictId).catch(() => {});
+      userDistrictState[capturedDistrictId] = { ...(userDistrictState[capturedDistrictId] || {}), fogged: false };
+      buildFogLayer(allDistrictsCache || []);
+      renderWatchtowers(allDistrictsCache || []);
+    }
+
     window.AppCore?.closeAllSheets();
     showFloatPtsOnMap(activeQuiz.figure.legacy_pts || 0);
     window.AppCore?.showCaptureReveal(activeQuiz.figure);
@@ -1132,6 +1144,10 @@ const MapModule = (() => {
     renderAll(allDistrictsCache || []);
     updateDiscoveryPercentFromDB(window.AppCore?.App?.user?.id);
     window.AppCore?.showFloatPts(50, window.innerWidth / 2, window.innerHeight / 2);
+
+    // Persist home district fog clear to DB so it survives reload.
+    const homeUser = window.AppCore?.App?.user;
+    if (homeUser) DB.Districts.checkIn(homeUser.id, districtId).catch(() => {});
   }
 
   function skipHomePicker() {
