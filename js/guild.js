@@ -95,7 +95,7 @@ const GuildModule = (() => {
 
     el.innerHTML = _renderGuildHub(guild, members, onlineIds, isLeader);
     _bindHubActions(el, guild, isLeader);
-    _loadPendingRequests(guild.id, isLeader);
+    if (isLeader) _loadPendingRequests(guild.id);
     _loadMissionsSection(guild.id);
 
     // Lazy-load guild score without blocking render
@@ -110,6 +110,16 @@ const GuildModule = (() => {
 
     return `
       <div style="display:flex;flex-direction:column;gap:var(--space-sm)">
+
+        ${isLeader ? `
+        <!-- Join Requests -->
+        <div id="guild-requests-top"
+             style="background:var(--color-card-dark);border-radius:var(--radius-xl);
+                    border:1px solid rgba(255,126,85,0.2);padding:var(--space-md)">
+          <p style="margin:0 0 var(--space-sm);font-size:10px;color:var(--color-primary);
+                     text-transform:uppercase;letter-spacing:1px;font-weight:600">📥 คำขอเข้าร่วม</p>
+          <div style="display:flex;justify-content:center;padding:8px"><div class="spinner"></div></div>
+        </div>` : ''}
 
         <!-- Header -->
         <div style="background:var(--color-card-dark);border-radius:var(--radius-xl);
@@ -186,7 +196,6 @@ const GuildModule = (() => {
           <div id="guild-member-list">
             ${members.map(m => _memberRow(m, onlineIds)).join('')}
           </div>
-          <div id="guild-pending-requests" hidden></div>
         </div>
 
         <!-- Collab Missions -->
@@ -308,37 +317,43 @@ const GuildModule = (() => {
     );
   }
 
-  async function _loadPendingRequests(guildId, isLeader) {
-    if (!isLeader) return;
-    const el = document.getElementById('guild-pending-requests');
+  async function _loadPendingRequests(guildId) {
+    const el = document.getElementById('guild-requests-top');
     if (!el) return;
     try {
       const requests = await DB.Coop.getJoinRequests(guildId);
-      if (!requests.length) return;
-      el.hidden = false;
-      el.innerHTML = `
-        <div style="border-top:1px solid rgba(255,255,255,0.06);margin-top:var(--space-sm);
-                    padding-top:var(--space-sm)">
-          <p style="margin:0 0 var(--space-sm);font-size:10px;color:var(--color-muted);
-                     text-transform:uppercase;letter-spacing:1px">คำขอเข้าร่วม (${requests.length})</p>
-          ${requests.map(r => `
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 0">
-              <p style="margin:0;flex:1;font-size:12px;font-weight:600">
-                ${escapeHtml(r.profiles?.username || '?')}</p>
-              <button class="btn btn-primary" style="font-size:10px;padding:4px 10px"
-                      data-approve="${escapeHtml(r.id)}">อนุมัติ</button>
-              <button class="btn btn-ghost"
-                      style="font-size:10px;padding:4px 10px;border-color:var(--color-border)"
-                      data-reject="${escapeHtml(r.id)}">ปฏิเสธ</button>
-            </div>`).join('')}
-        </div>`;
+      const header = `<p style="margin:0 0 var(--space-sm);font-size:10px;color:var(--color-primary);
+                                 text-transform:uppercase;letter-spacing:1px;font-weight:600">📥 คำขอเข้าร่วม${requests.length ? ` (${requests.length})` : ''}</p>`;
+      if (!requests.length) {
+        el.innerHTML = header + `<p style="margin:0;font-size:12px;color:var(--color-muted)">ยังไม่มีคำขอ</p>`;
+        return;
+      }
+      el.innerHTML = header + requests.map(r => {
+        const name     = escapeHtml(r.profiles?.username || '?');
+        const initials = name.substring(0, 2).toUpperCase();
+        return `
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;
+                      border-bottom:1px solid rgba(255,255,255,0.05)">
+            <div class="avatar-sm" style="width:34px;height:34px;font-size:12px;flex-shrink:0">${initials}</div>
+            <p style="margin:0;flex:1;font-size:13px;font-weight:600;color:var(--color-white)">${name}</p>
+            <button class="btn btn-primary" style="font-size:11px;padding:5px 12px;white-space:nowrap"
+                    data-approve="${escapeHtml(r.id)}">ยอมรับ</button>
+            <button class="btn btn-ghost"
+                    style="font-size:11px;padding:5px 12px;white-space:nowrap;border-color:var(--color-border)"
+                    data-reject="${escapeHtml(r.id)}">ปฏิเสธ</button>
+          </div>`;
+      }).join('');
       el.querySelectorAll('[data-approve]').forEach(btn =>
         btn.addEventListener('click', () => _handleApprove(btn.dataset.approve))
       );
       el.querySelectorAll('[data-reject]').forEach(btn =>
         btn.addEventListener('click', () => _handleReject(btn.dataset.reject))
       );
-    } catch {}
+    } catch (e) {
+      const el2 = document.getElementById('guild-requests-top');
+      if (el2) el2.innerHTML = `<p style="margin:0;font-size:11px;color:#ef5350">โหลดคำขอไม่สำเร็จ: ${escapeHtml(e?.message || 'unknown')}</p>`;
+      console.error('[guild] _loadPendingRequests failed:', e);
+    }
   }
 
   async function _loadMissionsSection(guildId) {
