@@ -59,6 +59,14 @@
 - No offline mode yet — you need a live internet connection the whole time you're playing.
 - Long play sessions use up battery quickly because of continuous location tracking.
 
+## Bugs & Fixes Needed (cross-checked against code, 2026-07-01)
+
+- **Some figures never appear on the map at all** — if a figure doesn't have a saved map location, it silently doesn't render anywhere, with no error and no placeholder marker — it just doesn't exist as far as a player can tell. The fix is either to guarantee every figure always has a location before it's ever shown to players, or to show some visible fallback marker instead of just dropping it.
+- **Raid figures have no special marker on the map** — the rarest figures that require a group Raid instead of a solo quiz look identical to any other locked figure on the map right now. There's no distinct icon or "Start Raid" button telling the player this one works differently before they walk up to it.
+- **Raid-start notifications don't take you into the raid** — when a raid you're part of kicks off, the notification you get doesn't open the raid screen directly; you have to go find it yourself.
+- **Lore/quiz review-status check isn't wired in yet** — the intent is that only content which has been officially reviewed and approved should ever be shown to a player, but that check isn't actually being enforced right now, so unreviewed content could theoretically be served.
+- **A hidden test area exists in the game** — there's a school-field-test-only district, figure, and quiz set built for a specific pilot test. Kept intentionally for now, not something to remove.
+
 ## In Progress (Intended Features — Actively Being Worked On)
 
 These are committed features, not just ideas. Each is cross-checked against the actual code in `C:\Users\LENOVO\Documents\Lieutenant Hecker\Primary Data\AI\Coding\Website - Tamroi - Coop` as of 2026-07-01, not just taken on intent.
@@ -78,3 +86,12 @@ These are committed features, not just ideas. Each is cross-checked against the 
 - **Environmental Puzzles (Lore as an on-site escape room)** — instead of just telling the player a fact outright, rewrite some Lore unlocks as a puzzle that can only be solved by physically reading the real location. Example: rather than stating "this town was built in 1907 by a noble," the mission becomes "find the family crest hidden on an old building's pillar, then decode the founding year from the architecture to open the next clue." The point is that the player's eyes have to actually scan the building, notice the stucco detailing, and engage with the real, aged place to find the answer — rather than just reading text at it.
 - **Formal evaluation via Google Form** — build the player-facing pretest/posttest survey (Intrinsic Motivation Inventory + learning outcome questions from the proposal's testing methodology) as an actual Google Form, since none of that evaluation has been run yet.
 - **Historical AI (later dev phase)** — a further-out idea to use the Gemini API as a historical-content assistant, using the player's location to sort and surface the most relevant figures/Lore/quiz content for wherever they currently are, rather than showing everything in a district at once.
+
+## Still Thinking About (Not Committed Yet)
+
+Ideas raised during review, not yet decided on:
+
+- **Guild size cap** — groups are currently limited to 6 members with no way to grow. Still deciding whether that's a permanent design choice or whether bigger groups (especially for Raids) should eventually be allowed.
+- **Quiz retry limits / hints** — a wrong quiz answer can currently be retried indefinitely. Considering whether to add a cooldown or a limited number of retries so quizzes feel more like a real test of understanding rather than trial-and-error.
+- **In-app guided tutorial for new players** — the "how to play" steps exist as a written guide, but there's no first-run walkthrough inside the app itself teaching a brand-new player the loop. Considering adding one.
+- **Broader achievement/badge system** — right now the only long-term trophy is the seasonal Top-3 leaderboard badge. Considering additional achievements (e.g. visiting every district, capturing every Legendary figure) as a further retention hook.
