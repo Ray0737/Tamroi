@@ -365,8 +365,8 @@ const Notifications = {
     await _sb.from('notifications').update({ is_read: true }).eq('id', notifId);
   },
 
-  async push(userId, type, title, message) {
-    await _sb.from('notifications').insert({ user_id: userId, type, title, message });
+  async push(userId, type, title, message, refId = null) {
+    await _sb.from('notifications').insert({ user_id: userId, type, title, message, ref_id: refId });
   },
 
   subscribe(userId, callback) {
@@ -709,7 +709,8 @@ const Coop = {
           leaderId,
           'join_request',
           'คำขอเข้าร่วมกลุ่ม',
-          `${profile?.username || 'ผู้ใช้'} ขอเข้าร่วม ${guildRow?.name || ''}`
+          `${profile?.username || 'ผู้ใช้'} ขอเข้าร่วม ${guildRow?.name || ''}`,
+          data.id
         );
       }
     } catch { /* notification failure is non-critical */ }
@@ -743,10 +744,17 @@ const Coop = {
     return data || [];
   },
 
-  async approveRequest(requestId, guildId, targetUserId) {
+  async approveRequest(requestId) {
+    const { data: req, error: reqErr } = await _sb
+      .from('guild_join_requests')
+      .select('guild_id, user_id')
+      .eq('id', requestId)
+      .single();
+    if (reqErr) throw reqErr;
+
     const { error: memberErr } = await _sb
       .from('guild_members')
-      .insert({ guild_id: guildId, user_id: targetUserId, role: 'member' });
+      .insert({ guild_id: req.guild_id, user_id: req.user_id, role: 'member' });
     if (memberErr && memberErr.code !== '23505') throw memberErr;
     const { error } = await _sb
       .from('guild_join_requests')

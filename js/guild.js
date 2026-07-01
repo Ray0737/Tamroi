@@ -326,14 +326,14 @@ const GuildModule = (() => {
               <p style="margin:0;flex:1;font-size:12px;font-weight:600">
                 ${escapeHtml(r.profiles?.username || '?')}</p>
               <button class="btn btn-primary" style="font-size:10px;padding:4px 10px"
-                      data-approve="${escapeHtml(r.id)}" data-user="${escapeHtml(r.user_id)}">อนุมัติ</button>
+                      data-approve="${escapeHtml(r.id)}">อนุมัติ</button>
               <button class="btn btn-ghost"
                       style="font-size:10px;padding:4px 10px;border-color:var(--color-border)"
                       data-reject="${escapeHtml(r.id)}">ปฏิเสธ</button>
             </div>`).join('')}
         </div>`;
       el.querySelectorAll('[data-approve]').forEach(btn =>
-        btn.addEventListener('click', () => _handleApprove(btn.dataset.approve, guildId, btn.dataset.user))
+        btn.addEventListener('click', () => _handleApprove(btn.dataset.approve))
       );
       el.querySelectorAll('[data-reject]').forEach(btn =>
         btn.addEventListener('click', () => _handleReject(btn.dataset.reject))
@@ -503,9 +503,9 @@ const GuildModule = (() => {
     }
   }
 
-  async function _handleApprove(requestId, guildId, targetUserId) {
+  async function _handleApprove(requestId) {
     try {
-      await DB.Coop.approveRequest(requestId, guildId, targetUserId);
+      await DB.Coop.approveRequest(requestId);
       await renderGuildPanel();
     } catch (e) {
       window.AppCore?.showToast?.(e.message || 'อนุมัติไม่สำเร็จ');

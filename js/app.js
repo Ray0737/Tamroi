@@ -335,6 +335,7 @@ function getRenderedNotifications() {
     title: row.querySelector('.notif-title')?.textContent || '',
     message: row.querySelector('.notif-msg')?.textContent || '',
     is_read: !row.classList.contains('unread'),
+    ref_id: row.querySelector('[data-ref]')?.dataset.ref || null,
   }));
 }
 
@@ -357,6 +358,7 @@ function renderNotifications(notifs) {
     artifact:      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;color:var(--color-muted)"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>`,
   };
   // escapeHtml prevents XSS from DB-sourced notification title/message
+  const isPendingJoinRequest = n => n.type === 'join_request' && !n.is_read && n.ref_id;
   list.innerHTML = notifs.map(n => `
     <div class="notif-row ${n.is_read ? '' : 'unread'}" data-id="${escapeHtml(String(n.id))}" data-type="${escapeHtml(n.type || '')}">
       <span class="notif-icon">${icons[n.type] || ''}</span>
@@ -364,16 +366,46 @@ function renderNotifications(notifs) {
         <p class="notif-title">${escapeHtml(n.title)}</p>
         <p class="notif-msg">${escapeHtml(n.message)}</p>
       </div>
-      ${!n.is_read ? `<span class="notif-dot"></span>` : ''}
+      ${isPendingJoinRequest(n) ? `
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          <button class="btn btn-primary" style="font-size:10px;padding:4px 10px"
+                  data-accept="${escapeHtml(String(n.id))}" data-ref="${escapeHtml(String(n.ref_id))}">ยอมรับ</button>
+          <button class="btn btn-ghost" style="font-size:10px;padding:4px 10px;border-color:var(--color-border)"
+                  data-ignore="${escapeHtml(String(n.id))}" data-ref="${escapeHtml(String(n.ref_id))}">ไม่รับ</button>
+        </div>
+      ` : (!n.is_read ? `<span class="notif-dot"></span>` : '')}
     </div>
   `).join('');
 
   list.querySelectorAll('.notif-row').forEach(row => {
+    if (row.querySelector('[data-accept]')) return;
     row.addEventListener('click', async () => {
       const id = row.dataset.id;
       row.classList.remove('unread');
       row.querySelector('.notif-dot')?.remove();
       await DB.Notifications.markRead(id).catch(() => {});
+    });
+  });
+
+  list.querySelectorAll('[data-accept]').forEach(btn => {
+    btn.addEventListener('click', async e => {
+      e.stopPropagation();
+      try {
+        await DB.Coop.approveRequest(btn.dataset.ref);
+        await DB.Notifications.markRead(btn.dataset.accept).catch(() => {});
+        document.dispatchEvent(new CustomEvent('guild-changed'));
+        loadNotifications();
+      } catch (err) { showToast(err.message || 'อนุมัติไม่สำเร็จ'); }
+    });
+  });
+  list.querySelectorAll('[data-ignore]').forEach(btn => {
+    btn.addEventListener('click', async e => {
+      e.stopPropagation();
+      try {
+        await DB.Coop.rejectRequest(btn.dataset.ref);
+        await DB.Notifications.markRead(btn.dataset.ignore).catch(() => {});
+        loadNotifications();
+      } catch (err) { showToast(err.message || 'เกิดข้อผิดพลาด'); }
     });
   });
 }

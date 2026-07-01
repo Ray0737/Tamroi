@@ -61,6 +61,8 @@
 | `supabase/patch_notifications_rls.sql` | Allow cross-user notification inserts (join request alerts) |
 | `supabase/patch_community.sql` | `community_posts` table + RLS + flag trigger |
 | `supabase/patch_community_likes.sql` | `community_post_likes` table + RLS |
+| `supabase/patch_guild_leader_rls.sql` | Lets non-members see who a guild's leader is (join-request notify) |
+| `supabase/patch_notification_ref.sql` | `notifications.ref_id` column — links a notif to its source row |
 
 ---
 
@@ -77,6 +79,7 @@
 | Class-tiered capture animation | ✅ Done | CSS reveal animation varies by figure class (C/B/A/S) |
 | Themed dialogs | ✅ Done | Native `confirm`/`alert` replaced with styled modals throughout |
 | Leaderboard filter dropdowns | ✅ Done | Replaced filter pills with `<select>` dropdowns |
+| Actionable join-request notification | ✅ Done | Notification tab shows Accept/Ignore buttons on `join_request` notifs (via `ref_id`); stays unread until acted on |
 | Guild leaderboard realtime | ✅ Done | `subscribeGuildChanges()` on guilds + guild_members tables |
 
 ### Known Gaps (Deferred)

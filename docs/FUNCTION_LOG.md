@@ -66,7 +66,7 @@
 | Function | File | Purpose | Supabase Tables | Status |
 |----------|------|---------|-----------------|--------|
 | `updateMapStatsPill()` | js/app.js | Updates top map stats pill from `App.profile` at boot and after capture | profiles | ✅ Working |
-| `loadNotifications()` | js/app.js | Loads unread notifications from DB; shows bell badge count | notifications | ✅ Working |
+| `loadNotifications()` | js/app.js | Loads unread notifications from DB; shows bell badge count. `join_request` notifs render Accept/Ignore buttons (via `ref_id` → `guild_join_requests.id`) and stay unread until acted on | notifications | ✅ Updated 2026-07-01 |
 | `subscribeNotifications()` | js/app.js | Supabase Realtime sub on `notifications` for this user | notifications (realtime) | ✅ Working |
 | `openLoreSheet(node)` | js/app.js | Opens lore reading bottom sheet; records open time for read-depth tracking | — | ✅ Working (depth tracking not yet added) |
 | `openLoreChainSheet(chain)` | js/app.js | Opens lore chain summary sheet | — | ✅ Working |
@@ -108,7 +108,7 @@
 | `DB.Coop.sendJoinRequest(guildId, userId)` | guild_join_requests, notifications | ✅ Working |
 | `DB.Coop.getMyPendingRequest(userId)` | guild_join_requests | ✅ Working |
 | `DB.Coop.getJoinRequests(guildId)` | guild_join_requests, profiles | ✅ Working |
-| `DB.Coop.approveRequest(requestId, guildId, targetUserId)` | guild_join_requests, guild_members | ✅ Working |
+| `DB.Coop.approveRequest(requestId)` | guild_join_requests, guild_members | ✅ Updated 2026-07-01: derives guild_id/user_id from the request row instead of caller args |
 | `DB.Coop.rejectRequest(requestId)` | guild_join_requests | ✅ Working |
 | `DB.Coop.getCollabMissions()` | collab_missions | ✅ Working |
 | `DB.Coop.checkInToMission(missionId, guildId, userId)` | collab_mission_checkins | ✅ Working |
