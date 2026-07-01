@@ -302,6 +302,8 @@ const MapModule = (() => {
   function checkLoreProximity(userLat, userLng) {
     loreNodes.forEach(node => {
       if (unlockedLoreIds.has(node.id) || pendingLoreIds.has(node.id)) return;
+      const districtId = node.district_id || node.districtId;
+      if (districtId && userDistrictState[districtId]?.fogged !== false) return;
       const distance = haversineDistance(userLat, userLng, node.lat, node.lng);
       if (distance <= (node.radius_m || 100)) unlockLore(node);
     });
@@ -332,11 +334,63 @@ const MapModule = (() => {
       return;
     }
 
-    const btn = document.getElementById('btn-save-lore');
-    if (btn) {
-      btn.disabled = true;
-      btn.innerHTML = `<div class="spinner"></div>`;
+    // Quiz gate: if the district has a quiz question, ask it before saving
+    const districtId = node.district_id || node.districtId;
+    if (districtId) {
+      try {
+        const q = await DB.Quiz.getForDistrict(districtId);
+        if (q) {
+          activeQuiz = { isLore: true, loreId: node.id, questions: [q], questionIndex: 0, selected: null };
+          renderLoreQuizSheet(node, q);
+          window.AppCore?.openSheet('quiz-sheet');
+          return;
+        }
+      } catch { /* no quiz available, proceed directly */ }
     }
+
+    await completeLoreUnlock(node);
+  }
+
+  function renderLoreQuizSheet(node, question) {
+    const step    = document.getElementById('quiz-step');
+    const pts     = document.getElementById('quiz-pts');
+    const title   = document.getElementById('quiz-title');
+    const qEl     = document.getElementById('quiz-question');
+    const options = document.getElementById('quiz-options');
+    const submit  = document.getElementById('btn-submit-quiz');
+    if (!step || !pts || !title || !qEl || !options || !submit) return;
+
+    step.textContent = 'Lore Quiz';
+    pts.textContent  = `+${node.lore_pts || 0} pts`;
+    title.textContent = node.name_th || node.name_en || 'Lore';
+    qEl.textContent   = question.question_th || '';
+
+    options.innerHTML = ['A', 'B', 'C', 'D'].map(opt => {
+      const key = `option_${opt.toLowerCase()}`;
+      return `<button class="btn btn-ghost btn-full quiz-option" data-option="${opt}" type="button">${opt}. ${escapeHtml(question[key] || '')}</button>`;
+    }).join('');
+
+    options.querySelectorAll('.quiz-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeQuiz.selected = btn.dataset.option;
+        options.querySelectorAll('.quiz-option').forEach(b => b.classList.remove('btn-primary'));
+        btn.classList.add('btn-primary');
+      });
+    });
+
+    submit.disabled = false;
+    submit.textContent = 'ยืนยันคำตอบ';
+    submit.onclick = submitQuizAnswer;
+  }
+
+  async function completeLoreUnlock(nodeOrId) {
+    const node = typeof nodeOrId === 'string'
+      ? (loreNodes.find(item => item.id === nodeOrId) || activeLoreNode)
+      : nodeOrId;
+    if (!node) return;
+
+    const btn = document.getElementById('btn-save-lore');
+    if (btn) { btn.disabled = true; btn.innerHTML = `<div class="spinner"></div>`; }
 
     const user = window.AppCore?.App?.user;
     try {
@@ -344,7 +398,7 @@ const MapModule = (() => {
         await DB.Lore.unlock(user.id, node.id);
         await DB.Profiles.addLegacyPoints(user.id, (node.lore_pts || 0) * getTransportMultiplier());
       }
-    } catch { /* offline unlock still persists locally */ }
+    } catch { /* offline — persists locally */ }
 
     unlockedLoreIds.add(node.id);
     pendingLoreIds.delete(node.id);
@@ -546,7 +600,7 @@ const MapModule = (() => {
     getLoreNodes().forEach(node => {
       const districtId = node.district_id || node.districtId;
       const state = districtId ? userDistrictState[districtId] : null;
-      if (state?.fogged) return;
+      if (districtId && state?.fogged !== false) return;
 
       const discovered = unlockedLoreIds.has(node.id) || pendingLoreIds.has(node.id);
 
@@ -918,12 +972,11 @@ const MapModule = (() => {
       feedbackEl.textContent = 'ตอบผิด — ลองใหม่อีกครั้ง';
       activeQuiz.selected = null;
 
-      const fig = activeQuiz.figure;
-      if (fig.class === 'S' || fig.class === 'A') {
-        // S/A: close sheet and force re-open to retry
+      // Lore quiz always retries (no S/A penalty)
+      const isHard = !activeQuiz.isLore && (activeQuiz.figure?.class === 'S' || activeQuiz.figure?.class === 'A');
+      if (isHard) {
         setTimeout(() => { window.AppCore?.closeAllSheets(); activeQuiz = null; }, 2000);
       } else {
-        // B/C: re-enable buttons after short delay for immediate retry
         setTimeout(() => {
           opts.forEach(btn => {
             btn.disabled = false;
@@ -941,6 +994,15 @@ const MapModule = (() => {
 
     if (activeQuiz.questionIndex + 1 < activeQuiz.questions.length) {
       openQuizForFigure(activeQuiz.figure.id, activeQuiz.questionIndex + 1, activeQuiz.questions);
+      return;
+    }
+
+    // ── Lore quiz: correct answer → complete the unlock ──
+    if (activeQuiz.isLore) {
+      const loreId = activeQuiz.loreId;
+      activeQuiz = null;
+      window.AppCore?.closeAllSheets();
+      await completeLoreUnlock(loreId);
       return;
     }
 
@@ -982,6 +1044,9 @@ const MapModule = (() => {
 
     // Reveal nodes in this district
     renderNodes();
+
+    // Reveal lore markers for this newly cleared district
+    renderLoreMarkers();
 
     // Update watchtower to visited state
     renderWatchtowers(allDistrictsCache || []);

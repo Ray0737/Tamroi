@@ -289,9 +289,6 @@ const Lore = {
       .from('lore_nodes')
       .select('*, districts(name_th,name_en,province)')
       .eq('is_active', true)
-      .eq('review_status', 'approved')
-      .not('source_ref', 'is', null)
-      .neq('source_ref', '')
       .order('chain_id', { ascending: true, nullsFirst: false })
       .order('chain_part', { ascending: true });
     if (error) throw error;
@@ -324,6 +321,16 @@ const Lore = {
 
 // ── Quiz ───────────────────────────────────────────────
 const Quiz = {
+  async getForDistrict(districtId) {
+    const { data, error } = await _sb
+      .from('quiz_questions')
+      .select('*')
+      .eq('district_id', districtId)
+      .limit(1);
+    if (error) throw error;
+    return data?.[0] || null;
+  },
+
   async getForFigure(figureId, count = 1) {
     const { data, error } = await _sb
       .from('quiz_questions')
