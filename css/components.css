@@ -1007,3 +1007,61 @@
   background-position: right 10px center;
   padding-right: 30px;
 }
+.lb-select option {
+  background: var(--color-card-dark);
+  color: var(--color-white);
+}
+.lb-select option:checked {
+  background: var(--color-surface);
+  color: var(--color-success);
+}
+
+/* Custom dropdown (replaces native select open state) */
+.lb-custom-wrap { position: relative; flex: 1; }
+.lb-custom-trigger {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding: 8px 12px;
+  background: var(--color-card-dark);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  font-family: var(--font-body); font-size: 13px; font-weight: 500;
+  cursor: pointer; text-align: left;
+}
+.lb-custom-trigger svg { flex-shrink: 0; transition: transform 0.15s; }
+.lb-custom-trigger.open svg { transform: rotate(180deg); }
+.lb-custom-panel {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 200;
+  background: var(--color-card-dark);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  display: none;
+}
+.lb-custom-panel.open { display: block; }
+.lb-custom-option {
+  padding: 10px 12px; font-size: 13px; cursor: pointer;
+  color: var(--color-muted); transition: background 0.1s, color 0.1s;
+}
+.lb-custom-option:hover { background: rgba(255,255,255,0.05); color: var(--color-white); }
+.lb-custom-option.selected { color: var(--color-success); background: rgba(123,198,126,0.08); }
+
+/* Guild panel button hover animations */
+#guild-panel button {
+  transition: opacity 0.15s, background 0.15s, transform 0.12s, border-color 0.15s;
+}
+#guild-panel button:hover { opacity: 0.85; transform: translateY(-1px); }
+#guild-panel button:active { transform: translateY(0); opacity: 1; }
+#guild-panel #btn-copy-invite:hover,
+#guild-panel #btn-edit-guild:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.2);
+  opacity: 1;
+}
+#guild-panel #btn-delete-guild:hover,
+#guild-panel #btn-leave-guild:hover {
+  background: rgba(239,83,80,0.08);
+  border-color: rgba(239,83,80,0.5);
+  opacity: 1;
+}

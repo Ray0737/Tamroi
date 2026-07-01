@@ -22,7 +22,73 @@ const LeaderboardModule = (() => {
     fetchAndRender();
   }
 
+  const _chevron = `<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+
+  function buildCustomSelect(id) {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'lb-custom-wrap';
+    // carry over flex style from the original select
+    if (sel.style.flex) wrap.style.flex = sel.style.flex;
+
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'lb-custom-trigger';
+
+    const panel = document.createElement('div');
+    panel.className = 'lb-custom-panel';
+
+    const opts = Array.from(sel.options);
+    opts.forEach(o => {
+      const item = document.createElement('div');
+      item.className = 'lb-custom-option' + (o.selected ? ' selected' : '');
+      item.dataset.value = o.value;
+      item.textContent = o.text;
+      item.addEventListener('click', () => {
+        sel.value = o.value;
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
+        updateTrigger();
+        closePanel();
+      });
+      panel.appendChild(item);
+    });
+
+    function updateTrigger() {
+      const cur = sel.options[sel.selectedIndex];
+      trigger.innerHTML = `<span>${cur?.text || ''}</span>${_chevron}`;
+      panel.querySelectorAll('.lb-custom-option').forEach(item => {
+        item.classList.toggle('selected', item.dataset.value === sel.value);
+      });
+    }
+
+    function closePanel() {
+      panel.classList.remove('open');
+      trigger.classList.remove('open');
+    }
+
+    trigger.addEventListener('click', e => {
+      e.stopPropagation();
+      const isOpen = panel.classList.contains('open');
+      document.querySelectorAll('.lb-custom-panel.open').forEach(p => {
+        p.classList.remove('open');
+        p.previousElementSibling?.classList.remove('open');
+      });
+      if (!isOpen) { panel.classList.add('open'); trigger.classList.add('open'); }
+    });
+
+    updateTrigger();
+    sel.style.display = 'none';
+    wrap.appendChild(trigger);
+    wrap.appendChild(panel);
+    sel.parentNode.insertBefore(wrap, sel);
+    wrap.appendChild(sel);
+  }
+
   function bindControls() {
+    ['leaderboard-view', 'leaderboard-period', 'leaderboard-metric'].forEach(buildCustomSelect);
+
     document.getElementById('leaderboard-metric')?.addEventListener('change', e => {
       activeMetric = e.target.value;
       render();
@@ -53,6 +119,13 @@ const LeaderboardModule = (() => {
         guildEl?.setAttribute('hidden', '');
         soloEl?.removeAttribute('hidden');
       }
+    });
+
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.lb-custom-panel.open').forEach(p => {
+        p.classList.remove('open');
+        p.previousElementSibling?.classList.remove('open');
+      });
     });
   }
 

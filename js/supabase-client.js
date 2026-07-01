@@ -710,6 +710,29 @@ const Coop = {
     if (error) throw error;
   },
 
+  async getAnnouncements(guildId) {
+    const { data, error } = await _sb
+      .from('guild_announcements')
+      .select('id, content, created_at, profiles(username)')
+      .eq('guild_id', guildId)
+      .order('created_at', { ascending: false })
+      .limit(20);
+    if (error) throw error;
+    return data || [];
+  },
+
+  async postAnnouncement(guildId, content, userId) {
+    const { error } = await _sb
+      .from('guild_announcements')
+      .insert({ guild_id: guildId, content, posted_by: userId });
+    if (error) throw error;
+  },
+
+  async deleteAnnouncement(id) {
+    const { error } = await _sb.from('guild_announcements').delete().eq('id', id);
+    if (error) throw error;
+  },
+
   async getMyPendingRequest(userId) {
     const { data } = await _sb
       .from('guild_join_requests')

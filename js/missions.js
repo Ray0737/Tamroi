@@ -177,12 +177,14 @@ const MissionModule = (() => {
       // All S/A figures captured or no districts explored yet
       const allDone = figures.filter(f => f.class === 'S' || f.class === 'A').every(f => capturedIds.has(f.id));
       el.innerHTML = `
-        <div style="background:var(--color-card-dark);border-radius:var(--radius-xl);
-                    border:1px solid rgba(123,198,126,0.2);padding:var(--space-md);text-align:center">
-          <p style="margin:0;font-size:13px;font-weight:700;color:var(--color-success)">
+        <div style="
+          background:linear-gradient(135deg,rgba(123,198,126,0.12) 0%,rgba(123,198,126,0.04) 100%);
+          border:1px solid rgba(123,198,126,0.2);border-radius:var(--radius-lg);
+          padding:16px var(--space-md);text-align:center">
+          <p style="margin:0;font-size:13px;font-weight:700;color:var(--color-success);letter-spacing:0.01em">
             ${allDone ? '🎉 ทุกภารกิจเสร็จสมบูรณ์!' : 'สำรวจพื้นที่ใหม่เพื่อปลดล็อคภารกิจ'}
           </p>
-          <p style="margin:6px 0 0;font-size:11px;color:var(--color-muted)">
+          <p style="margin:5px 0 0;font-size:11px;color:var(--color-muted);line-height:1.4">
             ${allDone ? 'คุณจับบุคคลสำคัญระดับ S/A ครบทั้งหมดแล้ว' : 'Check-in ที่ Watchtower ในเขตที่ยังไม่ได้สำรวจ'}
           </p>
         </div>`;
@@ -365,21 +367,21 @@ const MissionModule = (() => {
     el.innerHTML = `
       <div style="
         display:flex;align-items:center;gap:12px;
-        background:var(--color-success-dim);
-        border:1px solid rgba(123,198,126,0.25);
-        border-left:3px solid var(--color-success);
-        border-radius:var(--radius-md);padding:12px var(--space-md)">
-        <div style="width:36px;height:36px;border-radius:50%;background:rgba(123,198,126,0.2);
+        background:linear-gradient(135deg,rgba(123,198,126,0.12) 0%,rgba(123,198,126,0.04) 100%);
+        border:1px solid rgba(123,198,126,0.2);
+        border-radius:var(--radius-lg);padding:14px var(--space-md)">
+        <div style="width:40px;height:40px;border-radius:var(--radius-md);background:rgba(123,198,126,0.15);
                     display:flex;align-items:center;justify-content:center;
                     flex-shrink:0;color:var(--color-success)">
           ${_trainSVG}
         </div>
-        <div style="flex:1">
-          <p style="margin:0;font-size:13px;font-weight:700;color:var(--color-success)">BTS / MRT Bonus Active</p>
-          <p style="margin:2px 0 0;font-size:10px;color:var(--color-muted)">Using public transport in Bangkok · +2× Points on all actions</p>
+        <div style="flex:1;min-width:0">
+          <p style="margin:0;font-size:13px;font-weight:700;color:var(--color-success);letter-spacing:0.01em">BTS / MRT Bonus Active</p>
+          <p style="margin:3px 0 0;font-size:11px;color:var(--color-muted);line-height:1.4">Using public transport in Bangkok · +2× Points on all actions</p>
         </div>
-        <span style="flex-shrink:0;font-size:18px;font-weight:800;font-family:var(--font-heading);
-                     color:var(--color-success)">×2</span>
+        <span style="flex-shrink:0;font-size:20px;font-weight:800;font-family:var(--font-heading);
+                     color:var(--color-success);background:rgba(123,198,126,0.15);
+                     padding:4px 10px;border-radius:var(--radius-sm)">×2</span>
       </div>
     `;
   }
