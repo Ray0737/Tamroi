@@ -626,7 +626,7 @@ const GuildModule = (() => {
                         color:var(--color-white);font-size:13px">
           <button class="btn btn-primary" id="btn-findgroup-search" style="white-space:nowrap">ค้นหา</button>
         </div>
-        <div id="findgroup-results"></div>
+        <div id="findgroup-results" style="margin-top:var(--space-sm)"></div>
       </div>`;
   }
 
