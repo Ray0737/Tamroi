@@ -146,8 +146,7 @@
 | `init(userId)` | js/guild.js | Boot: loads user's guild, subscribes Presence + member changes, renders panel, triggers guild fog refresh | guilds, guild_members | ✅ Working |
 | `getState()` | js/guild.js | Returns current `{guild, members}` snapshot for other modules | — | ✅ Working |
 | `getOnlineMemberIds()` | js/guild.js | Returns Set of user_ids currently online via Presence | — (Presence) | ✅ Working |
-| `renderGuildPanel()` | js/guild.js | Renders guild hub or no-guild CTA in Leaderboard tab | guilds, guild_members, guild_join_requests | ✅ Working |
-| `renderFindGroupPanel()` | js/guild.js | Renders searchable guild browser + join request flow | guilds, guild_leaderboard, guild_join_requests | ✅ Working |
+| `renderGuildPanel()` | js/guild.js | Renders guild hub (with guild) or no-guild CTA + inline guild search (without guild) | guilds, guild_members, guild_join_requests | ✅ Working |
 | `init()` | js/coop.js | Loads collab missions for current district and renders cards | collab_missions, collab_mission_checkins | ✅ Working |
 | `renderMissionCard(mission, checkins, myCheckin)` | js/coop.js | Renders co-op mission card with progress bar and checkin CTA | — | ✅ Working |
 | `subscribeProgress(missionId, guildId)` | js/coop.js | Real-time progress bar updates via postgres_changes on checkins | collab_mission_checkins (realtime) | ✅ Working |

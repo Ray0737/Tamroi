@@ -531,12 +531,34 @@ const GuildModule = (() => {
           </button>
         </div>
         <p id="guild-error" style="font-size:11px;color:#ef5350;margin:6px 0 0;min-height:16px"></p>
+      </div>
+      <div style="margin-top:var(--space-md)">
+        <p style="font-size:11px;color:var(--color-muted);margin:0 0 8px">หรือค้นหากลุ่ม</p>
+        <div style="display:flex;gap:8px">
+          <input id="findgroup-search-input" type="text" placeholder="ค้นหากลุ่ม..."
+                 style="flex:1;background:var(--color-card-darker);border:1px solid var(--color-border);
+                        border-radius:var(--radius-md);padding:10px var(--space-sm);
+                        color:var(--color-white);font-size:13px">
+          <button class="btn btn-primary" id="btn-findgroup-search" style="white-space:nowrap">ค้นหา</button>
+        </div>
+        <div id="findgroup-results"></div>
       </div>`;
   }
 
   function _bindNoGuildActions(el, pendingRequest) {
     el.querySelector('#btn-create-guild')?.addEventListener('click', _handleCreate);
     el.querySelector('#btn-join-guild')?.addEventListener('click', _handleJoin);
+
+    const searchInput = el.querySelector('#findgroup-search-input');
+    const searchBtn   = el.querySelector('#btn-findgroup-search');
+    const resultsEl   = el.querySelector('#findgroup-results');
+    if (searchInput && searchBtn && resultsEl) {
+      const doSearch = () => _loadFindGroupResults(resultsEl, searchInput.value.trim(), null);
+      searchBtn.addEventListener('click', doSearch);
+      searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+      doSearch();
+    }
+
     el.querySelector('#btn-cancel-request')?.addEventListener('click', async () => {
       if (!pendingRequest?.id) return;
       try {
@@ -637,40 +659,6 @@ const GuildModule = (() => {
     }
   }
 
-  async function renderFindGroupPanel() {
-    if (_initPromise) await _initPromise;
-    const el = document.getElementById('findgroup-panel');
-    if (!el) return;
-    const myGuildId = _state?.guild?.id ?? null;
-
-    el.innerHTML = `
-      <div style="display:flex;flex-direction:column;gap:var(--space-sm)">
-        ${myGuildId ? `
-          <div style="padding:var(--space-sm) var(--space-md);background:rgba(255,126,85,0.08);
-                      border-radius:var(--radius-md);border:1px solid rgba(255,126,85,0.2)">
-            <p style="margin:0;font-size:12px;color:var(--color-primary)">
-              คุณอยู่ในกลุ่มแล้ว — ออกก่อนเพื่อเข้าร่วมกลุ่มอื่น</p>
-          </div>` : ''}
-        <div style="display:flex;gap:8px">
-          <input id="findgroup-search-input" type="text" placeholder="ค้นหากลุ่ม..."
-                 style="flex:1;background:var(--color-card-darker);border:1px solid var(--color-border);
-                        border-radius:var(--radius-md);padding:10px var(--space-sm);
-                        color:var(--color-white);font-size:13px">
-          <button class="btn btn-primary" id="btn-findgroup-search" style="white-space:nowrap">ค้นหา</button>
-        </div>
-        <div id="findgroup-results"></div>
-      </div>`;
-
-    const searchInput = el.querySelector('#findgroup-search-input');
-    const searchBtn   = el.querySelector('#btn-findgroup-search');
-    const resultsEl   = el.querySelector('#findgroup-results');
-    const doSearch    = () => _loadFindGroupResults(resultsEl, searchInput.value.trim(), myGuildId);
-
-    searchBtn.addEventListener('click', doSearch);
-    searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
-    doSearch();
-  }
-
   async function _loadFindGroupResults(resultsEl, query, myGuildId) {
     if (!resultsEl) return;
     resultsEl.innerHTML = `<div style="display:flex;justify-content:center;padding:20px"><div class="spinner"></div></div>`;
@@ -740,7 +728,7 @@ const GuildModule = (() => {
     }
   }
 
-  return { init, getState, getOnlineMemberIds, subscribePresence, renderGuildPanel, renderFindGroupPanel };
+  return { init, getState, getOnlineMemberIds, subscribePresence, renderGuildPanel };
 })();
 
 window.GuildModule = GuildModule;

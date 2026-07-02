@@ -319,7 +319,7 @@ Run patches in this order:
 - `window.DB.Raid`: `createSession(figureId, guildId, hostUserId)`, `joinSession(sessionId, userId)`, `updateSessionStatus(sessionId, status)`, `insertCaptures(sessionId, participantUserIds, figureId)`, `openBroadcast(sessionId)`, `openPresence(sessionId)`
 - `window.DB.Discussion`: `getComments(figureId)`, `postComment(figureId, userId, content, parentId)`, `flagComment(discussionId, userId)`
 - `window.DB.Community`: `getPosts(userId)`, `getReplies(parentId)`, `postMessage(userId, content, parentId)`, `flagPost(postId, userId)`, `likePost(postId, userId)`, `unlikePost(postId, userId)`
-- `window.GuildModule`: `init(userId)`, `getState()`, `getOnlineMemberIds()`, `renderGuildPanel()`, `renderFindGroupPanel()`
+- `window.GuildModule`: `init(userId)`, `getState()`, `getOnlineMemberIds()`, `renderGuildPanel()`
 - `window.CoopModule`: `init()`
 - `window.RaidModule`: `init(figureId)`
 - `window.DiscussionModule`: `init(figureId)`, `load(figureId)`

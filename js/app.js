@@ -177,7 +177,7 @@ function switchTab(tab) {
 }
 
 function _switchCommunityTab(view) {
-  ['community-rank-section', 'community-guild-section', 'community-findgroup-section', 'community-forum-section']
+  ['community-rank-section', 'community-guild-section', 'community-forum-section']
     .forEach(id => document.getElementById(id)?.setAttribute('hidden', ''));
 
   if (view === 'rank') {
@@ -186,9 +186,6 @@ function _switchCommunityTab(view) {
   } else if (view === 'mygroup') {
     document.getElementById('community-guild-section')?.removeAttribute('hidden');
     window.GuildModule?.renderGuildPanel();
-  } else if (view === 'findgroup') {
-    document.getElementById('community-findgroup-section')?.removeAttribute('hidden');
-    window.GuildModule?.renderFindGroupPanel();
   } else if (view === 'discuss') {
     document.getElementById('community-forum-section')?.removeAttribute('hidden');
     window.CommunityForumModule?.load();
