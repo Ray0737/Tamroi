@@ -74,7 +74,7 @@ async function _bootApp(user) {
   loadNotifications();
   subscribeNotifications();
   window.GuildModule?.init(user.id);
-  switchTab('map');
+  switchTab(localStorage.getItem('tamroi_active_tab') || 'map');
 }
 
 // ── Top Bar ───────────────────────────────────────────
@@ -132,6 +132,7 @@ function switchTab(tab) {
   if (App.currentTab === tab && App.mapInitialized) return;
   const previousTab = App.currentTab;
   App.currentTab = tab;
+  localStorage.setItem('tamroi_active_tab', tab);
 
   if (previousTab === 'community' && tab !== 'community') {
     window.LeaderboardModule?.unsubscribe?.();
