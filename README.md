@@ -29,7 +29,9 @@ Travel to a District
   → Map Discovery % increases → National Leaderboard rank up
 ```
 
-Lore narration now runs a short pre-test/post-test knowledge check either side of each entry, so learning gains from reading Lore in the field can be measured directly (feeds into the NSC learning-outcome evaluation methodology).
+Lore narration now runs a short pre-test/post-test knowledge check either side of each entry, so learning gains from reading Lore in the field can be measured directly (feeds into the NSC learning-outcome evaluation methodology — see `docs/pre-post_test_plan.md` for the full measurement plan).
+
+The Collection/Archive tab sorts captured figures by class (S → A → B → C) and has an "Owned" filter pill to show only figures you've actually captured.
 
 ### Figure Classes
 
