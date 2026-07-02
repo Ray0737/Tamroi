@@ -134,17 +134,15 @@ Website - Tamroi - Coop/
 
 ### ✅ Working
 
-Fog of War · GPS watchPosition · Watchtower check-in · Support node tracking · S/A encounter gate · Quiz capture (all tiers) · Legacy Score trigger · Archive grid · Lore Journal + proximity · Leaderboard (Realtime) · Notifications (Realtime, actionable) · Seasonal/BTS-MRT bonuses · Active Mission + Daily Challenges (real DB) · Guild create/join/leave/kick/delete/transfer · Invite-code + join-request flow · Guild presence · Guild fog overlay on map · Guild leaderboard (Realtime) · Guild announcements · Collaborative missions with live progress + auto-complete trigger · Raid encounters (lobby/broadcast quiz/host failover) core logic · Discussion threads · Community forum
+Fog of War · GPS watchPosition · Watchtower check-in · Support node tracking · S/A encounter gate · Quiz capture (all tiers) · Legacy Score trigger · Archive grid · Lore Journal + proximity · Leaderboard (Realtime) · Notifications (Realtime, actionable) · Seasonal/BTS-MRT bonuses · Active Mission + Daily Challenges (real DB) · Guild create/join/leave/kick/delete/transfer · Invite-code + join-request flow · Guild presence · Guild fog overlay on map · Guild leaderboard (Realtime) · Guild announcements · Collaborative missions with live progress + auto-complete trigger · Raid encounters (lobby/broadcast quiz/host failover, distinct ⚔️ map marker, notification deep-link) · Discussion threads · Community forum
 
 ### ⚠️ Broken / incomplete
 
 | Issue | File | Detail |
 |---|---|---|
 | Lore/quiz content gating | `js/supabase-client.js` | Missing `.eq('review_status','approved')` and `.not('source_ref','is',null)` on `DB.Lore.getAll()` / `DB.Quiz.getForFigure()` — `FUNCTION_LOG.md` incorrectly marks this as done; `VERIFYLOGIC.md` (stale, 2026-06-27) still has full fix instructions for it |
-| Raid map affordance | `js/map.js` | `raid_only` figures aren't yet given a distinct ⚔️ map icon or an "Encounter" button gate — noted as a known gap in `docs/progress.md` |
-| Raid notification deep-link | `js/app.js` / `js/raid.js` | Raid-start notification doesn't yet open the raid modal directly |
 | Playwright portability | `playwright.config.mjs` | Hardcoded Linux paths (`/home/papajittan/...`) for both the static server root and the `playwright` import — won't run as-is on this Windows machine without editing |
-| Mock Satit test data | `supabase/patch_mock_satit.sql` | Field-test-only district/figure/lore/quiz seed; must be removed before production deploy per its own header comment |
+| Mock Satit test data | `supabase/patch_mock_satit.sql` | Field-test-only district/figure/lore/quiz seed; kept intentionally for now, not scheduled for removal |
 
 ### ❌ Out of scope / deferred
 

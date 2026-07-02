@@ -59,12 +59,12 @@
 - No offline mode yet — you need a live internet connection the whole time you're playing.
 - Long play sessions use up battery quickly because of continuous location tracking.
 
-## Bugs & Fixes Needed (cross-checked against code, 2026-07-01)
+## Bugs & Fixes Needed (cross-checked against code, 2026-07-02)
 
-- **Some figures never appear on the map at all** — if a figure doesn't have a saved map location, it silently doesn't render anywhere, with no error and no placeholder marker — it just doesn't exist as far as a player can tell. The fix is either to guarantee every figure always has a location before it's ever shown to players, or to show some visible fallback marker instead of just dropping it.
-- **Raid figures have no special marker on the map** — the rarest figures that require a group Raid instead of a solo quiz look identical to any other locked figure on the map right now. There's no distinct icon or "Start Raid" button telling the player this one works differently before they walk up to it.
-- **Raid-start notifications don't take you into the raid** — when a raid you're part of kicks off, the notification you get doesn't open the raid screen directly; you have to go find it yourself.
-- **Lore/quiz review-status check isn't wired in yet** — the intent is that only content which has been officially reviewed and approved should ever be shown to a player, but that check isn't actually being enforced right now, so unreviewed content could theoretically be served.
+- **Some figures never appear on the map at all** — if a figure doesn't have a saved map location, it silently doesn't render anywhere, with no error and no placeholder marker — it just doesn't exist as far as a player can tell. The fix is either to guarantee every figure always has a location before it's ever shown to players, or to show some visible fallback marker instead of just dropping it. Still outstanding.
+- ✅ **Fixed — Raid figures now have a distinct map marker.** Figures that require a group Raid show a red ⚔️ icon instead of the normal locked-figure marker, and tapping one now checks whether enough guild members are online and opens the raid lobby directly — it no longer offers a regular solo quiz at all (previously it silently let players solo-capture a raid figure through the normal encounter flow, skipping the raid entirely).
+- ✅ **Fixed — Raid-start notifications now open the raid.** Tapping a "Raid เริ่มแล้ว!" notification now joins you straight into that raid's lobby instead of just marking it read.
+- **Lore/quiz review-status check isn't wired in yet** — the intent is that only content which has been officially reviewed and approved should ever be shown to a player, but that check isn't actually being enforced right now, so unreviewed content could theoretically be served. Still outstanding.
 - **A hidden test area exists in the game** — there's a school-field-test-only district, figure, and quiz set built for a specific pilot test. Kept intentionally for now, not something to remove.
 
 ## In Progress (Intended Features — Actively Being Worked On)

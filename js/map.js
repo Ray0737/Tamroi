@@ -577,24 +577,43 @@ const MapModule = (() => {
       const state = userDistrictState[figure.districtId] || { fogged: true };
       if (state.fogged) return;
 
-      const icon = L.divIcon({
-        className: '',
-        html: `<div class="marker-node" style="color:var(--color-primary);background:var(--color-primary-dim);border-color:var(--color-primary)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
-            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
-          </svg>
-        </div>`,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12],
-      });
+      const icon = figure.raid_only
+        ? L.divIcon({
+            className: '',
+            html: `<div class="marker-node" style="color:#EF5350;background:rgba(239,83,80,0.15);border-color:#EF5350" title="Raid Encounter">⚔️</div>`,
+            iconSize: [24, 24],
+            iconAnchor: [12, 12],
+          })
+        : L.divIcon({
+            className: '',
+            html: `<div class="marker-node" style="color:var(--color-primary);background:var(--color-primary-dim);border-color:var(--color-primary)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>`,
+            iconSize: [24, 24],
+            iconAnchor: [12, 12],
+          });
 
       const marker = L.marker([figure.lat, figure.lng], { icon }).addTo(map);
       marker.on('click', () => {
-        if (figure.class === 'C' || figure.class === 'B') openQuizForFigure(figure.id);
+        if (figure.raid_only) _startRaidEncounter(figure);
+        else if (figure.class === 'C' || figure.class === 'B') openQuizForFigure(figure.id);
         else openLegendaryEncounter(figure.districtId, figure.id);
       });
       markers[`figure-${figure.id}`] = marker;
     });
+  }
+
+  // Raid-only figures skip the solo quiz entirely — they can only be captured
+  // through RaidModule's group lobby (canStartRaid checks online guild members).
+  function _startRaidEncounter(figure) {
+    if (!window.RaidModule) return;
+    if (!window.RaidModule.canStartRaid(figure)) {
+      window.AppCore?.showToast('ต้องมีสมาชิกกลุ่มออนไลน์อย่างน้อย ' + (figure.raid_min_players || 2) + ' คนเพื่อเริ่ม Raid');
+      return;
+    }
+    window.RaidModule.openRaidModal(figure);
   }
 
   function renderLoreMarkers() {
@@ -884,6 +903,7 @@ const MapModule = (() => {
       window.AppCore?.showToast('ยังไม่มี Legendary Encounter ในย่านนี้');
       return;
     }
+    if (figure.raid_only) { _startRaidEncounter(figure); return; }
     openQuizForFigure(figure.id);
   }
 

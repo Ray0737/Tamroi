@@ -356,11 +356,12 @@ function renderNotifications(notifs) {
     fog_cleared:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;color:var(--color-success)"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>`,
     rank_change:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;color:#FFD700"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>`,
     artifact:      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;color:var(--color-muted)"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>`,
+    raid:          `<span style="font-size:20px">⚔️</span>`,
   };
   // escapeHtml prevents XSS from DB-sourced notification title/message
   const isPendingJoinRequest = n => n.type === 'join_request' && !n.is_read && n.ref_id;
   list.innerHTML = notifs.map(n => `
-    <div class="notif-row ${n.is_read ? '' : 'unread'}" data-id="${escapeHtml(String(n.id))}" data-type="${escapeHtml(n.type || '')}">
+    <div class="notif-row ${n.is_read ? '' : 'unread'}" data-id="${escapeHtml(String(n.id))}" data-type="${escapeHtml(n.type || '')}" data-ref-id="${escapeHtml(String(n.ref_id || ''))}">
       <span class="notif-icon">${icons[n.type] || ''}</span>
       <div class="notif-body">
         <p class="notif-title">${escapeHtml(n.title)}</p>
@@ -384,6 +385,9 @@ function renderNotifications(notifs) {
       row.classList.remove('unread');
       row.querySelector('.notif-dot')?.remove();
       await DB.Notifications.markRead(id).catch(() => {});
+      if (row.dataset.type === 'raid' && row.dataset.refId) {
+        window.RaidModule?.joinFromNotification(row.dataset.refId);
+      }
     });
   });
 

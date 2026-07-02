@@ -817,6 +817,16 @@ const Raid = {
     return data;
   },
 
+  async getById(sessionId) {
+    const { data, error } = await _sb
+      .from('raid_sessions')
+      .select('*, figures(*)')
+      .eq('id', sessionId)
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
   async joinSession(sessionId, userId) {
     const { data, error } = await _sb
       .from('raid_session_members')

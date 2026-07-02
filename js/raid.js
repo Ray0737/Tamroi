@@ -25,7 +25,7 @@ const RaidModule = (() => {
     return online.size >= (figure.raid_min_players || 2);
   }
 
-  async function openRaidModal(figure) {
+  async function openRaidModal(figure, existingSessionId = null) {
     const user  = window.AppCore?.App?.user;
     const guild = window.GuildModule?.getState();
     if (!user || !guild) return;
@@ -35,12 +35,17 @@ const RaidModule = (() => {
     modal.removeAttribute('hidden');
 
     try {
-      _session = await DB.Raid.createSession(figure.id, guild.guild.id, user.id);
-      _isHost  = true;
+      if (existingSessionId) {
+        _session = await DB.Raid.getById(existingSessionId);
+        _isHost  = _session.host_user_id === user.id;
+      } else {
+        _session = await DB.Raid.createSession(figure.id, guild.guild.id, user.id);
+        _isHost  = true;
+      }
       _answers = {}; _answered = []; _qIndex = 0; _retried = false;
 
       await DB.Raid.joinSession(_session.id, user.id);
-      _notifyGuildMembers(guild, _session, figure);
+      if (_isHost) _notifyGuildMembers(guild, _session, figure);
 
       _broadcastCh = DB.Raid.openBroadcast(_session.id);
       _presenceCh  = DB.Raid.openPresence(_session.id);
@@ -107,7 +112,8 @@ const RaidModule = (() => {
         await DB.Notifications.push(
           m.user_id, 'raid',
           `⚔️ Raid เริ่มแล้ว!`,
-          `กลุ่มของคุณเริ่ม Raid ${figure.name_th || figure.id} — เข้าร่วมได้เลย`
+          `กลุ่มของคุณเริ่ม Raid ${figure.name_th || figure.id} — เข้าร่วมได้เลย`,
+          session.id
         );
       } catch {}
     }
@@ -432,6 +438,21 @@ const RaidModule = (() => {
     }
   }
 
+  // Entry point for tapping a raid-start notification — joins the session that's
+  // already running instead of creating a new one.
+  async function joinFromNotification(sessionId) {
+    try {
+      const session = await DB.Raid.getById(sessionId);
+      if (!session || session.status !== 'waiting') {
+        window.AppCore?.showToast?.('Raid นี้จบไปแล้วหรือไม่มีอยู่จริง');
+        return;
+      }
+      await openRaidModal(session.figures, sessionId);
+    } catch {
+      window.AppCore?.showToast?.('ไม่สามารถเข้าร่วม Raid ได้');
+    }
+  }
+
   function _close() {
     if (_timer) clearInterval(_timer);
     try { _broadcastCh?.unsubscribe(); } catch {}
@@ -441,7 +462,7 @@ const RaidModule = (() => {
     document.getElementById('raid-modal')?.setAttribute('hidden', '');
   }
 
-  return { init, canStartRaid, openRaidModal, renderLobbyModal, renderQuizScreen, handleHostFailover, _close };
+  return { init, canStartRaid, openRaidModal, joinFromNotification, renderLobbyModal, renderQuizScreen, handleHostFailover, _close };
 })();
 
 window.RaidModule = RaidModule;
