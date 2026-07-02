@@ -297,6 +297,7 @@ Run patches in this order:
 | `discussion_flags` | patch_coop | Flag votes; trigger auto-hides at 3 flags |
 | `community_posts` | patch_community | Global community feed posts + replies |
 | `community_post_likes` | patch_community_likes | Like/unlike tracking per post per user |
+| `user_lore_assessments` | patch_prepost | Pre/post quiz results per user per lore node (one row per phase: pre/post) |
 | `guild_leaderboard` VIEW | patch_coop | Aggregated guild stats (discovery, captures, score) |
 | `on_capture_update_score` trigger | patch_lore | Auto-updates `profiles.legacy_score` on `user_captures` insert |
 | `on_collab_checkin_threshold` trigger | patch_coop | Auto-completes mission + awards pts when checkin count ≥ required |
@@ -305,7 +306,7 @@ Run patches in this order:
 ### Runtime APIs
 
 **Phase 1**
-- `window.DB.Lore`: `getAll()`, `getUserUnlocked(userId)`, `unlock(userId, loreId)`
+- `window.DB.Lore`: `getAll()`, `getUserUnlocked(userId)`, `unlock(userId, loreId)`, `getLoreQuestions(loreId)`, `saveAssessment(userId, loreId, phase, score, total)`, `getAssessments(userId, loreId)`
 - `window.DB.Quiz`: `getForFigure(figureId, count)`
 - `window.DB.Districts.getVisitedSupportNodes(userId)`, `updateNodeVisit(userId, districtId, nodeType, nodeId)`
 - `window.DB.Profiles.addLegacyPoints(userId, pts)`

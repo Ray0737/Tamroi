@@ -34,7 +34,7 @@
 |----------|------|---------|-----------------|--------|
 | `renderFigures(filter)` | js/collection.js | Loads and renders figure grid from Supabase; filters by S/A/B/C; shows captured/locked state | figures, user_captures | ✅ Working |
 | `showDetail(fig)` | js/collection.js | Renders figure bio modal; reads `era` from DB; fallback shows "[Class]-Class · [district]" | figures | ✅ Fixed 2026-06-27 |
-| `renderLoreJournal()` | js/collection.js | Loads user's unlocked lore entries; groups by chain_id; renders chain progress bars | user_lore, lore_nodes | ✅ Working |
+| `renderLoreJournal()` | js/collection.js | Loads user's unlocked lore entries; groups by chain_id; renders chain progress bars + assessment pill (pretest/posttest scores) | user_lore, lore_nodes, user_lore_assessments | ✅ Updated 2026-07-02: now async, displays assessment results |
 | `renderStats()` | js/collection.js | Syncs the stats summary row (figures captured, artifacts, legacy score) | profiles, user_captures | ✅ Working |
 
 ---
@@ -69,7 +69,7 @@
 | `updateMapStatsPill()` | js/app.js | Updates top map stats pill from `App.profile` at boot and after capture | profiles | ✅ Working |
 | `loadNotifications()` | js/app.js | Loads unread notifications from DB; shows bell badge count. `join_request` notifs render Accept/Ignore buttons (via `ref_id` → `guild_join_requests.id`) and stay unread until acted on | notifications | ✅ Updated 2026-07-01 |
 | `subscribeNotifications()` | js/app.js | Supabase Realtime sub on `notifications` for this user | notifications (realtime) | ✅ Working |
-| `openLoreSheet(node)` | js/app.js | Opens lore reading bottom sheet; records open time for read-depth tracking | — | ✅ Working (depth tracking not yet added) |
+| `openLoreSheet(node)` | js/app.js | Opens lore reading bottom sheet with pre/post assessment flow; async with phase machine (pretest → read → posttest) | user_lore_assessments | ✅ Updated 2026-07-02: now async, runs pre/post assessment phases |
 | `openLoreChainSheet(chain)` | js/app.js | Opens lore chain summary sheet | — | ✅ Working |
 
 ---
@@ -91,6 +91,9 @@
 | `DB.Lore.getAll()` | lore_nodes | ✅ Filters: is_active=true, review_status='approved', source_ref not null/empty |
 | `DB.Lore.unlock(userId, nodeId)` | user_lore | ✅ Working |
 | `DB.Lore.getUserUnlocked(userId)` | user_lore | ✅ Working |
+| `DB.Lore.getLoreQuestions(loreId)` | quiz_questions | ✅ Added 2026-07-02; fetches pretest MCQs for a lore node |
+| `DB.Lore.saveAssessment(userId, loreId, phase, score, total)` | user_lore_assessments | ✅ Added 2026-07-02; upserts one phase result (pre/post) |
+| `DB.Lore.getAssessments(userId, loreId)` | user_lore_assessments | ✅ Added 2026-07-02; returns pre+post records for journal display |
 | `DB.Quiz.getForFigure(figureId, count)` | quiz_questions | ✅ Filters: source_ref not null/empty |
 | `DB.Leaderboard.get()` | leaderboard_legacy (VIEW) | ✅ Working |
 | `DB.Notifications.getAll(userId)` | notifications | ✅ Working |
