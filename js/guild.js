@@ -356,7 +356,7 @@ const GuildModule = (() => {
     return `
       <div class="guild-member-row">
         <div class="guild-member-avatar-wrap">
-          <div class="avatar-sm" style="width:34px;height:34px;font-size:12px">${initials}</div>
+          ${avatarHTML(profile.avatar_url, initials, 34, isLeader ? 'var(--color-primary)' : 'var(--color-muted)')}
           <span class="guild-status-badge ${isOnline ? 'online' : 'offline'}"></span>
         </div>
         <div style="flex:1;min-width:0">
@@ -408,7 +408,7 @@ const GuildModule = (() => {
         return `
           <div style="display:flex;align-items:center;gap:10px;padding:8px 0;
                       border-bottom:1px solid rgba(255,255,255,0.05)">
-            <div class="avatar-sm" style="width:34px;height:34px;font-size:12px;flex-shrink:0">${initials}</div>
+            ${avatarHTML(r.profiles?.avatar_url, initials, 34, 'var(--color-muted)')}
             <p style="margin:0;flex:1;font-size:13px;font-weight:600;color:var(--color-white)">${name}</p>
             <button class="btn btn-primary" style="font-size:11px;padding:5px 12px;white-space:nowrap"
                     data-approve="${escapeHtml(r.id)}">ยอมรับ</button>

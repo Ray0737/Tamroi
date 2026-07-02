@@ -743,7 +743,7 @@ const Coop = {
   async getAnnouncements(guildId) {
     const { data, error } = await _sb
       .from('guild_announcements')
-      .select('id, content, created_at, profiles(username)')
+      .select('id, content, created_at, profiles(username, avatar_url)')
       .eq('guild_id', guildId)
       .order('created_at', { ascending: false })
       .limit(20);
@@ -783,7 +783,7 @@ const Coop = {
     if (error) throw error;
     if (!data?.length) return [];
     const ids = data.map(r => r.user_id);
-    const { data: profiles } = await _sb.from('profiles').select('id, username').in('id', ids);
+    const { data: profiles } = await _sb.from('profiles').select('id, username, avatar_url').in('id', ids);
     const map = Object.fromEntries((profiles || []).map(p => [p.id, p]));
     return data.map(r => ({ ...r, profiles: map[r.user_id] || null }));
   },
@@ -986,7 +986,7 @@ const Community = {
   async getPosts(userId = null) {
     const { data, error } = await _sb
       .from('community_posts')
-      .select('*, profiles(username)')
+      .select('*, profiles(username, avatar_url)')
       .is('parent_id', null)
       .order('created_at', { ascending: false })
       .limit(50);
@@ -1016,7 +1016,7 @@ const Community = {
   async getReplies(parentId) {
     const { data, error } = await _sb
       .from('community_posts')
-      .select('*, profiles(username)')
+      .select('*, profiles(username, avatar_url)')
       .eq('parent_id', parentId)
       .order('created_at');
     if (error) throw error;

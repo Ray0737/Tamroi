@@ -168,13 +168,11 @@ const RaidModule = (() => {
 
   function _memberAvatar(m) {
     const p = m.profiles || {};
+    const init = escapeHtml((p.username || '?').substring(0, 2).toUpperCase());
     return `
       <div style="text-align:center">
         <div style="position:relative;display:inline-block">
-          <div class="avatar-sm" style="width:48px;height:48px;font-size:18px;
-               border:2px solid ${m.is_ready ? 'var(--color-success)' : 'var(--color-border)'}">
-            ${escapeHtml((p.username || '?').substring(0, 2).toUpperCase())}
-          </div>
+          ${avatarHTML(p.avatar_url, init, 48, m.is_ready ? 'var(--color-success)' : 'var(--color-border)')}
           ${m.is_ready ? `<span style="position:absolute;bottom:-2px;right:-2px;font-size:12px">✅</span>` : ''}
         </div>
         <p style="font-size:10px;margin:4px 0 0;color:var(--color-muted);max-width:52px;

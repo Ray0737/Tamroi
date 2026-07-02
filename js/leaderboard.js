@@ -9,18 +9,7 @@ const LeaderboardModule = (() => {
 
   const MY_ID = '__current_user__';
 
-  function avatarHTML(url, init, size, ringColor, bgColor) {
-    bgColor = bgColor || 'rgba(255,255,255,0.06)';
-    try {
-      const u = new URL(url || '');
-      if (u.protocol === 'https:') {
-        return `<img src="${escapeHtml(u.href)}" alt="${escapeHtml(init)}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;border:2.5px solid ${ringColor};display:block;flex-shrink:0">`;
-      }
-    } catch {}
-    return `<div style="width:${size}px;height:${size}px;border-radius:50%;flex-shrink:0;background:${bgColor};border:2.5px solid ${ringColor};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:${Math.max(10, Math.floor(size / 3))}px;color:${ringColor}">${escapeHtml(init)}</div>`;
-  }
-
-  function load() {
+function load() {
     if (loaded) {
       render();
       subscribe();

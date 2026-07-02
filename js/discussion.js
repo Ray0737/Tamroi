@@ -64,9 +64,7 @@ const DiscussionModule = (() => {
                   ${isReply ? 'margin-left:24px;border-left:2px solid rgba(255,126,85,0.3)' : ''}">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
           <div style="display:flex;align-items:center;gap:6px">
-            <div class="avatar-sm" style="width:24px;height:24px;font-size:10px">
-              ${name.substring(0, 2).toUpperCase()}
-            </div>
+            ${avatarHTML(p.avatar_url, name.substring(0, 2).toUpperCase(), 24, 'rgba(255,255,255,0.2)')}
             <span style="font-size:12px;font-weight:600">${name}</span>
             <span style="font-size:10px;color:var(--color-muted)">${ago}</span>
           </div>

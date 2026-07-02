@@ -59,8 +59,7 @@ const CommunityForumModule = (() => {
     return `
       <div class="forum-post">
         <div class="forum-post-head">
-          <div class="avatar-sm" style="width:24px;height:24px;font-size:10px">
-            ${name.substring(0, 2).toUpperCase()}</div>
+          ${avatarHTML(p.profiles?.avatar_url, name.substring(0, 2).toUpperCase(), 24, 'rgba(255,255,255,0.2)')}
           <span class="forum-post-name">${name}</span>
           <span class="forum-post-time">${ago}</span>
           ${user && p.user_id !== user.id ? `
