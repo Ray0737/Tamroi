@@ -142,6 +142,9 @@ const CollectionModule = (() => {
     grid.hidden = activeFilter === 'journal';
     if (journal) journal.hidden = activeFilter !== 'journal';
 
+    const classOrder = { S: 0, A: 1, B: 2, C: 3 };
+    filtered.sort((a, b) => (classOrder[a.class] ?? 9) - (classOrder[b.class] ?? 9));
+
     const newOnes = filtered.filter(f => newCaptures.has(f.id));
     const rest    = filtered.filter(f => !newCaptures.has(f.id));
 
