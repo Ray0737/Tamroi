@@ -131,9 +131,9 @@ const CollectionModule = (() => {
     const journal = document.getElementById('lore-journal');
 
     let filtered = allFigures.filter(f => {
-      if (activeFilter === 'journal') return false;
-      if (activeFilter !== 'all' && activeFilter !== 'artifacts' && f.class !== activeFilter.toUpperCase()) return false;
-      if (activeFilter === 'artifacts') return false;
+      if (activeFilter === 'journal' || activeFilter === 'artifacts') return false;
+      if (activeFilter === 'owned') return captures.has(f.id) && (!query || f.name_en.toLowerCase().includes(query) || f.name_th.includes(query));
+      if (activeFilter !== 'all' && f.class !== activeFilter.toUpperCase()) return false;
       if (query && !f.name_en.toLowerCase().includes(query) && !f.name_th.includes(query)) return false;
       return true;
     });
@@ -199,7 +199,9 @@ const CollectionModule = (() => {
 
     const list = activeFilter === 'all' || activeFilter === 'artifacts'
       ? allArtifacts
-      : [];
+      : activeFilter === 'owned'
+        ? allArtifacts.filter(a => ownedArtifacts.has(a.id))
+        : [];
 
     if (!list.length) { container.innerHTML = ''; return; }
 
