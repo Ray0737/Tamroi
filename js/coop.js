@@ -28,8 +28,8 @@ const CoopModule = (() => {
 
       el.innerHTML = `
         <div>
-          <h3 class="section-title" style="margin-bottom:var(--space-sm)">🤝 ภารกิจกลุ่ม</h3>
-          <div id="coop-mission-cards" style="display:flex;flex-direction:column;gap:var(--space-sm)"></div>
+          <h3 class="section-title" style="margin-bottom:var(--space-sm)"><i class="bi bi-people-fill"></i> ภารกิจกลุ่ม</h3>
+          <div id="coop-mission-cards"></div>
         </div>`;
 
       const cardsEl = document.getElementById('coop-mission-cards');
@@ -79,40 +79,25 @@ const CoopModule = (() => {
     const pct  = Math.min(100, Math.round((checkinCount / mission.required_players) * 100));
 
     return `
-      <div style="background:var(--color-card-dark);border-radius:var(--radius-xl);
-                  border:1px solid rgba(123,198,126,0.2);overflow:hidden">
-        <div style="padding:var(--space-md);border-bottom:1px solid rgba(255,255,255,0.05)">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-            <span style="font-size:14px">🤝</span>
-            <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;
-                         color:var(--color-success)">ภารกิจกลุ่ม</span>
-          </div>
-          <h4 style="margin:0 0 4px;font-family:var(--font-heading);font-size:14px;font-weight:700">
-            ${escapeHtml(mission.title_th)}</h4>
-          <p style="margin:0;font-size:11px;color:var(--color-muted);line-height:1.5">
-            ${escapeHtml(mission.description_th || '')}</p>
+      <div class="coop-mission-card ${done ? 'done' : ''}">
+        <div class="coop-mission-head">
+          <i class="bi bi-flag"></i>
+          <p class="coop-mission-title">${escapeHtml(mission.title_th)}</p>
+          <span class="coop-mission-badge ${done ? 'done' : ''}">
+            ${done ? `<i class="bi bi-check-circle-fill"></i> สำเร็จ` : `+${mission.reward_pts} pts`}
+          </span>
         </div>
-        <div style="padding:var(--space-sm) var(--space-md) var(--space-md)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <span style="font-size:11px;color:var(--color-muted)">
-              ${checkinCount} / ${mission.required_players} สมาชิกเช็คอินแล้ว
-            </span>
-            <span style="font-size:11px;font-weight:700;
-                         color:${done ? 'var(--color-success)' : 'var(--color-primary)'}">
-              ${done ? '✅ สำเร็จ' : `+${mission.reward_pts} pts`}
-            </span>
-          </div>
-          <div style="background:rgba(255,255,255,0.08);border-radius:var(--radius-full);height:6px;overflow:hidden">
-            <div style="height:100%;width:${pct}%;
-                         background:${done ? 'var(--color-success)' : 'var(--color-primary)'};
-                         border-radius:var(--radius-full);transition:width 0.4s ease"></div>
-          </div>
-          ${!myCheckin && !done ? `
-            <button class="btn btn-primary btn-full" data-checkin-btn
-                    style="margin-top:var(--space-sm);font-size:13px">
-              เช็คอินภารกิจนี้
-            </button>` : ''}
+        <p class="coop-mission-desc">${escapeHtml(mission.description_th || '')}</p>
+        <div class="coop-progress-row">
+          <span>${checkinCount} / ${mission.required_players} สมาชิกเช็คอินแล้ว</span>
         </div>
+        <div class="coop-progress-track">
+          <div class="coop-progress-fill ${done ? 'done' : 'pending'}" style="width:${pct}%"></div>
+        </div>
+        ${!myCheckin && !done ? `
+          <button class="btn btn-primary btn-full coop-checkin-btn" data-checkin-btn style="font-size:13px">
+            เช็คอินภารกิจนี้
+          </button>` : ''}
       </div>`;
   }
 
@@ -137,11 +122,10 @@ const CoopModule = (() => {
 
   function _noGuildCard() {
     return `
-      <div style="background:var(--color-card-dark);border-radius:var(--radius-xl);
-                  border:1px dashed var(--color-border);padding:var(--space-md);text-align:center">
-        <p style="margin:0 0 4px;font-size:13px;font-weight:600;color:var(--color-muted)">
-          🤝 เข้าร่วมกลุ่มเพื่อทำภารกิจร่วมกัน</p>
-        <p style="margin:0;font-size:11px;color:var(--color-muted)">ไปที่แท็บ Rank → กลุ่ม</p>
+      <div class="coop-no-guild">
+        <i class="bi bi-people"></i>
+        <p>เข้าร่วมกลุ่มเพื่อทำภารกิจร่วมกัน</p>
+        <p class="hint">ไปที่แท็บ Rank → กลุ่ม</p>
       </div>`;
   }
 

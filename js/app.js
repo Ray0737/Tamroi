@@ -475,11 +475,13 @@ function renderNotifications(notifs) {
     return;
   }
   const icons = {
-    figure_unlock: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;color:var(--color-primary)"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>`,
-    fog_cleared:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;color:var(--color-success)"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>`,
-    rank_change:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;color:#FFD700"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>`,
-    artifact:      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;color:var(--color-muted)"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>`,
-    raid:          `<span style="font-size:20px">⚔️</span>`,
+    figure_unlock: `<i class="bi bi-flag" style="font-size:19px;color:var(--color-primary)"></i>`,
+    fog_cleared:   `<i class="bi bi-map" style="font-size:19px;color:var(--color-success)"></i>`,
+    rank_change:   `<i class="bi bi-trophy" style="font-size:19px;color:#FFD700"></i>`,
+    artifact:      `<i class="bi bi-box-seam" style="font-size:19px;color:var(--color-muted)"></i>`,
+    raid:          `<i class="bi bi-lightning" style="font-size:19px;color:#EF5350"></i>`,
+    rally:         `<i class="bi bi-geo-alt" style="font-size:19px;color:var(--color-primary)"></i>`,
+    join_request:  `<i class="bi bi-person-plus" style="font-size:19px;color:var(--color-primary)"></i>`,
   };
   // escapeHtml prevents XSS from DB-sourced notification title/message
   const isPendingJoinRequest = n => n.type === 'join_request' && !n.is_read && n.ref_id;
@@ -554,10 +556,18 @@ function showToast(message) {
     toast = document.createElement('div');
     toast.id = 'app-toast';
     toast.className = 'app-toast';
+    toast.innerHTML = `
+      <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <span class="toast-msg"></span>
+    `;
     document.querySelector('.app-wrapper')?.appendChild(toast);
   }
 
-  toast.textContent = message;
+  toast.querySelector('.toast-msg').textContent = message;
   toast.classList.add('show');
   clearTimeout(showToast._timer);
   showToast._timer = setTimeout(() => toast.classList.remove('show'), 2600);
@@ -573,35 +583,18 @@ function showConfirm(message, { destructive = false, confirmLabel = 'ยืน�
     const confirmClr = '#fff';
 
     overlay.innerHTML = `
-      <div style="background:var(--color-card-dark);border-radius:var(--radius-lg);
-                  padding:24px 20px 20px;width:100%;max-width:272px;text-align:center;
-                  border:1px solid rgba(255,255,255,0.08);box-shadow:var(--shadow-card)">
-        ${destructive ? `
-        <div style="width:44px;height:44px;border-radius:50%;margin:0 auto 14px;
-                    background:rgba(239,83,80,0.12);
-                    display:flex;align-items:center;justify-content:center;
-                    color:#ef5350;font-size:20px">
-          <i class="bi bi-exclamation-triangle-fill"></i>
-        </div>` : `
-        <div style="width:44px;height:44px;border-radius:50%;margin:0 auto 14px;
-                    background:rgba(255,255,255,0.06);
-                    display:flex;align-items:center;justify-content:center;
-                    color:var(--color-muted);font-size:20px">
-          <i class="bi bi-question-circle"></i>
-        </div>`}
-        <p style="color:var(--color-white);font-family:var(--font-body);font-size:14px;
-                  font-weight:600;margin:0 0 20px;line-height:1.5">${message}</p>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <button data-ok
-                  style="width:100%;padding:10px;border-radius:var(--radius-md);border:none;
-                         background:${confirmBg};color:${confirmClr};font-size:13px;
-                         font-weight:700;cursor:pointer;font-family:var(--font-body);
-                         transition:opacity 0.15s">${confirmLabel}</button>
-          <button data-cancel
-                  style="width:100%;padding:9px;border-radius:var(--radius-md);
-                         border:1px solid var(--color-border);background:transparent;
-                         color:var(--color-muted);font-size:12px;font-weight:500;
-                         cursor:pointer;font-family:var(--font-body)">${cancelLabel}</button>
+      <div style="background:var(--color-card-dark);border-radius:var(--radius-md);
+                  padding:18px;width:100%;max-width:260px;text-align:center;
+                  border:1px solid var(--color-border)">
+        <i class="bi ${destructive ? 'bi-exclamation-triangle-fill' : 'bi-question-circle'}"
+           style="font-size:32px;color:${destructive ? '#ef5350' : 'var(--color-muted)'};
+                  display:block;margin-bottom:12px"></i>
+        <p style="color:var(--color-white);font-family:var(--font-body);font-size:13px;
+                  font-weight:600;margin:0 0 16px;line-height:1.5">${message}</p>
+        <div style="display:flex;gap:8px">
+          <button data-cancel class="confirm-btn confirm-btn-cancel">${cancelLabel}</button>
+          <button data-ok class="confirm-btn confirm-btn-ok"
+                  style="background:${confirmBg};color:${confirmClr}">${confirmLabel}</button>
         </div>
       </div>`;
 

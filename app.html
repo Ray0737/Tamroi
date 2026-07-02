@@ -335,9 +335,9 @@
 
           <!-- Community sub-tab pills -->
           <div class="filter-pills" id="community-sub-tabs">
-            <button class="pill active" data-community-tab="rank">อันดับ</button>
-            <button class="pill" data-community-tab="mygroup">กลุ่มของฉัน</button>
-            <button class="pill" data-community-tab="discuss">ถกเถียง</button>
+            <button class="pill active" data-community-tab="rank"><i class="bi bi-trophy"></i> อันดับ</button>
+            <button class="pill" data-community-tab="mygroup"><i class="bi bi-people"></i> กลุ่มของฉัน</button>
+            <button class="pill" data-community-tab="discuss"><i class="bi bi-chat-square-text"></i> ถกเถียง</button>
           </div>
 
           <!-- ── อันดับ ── -->
@@ -359,12 +359,9 @@
                   <option value="archive">Archive</option>
                 </select>
               </div>
-              <div class="card" id="leaderboard-podium" style="padding:0 var(--space-sm) var(--space-sm)"></div>
               <div id="my-rank-card"></div>
-              <div class="card" style="padding:var(--space-sm)">
-                <div id="leaderboard-list">
-                  <div style="display:flex;justify-content:center;padding:40px"><div class="spinner"></div></div>
-                </div>
+              <div id="leaderboard-list">
+                <div style="display:flex;justify-content:center;padding:40px"><div class="spinner"></div></div>
               </div>
             </div>
             <div id="guild-leaderboard-section" hidden style="display:flex;flex-direction:column;gap:var(--space-md)">

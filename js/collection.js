@@ -146,7 +146,7 @@ const CollectionModule = (() => {
           ${isCaptured ? `<div class="captured-ribbon">${checkSVG()}</div>` : ''}
           ${isLocked   ? `<div class="lock-overlay">${lockSVG()}</div>` : ''}
           <div class="figure-portrait" style="color:var(--color-muted)">${personSVG}</div>
-          <span class="badge badge-${f.class.toLowerCase()}">${f.class}-Class</span>
+          <span class="figure-class-label ${f.class.toLowerCase()}">${f.class}-Class</span>
           <p class="figure-name-th">${f.name_th}</p>
           <p class="figure-name-en">${f.name_en}</p>
           ${isLocked

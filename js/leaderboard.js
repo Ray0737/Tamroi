@@ -9,8 +9,6 @@ const LeaderboardModule = (() => {
 
   const MY_ID = '__current_user__';
 
-  const CROWN_SVG = `<svg viewBox="0 0 24 24" fill="#FFD700" stroke="#FFD700" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M2 19l3-9 5 5 4-9 4 9 3-7v11H2z"/></svg>`;
-
   function avatarHTML(url, init, size, ringColor, bgColor) {
     bgColor = bgColor || 'rgba(255,255,255,0.06)';
     try {
@@ -149,69 +147,39 @@ const LeaderboardModule = (() => {
       const user       = window.AppCore?.App?.user;
       const membership = user ? await DB.Coop.getMyMemberships(user.id) : {};
 
-      const iconChevron = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;transition:transform .2s">
-        <polyline points="6 9 12 15 18 9"/></svg>`;
-
       el.innerHTML = !guilds.length
-        ? `<p style="text-align:center;color:var(--color-muted);font-size:12px;padding:var(--space-md)">ยังไม่มีกลุ่ม</p>`
+        ? `<p class="guild-list-empty">ยังไม่มีกลุ่ม</p>`
         : guilds.map((g, i) => {
             const isMine   = g.guild_id in membership;
             const isLeader = membership[g.guild_id] === 'leader';
+            const rank     = i + 1;
+            const tier     = _RANK_TIER[rank];
             return `
-            <div class="guild-card card" data-id="${g.guild_id}" data-code="${escapeHtml(g.invite_code || '')}"
-                 style="padding:0;cursor:pointer;overflow:hidden;
-                        border:1px solid ${isMine ? 'rgba(255,126,85,0.3)' : 'rgba(255,255,255,0.06)'}">
-
-              <!-- Header row -->
-              <div style="display:flex;align-items:center;gap:10px;padding:11px 14px">
-                <span style="font-size:13px;font-weight:800;color:var(--color-muted);
-                             width:18px;text-align:center;flex-shrink:0">${i + 1}</span>
-                <div style="flex:1;min-width:0">
-                  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                    <p style="margin:0;font-size:13px;font-weight:700;color:var(--color-white);
-                               white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-                      ${escapeHtml(g.name)}</p>
-                    ${isMine ? `<span style="font-size:9px;background:rgba(255,126,85,.15);
-                      color:var(--color-primary);border-radius:4px;padding:1px 6px;font-weight:600">คุณ</span>` : ''}
-                    ${isLeader ? `<span style="font-size:9px;background:rgba(255,126,85,.08);
-                      color:var(--color-muted);border-radius:4px;padding:1px 6px">Leader</span>` : ''}
-                  </div>
-                  <p style="margin:3px 0 0;font-size:10px;color:var(--color-muted)">
-                    ${g.member_count ?? 0} members · ${g.guild_discovery_count} districts · ${g.guild_captures} captures</p>
-                </div>
-                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0">
-                  <span style="font-size:13px;font-weight:700;color:var(--color-primary)">
-                    ${(g.guild_legacy_score || 0).toLocaleString()} pts</span>
-                </div>
-                <span class="chevron-icon" style="flex-shrink:0;color:var(--color-muted)">${iconChevron}</span>
+            <div class="lb-row ${isMine ? 'lb-my-row' : ''}" data-id="${g.guild_id}" data-code="${escapeHtml(g.invite_code || '')}"
+                 style="cursor:pointer">
+              <span class="lb-rank ${tier || ''}">${tier ? _rankIcon(rank) : `#${rank}`}</span>
+              <div class="lb-name-block">
+                <p class="lb-name">
+                  ${escapeHtml(g.name)}${isMine ? ` <span class="lb-you">${isLeader ? 'Leader' : 'คุณ'}</span>` : ''}
+                </p>
+                <p class="lb-sub">${g.member_count ?? 0} members · ${g.guild_discovery_count} districts · ${g.guild_captures} captures</p>
               </div>
-
-              <!-- Expanded detail -->
-              <div class="guild-detail" hidden
-                   style="border-top:1px solid rgba(255,255,255,0.05);padding:10px 14px;
-                          background:rgba(0,0,0,0.15)">
-                ${isMine ? `
-                  <div>
-                    <p style="margin:0 0 5px;font-size:9px;color:var(--color-muted);
-                               text-transform:uppercase;letter-spacing:1.5px">รหัสเชิญ</p>
-                    <div style="display:inline-block;background:rgba(255,126,85,0.08);
-                                border:1px solid rgba(255,126,85,0.2);border-radius:8px;padding:6px 12px">
-                      <span style="font-size:17px;font-weight:800;color:var(--color-primary);
-                                   letter-spacing:5px;font-family:monospace">${escapeHtml(g.invite_code || '—')}</span>
-                    </div>
-                  </div>` : `
-                  <p style="margin:0;font-size:11px;color:var(--color-muted)">
-                    เข้าร่วมกลุ่มนี้เพื่อดูรหัสเชิญ</p>`}
-              </div>
+              <span class="lb-score ${tier || ''}">${(g.guild_legacy_score || 0).toLocaleString()} pts</span>
+              <i class="bi bi-chevron-down chevron-icon" style="color:var(--color-muted);font-size:11px;transition:transform .2s"></i>
+            </div>
+            <div class="guild-detail" hidden style="padding:4px 4px 12px 34px">
+              ${isMine ? `
+                <p style="margin:0 0 4px;font-size:9px;color:var(--color-muted);text-transform:uppercase;letter-spacing:1.5px">รหัสเชิญ</p>
+                <span style="font-size:15px;font-weight:800;color:var(--color-primary);letter-spacing:4px;font-family:monospace">${escapeHtml(g.invite_code || '—')}</span>
+              ` : `<p style="margin:0;font-size:11px;color:var(--color-muted)">เข้าร่วมกลุ่มนี้เพื่อดูรหัสเชิญ</p>`}
             </div>`;
           }).join('');
 
-      el.querySelectorAll('.guild-card').forEach(card => {
-        card.addEventListener('click', (e) => {
+      el.querySelectorAll('.lb-row[data-id]').forEach(row => {
+        row.addEventListener('click', (e) => {
           if (e.target.closest('button')) return;
-          const detail  = card.querySelector('.guild-detail');
-          const chevron = card.querySelector('.chevron-icon svg');
+          const detail  = row.nextElementSibling;
+          const chevron = row.querySelector('.chevron-icon');
           const open    = !detail.hidden;
           detail.hidden = open;
           if (chevron) chevron.style.transform = open ? '' : 'rotate(180deg)';
@@ -268,16 +236,13 @@ const LeaderboardModule = (() => {
     }
     sortPlayers(players);
     currentPlayers = players;
-    renderPodium(players.slice(0, 3));
     renderMyRank(players);
     renderList(players);
   }
 
   function renderEmptyState(message) {
-    const podium = document.getElementById('leaderboard-podium');
     const myRank = document.getElementById('my-rank-card');
     const list = document.getElementById('leaderboard-list');
-    if (podium) podium.innerHTML = '';
     if (myRank) myRank.innerHTML = '';
     if (list) {
       list.innerHTML = `
@@ -336,7 +301,6 @@ const LeaderboardModule = (() => {
     }
 
     patchPlayerRow(rowId);
-    renderPodium(currentPlayers.slice(0, 3));
     renderMyRank(currentPlayers);
   }
 
@@ -348,54 +312,15 @@ const LeaderboardModule = (() => {
     if (score && player) score.textContent = getMetricValue(player);
   }
 
-  // ── Podium (top 3) ────────────────────────────────
-  function renderPodium(top3) {
-    const el = document.getElementById('leaderboard-podium');
-    if (!el) return;
-    if (top3.length < 3) { el.innerHTML = ''; return; }
-    const [first, second, third] = top3;
+  const _RANK_TIER = { 1: 'gold', 2: 'silver', 3: 'bronze' };
 
-    const podiumItem = (p, pos) => {
-      const colors = { 1: '#FFD700', 2: '#C0C0C0', 3: '#CD7F32' };
-      const heights = { 1: 60, 2: 44, 3: 32 };
-      const sizes   = { 1: 54, 2: 44, 3: 40 };
-      const c = colors[pos];
-      const h = heights[pos];
-      const s = sizes[pos];
-      const init = (p.username || '?').charAt(0).toUpperCase();
-      const name = escapeHtml(p.username || '');
-
-      return `
-        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1">
-          ${pos === 1 ? `<div style="height:22px;display:flex;align-items:center">${CROWN_SVG}</div>` : '<div style="height:22px"></div>'}
-          ${avatarHTML(p.avatar_url, init, s, c, `${c}22`)}
-          <p style="margin:0;font-size:11px;font-weight:600;color:var(--color-white);
-                    max-width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-                    text-align:center">${name}</p>
-          <p style="margin:0;font-size:9px;color:var(--color-muted)">${getMetricValue(p)}</p>
-          <div style="
-            width:100%;height:${h}px;
-            background:${c}18;
-            border-radius:var(--radius-sm) var(--radius-sm) 0 0;
-            border-top:2px solid ${c}40;
-            display:flex;align-items:center;justify-content:center">
-            <span style="font-weight:800;font-size:14px;color:${c}">#${pos}</span>
-          </div>
-        </div>
-      `;
-    };
-
-    el.innerHTML = `
-      <div style="display:flex;align-items:flex-end;gap:var(--space-sm);
-                  padding:var(--space-md) var(--space-sm) 0">
-        ${podiumItem(second, 2)}
-        ${podiumItem(first,  1)}
-        ${podiumItem(third,  3)}
-      </div>
-    `;
+  function _rankIcon(rank) {
+    const tier = _RANK_TIER[rank];
+    if (!tier) return `#${rank}`;
+    return `<i class="bi bi-trophy-fill"></i>`;
   }
 
-  // ── My rank card ──────────────────────────────────
+  // ── My rank row ─────────────────────────────────────
   function renderMyRank(players) {
     const el = document.getElementById('my-rank-card');
     if (!el) return;
@@ -403,70 +328,43 @@ const LeaderboardModule = (() => {
     if (myIdx === -1) { el.innerHTML = ''; return; }
     const me = players[myIdx];
     const rank = myIdx + 1;
+    const tier = _RANK_TIER[rank];
 
     el.innerHTML = `
-      <div style="
-        display:flex;align-items:center;gap:10px;
-        background:var(--color-primary-dim);
-        border:1.5px solid var(--color-primary);
-        border-radius:var(--radius-md);
-        padding:10px 14px;margin-bottom:var(--space-sm)">
-        <span style="font-size:18px;font-weight:800;font-family:var(--font-heading);
-                     color:var(--color-primary);width:28px;text-align:center;flex-shrink:0">#${rank}</span>
-        ${avatarHTML(me.avatar_url, (me.username||'Y').substring(0,2).toUpperCase(), 34, 'var(--color-primary)', 'var(--color-primary-dim)')}
-        <div style="flex:1;min-width:0">
-          <p style="margin:0;font-weight:600;font-size:13px;color:var(--color-white)">
-            ${escapeHtml(me.username)} <span style="font-size:10px;color:var(--color-primary)">(You)</span>
-          </p>
-          <p style="margin:1px 0 0;font-size:10px;color:var(--color-muted)">${escapeHtml(me.province)}</p>
+      <div class="lb-row lb-my-row">
+        <span class="lb-rank ${tier || ''}">${tier ? _rankIcon(rank) : `#${rank}`}</span>
+        ${avatarHTML(me.avatar_url, (me.username||'Y').substring(0,2).toUpperCase(), 32, 'var(--color-primary)', 'var(--color-primary-dim)')}
+        <div class="lb-name-block">
+          <p class="lb-name">${escapeHtml(me.username)} <span class="lb-you">(You)</span></p>
+          <p class="lb-sub">${escapeHtml(me.province)}</p>
         </div>
-        <span style="font-weight:700;font-size:14px;color:var(--color-primary);flex-shrink:0">${getMetricValue(me)}</span>
+        <span class="lb-score">${getMetricValue(me)}</span>
       </div>
     `;
   }
 
-  // ── Full rank list ────────────────────────────────
+  // ── Full rank list — flat, divider-separated ──────
   function renderList(players) {
     const el = document.getElementById('leaderboard-list');
     if (!el) return;
 
-    const rankColors = { 1: '#FFD700', 2: '#C0C0C0', 3: '#CD7F32' };
-
     el.innerHTML = players.map((p, idx) => {
-      const rank        = idx + 1;
-      const isMe        = p.id === MY_ID;
-      const rankColor   = rankColors[rank] || (isMe ? 'var(--color-primary)' : 'var(--color-muted)');
-      const init        = (p.username || '?').substring(0, 2).toUpperCase();
-      const ringColor   = rankColors[rank] || (isMe ? 'var(--color-primary)' : 'rgba(255,255,255,0.12)');
+      const rank = idx + 1;
+      const isMe = p.id === MY_ID;
+      const tier = _RANK_TIER[rank];
+      const init = (p.username || '?').substring(0, 2).toUpperCase();
+      const ringColor = tier ? { gold: '#FFD700', silver: '#C0C0C0', bronze: '#CD7F32' }[tier]
+                       : (isMe ? 'var(--color-primary)' : 'rgba(255,255,255,0.12)');
 
       return `
-        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;
-                    border-radius:12px;
-                    background:var(--color-card-darker);
-                    border:1px solid rgba(255,255,255,0.07);
-                    transition:background .15s"
-             data-user-id="${escapeHtml(p.id)}">
-
-          <span style="width:28px;text-align:center;font-size:13px;font-weight:800;
-                       flex-shrink:0;color:${rankColor}">
-            #${rank}
-          </span>
-
-          ${avatarHTML(p.avatar_url, init, 36, ringColor)}
-
-          <div style="flex:1;min-width:0">
-            <p style="margin:0;font-size:13px;font-weight:600;color:var(--color-white);
-                      white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-              ${escapeHtml(p.username)}${isMe ? ` <span style="font-size:10px;font-weight:400;color:var(--color-muted)">(You)</span>` : ''}
-            </p>
-            <p style="margin:2px 0 0;font-size:10px;color:var(--color-muted)">
-              ${escapeHtml(p.province || '—')}</p>
+        <div class="lb-row" data-user-id="${escapeHtml(p.id)}">
+          <span class="lb-rank ${tier || ''}">${tier ? _rankIcon(rank) : `#${rank}`}</span>
+          ${avatarHTML(p.avatar_url, init, 32, ringColor)}
+          <div class="lb-name-block">
+            <p class="lb-name">${escapeHtml(p.username)}${isMe ? ` <span class="lb-you">(You)</span>` : ''}</p>
+            <p class="lb-sub">${escapeHtml(p.province || '—')}</p>
           </div>
-
-          <span data-rank-score style="font-size:12px;font-weight:700;flex-shrink:0;
-                       color:${rankColor}">
-            ${getMetricValue(p)}
-          </span>
+          <span data-rank-score class="lb-score ${tier || ''}">${getMetricValue(p)}</span>
         </div>
       `;
     }).join('');

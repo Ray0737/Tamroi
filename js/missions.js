@@ -9,7 +9,6 @@ const MissionModule = (() => {
   const _targetSVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`;
   const _mapSVG    = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>`;
   const _crownSVG  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M2 20h20"/><path d="M2 14l5-8 5 5 5-8 5 8v6H2v-3z"/></svg>`;
-  const _trainSVG  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><rect x="4" y="3" width="16" height="14" rx="4"/><path d="M8 17l-2 4m10-4l2 4"/><line x1="8" y1="12" x2="16" y2="12"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.5" fill="currentColor"/></svg>`;
 
   // District → Thai era name mapping used by renderActive()
   const DISTRICT_ERA_TH = {
@@ -177,16 +176,10 @@ const MissionModule = (() => {
       // All S/A figures captured or no districts explored yet
       const allDone = figures.filter(f => f.class === 'S' || f.class === 'A').every(f => capturedIds.has(f.id));
       el.innerHTML = `
-        <div style="
-          background:linear-gradient(135deg,rgba(123,198,126,0.12) 0%,rgba(123,198,126,0.04) 100%);
-          border:1px solid rgba(123,198,126,0.2);border-radius:var(--radius-lg);
-          padding:16px var(--space-md);text-align:center">
-          <p style="margin:0;font-size:13px;font-weight:700;color:var(--color-success);letter-spacing:0.01em">
-            ${allDone ? '🎉 ทุกภารกิจเสร็จสมบูรณ์!' : 'สำรวจพื้นที่ใหม่เพื่อปลดล็อคภารกิจ'}
-          </p>
-          <p style="margin:5px 0 0;font-size:11px;color:var(--color-muted);line-height:1.4">
-            ${allDone ? 'คุณจับบุคคลสำคัญระดับ S/A ครบทั้งหมดแล้ว' : 'Check-in ที่ Watchtower ในเขตที่ยังไม่ได้สำรวจ'}
-          </p>
+        <div class="mission-empty">
+          <i class="bi ${allDone ? 'bi-trophy' : 'bi-compass'}"></i>
+          <p>${allDone ? 'ทุกภารกิจเสร็จสมบูรณ์!' : 'สำรวจพื้นที่ใหม่เพื่อปลดล็อคภารกิจ'}</p>
+          <p class="sub">${allDone ? 'คุณจับบุคคลสำคัญระดับ S/A ครบทั้งหมดแล้ว' : 'Check-in ที่ Watchtower ในเขตที่ยังไม่ได้สำรวจ'}</p>
         </div>`;
       return;
     }
@@ -365,23 +358,13 @@ const MissionModule = (() => {
     const el = document.getElementById('bkk-bonus');
     if (!el) return;
     el.innerHTML = `
-      <div style="
-        display:flex;align-items:center;gap:12px;
-        background:linear-gradient(135deg,rgba(123,198,126,0.12) 0%,rgba(123,198,126,0.04) 100%);
-        border:1px solid rgba(123,198,126,0.2);
-        border-radius:var(--radius-lg);padding:14px var(--space-md)">
-        <div style="width:40px;height:40px;border-radius:var(--radius-md);background:rgba(123,198,126,0.15);
-                    display:flex;align-items:center;justify-content:center;
-                    flex-shrink:0;color:var(--color-success)">
-          ${_trainSVG}
+      <div class="mission-banner">
+        <i class="bi bi-train-front"></i>
+        <div class="mission-banner-body">
+          <p class="mission-banner-title">BTS / MRT Bonus Active</p>
+          <p class="mission-banner-sub">Using public transport in Bangkok · +2× Points on all actions</p>
         </div>
-        <div style="flex:1;min-width:0">
-          <p style="margin:0;font-size:13px;font-weight:700;color:var(--color-success);letter-spacing:0.01em">BTS / MRT Bonus Active</p>
-          <p style="margin:3px 0 0;font-size:11px;color:var(--color-muted);line-height:1.4">Using public transport in Bangkok · +2× Points on all actions</p>
-        </div>
-        <span style="flex-shrink:0;font-size:20px;font-weight:800;font-family:var(--font-heading);
-                     color:var(--color-success);background:rgba(123,198,126,0.15);
-                     padding:4px 10px;border-radius:var(--radius-sm)">×2</span>
+        <span class="mission-banner-badge">×2</span>
       </div>
     `;
   }

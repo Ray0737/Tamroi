@@ -8,12 +8,6 @@ const GuildModule = (() => {
   let _userId = null;
   let _initPromise = null;  // ponytail: guards renderGuildPanel against reload race
 
-  const iconEnter = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-    stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px">
-    <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/>
-    <polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
-  </svg>`;
-
   async function init(userId) {
     _userId = userId;
     _initPromise = (async () => {
@@ -112,171 +106,135 @@ const GuildModule = (() => {
     const onlineCount = members.filter(m => onlineIds.has(m.user_id)).length;
 
     return `
-      <div style="display:flex;flex-direction:column;gap:10px">
+      <div>
 
-        <!-- ── Team header ── -->
-        <div style="background:var(--color-card-dark);border-radius:14px;
-                    border:1px solid rgba(255,255,255,0.08);padding:16px">
-          <p style="margin:0 0 2px;font-size:9px;text-transform:uppercase;letter-spacing:2px;
-                     color:var(--color-primary);font-weight:700">TEAM</p>
-          <h3 style="margin:0 0 8px;font-size:22px;font-weight:800;color:var(--color-white);
-                     word-break:break-word;line-height:1.2">${escapeHtml(guild.name)}</h3>
-
-          <div style="display:flex;align-items:center;gap:7px;margin-bottom:14px">
-            <span style="width:7px;height:7px;border-radius:50%;background:var(--color-success);flex-shrink:0"></span>
-            <span style="font-size:12px;color:var(--color-muted)">${onlineCount}/${members.length} ออนไลน์</span>
-            <span style="font-size:12px;color:var(--color-muted)">·</span>
-            <span id="guild-score-display" style="font-size:12px;color:var(--color-muted)">—</span>
+        <!-- ── Team header — compact profile row ── -->
+        <div class="guild-section">
+          <div class="guild-header-row">
+            <div class="guild-emblem">${escapeHtml(guild.name.substring(0, 2).toUpperCase())}</div>
+            <div class="guild-header-main">
+              <h3 class="guild-name">${escapeHtml(guild.name)}</h3>
+              <p class="guild-header-meta">
+                <span class="guild-status-dot"></span>
+                <span>${onlineCount}/${members.length} ออนไลน์</span>
+                <span>·</span>
+                <span id="guild-score-display">—</span>
+              </p>
+            </div>
+            ${isLeader ? `
+            <button id="btn-edit-guild" class="guild-header-edit-btn" title="แก้ไข">
+              <i class="bi bi-pencil"></i></button>` : ''}
           </div>
 
-          <!-- Invite + actions row -->
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <span style="font-size:10px;color:var(--color-muted);flex-shrink:0">รหัสเชิญ</span>
-            <span style="font-size:14px;font-weight:800;color:var(--color-primary);
-                         letter-spacing:3px;font-family:monospace">${escapeHtml(guild.invite_code)}</span>
-            <button id="btn-copy-invite"
-                    style="font-size:10px;color:var(--color-muted);background:none;
-                           border:1px solid var(--color-border);border-radius:6px;
-                           padding:2px 8px;cursor:pointer;display:inline-flex;align-items:center;gap:3px">
-              <i class="bi bi-clipboard"></i> คัดลอก</button>
-            ${isLeader ? `
-            <button id="btn-edit-guild"
-                    style="margin-left:auto;font-size:10px;color:var(--color-muted);background:none;
-                           border:1px solid var(--color-border);border-radius:6px;
-                           padding:2px 8px;cursor:pointer;display:inline-flex;align-items:center;gap:3px">
-              <i class="bi bi-pencil"></i> แก้ไข</button>` : ''}
+          <!-- ── Quick actions — moved up from the bottom ── -->
+          <div class="guild-action-row">
+            <button id="btn-rally-pin" class="guild-action-btn" style="color:var(--color-primary)">
+              <i class="bi bi-geo-alt-fill"></i> Rally</button>
+            <button id="btn-open-discuss" class="guild-action-btn" style="color:var(--color-muted)">
+              <i class="bi bi-chat"></i> ถกเถียง</button>
+            ${!isLeader ? `
+              <button id="btn-leave-guild" class="guild-action-btn" style="color:var(--color-danger)">
+                <i class="bi bi-box-arrow-right"></i> ออกจากกลุ่ม</button>` : `
+              <button id="btn-delete-guild" class="guild-action-btn" style="color:var(--color-danger)">
+                <i class="bi bi-trash"></i> ลบกลุ่ม</button>`}
           </div>
 
           ${guild.description ? `
-          <p style="margin:10px 0 0;font-size:12px;color:var(--color-muted);line-height:1.5">${escapeHtml(guild.description)}</p>` : ''}
+          <p class="guild-desc-text">${escapeHtml(guild.description)}</p>` : ''}
           ${guild.announcement ? `
-          <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);
-                      display:flex;align-items:flex-start;gap:8px">
-            <i class="bi bi-megaphone" style="color:var(--color-muted);font-size:12px;flex-shrink:0;margin-top:2px"></i>
-            <p style="margin:0;font-size:12px;color:var(--color-muted);line-height:1.5">${escapeHtml(guild.announcement)}</p>
+          <div class="guild-announce-row">
+            <i class="bi bi-megaphone"></i>
+            <p>${escapeHtml(guild.announcement)}</p>
+          </div>` : ''}
+
+          <!-- Edit form -->
+          ${isLeader ? `
+          <div id="guild-edit-form" hidden style="margin-top:14px">
+            <p class="guild-field-label">ชื่อกลุ่ม</p>
+            <input id="edit-guild-name" type="text" class="guild-input" value="${escapeHtml(guild.name)}">
+            <p class="guild-field-label">คำอธิบาย</p>
+            <textarea id="edit-guild-desc" class="guild-textarea" rows="2" maxlength="200"
+                      >${escapeHtml(guild.description || '')}</textarea>
+            <div class="guild-form-actions">
+              <button id="btn-cancel-edit" class="btn btn-ghost"
+                      style="font-size:11px;padding:5px 14px;border-color:var(--color-border)">ยกเลิก</button>
+              <button id="btn-save-guild" class="btn btn-primary"
+                      style="font-size:11px;padding:5px 16px">บันทึก</button>
+            </div>
           </div>` : ''}
         </div>
 
-        <!-- Edit form -->
-        ${isLeader ? `
-        <div id="guild-edit-form" hidden
-             style="background:var(--color-card-dark);border-radius:14px;
-                    border:1px solid rgba(255,255,255,0.08);padding:14px 16px">
-          <p style="margin:0 0 5px;font-size:11px;font-weight:700;color:var(--color-white)">ชื่อกลุ่ม</p>
-          <input id="edit-guild-name" type="text" value="${escapeHtml(guild.name)}"
-                 style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--color-border);
-                        border-radius:8px;padding:8px 12px;color:var(--color-white);
-                        font-size:13px;margin-bottom:10px;box-sizing:border-box">
-          <p style="margin:0 0 5px;font-size:11px;font-weight:700;color:var(--color-white)">คำอธิบาย</p>
-          <textarea id="edit-guild-desc" rows="2" maxlength="200"
-                    style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--color-border);
-                           border-radius:8px;padding:8px 12px;color:var(--color-white);
-                           font-size:12px;margin-bottom:10px;resize:none;box-sizing:border-box">${escapeHtml(guild.description || '')}</textarea>
-          <div style="display:flex;justify-content:flex-end;gap:6px">
-            <button id="btn-cancel-edit" class="btn btn-ghost"
-                    style="font-size:11px;padding:5px 14px;border-color:var(--color-border)">ยกเลิก</button>
-            <button id="btn-save-guild" class="btn btn-primary"
-                    style="font-size:11px;padding:5px 16px">บันทึก</button>
-          </div>
-        </div>` : ''}
+        <!-- ── Sub-nav — switches the panels below, mirrors the main bottom nav ── -->
+        <div class="guild-subnav">
+          <button class="guild-subnav-item active" data-guild-tab="members">
+            <i class="bi bi-people"></i><span>สมาชิก</span></button>
+          <button class="guild-subnav-item" data-guild-tab="announce">
+            <i class="bi bi-megaphone"></i><span>ประกาศ</span></button>
+          <button class="guild-subnav-item" data-guild-tab="log">
+            <i class="bi bi-journal-text"></i><span>บันทึก</span></button>
+          <button class="guild-subnav-item" data-guild-tab="missions">
+            <i class="bi bi-lightning"></i><span>ภารกิจ</span></button>
+        </div>
 
         <!-- ── Members + Requests ── -->
-        <div style="background:var(--color-card-dark);border-radius:14px;
-                    border:1px solid rgba(255,255,255,0.08);overflow:hidden">
-          <div style="padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.06);
-                      display:flex;align-items:center;justify-content:space-between">
-            <span style="font-size:11px;font-weight:700;color:var(--color-white);
-                          display:flex;align-items:center;gap:6px">
-              <i class="bi bi-people" style="color:var(--color-muted)"></i> สมาชิก</span>
-            <span style="font-size:11px;color:var(--color-muted)">${members.length} / 6</span>
+        <div class="guild-section guild-subpanel" data-guild-panel="members">
+          <div class="guild-invite-line">
+            <span>รหัสเชิญ</span>
+            <span class="guild-invite-code">${escapeHtml(guild.invite_code)}</span>
+            <button id="btn-copy-invite" class="guild-invite-copy-btn" title="คัดลอก">
+              <i class="bi bi-clipboard"></i></button>
           </div>
           <div id="guild-member-list">
             ${members.map(m => _memberRow(m, onlineIds)).join('')}
           </div>
           ${isLeader ? `
-          <div id="guild-requests-top"
-               style="padding:12px 16px;border-top:1px solid rgba(255,126,85,0.15)">
+          <div id="guild-requests-top" style="margin-top:10px">
             <div style="display:flex;justify-content:center;padding:4px"><div class="spinner"></div></div>
           </div>` : ''}
         </div>
 
         <!-- ── Announcements ── -->
-        <div style="background:var(--color-card-dark);border-radius:14px;
-                    border:1px solid rgba(255,255,255,0.08);overflow:hidden">
-          <div style="padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.06);
-                      display:flex;align-items:center;gap:6px">
-            <i class="bi bi-megaphone" style="color:var(--color-muted);font-size:12px"></i>
-            <span style="font-size:11px;font-weight:700;color:var(--color-white)">ประกาศ</span>
-          </div>
+        <div class="guild-section guild-subpanel" data-guild-panel="announce" hidden>
           ${isLeader ? `
-          <div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.05);
-                      display:flex;gap:8px;align-items:flex-end">
-            <textarea id="announcement-input" rows="2" maxlength="500"
-                      placeholder="พิมพ์ประกาศใหม่..."
-                      style="flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--color-border);
-                             border-radius:8px;padding:7px 10px;color:var(--color-white);
-                             font-size:12px;resize:none;font-family:var(--font-body);
-                             box-sizing:border-box;line-height:1.4"></textarea>
-            <button id="btn-post-announcement" class="btn btn-primary"
-                    style="font-size:11px;padding:6px 12px;flex-shrink:0;align-self:flex-end">
-              <i class="bi bi-send"></i></button>
+          <div class="guild-compose-row">
+            <textarea id="announcement-input" rows="1" maxlength="500"
+                      placeholder="พิมพ์ประกาศใหม่..."></textarea>
+            <button id="btn-post-announcement" class="forum-send-btn" title="โพสต์">
+              <i class="bi bi-send-fill"></i></button>
           </div>` : ''}
-          <div id="guild-announcements-list" style="padding:4px 0">
+          <div id="guild-announcements-list">
             <div style="display:flex;justify-content:center;padding:14px"><div class="spinner"></div></div>
           </div>
         </div>
 
         <!-- ── Expedition Log ── -->
-        <div style="background:var(--color-card-dark);border-radius:14px;
-                    border:1px solid rgba(255,255,255,0.08);overflow:hidden">
-          <div style="padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.06);
-                      display:flex;align-items:center;gap:6px">
-            <i class="bi bi-journal-text" style="color:var(--color-muted);font-size:12px"></i>
-            <span style="font-size:11px;font-weight:700;color:var(--color-white)">บันทึกการสำรวจ</span>
-          </div>
-          <div id="guild-expedition-log" style="padding:4px 0">
+        <div class="guild-section guild-subpanel" data-guild-panel="log" hidden>
+          <div id="guild-expedition-log">
             <div style="display:flex;justify-content:center;padding:14px"><div class="spinner"></div></div>
           </div>
         </div>
 
         <!-- ── Missions ── -->
-        <div style="background:var(--color-card-dark);border-radius:14px;
-                    border:1px solid rgba(255,255,255,0.08);overflow:hidden">
-          <div style="padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.06)">
-            <p style="margin:0;font-size:11px;font-weight:700;color:var(--color-white);
-                       display:flex;align-items:center;gap:6px">
-              <i class="bi bi-lightning" style="color:var(--color-muted)"></i> ภารกิจกลุ่ม</p>
-          </div>
-          <div id="guild-hub-missions" style="padding:12px 16px">
+        <div class="guild-section guild-subpanel" data-guild-panel="missions" hidden>
+          <div id="guild-hub-missions">
             <div style="display:flex;justify-content:center;padding:10px"><div class="spinner"></div></div>
           </div>
-        </div>
-
-        <!-- ── Action row — compact, right-aligned ── -->
-        <div style="display:flex;justify-content:flex-end;gap:6px">
-          <button id="btn-rally-pin" class="btn btn-ghost"
-                  style="font-size:11px;padding:5px 12px;color:var(--color-primary);
-                         border-color:rgba(255,126,85,0.35);display:flex;align-items:center;gap:4px">
-            📍 Rally</button>
-          <button id="btn-open-discuss" class="btn btn-ghost"
-                  style="font-size:11px;padding:5px 12px;color:var(--color-muted);
-                         border-color:var(--color-border);display:flex;align-items:center;gap:4px">
-            <i class="bi bi-chat"></i> ถกเถียง</button>
-          ${!isLeader ? `
-            <button class="btn btn-ghost" id="btn-leave-guild"
-                    style="font-size:11px;padding:5px 12px;color:#ef5350;
-                           border-color:rgba(239,83,80,0.3);display:flex;align-items:center;gap:4px">
-              <i class="bi bi-box-arrow-right"></i> ออกจากกลุ่ม</button>` : `
-            <button class="btn btn-ghost" id="btn-delete-guild"
-                    style="font-size:11px;padding:5px 12px;color:#ef5350;
-                           border-color:rgba(239,83,80,0.3);display:flex;align-items:center;gap:4px">
-              <i class="bi bi-trash"></i> ลบกลุ่ม</button>`}
         </div>
 
       </div>`;
   }
 
   function _bindHubActions(el, guild, isLeader) {
+    el.querySelectorAll('.guild-subnav-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.guildTab;
+        el.querySelectorAll('.guild-subnav-item').forEach(b => b.classList.toggle('active', b === btn));
+        el.querySelectorAll('[data-guild-panel]').forEach(panel => {
+          panel.hidden = panel.dataset.guildPanel !== tab;
+        });
+      });
+    });
+
     el.querySelector('#btn-leave-guild')?.addEventListener('click', _handleLeave);
     el.querySelector('#btn-delete-guild')?.addEventListener('click', () => _handleDelete(guild.id));
     const rallyBtn = el.querySelector('#btn-rally-pin');
@@ -348,26 +306,21 @@ const GuildModule = (() => {
     try {
       const items = await DB.Coop.getAnnouncements(guildId);
       if (!items.length) {
-        el.innerHTML = `<p style="margin:0;padding:14px 16px;font-size:12px;color:var(--color-muted);text-align:center">ยังไม่มีประกาศ</p>`;
+        el.innerHTML = `<p class="guild-list-empty">ยังไม่มีประกาศ</p>`;
         return;
       }
       el.innerHTML = items.map(a => {
         const name = escapeHtml(a.profiles?.username || '?');
         const ago  = _relativeTime(a.created_at);
         return `
-          <div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.04);
-                      display:flex;align-items:flex-start;gap:10px">
-            <div style="flex:1;min-width:0">
-              <p style="margin:0 0 3px;font-size:12px;color:var(--color-white);line-height:1.5;
-                         word-break:break-word">${escapeHtml(a.content)}</p>
-              <p style="margin:0;font-size:10px;color:var(--color-muted)">${name} · ${ago}</p>
+          <div class="guild-announcement-item">
+            <div class="guild-announcement-body">
+              <p class="guild-announcement-text">${escapeHtml(a.content)}</p>
+              <p class="guild-announcement-meta">${name} · ${ago}</p>
             </div>
             ${isLeader ? `
-            <button style="flex-shrink:0;background:none;border:none;cursor:pointer;
-                           color:var(--color-muted);padding:2px 4px;font-size:13px;
-                           transition:color 0.15s" data-del-announcement="${escapeHtml(a.id)}"
-                    onmouseover="this.style.color='#ef5350'" onmouseout="this.style.color=''">
-              <i class="bi bi-x"></i></button>` : ''}
+            <button class="guild-del-btn" data-del-announcement="${escapeHtml(a.id)}">
+              <i class="bi bi-x-lg"></i></button>` : ''}
           </div>`;
       }).join('');
       el.querySelectorAll('[data-del-announcement]').forEach(btn =>
@@ -377,7 +330,7 @@ const GuildModule = (() => {
         })
       );
     } catch {
-      el.innerHTML = `<p style="margin:0;padding:14px 16px;font-size:12px;color:var(--color-muted);text-align:center">โหลดไม่สำเร็จ</p>`;
+      el.innerHTML = `<p class="guild-list-error">โหลดไม่สำเร็จ</p>`;
     }
   }
 
@@ -401,34 +354,23 @@ const GuildModule = (() => {
     const iAmLeader = _state.guild.myRole === 'leader';
 
     return `
-      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;
-                  border-bottom:1px solid rgba(255,255,255,0.04)">
-        <div style="position:relative;flex-shrink:0">
+      <div class="guild-member-row">
+        <div class="guild-member-avatar-wrap">
           <div class="avatar-sm" style="width:34px;height:34px;font-size:12px">${initials}</div>
-          <span style="position:absolute;bottom:0;right:0;width:8px;height:8px;border-radius:50%;
-                       background:${isOnline ? 'var(--color-success)' : 'var(--color-border)'};
-                       border:2px solid var(--color-card-dark)"></span>
+          <span class="guild-status-badge ${isOnline ? 'online' : 'offline'}"></span>
         </div>
         <div style="flex:1;min-width:0">
-          <p style="margin:0;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-                     color:var(--color-white)">
-            ${username}${isMe ? ' <span style="color:var(--color-muted);font-weight:400;font-size:11px">(คุณ)</span>' : ''}
+          <p class="guild-member-name">
+            ${username}${isMe ? ' <span class="guild-member-you">(คุณ)</span>' : ''}
           </p>
-          ${isLeader ? `<p style="margin:0;font-size:10px;font-weight:600;color:var(--color-primary);
-                                   display:flex;align-items:center;gap:3px">
+          ${isLeader ? `<p class="guild-member-leader-tag">
                           <i class="bi bi-star-fill" style="font-size:9px"></i> Leader</p>` : ''}
         </div>
         ${iAmLeader && !isMe ? `
-          <div style="display:flex;gap:4px">
-            <button style="font-size:11px;color:var(--color-muted);background:none;
-                           border:1px solid var(--color-border);border-radius:6px;
-                           padding:4px 10px;cursor:pointer;display:flex;align-items:center;gap:3px"
-                    data-transfer="${escapeHtml(m.user_id)}">
+          <div class="guild-member-actions">
+            <button class="guild-icon-btn" data-transfer="${escapeHtml(m.user_id)}">
               <i class="bi bi-arrow-left-right"></i></button>
-            <button style="font-size:11px;color:#ef5350;background:none;
-                           border:1px solid rgba(239,83,80,0.3);border-radius:6px;
-                           padding:4px 10px;cursor:pointer;display:flex;align-items:center;gap:3px"
-                    data-kick="${escapeHtml(m.user_id)}">
+            <button class="guild-icon-btn danger" data-kick="${escapeHtml(m.user_id)}">
               <i class="bi bi-person-x"></i></button>
           </div>` : ''}
       </div>`;
@@ -438,6 +380,7 @@ const GuildModule = (() => {
     const el = document.getElementById('guild-member-list');
     if (!el || !_state) return;
     const onlineIds = getOnlineMemberIds();
+
     el.innerHTML = _state.members.map(m => _memberRow(m, onlineIds)).join('');
     el.querySelectorAll('[data-kick]').forEach(btn =>
       btn.addEventListener('click', () => _handleKick(btn.dataset.kick))
@@ -482,7 +425,7 @@ const GuildModule = (() => {
       );
     } catch (e) {
       const el2 = document.getElementById('guild-requests-top');
-      if (el2) el2.innerHTML = `<p style="margin:0;font-size:11px;color:#ef5350">โหลดคำขอไม่สำเร็จ: ${escapeHtml(e?.message || 'unknown')}</p>`;
+      if (el2) el2.innerHTML = `<p class="guild-list-error" style="text-align:left;padding:0">โหลดคำขอไม่สำเร็จ: ${escapeHtml(e?.message || 'unknown')}</p>`;
       console.error('[guild] _loadPendingRequests failed:', e);
     }
   }
@@ -529,7 +472,7 @@ const GuildModule = (() => {
       if (Date.now() - new Date(payload.sent_at).getTime() > 7200000) return; // 2h expiry
       window.MapModule?.renderRallyPin(payload.user_id, payload.username, payload.lat, payload.lng);
       if (payload.user_id !== _userId)
-        window.AppCore?.showToast?.(`📍 ${escapeHtml(payload.username)} ส่งหมุด Rally!`);
+        window.AppCore?.showToast?.(`${escapeHtml(payload.username)} ส่งหมุด Rally!`);
     });
     _rallyChannel.subscribe();
   }
@@ -546,7 +489,7 @@ const GuildModule = (() => {
       await _rallyChannel.send({ type: 'broadcast', event: 'rally_pin', payload });
       _state.members
         .filter(m => m.user_id !== user.id)
-        .forEach(m => DB.Notifications.push(m.user_id, 'rally', `📍 ${username} ส่งหมุด`, 'แตะเพื่อดูบนแผนที่').catch(() => {}));
+        .forEach(m => DB.Notifications.push(m.user_id, 'rally', `${username} ส่งหมุด`, 'แตะเพื่อดูบนแผนที่').catch(() => {}));
       window.AppCore?.showToast?.('ส่งหมุด Rally แล้ว!');
     } catch {
       window.AppCore?.showToast?.('ส่งหมุดไม่สำเร็จ');
@@ -562,58 +505,42 @@ const GuildModule = (() => {
       const memberIds = _state.members.map(m => m.user_id);
       const events = await DB.Coop.getExpeditionLog(memberIds);
       if (!events.length) {
-        el.innerHTML = `<p style="margin:0;padding:14px 16px;font-size:12px;color:var(--color-muted);text-align:center">ยังไม่มีกิจกรรม</p>`;
+        el.innerHTML = `<p class="guild-list-empty">ยังไม่มีกิจกรรม</p>`;
         return;
       }
-      const iconFor  = { capture: '⚔️', fog: '🌫️', lore: '📖' };
+      const iconFor  = { capture: 'bi-trophy', fog: 'bi-map', lore: 'bi-book' };
       const labelFor = { capture: 'จับ', fog: 'เปิดหมอก', lore: 'ปลดล็อก Lore:' };
       el.innerHTML = events.map(e => `
-        <div style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,0.04);
-                    display:flex;align-items:flex-start;gap:8px">
-          <span style="font-size:13px;flex-shrink:0;margin-top:1px">${iconFor[e.type]}</span>
-          <div style="flex:1;min-width:0">
-            <p style="margin:0;font-size:12px;color:var(--color-white);line-height:1.4">
+        <div class="guild-log-item">
+          <i class="bi ${iconFor[e.type]} guild-log-icon"></i>
+          <div class="guild-log-body">
+            <p class="guild-log-text">
               <strong>${escapeHtml(e.user)}</strong> ${labelFor[e.type]}
-              <span style="color:var(--color-primary)">${escapeHtml(e.detail)}</span>
+              <span class="guild-log-detail">${escapeHtml(e.detail)}</span>
             </p>
-            <p style="margin:2px 0 0;font-size:10px;color:var(--color-muted)">${_relativeTime(e.ts)}</p>
+            <p class="guild-log-time">${_relativeTime(e.ts)}</p>
           </div>
         </div>`).join('');
     } catch {
-      el.innerHTML = `<p style="margin:0;padding:14px 16px;font-size:12px;color:var(--color-muted);text-align:center">โหลดไม่สำเร็จ</p>`;
+      el.innerHTML = `<p class="guild-list-error">โหลดไม่สำเร็จ</p>`;
     }
   }
 
   function _renderNoGuild(pendingRequest = null) {
     return `
-      <div style="background:var(--color-card-dark);border-radius:var(--radius-xl);
-                  border:1px dashed var(--color-border);padding:var(--space-lg);text-align:center">
-        <p style="font-size:32px;margin:0 0 var(--space-sm)">🤝</p>
-        <h3 style="font-family:var(--font-heading);font-size:16px;font-weight:700;margin:0 0 6px">
-          ยังไม่มีกลุ่ม</h3>
-        <p style="font-size:12px;color:var(--color-muted);margin:0 0 var(--space-md)">
-          สร้างหรือเข้าร่วมกลุ่มเพื่อเล่นร่วมกับเพื่อน</p>
+      <div class="guild-no-panel">
+        <i class="bi bi-people guild-no-icon"></i>
+        <h3 class="guild-no-title">ยังไม่มีกลุ่ม</h3>
+        <p class="guild-no-desc">สร้างหรือเข้าร่วมกลุ่มเพื่อเล่นร่วมกับเพื่อน</p>
         ${pendingRequest ? `
-          <div style="padding:var(--space-sm);background:rgba(255,126,85,0.08);
-                      border-radius:var(--radius-md);border:1px solid rgba(255,126,85,0.2);
-                      margin-bottom:var(--space-sm);display:flex;align-items:center;gap:8px">
-            <p style="margin:0;flex:1;font-size:12px;color:var(--color-primary);text-align:left">
-              ⏳ รอการอนุมัติจาก <strong>${escapeHtml(pendingRequest.guilds?.name || '...')}</strong>
-            </p>
-            <button id="btn-cancel-request"
-                    style="font-size:10px;color:var(--color-muted);background:none;
-                           border:1px solid var(--color-border);border-radius:var(--radius-sm);
-                           padding:3px 8px;cursor:pointer;flex-shrink:0"
+          <div class="guild-pending-banner">
+            <p><i class="bi bi-hourglass-split"></i> รอการอนุมัติจาก <strong>${escapeHtml(pendingRequest.guilds?.name || '...')}</strong></p>
+            <button id="btn-cancel-request" class="guild-pending-cancel"
                     data-req-id="${escapeHtml(pendingRequest.id)}">ยกเลิก</button>
           </div>` : ''}
-        <input id="guild-name-input" type="text" placeholder="ชื่อกลุ่มใหม่..."
-               style="width:100%;background:var(--color-card-darker);border:1px solid var(--color-border);
-                      border-radius:var(--radius-md);padding:10px var(--space-sm);color:var(--color-white);
-                      font-size:13px;margin-bottom:8px">
+        <input id="guild-name-input" type="text" placeholder="ชื่อกลุ่มใหม่..." class="guild-input">
         <textarea id="guild-desc-input" placeholder="คำอธิบายกลุ่ม (ไม่บังคับ)" rows="2" maxlength="200"
-               style="width:100%;background:var(--color-card-darker);border:1px solid var(--color-border);
-                      border-radius:var(--radius-md);padding:10px var(--space-sm);color:var(--color-white);
-                      font-size:12px;margin-bottom:8px;resize:none;box-sizing:border-box"></textarea>
+                  class="guild-textarea"></textarea>
         <button class="btn btn-primary btn-full" id="btn-create-guild" style="margin-bottom:var(--space-sm)">
           สร้างกลุ่มใหม่</button>
         <div style="display:flex;gap:8px">
@@ -625,14 +552,14 @@ const GuildModule = (() => {
           <button id="btn-join-guild"
                   class="btn btn-outline btn-sm"
                   style="display:flex;align-items:center;gap:4px;white-space:nowrap">
-            ${iconEnter} เข้าร่วม
+            <i class="bi bi-box-arrow-in-right"></i> เข้าร่วม
           </button>
         </div>
-        <p id="guild-error" style="font-size:11px;color:#ef5350;margin:6px 0 0;min-height:16px"></p>
+        <p id="guild-error" style="font-size:11px;color:var(--color-danger);margin:6px 0 0;min-height:16px"></p>
       </div>
       <div style="margin-top:var(--space-md)">
-        <p style="font-size:11px;color:var(--color-muted);margin:0 0 8px">หรือค้นหากลุ่ม</p>
-        <div style="display:flex;gap:8px">
+        <p class="guild-find-hint">หรือค้นหากลุ่ม</p>
+        <div class="guild-find-row">
           <input id="findgroup-search-input" type="text" placeholder="ค้นหากลุ่ม..."
                  style="flex:1;background:var(--color-card-darker);border:1px solid var(--color-border);
                         border-radius:var(--radius-md);padding:10px var(--space-sm);
@@ -771,7 +698,7 @@ const GuildModule = (() => {
       guilds.sort((a, b) => (b.guild_legacy_score || 0) - (a.guild_legacy_score || 0));
 
       if (!guilds.length) {
-        resultsEl.innerHTML = `<p style="text-align:center;color:var(--color-muted);font-size:12px;padding:var(--space-md)">ไม่พบกลุ่ม</p>`;
+        resultsEl.innerHTML = `<p class="guild-list-empty">ไม่พบกลุ่ม</p>`;
         return;
       }
 
@@ -782,15 +709,12 @@ const GuildModule = (() => {
           const disabled  = !!myGuildId || isMyGuild || isPending;
           const btnLabel  = isMyGuild ? 'คุณอยู่แล้ว' : isPending ? 'รอการอนุมัติ' : 'ขอเข้าร่วม';
           return `
-            <div style="background:var(--color-card-dark);border-radius:var(--radius-md);
-                        border:1px solid rgba(255,255,255,0.06);overflow:hidden">
-              <div style="display:flex;align-items:center;gap:10px;padding:10px var(--space-sm)">
-                <span style="font-size:12px;font-weight:700;color:var(--color-muted);
-                             width:20px;text-align:center;flex-shrink:0">${i + 1}</span>
-                <div style="flex:1;min-width:0">
-                  <p style="margin:0;font-size:13px;font-weight:600;color:var(--color-white);
-                             white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(g.name)}</p>
-                  <p style="margin:2px 0 0;font-size:10px;color:var(--color-muted)">
+            <div class="guild-result-card">
+              <div class="guild-result-head">
+                <span class="guild-result-rank">${i + 1}</span>
+                <div class="guild-result-body">
+                  <p class="guild-result-name">${escapeHtml(g.name)}</p>
+                  <p class="guild-result-meta">
                     ${g.member_count} สมาชิก · ${(g.guild_legacy_score || 0).toLocaleString()} pts</p>
                 </div>
                 <button class="btn btn-primary"
@@ -801,10 +725,8 @@ const GuildModule = (() => {
                 </button>
               </div>
               ${(g.description || g.announcement) ? `
-                <div style="padding:6px var(--space-sm) 10px calc(20px + 10px + var(--space-sm));
-                            border-top:1px solid rgba(255,255,255,0.04)">
-                  <p style="margin:0;font-size:11px;color:var(--color-muted);line-height:1.5">
-                    ${escapeHtml(g.description || g.announcement)}</p>
+                <div class="guild-result-desc">
+                  <p>${escapeHtml(g.description || g.announcement)}</p>
                 </div>` : ''}
             </div>`;
         }).join('')}
@@ -823,7 +745,7 @@ const GuildModule = (() => {
       });
     } catch (e) {
       console.error('[findgroup]', e);
-      resultsEl.innerHTML = `<p style="text-align:center;color:var(--color-muted);font-size:12px">เกิดข้อผิดพลาด</p>`;
+      resultsEl.innerHTML = `<p class="guild-list-empty">เกิดข้อผิดพลาด</p>`;
     }
   }
 
