@@ -365,7 +365,8 @@ const MapModule = (() => {
     options.querySelectorAll('.quiz-option').forEach(btn => {
       btn.addEventListener('click', () => {
         activeQuiz.selected = btn.dataset.option;
-        options.querySelectorAll('.quiz-option').forEach(b => b.classList.remove('btn-primary'));
+        options.querySelectorAll('.quiz-option').forEach(b => { b.classList.remove('btn-primary'); b.classList.add('btn-ghost'); });
+        btn.classList.remove('btn-ghost');
         btn.classList.add('btn-primary');
       });
     });
@@ -947,7 +948,8 @@ const MapModule = (() => {
     options.querySelectorAll('.quiz-option').forEach(btn => {
       btn.addEventListener('click', () => {
         activeQuiz.selected = btn.dataset.option;
-        options.querySelectorAll('.quiz-option').forEach(item => item.classList.remove('btn-primary'));
+        options.querySelectorAll('.quiz-option').forEach(item => { item.classList.remove('btn-primary'); item.classList.add('btn-ghost'); });
+        btn.classList.remove('btn-ghost');
         btn.classList.add('btn-primary');
       });
     });
