@@ -50,6 +50,8 @@ The Collection/Archive tab sorts captured figures by class (S → A → B → C)
 | The Archive | Total figures and artifacts captured |
 | Legacy Score | Points by figure impact — King Taksin = 500 pts |
 
+Player avatars (from Google OAuth or a custom profile picture) now show throughout — leaderboard rows, guild member lists, raid lobbies — instead of just initials.
+
 ---
 
 ## Team — ปลามึกยักษ์
