@@ -229,57 +229,177 @@ function closeAllSheets() {
   if (nav) nav.style.pointerEvents = '';  // restore nav
 }
 
-function openLoreSheet(node) {
-  const title = document.getElementById('lore-title');
+async function openLoreSheet(node) {
+  const title     = document.getElementById('lore-title');
   const typeBadge = document.getElementById('lore-type-badge');
-  const ptsBadge = document.getElementById('lore-pts-badge');
+  const ptsBadge  = document.getElementById('lore-pts-badge');
   const narrative = document.getElementById('lore-narrative');
-  const img = document.getElementById('lore-img');
+  const img       = document.getElementById('lore-img');
   const audioWrap = document.getElementById('lore-audio-wrap');
-  const audio = document.getElementById('lore-audio');
+  const audio     = document.getElementById('lore-audio');
   const audioToggle = document.getElementById('lore-audio-toggle');
-  const saveBtn = document.getElementById('btn-save-lore');
+  const saveBtn   = document.getElementById('btn-save-lore');
+  const phasePanel = document.getElementById('lore-phase-panel');
   if (!title || !typeBadge || !ptsBadge || !narrative || !saveBtn) return;
 
+  // ── populate static header (always) ──────────────────
   const contentType = node.content_type || 'text';
-  title.textContent = node.name_th || node.name_en || 'Lore';
+  title.textContent    = node.name_th || node.name_en || 'Lore';
   typeBadge.textContent = contentType;
-  ptsBadge.textContent = `+${node.lore_pts || 0} pts`;
+  ptsBadge.textContent  = `+${node.lore_pts || 0} pts`;
   narrative.textContent = node.content_th || node.content_en || '';
 
   if (img) {
     const isImage = contentType === 'image' && node.media_url;
     img.hidden = !isImage;
-    img.src = isImage ? node.media_url : '';
-    img.alt = isImage ? (node.name_th || node.name_en || '') : '';
+    img.src    = isImage ? node.media_url : '';
+    img.alt    = isImage ? (node.name_th || node.name_en || '') : '';
   }
-
   if (audioWrap && audio && audioToggle) {
     const isAudio = contentType === 'audio' && node.media_url;
     audioWrap.hidden = !isAudio;
     audio.src = isAudio ? node.media_url : '';
     audioToggle.textContent = 'เล่นเสียง';
     audioToggle.onclick = async () => {
-      if (audio.paused) {
-        await audio.play();
-        audioToggle.textContent = 'หยุดเสียง';
+      if (audio.paused) { await audio.play(); audioToggle.textContent = 'หยุดเสียง'; }
+      else { audio.pause(); audioToggle.textContent = 'เล่นเสียง'; }
+    };
+  }
+
+  // ── already saved node → legacy behaviour ─────────────
+  if (node.is_saved) {
+    if (phasePanel) phasePanel.hidden = true;
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'บันทึกแล้ว';
+    saveBtn.onclick = null;
+    openSheet('lore-sheet');
+    return;
+  }
+
+  // ── fetch questions + prior attempts (parallel) ───────
+  const userId = App.user?.id;
+  let questions = [], priorPre = false, priorPost = false;
+  if (userId) {
+    try {
+      const [qs, assessments] = await Promise.all([
+        DB.Lore.getLoreQuestions(node.id),
+        DB.Lore.getAssessments(userId, node.id)
+      ]);
+      questions  = qs || [];
+      priorPre   = assessments.some(a => a.phase === 'pre');
+      priorPost  = assessments.some(a => a.phase === 'post');
+    } catch (_) { /* degraded: skip tests */ }
+  }
+
+  const hasQuestions  = questions.length > 0;
+  const needsPretest  = hasQuestions && !priorPre;
+  const needsPosttest = hasQuestions && !priorPost;
+
+  // pre score captured during pretest phase
+  let preScore = priorPre ? null : 0;
+
+  // ── helper: render a quiz into #lore-phase-panel ──────
+  function renderQuiz(qs, onSubmit) {
+    if (!phasePanel) return;
+    let answers = {};
+    phasePanel.innerHTML = qs.map((q, i) => `
+      <p class="lore-narrative" style="margin-bottom:6px"><strong>${escapeHtml(q.question_th)}</strong></p>
+      <div class="lore-quiz-options mb-3">
+        ${['A','B','C','D'].map(opt => `
+          <button class="btn btn-ghost btn-full lore-quiz-opt mb-1" data-q="${i}" data-opt="${opt}">
+            ${escapeHtml(q['option_' + opt.toLowerCase()])}
+          </button>`).join('')}
+      </div>`).join('');
+    phasePanel.querySelectorAll('.lore-quiz-opt').forEach(btn => {
+      btn.onclick = () => {
+        const qi = btn.dataset.q;
+        phasePanel.querySelectorAll(`[data-q="${qi}"]`).forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        answers[qi] = btn.dataset.opt;
+      };
+    });
+    saveBtn.textContent = 'ส่งคำตอบ';
+    saveBtn.disabled    = false;
+    saveBtn.onclick     = () => {
+      const score = qs.filter((q, i) => answers[i] === q.correct_option).length;
+      onSubmit(score, qs.length);
+    };
+  }
+
+  // ── helper: show content phase ────────────────────────
+  function showContentPhase() {
+    if (phasePanel) phasePanel.hidden = true;
+    saveBtn.disabled    = false;
+    saveBtn.textContent = 'อ่านแล้ว บันทึก →';
+    saveBtn.onclick     = async () => {
+      await window.MapModule?.saveLoreUnlock(node.id);
+      if (needsPosttest) {
+        showPosttestPhase();
       } else {
-        audio.pause();
-        audioToggle.textContent = 'เล่นเสียง';
+        closeAllSheets();
       }
     };
   }
 
-  if (node.is_saved) {
-    saveBtn.disabled = true;
-    saveBtn.textContent = 'บันทึกแล้ว';
-    saveBtn.onclick = null;
-  } else {
-    saveBtn.disabled = false;
-    saveBtn.textContent = 'บันทึกลง Journal';
-    saveBtn.onclick = () => window.MapModule?.saveLoreUnlock(node.id);
+  // ── helper: show posttest phase ───────────────────────
+  function showPosttestPhase() {
+    if (phasePanel) { phasePanel.hidden = false; }
+    typeBadge.textContent = 'หลังอ่าน';
+    renderQuiz(questions, async (score, total) => {
+      if (userId) {
+        try {
+          const saves = [DB.Lore.saveAssessment(userId, node.id, 'post', score, total)];
+          if (preScore !== null && !priorPre) {
+            saves.push(DB.Lore.saveAssessment(userId, node.id, 'pre', preScore, total));
+          }
+          await Promise.all(saves);
+          // bonus points
+          const bonus = preScore === null ? 0
+            : preScore === 0 && score === total ? 20
+            : score > preScore ? 10 : 0;
+          if (bonus > 0) await DB.Profiles.addLegacyPoints(userId, bonus);
+        } catch (_) {}
+      }
+      showResultPhase(preScore, score, questions.length);
+    });
   }
+
+  // ── helper: show result phase ─────────────────────────
+  function showResultPhase(pre, post, total) {
+    if (phasePanel) {
+      const alreadyKnew = pre !== null && pre === total;
+      const learned     = pre !== null && post > pre;
+      const pct         = total > 0 ? Math.round((post / total) * 100) : 0;
+      phasePanel.hidden = false;
+      phasePanel.innerHTML = `
+        <div class="lore-delta-badge">
+          ${alreadyKnew
+            ? '<span>เก่งมาก! คุณรู้เรื่องนี้อยู่แล้ว 🏆</span>'
+            : learned
+              ? `<span>คุณเรียนรู้เพิ่มขึ้น! ตอบถูก ${post}/${total} (${pct}%)</span>`
+              : `<span>ตอบถูก ${post}/${total} (${pct}%) — ลองอ่านอีกครั้ง!</span>`}
+        </div>`;
+    }
+    saveBtn.textContent = 'ปิด';
+    saveBtn.disabled    = false;
+    saveBtn.onclick     = () => closeAllSheets();
+  }
+
+  // ── phase entry ───────────────────────────────────────
   openSheet('lore-sheet');
+
+  if (needsPretest) {
+    if (phasePanel) phasePanel.hidden = false;
+    typeBadge.textContent = 'ก่อนอ่าน';
+    renderQuiz(questions, (score, total) => {
+      preScore = score;
+      if (phasePanel) phasePanel.hidden = true;
+      typeBadge.textContent = contentType;
+      showContentPhase();
+    });
+  } else {
+    showContentPhase();
+  }
 }
 
 function openLoreChainSheet(chain) {
