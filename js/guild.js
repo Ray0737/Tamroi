@@ -151,9 +151,9 @@ const GuildModule = (() => {
           ${isLeader ? `
           <div id="guild-edit-form" hidden style="margin-top:14px">
             <p class="guild-field-label">ชื่อกลุ่ม</p>
-            <input id="edit-guild-name" type="text" class="guild-input" value="${escapeHtml(guild.name)}">
+            <input id="edit-guild-name" type="text" class="guild-input" autocomplete="off" value="${escapeHtml(guild.name)}">
             <p class="guild-field-label">คำอธิบาย</p>
-            <textarea id="edit-guild-desc" class="guild-textarea" rows="2" maxlength="200"
+            <textarea id="edit-guild-desc" class="guild-textarea" rows="2" maxlength="200" autocomplete="off"
                       >${escapeHtml(guild.description || '')}</textarea>
             <div class="guild-form-actions">
               <button id="btn-cancel-edit" class="btn btn-ghost"
@@ -197,7 +197,7 @@ const GuildModule = (() => {
         <div class="guild-section guild-subpanel" data-guild-panel="announce" hidden>
           ${isLeader ? `
           <div class="guild-compose-row">
-            <textarea id="announcement-input" rows="1" maxlength="500"
+            <textarea id="announcement-input" rows="1" maxlength="500" autocomplete="off"
                       placeholder="พิมพ์ประกาศใหม่..."></textarea>
             <button id="btn-post-announcement" class="forum-send-btn" title="โพสต์">
               <i class="bi bi-send-fill"></i></button>
@@ -538,20 +538,20 @@ const GuildModule = (() => {
             <button id="btn-cancel-request" class="guild-pending-cancel"
                     data-req-id="${escapeHtml(pendingRequest.id)}">ยกเลิก</button>
           </div>` : ''}
-        <input id="guild-name-input" type="text" placeholder="ชื่อกลุ่มใหม่..." class="guild-input">
+        <input id="guild-name-input" type="text" placeholder="ชื่อกลุ่มใหม่..." class="guild-input" autocomplete="off">
         <textarea id="guild-desc-input" placeholder="คำอธิบายกลุ่ม (ไม่บังคับ)" rows="2" maxlength="200"
-                  class="guild-textarea"></textarea>
-        <button class="btn btn-primary btn-full" id="btn-create-guild" style="margin-bottom:var(--space-sm)">
+                  class="guild-textarea" autocomplete="off"></textarea>
+        <button class="btn btn-primary btn-full" id="btn-create-guild"
+                style="font-size:13px;padding:10px;margin-bottom:var(--space-sm)">
           สร้างกลุ่มใหม่</button>
-        <div style="display:flex;gap:8px">
-          <input id="guild-code-input" type="text" placeholder="รหัสเชิญ (6 ตัว)..."
-                 maxlength="6"
-                 style="flex:1;background:var(--color-card-darker);border:1px solid var(--color-border);
-                        border-radius:var(--radius-md);padding:8px 10px;color:var(--color-white);
-                        font-size:12px;text-transform:uppercase;letter-spacing:2px">
+        <div style="display:flex;align-items:flex-end;gap:8px">
+          <input id="guild-code-input" type="text" placeholder="กรอกรหัสเชิญ 6 หลัก"
+                 maxlength="6" class="guild-input guild-code-input" autocomplete="off"
+                 style="flex:1;margin-bottom:0">
           <button id="btn-join-guild"
                   class="btn btn-outline btn-sm"
-                  style="display:flex;align-items:center;gap:4px;white-space:nowrap">
+                  style="display:flex;align-items:center;gap:4px;white-space:nowrap;
+                         font-size:12px;padding:8px 14px;flex-shrink:0">
             <i class="bi bi-box-arrow-in-right"></i> เข้าร่วม
           </button>
         </div>
@@ -559,14 +559,13 @@ const GuildModule = (() => {
       </div>
       <div style="margin-top:var(--space-md)">
         <p class="guild-find-hint">หรือค้นหากลุ่ม</p>
-        <div class="guild-find-row">
+        <div class="guild-find-row" style="align-items:flex-end">
           <input id="findgroup-search-input" type="text" placeholder="ค้นหากลุ่ม..."
-                 style="flex:1;background:var(--color-card-darker);border:1px solid var(--color-border);
-                        border-radius:var(--radius-md);padding:10px var(--space-sm);
-                        color:var(--color-white);font-size:13px">
-          <button class="btn btn-primary" id="btn-findgroup-search" style="white-space:nowrap">ค้นหา</button>
+                 class="guild-input" autocomplete="off" style="flex:1;margin-bottom:0">
+          <button class="btn btn-primary" id="btn-findgroup-search"
+                  style="white-space:nowrap;font-size:12px;padding:8px 16px;flex-shrink:0">ค้นหา</button>
         </div>
-        <div id="findgroup-results" style="margin-top:var(--space-sm)"></div>
+        <div id="findgroup-results" style="margin-top:var(--space-md)"></div>
       </div>`;
   }
 

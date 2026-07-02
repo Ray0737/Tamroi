@@ -1373,6 +1373,23 @@
 }
 .guild-input:focus, .guild-textarea:focus { border-bottom-color: var(--color-primary); }
 .guild-textarea { resize: none; font-size: var(--text-sm); }
+.guild-code-input { text-transform: uppercase; letter-spacing: 0.5px; }
+.guild-code-input:placeholder-shown { text-transform: none; letter-spacing: normal; }
+
+/* Autofill on transparent underline inputs — match page bg (#1C1B2E),
+   not a card bg, since these sit directly on the page, not inside a card.
+   var() is unreliable inside :-webkit-autofill so literals only. */
+.guild-input:-webkit-autofill,
+.guild-input:-webkit-autofill:hover,
+.guild-input:-webkit-autofill:focus,
+.guild-textarea:-webkit-autofill,
+.forum-compose textarea:-webkit-autofill,
+.guild-compose-row textarea:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 9999px #1C1B2E inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff;
+  transition: background-color 9999s ease-in-out 0s;
+}
 .guild-form-actions { display: flex; justify-content: flex-end; gap: 6px; }
 
 /* ── Guild sub-nav — mirrors the app's main bottom nav ── */
