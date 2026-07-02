@@ -804,6 +804,33 @@ const Coop = {
       .eq('guild_id', guildId).maybeSingle();
     return data?.guild_legacy_score ?? 0;
   },
+
+  async getExpeditionLog(memberIds, limit = 15) {
+    if (!memberIds?.length) return [];
+    const [captures, districts, lore] = await Promise.all([
+      _sb.from('user_captures')
+        .select('user_id, captured_at, figures(name_th), profiles(username)')
+        .in('user_id', memberIds).order('captured_at', { ascending: false }).limit(limit),
+      _sb.from('user_districts')
+        .select('user_id, checked_in_at, districts(name_th), profiles(username)')
+        .in('user_id', memberIds).eq('fogged', false)
+        .not('checked_in_at', 'is', null)
+        .order('checked_in_at', { ascending: false }).limit(limit),
+      _sb.from('user_lore')
+        .select('user_id, unlocked_at, lore_nodes(name), profiles(username)')
+        .in('user_id', memberIds).order('unlocked_at', { ascending: false }).limit(limit),
+    ]);
+    const events = [];
+    (captures.data  || []).forEach(r => events.push({ type: 'capture', user: r.profiles?.username || '?', detail: r.figures?.name_th  || '?', ts: r.captured_at  }));
+    (districts.data || []).forEach(r => events.push({ type: 'fog',     user: r.profiles?.username || '?', detail: r.districts?.name_th || '?', ts: r.checked_in_at }));
+    (lore.data      || []).forEach(r => events.push({ type: 'lore',    user: r.profiles?.username || '?', detail: r.lore_nodes?.name   || '?', ts: r.unlocked_at  }));
+    events.sort((a, b) => new Date(b.ts) - new Date(a.ts));
+    return events.slice(0, limit);
+  },
+
+  openRallyChannel(guildId) {
+    return _sb.channel(`broadcast:rally:${guildId}`, { config: { broadcast: { self: true } } });
+  },
 };
 
 // ── Raid ───────────────────────────────────────────────

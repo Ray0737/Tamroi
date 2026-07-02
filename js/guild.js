@@ -4,6 +4,7 @@ const GuildModule = (() => {
   let _presenceMap = {};    // userId → presence entries
   let _presenceChannel = null;
   let _membersChannel = null;
+  let _rallyChannel = null;
   let _userId = null;
   let _initPromise = null;  // ponytail: guards renderGuildPanel against reload race
 
@@ -21,7 +22,7 @@ const GuildModule = (() => {
       } catch {
         _state = null;
       }
-      if (_state) { subscribePresence(); subscribeMembers(); }
+      if (_state) { subscribePresence(); subscribeMembers(); subscribeRallyPins(); }
       if (_state) _refreshGuildFog();
     })();
     return _initPromise;
@@ -97,6 +98,7 @@ const GuildModule = (() => {
     _bindHubActions(el, guild, isLeader);
     if (isLeader) _loadPendingRequests(guild.id);
     _loadAnnouncements(guild.id, isLeader);
+    _loadExpeditionLog(guild.id);
     _loadMissionsSection(guild.id);
 
     // Lazy-load guild score without blocking render
@@ -217,6 +219,19 @@ const GuildModule = (() => {
           </div>
         </div>
 
+        <!-- ── Expedition Log ── -->
+        <div style="background:var(--color-card-dark);border-radius:14px;
+                    border:1px solid rgba(255,255,255,0.08);overflow:hidden">
+          <div style="padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.06);
+                      display:flex;align-items:center;gap:6px">
+            <i class="bi bi-journal-text" style="color:var(--color-muted);font-size:12px"></i>
+            <span style="font-size:11px;font-weight:700;color:var(--color-white)">บันทึกการสำรวจ</span>
+          </div>
+          <div id="guild-expedition-log" style="padding:4px 0">
+            <div style="display:flex;justify-content:center;padding:14px"><div class="spinner"></div></div>
+          </div>
+        </div>
+
         <!-- ── Missions ── -->
         <div style="background:var(--color-card-dark);border-radius:14px;
                     border:1px solid rgba(255,255,255,0.08);overflow:hidden">
@@ -232,6 +247,10 @@ const GuildModule = (() => {
 
         <!-- ── Action row — compact, right-aligned ── -->
         <div style="display:flex;justify-content:flex-end;gap:6px">
+          <button id="btn-rally-pin" class="btn btn-ghost"
+                  style="font-size:11px;padding:5px 12px;color:var(--color-primary);
+                         border-color:rgba(255,126,85,0.35);display:flex;align-items:center;gap:4px">
+            📍 Rally</button>
           <button id="btn-open-discuss" class="btn btn-ghost"
                   style="font-size:11px;padding:5px 12px;color:var(--color-muted);
                          border-color:var(--color-border);display:flex;align-items:center;gap:4px">
@@ -253,6 +272,8 @@ const GuildModule = (() => {
   function _bindHubActions(el, guild, isLeader) {
     el.querySelector('#btn-leave-guild')?.addEventListener('click', _handleLeave);
     el.querySelector('#btn-delete-guild')?.addEventListener('click', () => _handleDelete(guild.id));
+    const rallyBtn = el.querySelector('#btn-rally-pin');
+    rallyBtn?.addEventListener('click', () => _handleRallyPin(rallyBtn));
     el.querySelector('#btn-open-discuss')?.addEventListener('click', () => {
       document.querySelector('[data-community-tab="discuss"]')?.click();
     });
@@ -487,6 +508,70 @@ const GuildModule = (() => {
       }
     } catch {
       el.innerHTML = '';
+    }
+  }
+
+  function subscribeRallyPins() {
+    if (!_state?.guild?.id) return;
+    if (_rallyChannel) { try { _rallyChannel.unsubscribe(); } catch {} }
+    _rallyChannel = DB.Coop.openRallyChannel(_state.guild.id);
+    _rallyChannel.on('broadcast', { event: 'rally_pin' }, ({ payload }) => {
+      if (!payload) return;
+      if (Date.now() - new Date(payload.sent_at).getTime() > 7200000) return; // 2h expiry
+      window.MapModule?.renderRallyPin(payload.user_id, payload.username, payload.lat, payload.lng);
+      if (payload.user_id !== _userId)
+        window.AppCore?.showToast?.(`📍 ${escapeHtml(payload.username)} ส่งหมุด Rally!`);
+    });
+    _rallyChannel.subscribe();
+  }
+
+  async function _handleRallyPin(btn) {
+    const pos = window.MapModule?.getLastKnownPosition?.();
+    if (!pos) { window.AppCore?.showToast?.('ไม่พบตำแหน่ง GPS'); return; }
+    const user = window.AppCore?.App?.user;
+    const me   = _state?.members?.find(m => m.user_id === user?.id);
+    const username = me?.profiles?.username || 'Traveler';
+    const payload  = { user_id: user.id, username, lat: pos.lat, lng: pos.lng, sent_at: new Date().toISOString() };
+    if (btn) btn.disabled = true;
+    try {
+      await _rallyChannel.send({ type: 'broadcast', event: 'rally_pin', payload });
+      _state.members
+        .filter(m => m.user_id !== user.id)
+        .forEach(m => DB.Notifications.push(m.user_id, 'rally', `📍 ${username} ส่งหมุด`, 'แตะเพื่อดูบนแผนที่').catch(() => {}));
+      window.AppCore?.showToast?.('ส่งหมุด Rally แล้ว!');
+    } catch {
+      window.AppCore?.showToast?.('ส่งหมุดไม่สำเร็จ');
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  async function _loadExpeditionLog() {
+    const el = document.getElementById('guild-expedition-log');
+    if (!el || !_state) return;
+    try {
+      const memberIds = _state.members.map(m => m.user_id);
+      const events = await DB.Coop.getExpeditionLog(memberIds);
+      if (!events.length) {
+        el.innerHTML = `<p style="margin:0;padding:14px 16px;font-size:12px;color:var(--color-muted);text-align:center">ยังไม่มีกิจกรรม</p>`;
+        return;
+      }
+      const iconFor  = { capture: '⚔️', fog: '🌫️', lore: '📖' };
+      const labelFor = { capture: 'จับ', fog: 'เปิดหมอก', lore: 'ปลดล็อก Lore:' };
+      el.innerHTML = events.map(e => `
+        <div style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,0.04);
+                    display:flex;align-items:flex-start;gap:8px">
+          <span style="font-size:13px;flex-shrink:0;margin-top:1px">${iconFor[e.type]}</span>
+          <div style="flex:1;min-width:0">
+            <p style="margin:0;font-size:12px;color:var(--color-white);line-height:1.4">
+              <strong>${escapeHtml(e.user)}</strong> ${labelFor[e.type]}
+              <span style="color:var(--color-primary)">${escapeHtml(e.detail)}</span>
+            </p>
+            <p style="margin:2px 0 0;font-size:10px;color:var(--color-muted)">${_relativeTime(e.ts)}</p>
+          </div>
+        </div>`).join('');
+    } catch {
+      el.innerHTML = `<p style="margin:0;padding:14px 16px;font-size:12px;color:var(--color-muted);text-align:center">โหลดไม่สำเร็จ</p>`;
     }
   }
 

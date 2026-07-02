@@ -1227,7 +1227,22 @@ const MapModule = (() => {
   function getLoreNodes() { return loreNodes; }
   function getUnlockedLoreIds() { return [...unlockedLoreIds]; }
 
-  return { init, resize, confirmHome, skipHomePicker, saveLoreUnlock, visitSupportNode, openLegendaryEncounter, openQuizForFigure, submitQuizAnswer, getLoreNodes, getUnlockedLoreIds, renderGuildFog, getLastKnownPosition: () => lastKnownPosition };
+  const _rallyPins = {};
+  function renderRallyPin(userId, username, lat, lng) {
+    if (!map) return;
+    if (_rallyPins[userId]) map.removeLayer(_rallyPins[userId]);
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="background:var(--color-primary);color:#fff;font-size:10px;font-weight:700;
+                         padding:3px 8px;border-radius:10px;white-space:nowrap;
+                         box-shadow:0 2px 8px rgba(0,0,0,0.4);pointer-events:none">
+               📍 ${escapeHtml(username)}</div>`,
+      iconSize: [null, null], iconAnchor: [0, 16],
+    });
+    _rallyPins[userId] = L.marker([lat, lng], { icon, zIndexOffset: 900, interactive: false }).addTo(map);
+  }
+
+  return { init, resize, confirmHome, skipHomePicker, saveLoreUnlock, visitSupportNode, openLegendaryEncounter, openQuizForFigure, submitQuizAnswer, getLoreNodes, getUnlockedLoreIds, renderGuildFog, renderRallyPin, getLastKnownPosition: () => lastKnownPosition };
 })();
 
 window.MapModule = MapModule;
