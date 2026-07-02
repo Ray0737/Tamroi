@@ -220,7 +220,7 @@ const CollectionModule = (() => {
     }).join('');
   }
 
-  function renderLoreJournal() {
+  async function renderLoreJournal() {
     const journal = document.getElementById('lore-journal');
     if (!journal) return;
 
@@ -240,9 +240,25 @@ const CollectionModule = (() => {
       return;
     }
 
+    // fetch pre/post records for all unlocked nodes
+    const userId = window.App?.user?.id;
+    const assessmentMap = new Map(); // loreId → { pre, post }
+    if (userId && loreEntries.length) {
+      const results = await Promise.allSettled(
+        loreEntries.map(e => DB.Lore.getAssessments(userId, e.id).then(rows => ({ id: e.id, rows })))
+      );
+      results.forEach(r => {
+        if (r.status !== 'fulfilled') return;
+        const { id, rows } = r.value;
+        const pre  = rows.find(a => a.phase === 'pre');
+        const post = rows.find(a => a.phase === 'post');
+        if (pre && post) assessmentMap.set(id, { pre, post });
+      });
+    }
+
     const grouped = groupLoreEntries(loreEntries);
     journal.innerHTML = grouped.map(group => {
-      if (!group.chainId) return renderLoreEntry(group.entries[0]);
+      if (!group.chainId) return renderLoreEntry(group.entries[0], assessmentMap);
       const complete = group.entries.length >= 3;
       const pct = Math.min(100, Math.round((group.entries.length / 3) * 100));
       return `
@@ -256,7 +272,7 @@ const CollectionModule = (() => {
           </div>
           <div class="progress-track"><div class="progress-fill orange" style="width:${pct}%"></div></div>
           <div style="display:flex;flex-direction:column;gap:var(--space-sm);margin-top:var(--space-sm)">
-            ${group.entries.map(renderLoreEntry).join('')}
+            ${group.entries.map(e => renderLoreEntry(e, assessmentMap)).join('')}
           </div>
         </div>
       `;
@@ -315,11 +331,16 @@ const CollectionModule = (() => {
     return groups;
   }
 
-  function renderLoreEntry(entry) {
+  function renderLoreEntry(entry, assessmentMap = new Map()) {
     const district = entry.districts?.name_th || entry.district_name || entry.district_id || 'Thailand';
     const date = entry.unlocked_at ? new Date(entry.unlocked_at).toLocaleDateString('th-TH') : '';
     const content = entry.content_th || entry.content_en || '';
     const preview = content.length > 80 ? content.slice(0, 80) + '...' : content;
+
+    const assessment = assessmentMap.get(entry.id);
+    const pill = assessment
+      ? `<span class="lore-score-pill">ก่อน ${assessment.pre.score}/${assessment.pre.total} → หลัง ${assessment.post.score}/${assessment.post.total}</span>`
+      : '';
 
     return `
       <div class="lore-journal-card" data-lore-id="${escapeHtml(entry.id)}">
@@ -332,6 +353,7 @@ const CollectionModule = (() => {
         </div>
         <p class="lore-journal-preview">${escapeHtml(preview)}</p>
         <div class="lore-journal-full">${escapeHtml(content)}</div>
+        ${pill}
       </div>
     `;
   }

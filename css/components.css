@@ -679,6 +679,17 @@
   color: var(--color-primary);
 }
 
+.lore-score-pill {
+  display: inline-block;
+  margin-top: var(--space-sm);
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-success-dim);
+  color: var(--color-success);
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
 .app-toast {
   position: fixed;
   left: 50%;
