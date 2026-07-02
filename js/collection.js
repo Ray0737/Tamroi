@@ -92,13 +92,26 @@ const CollectionModule = (() => {
   }
 
   function renderStats() {
+    const el = document.getElementById('collection-stats');
+    if (!el) return;
+
+    if (activeFilter === 'journal') {
+      const totalLore    = window.MapModule?.getLoreNodes?.()?.length || 0;
+      const completeChains = groupLoreEntries(loreEntries).filter(g => g.chainId && g.entries.length >= 3).length;
+      const lorePts      = loreEntries.reduce((s, e) => s + (e.lore_pts || 0), 0);
+      el.innerHTML = `
+        <div class="stat-item"><span class="stat-value text-orange">${loreEntries.length}${totalLore ? '/' + totalLore : ''}</span><span class="stat-label">Lore</span></div>
+        <div class="stat-item"><span class="stat-value text-green">${completeChains}</span><span class="stat-label">Chains</span></div>
+        <div class="stat-item"><span class="stat-value text-white">${lorePts.toLocaleString()}</span><span class="stat-label">Lore Pts</span></div>
+      `;
+      return;
+    }
+
     const captured = allFigures.filter(f => captures.has(f.id)).length;
     const legacy   = allFigures
       .filter(f => captures.has(f.id))
       .reduce((sum, f) => sum + (f.legacy_pts || 0), 0);
 
-    const el = document.getElementById('collection-stats');
-    if (!el) return;
     el.innerHTML = `
       <div class="stat-item"><span class="stat-value text-orange">${captured}</span><span class="stat-label">Figures</span></div>
       <div class="stat-item"><span class="stat-value text-green">${ownedArtifacts.size}</span><span class="stat-label">Artifacts</span></div>
