@@ -11,6 +11,17 @@ const LeaderboardModule = (() => {
 
   const CROWN_SVG = `<svg viewBox="0 0 24 24" fill="#FFD700" stroke="#FFD700" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M2 19l3-9 5 5 4-9 4 9 3-7v11H2z"/></svg>`;
 
+  function avatarHTML(url, init, size, ringColor, bgColor) {
+    bgColor = bgColor || 'rgba(255,255,255,0.06)';
+    try {
+      const u = new URL(url || '');
+      if (u.protocol === 'https:') {
+        return `<img src="${escapeHtml(u.href)}" alt="${escapeHtml(init)}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;border:2.5px solid ${ringColor};display:block;flex-shrink:0">`;
+      }
+    } catch {}
+    return `<div style="width:${size}px;height:${size}px;border-radius:50%;flex-shrink:0;background:${bgColor};border:2.5px solid ${ringColor};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:${Math.max(10, Math.floor(size / 3))}px;color:${ringColor}">${escapeHtml(init)}</div>`;
+  }
+
   function load() {
     if (loaded) {
       render();
@@ -351,19 +362,13 @@ const LeaderboardModule = (() => {
       const c = colors[pos];
       const h = heights[pos];
       const s = sizes[pos];
-      const init = escapeHtml((p.username || '?').charAt(0).toUpperCase());
+      const init = (p.username || '?').charAt(0).toUpperCase();
       const name = escapeHtml(p.username || '');
 
       return `
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1">
           ${pos === 1 ? `<div style="height:22px;display:flex;align-items:center">${CROWN_SVG}</div>` : '<div style="height:22px"></div>'}
-          <div style="
-            width:${s}px;height:${s}px;border-radius:50%;
-            background:${c}22;border:2.5px solid ${c};
-            display:flex;align-items:center;justify-content:center;
-            font-weight:800;font-size:${pos===1?18:14}px;color:${c}">
-            ${init}
-          </div>
+          ${avatarHTML(p.avatar_url, init, s, c, `${c}22`)}
           <p style="margin:0;font-size:11px;font-weight:600;color:var(--color-white);
                     max-width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
                     text-align:center">${name}</p>
@@ -408,12 +413,7 @@ const LeaderboardModule = (() => {
         padding:10px 14px;margin-bottom:var(--space-sm)">
         <span style="font-size:18px;font-weight:800;font-family:var(--font-heading);
                      color:var(--color-primary);width:28px;text-align:center;flex-shrink:0">#${rank}</span>
-        <div style="width:34px;height:34px;border-radius:50%;border:2px solid var(--color-primary);
-                    background:var(--color-primary-dim);display:flex;align-items:center;
-                    justify-content:center;font-weight:700;font-size:12px;
-                    color:var(--color-primary);flex-shrink:0">
-          ${escapeHtml((me.username||'Y').substring(0,2).toUpperCase())}
-        </div>
+        ${avatarHTML(me.avatar_url, (me.username||'Y').substring(0,2).toUpperCase(), 34, 'var(--color-primary)', 'var(--color-primary-dim)')}
         <div style="flex:1;min-width:0">
           <p style="margin:0;font-weight:600;font-size:13px;color:var(--color-white)">
             ${escapeHtml(me.username)} <span style="font-size:10px;color:var(--color-primary)">(You)</span>
@@ -436,7 +436,7 @@ const LeaderboardModule = (() => {
       const rank        = idx + 1;
       const isMe        = p.id === MY_ID;
       const rankColor   = rankColors[rank] || (isMe ? 'var(--color-primary)' : 'var(--color-muted)');
-      const init        = escapeHtml((p.username || '?').substring(0, 2).toUpperCase());
+      const init        = (p.username || '?').substring(0, 2).toUpperCase();
       const ringColor   = rankColors[rank] || (isMe ? 'var(--color-primary)' : 'rgba(255,255,255,0.12)');
 
       return `
@@ -452,13 +452,7 @@ const LeaderboardModule = (() => {
             #${rank}
           </span>
 
-          <div style="width:36px;height:36px;border-radius:50%;flex-shrink:0;
-                      background:rgba(255,255,255,0.06);
-                      display:flex;align-items:center;justify-content:center;
-                      font-size:12px;font-weight:700;color:${rankColor};
-                      box-shadow:0 0 0 2px ${ringColor}">
-            ${init}
-          </div>
+          ${avatarHTML(p.avatar_url, init, 36, ringColor)}
 
           <div style="flex:1;min-width:0">
             <p style="margin:0;font-size:13px;font-weight:600;color:var(--color-white);
