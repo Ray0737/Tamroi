@@ -316,6 +316,36 @@ const Lore = {
       .single();
     if (error && error.code !== 'PGRST116') throw error;
     return data;
+  },
+
+  async getLoreQuestions(loreId) {
+    const { data, error } = await _sb
+      .from('quiz_questions')
+      .select('id, question_th, option_a, option_b, option_c, option_d, correct_option')
+      .eq('lore_id', loreId)
+      .eq('assessment_type', 'pretest');
+    if (error) throw error;
+    return data;
+  },
+
+  async saveAssessment(userId, loreId, phase, score, total) {
+    const { error } = await _sb
+      .from('user_lore_assessments')
+      .upsert(
+        { user_id: userId, lore_id: loreId, phase, score, total },
+        { onConflict: 'user_id,lore_id,phase', ignoreDuplicates: false }
+      );
+    if (error) throw error;
+  },
+
+  async getAssessments(userId, loreId) {
+    const { data, error } = await _sb
+      .from('user_lore_assessments')
+      .select('phase, score, total')
+      .eq('user_id', userId)
+      .eq('lore_id', loreId);
+    if (error) throw error;
+    return data;
   }
 };
 
