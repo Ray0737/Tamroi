@@ -339,7 +339,7 @@ const CollectionModule = (() => {
 
     const assessment = assessmentMap.get(entry.id);
     const pill = assessment
-      ? `<span class="lore-score-pill">ก่อน ${assessment.pre.score}/${assessment.pre.total} → หลัง ${assessment.post.score}/${assessment.post.total}</span>`
+      ? `<span class="lore-score-pill">ก่อน ${Number(assessment.pre.score)}/${Number(assessment.pre.total)} → หลัง ${Number(assessment.post.score)}/${Number(assessment.post.total)}</span>`
       : '';
 
     return `

@@ -682,7 +682,7 @@
 .lore-score-pill {
   display: inline-block;
   margin-top: var(--space-sm);
-  padding: 3px 8px;
+  padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-full);
   background: var(--color-success-dim);
   color: var(--color-success);

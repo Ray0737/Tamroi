@@ -279,6 +279,8 @@ async function openLoreSheet(node) {
   // ── fetch questions + prior attempts (parallel) ───────
   const userId = App.user?.id;
   let questions = [], priorPre = false, priorPost = false;
+  // pre score: 0 = no pretest yet; null = priorPre but score unknown (legacy); actual int = loaded from DB
+  let preScore = 0;
   if (userId) {
     try {
       const [qs, assessments] = await Promise.all([
@@ -286,8 +288,10 @@ async function openLoreSheet(node) {
         DB.Lore.getAssessments(userId, node.id)
       ]);
       questions  = qs || [];
-      priorPre   = assessments.some(a => a.phase === 'pre');
-      priorPost  = assessments.some(a => a.phase === 'post');
+      const preAss  = assessments.find(a => a.phase === 'pre');
+      priorPre      = !!preAss;
+      priorPost     = assessments.some(a => a.phase === 'post');
+      if (preAss) preScore = preAss.score; else if (priorPre) preScore = null;
     } catch (_) { /* degraded: skip tests */ }
   }
 
@@ -295,15 +299,12 @@ async function openLoreSheet(node) {
   const needsPretest  = hasQuestions && !priorPre;
   const needsPosttest = hasQuestions && !priorPost;
 
-  // pre score captured during pretest phase
-  let preScore = priorPre ? null : 0;
-
   // ── helper: render a quiz into #lore-phase-panel ──────
   function renderQuiz(qs, onSubmit) {
     if (!phasePanel) return;
     let answers = {};
     phasePanel.innerHTML = qs.map((q, i) => `
-      <p class="lore-narrative" style="margin-bottom:6px"><strong>${escapeHtml(q.question_th)}</strong></p>
+      <p class="lore-narrative"><strong>${escapeHtml(q.question_th)}</strong></p>
       <div class="lore-quiz-options mb-3">
         ${['A','B','C','D'].map(opt => `
           <button class="btn btn-ghost btn-full lore-quiz-opt mb-1" data-q="${i}" data-opt="${opt}">
