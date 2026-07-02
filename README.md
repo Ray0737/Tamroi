@@ -29,6 +29,8 @@ Travel to a District
   → Map Discovery % increases → National Leaderboard rank up
 ```
 
+Lore narration now runs a short pre-test/post-test knowledge check either side of each entry, so learning gains from reading Lore in the field can be measured directly (feeds into the NSC learning-outcome evaluation methodology).
+
 ### Figure Classes
 
 | Class | Points | Unlock |
