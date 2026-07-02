@@ -487,10 +487,10 @@ const Coop = {
     return { guild: { ...guild, myRole: memberRow.role }, members };
   },
 
-  async createGuild(name, userId) {
+  async createGuild(name, userId, description) {
     const { data, error } = await _sb
       .from('guilds')
-      .insert({ name, created_by: userId })
+      .insert({ name, created_by: userId, ...(description ? { description } : {}) })
       .select()
       .single();
     if (error) throw error;
@@ -666,7 +666,7 @@ const Coop = {
     const q = query?.trim() ?? '';
     const { data, error } = await _sb
       .from('guilds')
-      .select('id, name, announcement')
+      .select('id, name, description, announcement')
       .ilike('name', `%${q}%`)
       .limit(20);
     if (error) throw error;

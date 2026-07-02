@@ -147,6 +147,8 @@ const GuildModule = (() => {
               <i class="bi bi-pencil"></i> แก้ไข</button>` : ''}
           </div>
 
+          ${guild.description ? `
+          <p style="margin:10px 0 0;font-size:12px;color:var(--color-muted);line-height:1.5">${escapeHtml(guild.description)}</p>` : ''}
           ${guild.announcement ? `
           <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);
                       display:flex;align-items:flex-start;gap:8px">
@@ -165,6 +167,11 @@ const GuildModule = (() => {
                  style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--color-border);
                         border-radius:8px;padding:8px 12px;color:var(--color-white);
                         font-size:13px;margin-bottom:10px;box-sizing:border-box">
+          <p style="margin:0 0 5px;font-size:11px;font-weight:700;color:var(--color-white)">คำอธิบาย</p>
+          <textarea id="edit-guild-desc" rows="2" maxlength="200"
+                    style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--color-border);
+                           border-radius:8px;padding:8px 12px;color:var(--color-white);
+                           font-size:12px;margin-bottom:10px;resize:none;box-sizing:border-box">${escapeHtml(guild.description || '')}</textarea>
           <div style="display:flex;justify-content:flex-end;gap:6px">
             <button id="btn-cancel-edit" class="btn btn-ghost"
                     style="font-size:11px;padding:5px 14px;border-color:var(--color-border)">ยกเลิก</button>
@@ -305,10 +312,12 @@ const GuildModule = (() => {
 
   async function _handleSaveGuild(guildId) {
     const name = document.getElementById('edit-guild-name')?.value?.trim();
+    const desc = document.getElementById('edit-guild-desc')?.value?.trim() ?? '';
     if (!name) return;
     try {
-      await DB.Coop.updateGuild(guildId, { name });
+      await DB.Coop.updateGuild(guildId, { name, description: desc || null });
       _state.guild.name = name;
+      _state.guild.description = desc || null;
       await renderGuildPanel();
     } catch (e) {
       window.AppCore?.showToast?.(e.message || 'บันทึกไม่สำเร็จ');
@@ -601,6 +610,10 @@ const GuildModule = (() => {
                style="width:100%;background:var(--color-card-darker);border:1px solid var(--color-border);
                       border-radius:var(--radius-md);padding:10px var(--space-sm);color:var(--color-white);
                       font-size:13px;margin-bottom:8px">
+        <textarea id="guild-desc-input" placeholder="คำอธิบายกลุ่ม (ไม่บังคับ)" rows="2" maxlength="200"
+               style="width:100%;background:var(--color-card-darker);border:1px solid var(--color-border);
+                      border-radius:var(--radius-md);padding:10px var(--space-sm);color:var(--color-white);
+                      font-size:12px;margin-bottom:8px;resize:none;box-sizing:border-box"></textarea>
         <button class="btn btn-primary btn-full" id="btn-create-guild" style="margin-bottom:var(--space-sm)">
           สร้างกลุ่มใหม่</button>
         <div style="display:flex;gap:8px">
@@ -657,10 +670,11 @@ const GuildModule = (() => {
 
   async function _handleCreate() {
     const name  = document.getElementById('guild-name-input')?.value?.trim();
+    const desc  = document.getElementById('guild-desc-input')?.value?.trim() || undefined;
     const errEl = document.getElementById('guild-error');
     if (!name) { if (errEl) errEl.textContent = 'กรุณาใส่ชื่อกลุ่ม'; return; }
     try {
-      await DB.Coop.createGuild(name, _userId);
+      await DB.Coop.createGuild(name, _userId, desc);
       _state = await DB.Coop.getMyGuild(_userId);
       subscribePresence();
       subscribeMembers();
@@ -786,11 +800,11 @@ const GuildModule = (() => {
                   ${btnLabel}
                 </button>
               </div>
-              ${g.announcement ? `
+              ${(g.description || g.announcement) ? `
                 <div style="padding:6px var(--space-sm) 10px calc(20px + 10px + var(--space-sm));
                             border-top:1px solid rgba(255,255,255,0.04)">
                   <p style="margin:0;font-size:11px;color:var(--color-muted);line-height:1.5">
-                    ${escapeHtml(g.announcement)}</p>
+                    ${escapeHtml(g.description || g.announcement)}</p>
                 </div>` : ''}
             </div>`;
         }).join('')}
