@@ -49,3 +49,7 @@ logs/
 
 # ── graphify knowledge graph output ───────────────────
 graphify-out/
+
+
+CLAUDE.md
+AGENTS.md
