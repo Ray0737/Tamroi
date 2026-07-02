@@ -7,7 +7,6 @@ const MapModule = (() => {
   let activeDistrict   = null;
   let _nodeCardTimer   = null;    // auto-dismiss timer for node info card
   let _locationMarker  = null;    // real-time GPS dot
-  let _locationRing    = null;    // GPS accuracy circle
   let _locationWatcher = null;    // watchPosition handle
   let _posHistory      = [];      // recent positions for speed/teleport detection
   let allDistrictsCache = null;
@@ -155,18 +154,6 @@ const MapModule = (() => {
 
   function updateLocationDot(lat, lng, accuracy) {
     if (_locationMarker)  { map.removeLayer(_locationMarker);  _locationMarker = null; }
-    if (_locationRing)    { map.removeLayer(_locationRing);    _locationRing   = null; }
-
-    // Accuracy ring — light blue filled circle
-    _locationRing = L.circle([lat, lng], {
-      radius:      accuracy,
-      fillColor:   '#4FC3F7',
-      fillOpacity: 0.10,
-      color:       '#4FC3F7',
-      weight:      1,
-      opacity:     0.35,
-      interactive: false,
-    }).addTo(map);
 
     // Dot marker with pulsing CSS animation
     const icon = L.divIcon({
@@ -309,7 +296,7 @@ const MapModule = (() => {
       const districtId = node.district_id || node.districtId;
       if (districtId && userDistrictState[districtId]?.fogged !== false) return;
       const distance = haversineDistance(userLat, userLng, node.lat, node.lng);
-      if (distance <= (node.radius_m || 100)) unlockLore(node);
+      if (distance <= (Math.min(node.radius_m || 50, 50))) unlockLore(node);
     });
   }
 
@@ -334,7 +321,7 @@ const MapModule = (() => {
     const node = loreNodes.find(item => item.id === loreId) || activeLoreNode;
     if (!node) return;
 
-    if (!isDev() && lastKnownPosition && haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, node.lat, node.lng) > (node.radius_m || 100)) {
+    if (!isDev() && lastKnownPosition && haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, node.lat, node.lng) > (Math.min(node.radius_m || 50, 50))) {
       window.AppCore?.showToast('คุณอยู่ไกลเกินไป — เดินทางให้ใกล้กว่านี้');
       return;
     }
@@ -631,7 +618,7 @@ const MapModule = (() => {
       if (!discovered) {
         // Radius ring so players can see how close they need to be
         const ring = L.circle([node.lat, node.lng], {
-          radius: node.radius_m || 100,
+          radius: 50,
           color: '#8986A8',
           weight: 1,
           dashArray: '4,4',
