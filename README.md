@@ -7,7 +7,7 @@
 ทีม **ปลามึกยักษ์** · โรงเรียนสาธิตมหาวิทยาลัยศรีนครินทรวิโรฒ ประสานมิตร (ฝ่ายมัธยม)  
 วิชาเอกวิศวกรรมปัญญาประดิษฐ์ (AI)
 
-> **Branch: `main`** — Current working prototype. Deployed on Vercel.
+> **Branch: `Co-op`** — Adds guilds, collaborative missions, raid encounters, and discussion threads on top of the solo prototype. Deployed on Vercel.
 
 ---
 
@@ -34,8 +34,9 @@ Travel to a District
 | Class | Points | Unlock |
 |---|---|---|
 | C-Class | 50 pts | Instant — 1-question quiz |
+| B-Class | 100 pts | 1-question quiz only, no Support Node gate |
 | A-Class | 200 pts | Support Node gate + 3-question quiz |
-| S-Class / Legendary | 500 pts | Full Support Node chain required |
+| S-Class / Legendary | 500 pts | Full Support Node chain required (or a group Raid for `raid_only` figures) |
 
 ### Leaderboard — The High Chronicler
 
