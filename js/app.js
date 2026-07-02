@@ -332,10 +332,14 @@ async function openLoreSheet(node) {
     saveBtn.disabled    = false;
     saveBtn.textContent = 'อ่านแล้ว บันทึก →';
     saveBtn.onclick     = async () => {
-      await window.MapModule?.saveLoreUnlock(node.id);
-      if (needsPosttest) {
-        showPosttestPhase();
-      } else {
+      try {
+        await window.MapModule?.saveLoreUnlock(node.id);
+        if (needsPosttest) {
+          showPosttestPhase();
+        } else {
+          closeAllSheets();
+        }
+      } catch (_) {
         closeAllSheets();
       }
     };
