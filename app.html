@@ -572,15 +572,56 @@
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" style="filter:invert(1)"></button>
     </div>
     <div class="offcanvas-body" style="display:flex;flex-direction:column;gap:var(--space-md);color:#ffffff">
+      <!-- Profile card -->
       <div class="card" style="text-align:center;color:#ffffff">
         <div class="avatar-sm" style="width:64px;height:64px;font-size:24px;margin:0 auto var(--space-sm)" id="settings-avatar">T</div>
-        <p style="font-weight:700;color:#ffffff" id="settings-username">Traveler</p>
-        <p style="font-size:var(--text-xs);color:#9DA3AE" id="settings-email">–</p>
+        <!-- username display / edit -->
+        <div id="settings-username-view" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:4px">
+          <p style="font-weight:700;color:#ffffff;margin:0" id="settings-username">Traveler</p>
+          <button id="btn-edit-username" style="background:none;border:none;padding:2px;cursor:pointer;color:var(--color-muted)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+              <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </button>
+        </div>
+        <div id="settings-username-edit" style="display:none;margin-bottom:4px;padding:0 var(--space-sm)">
+          <input id="input-username" type="text" maxlength="30"
+            style="width:100%;background:var(--color-bg);border:1px solid var(--color-border);border-radius:var(--radius-md);
+                   padding:6px 10px;color:#fff;font-size:var(--text-sm);text-align:center;margin-bottom:6px">
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-sm" id="btn-username-cancel"
+              style="flex:1;background:transparent;border:1px solid var(--color-border);color:var(--color-muted);font-size:12px">ยกเลิก</button>
+            <button class="btn btn-sm btn-primary" id="btn-username-save"
+              style="flex:1;font-size:12px">บันทึก</button>
+          </div>
+        </div>
+        <p style="font-size:var(--text-xs);color:#9DA3AE;margin:0" id="settings-email">–</p>
       </div>
 
+      <!-- Preferences -->
+      <div class="card" style="color:#ffffff;display:flex;flex-direction:column;gap:0">
+        <p style="font-size:var(--text-xs);color:#9DA3AE;margin-bottom:var(--space-sm);text-transform:uppercase;letter-spacing:1px">การตั้งค่า</p>
+        <!-- Notifications toggle -->
+        <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:4px 0">
+          <span style="font-size:var(--text-sm)">การแจ้งเตือน</span>
+          <div class="settings-toggle" id="notif-toggle-wrap">
+            <input type="checkbox" id="toggle-notifications" style="display:none" checked>
+            <div id="notif-toggle-track"
+              style="width:40px;height:22px;border-radius:11px;background:var(--color-success);
+                     position:relative;transition:background .2s;cursor:pointer">
+              <div id="notif-toggle-thumb"
+                style="width:18px;height:18px;border-radius:50%;background:#fff;
+                       position:absolute;top:2px;left:20px;transition:left .2s"></div>
+            </div>
+          </div>
+        </label>
+      </div>
+
+      <!-- App version -->
       <div class="card" style="color:#ffffff">
-        <p style="font-size:var(--text-xs);color:#9DA3AE;margin-bottom:var(--space-sm)">App Version</p>
-        <p style="font-size:var(--text-sm);color:#ffffff">Tamroi v0.6 · Prototype</p>
+        <p style="font-size:var(--text-xs);color:#9DA3AE;margin-bottom:4px">App Version</p>
+        <p style="font-size:var(--text-sm);color:#ffffff;margin:0">Tamroi v0.6 · Prototype</p>
       </div>
 
       <button class="btn btn-outline btn-full" id="btn-signout">

@@ -439,6 +439,7 @@ function subscribeNotifications() {
   if (!App.user || App.notifChannel || !DB.Notifications.subscribe) return;
   try {
     App.notifChannel = DB.Notifications.subscribe(App.user.id, payload => {
+      if (localStorage.getItem('tamroi_notif') === 'off') return;
       prependNotification(payload.new);
       updateUnreadBadge(1);
     });
@@ -612,6 +613,60 @@ document.getElementById('btn-signout')?.addEventListener('click', async () => {
   await DB.Auth.signOut();
   window.location.href = 'index.html';
 });
+
+// ── Settings: Edit Username ───────────────────────────
+document.getElementById('btn-edit-username')?.addEventListener('click', () => {
+  const input = document.getElementById('input-username');
+  input.value = App.profile?.username || '';
+  document.getElementById('settings-username-view').style.display = 'none';
+  document.getElementById('settings-username-edit').style.display = 'block';
+  input.focus();
+});
+
+document.getElementById('btn-username-cancel')?.addEventListener('click', () => {
+  document.getElementById('settings-username-view').style.display = 'flex';
+  document.getElementById('settings-username-edit').style.display = 'none';
+});
+
+document.getElementById('btn-username-save')?.addEventListener('click', async () => {
+  const input = document.getElementById('input-username');
+  const newName = input.value.trim();
+  if (!newName || newName === App.profile?.username) {
+    document.getElementById('settings-username-view').style.display = 'flex';
+    document.getElementById('settings-username-edit').style.display = 'none';
+    return;
+  }
+  try {
+    await DB.Profiles.update(App.user.id, { username: newName });
+    App.profile.username = newName;
+    document.getElementById('settings-username').textContent = newName;
+    document.getElementById('settings-avatar').textContent = newName.substring(0, 2).toUpperCase();
+    updateTopBar();
+    showToast('เปลี่ยนชื่อสำเร็จ');
+  } catch {
+    showToast('เปลี่ยนชื่อไม่สำเร็จ — ชื่อนี้อาจถูกใช้แล้ว');
+  }
+  document.getElementById('settings-username-view').style.display = 'flex';
+  document.getElementById('settings-username-edit').style.display = 'none';
+});
+
+// ── Settings: Notifications Toggle ───────────────────
+(function initNotifToggle() {
+  const track = document.getElementById('notif-toggle-track');
+  const thumb = document.getElementById('notif-toggle-thumb');
+  const checkbox = document.getElementById('toggle-notifications');
+  if (!track) return;
+
+  const enabled = localStorage.getItem('tamroi_notif') !== 'off';
+  const apply = (on) => {
+    track.style.background = on ? 'var(--color-success)' : 'var(--color-muted)';
+    thumb.style.left = on ? '20px' : '2px';
+    checkbox.checked = on;
+    localStorage.setItem('tamroi_notif', on ? 'on' : 'off');
+  };
+  apply(enabled);
+  track.addEventListener('click', () => apply(!checkbox.checked));
+})();
 
 // ── Mock fallback data ────────────────────────────────
 function getMockNotifications() {
