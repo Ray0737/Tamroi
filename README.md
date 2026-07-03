@@ -62,4 +62,4 @@ Player avatars (from Google OAuth or a custom profile picture) now show througho
 | รชยา เชวงกิจวณิช | charlotte.kamoshita00@gmail.com |
 | ปภาวิชญ์ แซ่หลิ่ว | papawit@proton.me |
 
-GitHub: [Ray0737/Tamroi](https://github.com/Ray0737/Tamroi)
+GitHub: [Ray0737/tam_roi](https://github.com/Ray0737/tam_roi)
