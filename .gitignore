@@ -4,6 +4,7 @@
 *.pptx
 *.pdf
 ~WRL*.tmp
+!docs/proposal/ตามรอย_NSC_2026_v29.docx
 
 # ── Supabase / API credentials — NEVER commit these ──
 # js/env.js — unblocked on August branch so coding agent can use real credentials
