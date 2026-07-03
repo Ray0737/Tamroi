@@ -58,6 +58,7 @@
 │   ├── coop.js          Collaborative mission cards + real-time checkin progress
 │   ├── raid.js          Raid lobby · Broadcast quiz · host failover
 │   ├── discussion.js    Figure discussion threads (1-level replies + auto-flag)
+│   ├── debates.js          Historical Debate bottom sheet · vote form · results
 │   └── community-forum.js  Community feed · likes · replies · flag
 └── supabase/
     ├── schema.sql              Full DB schema + Bangkok district seed data
@@ -75,6 +76,9 @@
     ├── patch_community_likes.sql community_post_likes table + RLS
     ├── patch_guild_leader_rls.sql lets non-members see who a guild's leader is (join-request notify)
     ├── patch_notification_ref.sql notifications.ref_id column — links a notif to its source row (e.g. join request)
+    ├── patch_retrieval_practice.sql recall_due_at on user_lore · assessment_type on quiz_questions · lore_recall challenge type
+    ├── patch_debates.sql       history_debates · debate_votes · get_debate_stats SECURITY DEFINER RPC
+    ├── patch_jigsaw.sql        chapter_index on lore_nodes · type on collab_missions · guild_jigsaw_assignments table
     └── patch_mock_satit.sql    Test-only seed data — REMOVE before production
 └── docs/
     ├── CODING_INSTRUCTIONS.md  Design system and implementation rules
@@ -213,9 +217,12 @@ Run patches in this order:
 15. SQL Editor → `supabase/patch_guild_leader_rls.sql`
 16. SQL Editor → `supabase/patch_notification_ref.sql`
 17. *(Optional, dev/test only)* SQL Editor → `supabase/patch_mock_satit.sql`
-17. Authentication → Email → **disable "Confirm email"** for dev
-18. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
-19. Settings → API → copy URL + anon key into `js/env.js`
+18. SQL Editor → `supabase/patch_retrieval_practice.sql`
+19. SQL Editor → `supabase/patch_debates.sql`
+20. SQL Editor → `supabase/patch_jigsaw.sql`
+21. Authentication → Email → **disable "Confirm email"** for dev
+22. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
+23. Settings → API → copy URL + anon key into `js/env.js`
 
 ---
 
@@ -299,6 +306,13 @@ Run patches in this order:
 | `community_post_likes` | patch_community_likes | Like/unlike tracking per post per user |
 | `user_lore_assessments` | patch_prepost | Pre/post quiz results per user per lore node (one row per phase: pre/post) |
 | `guild_leaderboard` VIEW | patch_coop | Aggregated guild stats (discovery, captures, score) |
+| `history_debates` | patch_debates | Unsolved History debate prompts per figure (case A/B) |
+| `debate_votes` | patch_debates | Per-user votes + optional reason; own-row RLS |
+| `get_debate_stats(p_debate_id)` RPC | patch_debates | SECURITY DEFINER — returns aggregate vote counts + reasons |
+| `guild_jigsaw_assignments` | patch_jigsaw | Chapter assignments + summaries per member per jigsaw mission |
+| `quiz_questions.lore_id` | patch_retrieval_practice | Links recall questions to their source lore node |
+| `quiz_questions.assessment_type` | patch_retrieval_practice | `'capture'` / `'pretest'` / `'recall'` |
+| `user_lore.recall_due_at` | patch_retrieval_practice | Spaced-repetition due timestamp; auto-set by DB trigger |
 | `on_capture_update_score` trigger | patch_lore | Auto-updates `profiles.legacy_score` on `user_captures` insert |
 | `on_collab_checkin_threshold` trigger | patch_coop | Auto-completes mission + awards pts when checkin count ≥ required |
 | `on_discussion_flag_count` trigger | patch_coop | Sets `is_flagged = true` when flag count ≥ 3 |
@@ -306,7 +320,8 @@ Run patches in this order:
 ### Runtime APIs
 
 **Phase 1**
-- `window.DB.Lore`: `getAll()`, `getUserUnlocked(userId)`, `unlock(userId, loreId)`, `getLoreQuestions(loreId)`, `saveAssessment(userId, loreId, phase, score, total)`, `getAssessments(userId, loreId)`
+- `window.DB.Lore`: `getAll()`, `getUserUnlocked(userId)`, `unlock(userId, loreId)`, `getLoreQuestions(loreId)`, `getRecallQuestions(loreNodeId)`, `saveAssessment(userId, loreId, phase, score, total)`, `getAssessments(userId, loreId)`
+- `window.DB.Missions`: `getRecallMissions(userId)`, `completeRecall(userId, loreNodeId, wasCorrect)`
 - `window.DB.Quiz`: `getForFigure(figureId, count)`
 - `window.DB.Districts.getVisitedSupportNodes(userId)`, `updateNodeVisit(userId, districtId, nodeType, nodeId)`
 - `window.DB.Profiles.addLegacyPoints(userId, pts)`
@@ -317,12 +332,14 @@ Run patches in this order:
 - `window.MapModule.renderRallyPin(userId, username, lat, lng)`: places/updates a rally pin marker on the map
 
 **Phase 3 — Co-op**
-- `window.DB.Coop`: `getMyGuild(userId)`, `getGuildMembers(guildId)`, `getGuildClearedDistrictIds(guildId)`, `createGuild(name, userId)`, `leaveGuild(guildId, userId)`, `kickMember(guildId, targetUserId)`, `deleteGuild(guildId)`, `updateGuild(guildId, fields)`, `searchGuilds(query)`, `sendJoinRequest(guildId, userId)`, `getMyPendingRequest(userId)`, `getJoinRequests(guildId)`, `approveRequest(requestId, guildId, targetUserId)`, `rejectRequest(requestId)`, `getCollabMissions()`, `checkInToMission(missionId, guildId, userId)`, `getMissionCheckins(missionId, guildId)`, `getAllGuildCheckins(guildId)`, `getGuildLeaderboard()`, `subscribeGuildPresence(guildId, {onSync, onJoin, onLeave})`, `subscribeGuildMembers(guildId, callback)`, `subscribeGuildChanges(callback)`, `subscribeMissionProgress(missionId, guildId, callback)`, `getMyMemberships(userId)`, `getExpeditionLog(memberIds, limit?)`, `openRallyChannel(guildId)`
+- `window.DB.Coop`: `getMyGuild(userId)`, `getGuildMembers(guildId)`, `getGuildClearedDistrictIds(guildId)`, `createGuild(name, userId)`, `leaveGuild(guildId, userId)`, `kickMember(guildId, targetUserId)`, `deleteGuild(guildId)`, `updateGuild(guildId, fields)`, `searchGuilds(query)`, `sendJoinRequest(guildId, userId)`, `getMyPendingRequest(userId)`, `getJoinRequests(guildId)`, `approveRequest(requestId, guildId, targetUserId)`, `rejectRequest(requestId)`, `getCollabMissions()`, `checkInToMission(missionId, guildId, userId)`, `getMissionCheckins(missionId, guildId)`, `getAllGuildCheckins(guildId)`, `getGuildLeaderboard()`, `subscribeGuildPresence(guildId, {onSync, onJoin, onLeave})`, `subscribeGuildMembers(guildId, callback)`, `subscribeGuildChanges(callback)`, `subscribeMissionProgress(missionId, guildId, callback)`, `getMyMemberships(userId)`, `getExpeditionLog(memberIds, limit?)`, `openRallyChannel(guildId)`, `getJigsawAssignments(guildId, missionId)`, `assignJigsawChapters(guildId, missionId, memberIds)`, `postJigsawSummary(guildId, missionId, userId, summary)`
+- `window.DB.Debates`: `getForFigure(figureId)`, `getStats(debateId)`, `vote(debateId, userId, vote, reason)`
 - `window.DB.Raid`: `createSession(figureId, guildId, hostUserId)`, `joinSession(sessionId, userId)`, `updateSessionStatus(sessionId, status)`, `insertCaptures(sessionId, participantUserIds, figureId)`, `openBroadcast(sessionId)`, `openPresence(sessionId)`
 - `window.DB.Discussion`: `getComments(figureId)`, `postComment(figureId, userId, content, parentId)`, `flagComment(discussionId, userId)`
 - `window.DB.Community`: `getPosts(userId)`, `getReplies(parentId)`, `postMessage(userId, content, parentId)`, `flagPost(postId, userId)`, `likePost(postId, userId)`, `unlikePost(postId, userId)`
 - `window.GuildModule`: `init(userId)`, `getState()`, `getOnlineMemberIds()`, `renderGuildPanel()`
-- `window.CoopModule`: `init()`
+- `window.CoopModule`: `init()`, `postJigsawSummary(guildId, missionId)`
+- `window.DebateModule`: `open(figureId)`, `close()`
 - `window.RaidModule`: `init(figureId)`
 - `window.DiscussionModule`: `init(figureId)`, `load(figureId)`
 - `window.CommunityForumModule`: `load()`

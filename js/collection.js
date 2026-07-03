@@ -399,6 +399,25 @@ const CollectionModule = (() => {
     cleanupModalState();
     const bsModal = bootstrap.Modal.getOrCreateInstance(modal);
     bsModal.show();
+
+    // Inject "Unsolved History" button if figure is captured and has a debate
+    const footerEl = modal.querySelector('.modal-footer');
+    const existing = document.getElementById('btn-figure-debate');
+    if (existing) existing.remove();
+
+    if (captures.has(figureId) && window.DebateModule) {
+      DB.Debates.getForFigure(figureId).then(debate => {
+        if (!debate) return;
+        const btn = document.createElement('button');
+        btn.id          = 'btn-figure-debate';
+        btn.type        = 'button';
+        btn.className   = 'btn btn-outline btn-full';
+        btn.style.cssText = 'font-size:11px;margin-bottom:4px';
+        btn.textContent = 'ประวัติศาสตร์ที่ยังถกเถียง';
+        btn.onclick     = () => { bsModal.hide(); DebateModule.open(figureId); };
+        footerEl.insertBefore(btn, footerEl.firstChild);
+      }).catch(() => {});
+    }
   }
 
   function bindFigureModalCleanup(modal) {

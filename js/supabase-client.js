@@ -346,6 +346,16 @@ const Lore = {
       .eq('lore_id', loreId);
     if (error) throw error;
     return data;
+  },
+
+  async getRecallQuestions(loreNodeId) {
+    const { data, error } = await _sb
+      .from('quiz_questions')
+      .select('id, question_th, option_a, option_b, option_c, option_d, correct_option')
+      .eq('lore_id', loreNodeId)
+      .eq('assessment_type', 'recall');
+    if (error) throw error;
+    return data || [];
   }
 };
 
@@ -489,6 +499,54 @@ const Missions = {
         user_id: userId, challenge_id: c.id, date: today,
         current_count: newCount, completed: newCount >= c.target_count,
       }, { onConflict: 'user_id,challenge_id,date' });
+    }
+  },
+
+  async getRecallMissions(userId) {
+    const today = new Date().toISOString().split('T')[0];
+    const { data: dueNodes, error } = await _sb
+      .from('user_lore')
+      .select('lore_node_id, recall_due_at, lore_nodes(name_th)')
+      .eq('user_id', userId)
+      .lte('recall_due_at', new Date().toISOString());
+    if (error || !dueNodes?.length) return [];
+
+    const { data: done } = await _sb
+      .from('user_daily_progress')
+      .select('challenge_id')
+      .eq('user_id', userId)
+      .eq('date', today)
+      .eq('completed', true);
+    const doneIds = new Set((done || []).map(d => d.challenge_id));
+
+    return dueNodes
+      .filter(n => n.lore_node_id && !doneIds.has(`recall_${n.lore_node_id}`))
+      .map(n => ({
+        id: `recall_${n.lore_node_id}`,
+        type: 'lore_recall',
+        title_th: `ทบทวน: ${n.lore_nodes?.name_th || 'Lore'}`,
+        target_count: 1,
+        pts_reward: 30,
+        current: 0,
+        completed: false,
+        lore_node_id: n.lore_node_id,
+      }));
+  },
+
+  async completeRecall(userId, loreNodeId, wasCorrect) {
+    const today = new Date().toISOString().split('T')[0];
+    if (wasCorrect) {
+      await _sb.from('user_daily_progress').upsert(
+        { user_id: userId, challenge_id: `recall_${loreNodeId}`, date: today,
+          current_count: 1, completed: true },
+        { onConflict: 'user_id,challenge_id,date' }
+      );
+      await _sb.rpc('increment_legacy_score', { p_user_id: userId, p_amount: 30 });
+    } else {
+      await _sb.from('user_lore')
+        .update({ recall_due_at: new Date(Date.now() + 3 * 86400000).toISOString() })
+        .eq('user_id', userId)
+        .eq('lore_node_id', loreNodeId);
     }
   }
 };
@@ -861,6 +919,35 @@ const Coop = {
   openRallyChannel(guildId) {
     return _sb.channel(`broadcast:rally:${guildId}`, { config: { broadcast: { self: true } } });
   },
+
+  async getJigsawAssignments(guildId, missionId) {
+    const { data, error } = await _sb
+      .from('guild_jigsaw_assignments')
+      .select('*, profiles(username)')
+      .eq('guild_id', guildId)
+      .eq('mission_id', missionId);
+    if (error) throw error;
+    return data || [];
+  },
+
+  async assignJigsawChapters(guildId, missionId, memberIds) {
+    const rows = memberIds.map((uid, i) => ({
+      guild_id: guildId, mission_id: missionId,
+      user_id: uid, chapter_index: i % 3,
+    }));
+    const { error } = await _sb.from('guild_jigsaw_assignments')
+      .upsert(rows, { onConflict: 'guild_id,mission_id,user_id', ignoreDuplicates: true });
+    if (error) throw error;
+  },
+
+  async postJigsawSummary(guildId, missionId, userId, summary) {
+    const { error } = await _sb.from('guild_jigsaw_assignments')
+      .update({ chapter_summary: summary, summary_posted: true })
+      .eq('guild_id', guildId)
+      .eq('mission_id', missionId)
+      .eq('user_id', userId);
+    if (error) throw error;
+  },
 };
 
 // ── Raid ───────────────────────────────────────────────
@@ -1052,5 +1139,34 @@ const Community = {
   },
 };
 
+// ── Debates ────────────────────────────────────────────
+const Debates = {
+  async getForFigure(figureId) {
+    const { data, error } = await _sb
+      .from('history_debates')
+      .select('*')
+      .eq('figure_id', figureId)
+      .eq('is_active', true)
+      .single();
+    if (error?.code === 'PGRST116') return null;
+    if (error) throw error;
+    return data;
+  },
+
+  async getStats(debateId) {
+    const { data, error } = await _sb.rpc('get_debate_stats', { p_debate_id: debateId });
+    if (error) throw error;
+    return data || { count_a: 0, count_b: 0, total: 0, user_vote: null, reasons_a: [], reasons_b: [] };
+  },
+
+  async vote(debateId, userId, vote, reason) {
+    const { error } = await _sb.from('debate_votes').upsert(
+      { debate_id: debateId, user_id: userId, vote, reason: reason || null },
+      { onConflict: 'debate_id,user_id' }
+    );
+    if (error) throw error;
+  }
+};
+
 // Expose globally
-window.DB = { Auth, Profiles, Districts, Figures, SupportNodes, BtsMrtStations, Artifacts, Leaderboard, Lore, Quiz, Notifications, Missions, Coop, Raid, Discussion, Community };
+window.DB = { Auth, Profiles, Districts, Figures, SupportNodes, BtsMrtStations, Artifacts, Leaderboard, Lore, Quiz, Notifications, Missions, Coop, Raid, Discussion, Community, Debates };

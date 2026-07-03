@@ -27,11 +27,12 @@ const MissionModule = (() => {
     if (!user) { _renderActiveFallback(); _renderDailyFallback(); return; }
 
     try {
-      const [figures, captureRows, districtRows, challenges] = await Promise.all([
+      const [figures, captureRows, districtRows, challenges, recallMissions] = await Promise.all([
         DB.Figures.getAll(),
         DB.Figures.getUserCaptures(user.id),
         DB.Districts.getUserState(user.id),
         DB.Missions.getDailyChallenges(user.id),
+        DB.Missions.getRecallMissions(user.id),
       ]);
 
       const capturedIds  = new Set((captureRows || []).map(c => c.figure_id));
@@ -41,7 +42,7 @@ const MissionModule = (() => {
 
       _missionCtx = { figures: figures || [], capturedIds, districtMap };
       renderActive();
-      renderDaily(challenges || []);
+      renderDaily([...(challenges || []), ...(recallMissions || [])]);
     } catch {
       _renderActiveFallback();
       _renderDailyFallback();
@@ -267,10 +268,11 @@ const MissionModule = (() => {
 
   // ── Daily challenges ──────────────────────────────
   const _DAILY_TYPE_STYLE = {
-    lore:    { color: '#7BC67E', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>` },
-    checkin: { color: '#FF7E55', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>` },
-    capture: { color: '#F6C19E', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>` },
-    quiz:    { color: '#4FC3F7', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>` },
+    lore:        { color: '#7BC67E', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>` },
+    checkin:     { color: '#FF7E55', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>` },
+    capture:     { color: '#F6C19E', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>` },
+    quiz:        { color: '#4FC3F7', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>` },
+    lore_recall: { color: '#CE93D8', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>` },
   };
 
   function _renderDailyFallback() {
@@ -311,14 +313,17 @@ const MissionModule = (() => {
           const style = _DAILY_TYPE_STYLE[c.type] || _DAILY_TYPE_STYLE.quiz;
           const color = c.completed ? 'var(--color-success)' : style.color;
           const showProg = c.target_count > 1 && !c.completed;
-          return `
-          <div style="
+          const isRecall = c.type === 'lore_recall' && !c.completed;
+        return `
+          <div onclick="${isRecall ? `MissionModule.openRecall(${JSON.stringify(c).replace(/"/g, '&quot;')})` : ''}"
+               style="
             display:flex;align-items:center;gap:10px;
             background:var(--color-card-dark);
             border:1px solid ${c.completed ? 'rgba(123,198,126,0.2)' : 'var(--color-border)'};
             border-left:3px solid ${color};
             border-radius:var(--radius-md);
             padding:10px 12px;
+            ${isRecall ? 'cursor:pointer;' : ''}
           ">
             <div style="
               width:32px;height:32px;border-radius:50%;
@@ -375,7 +380,71 @@ const MissionModule = (() => {
     </svg>`;
   }
 
-  return { load };
+  // ── Recall Quiz ───────────────────────────────────────
+  async function openRecall(challenge) {
+    const user = window.AppCore?.App?.user;
+    if (!user) return;
+    const questions = await DB.Lore.getRecallQuestions(challenge.lore_node_id);
+    const modal = document.getElementById('recall-modal');
+    if (!modal) return;
+
+    const titleEl    = document.getElementById('recall-modal-title');
+    const questionEl = document.getElementById('recall-modal-question');
+    const optionsEl  = document.getElementById('recall-modal-options');
+    const resultEl   = document.getElementById('recall-modal-result');
+    const doneBtn    = document.getElementById('recall-modal-done');
+
+    resultEl.hidden = true;
+    doneBtn.hidden  = true;
+
+    if (!questions?.length) {
+      titleEl.textContent    = challenge.title_th;
+      questionEl.textContent = 'ยังไม่มีคำถามสำหรับ Recall นี้';
+      optionsEl.innerHTML    = '';
+      bootstrap.Modal.getOrCreateInstance(modal).show();
+      return;
+    }
+
+    const q = questions[0];
+    titleEl.textContent    = challenge.title_th;
+    questionEl.textContent = q.question_th;
+
+    optionsEl.innerHTML = ['A','B','C','D'].map(k => {
+      const text = q[`option_${k.toLowerCase()}`];
+      if (!text) return '';
+      return `<button class="btn btn-outline btn-full" style="text-align:left;font-size:13px"
+                      data-opt="${k}"
+                      onclick="MissionModule._handleRecallAnswer('${q.correct_option}','${challenge.lore_node_id}',this)">
+                ${escapeHtml(k + '. ' + text)}
+              </button>`;
+    }).join('');
+
+    bootstrap.Modal.getOrCreateInstance(modal).show();
+  }
+
+  async function _handleRecallAnswer(correctOpt, loreNodeId, btn) {
+    const user    = window.AppCore?.App?.user;
+    const chosen  = btn.dataset.opt;
+    const correct = chosen === correctOpt;
+
+    document.querySelectorAll('#recall-modal-options button')
+            .forEach(b => { b.disabled = true; b.style.opacity = '0.6'; });
+
+    const resultEl = document.getElementById('recall-modal-result');
+    const doneBtn  = document.getElementById('recall-modal-done');
+    resultEl.style.background = correct ? 'rgba(123,198,126,0.12)' : 'rgba(255,126,85,0.12)';
+    resultEl.style.border     = `1px solid ${correct ? 'rgba(123,198,126,0.3)' : 'rgba(255,126,85,0.3)'}`;
+    resultEl.style.color      = correct ? 'var(--color-success)' : 'var(--color-primary)';
+    resultEl.textContent      = correct
+      ? '✓ ถูกต้อง! +30 pts · ยอดเยี่ยม'
+      : '✗ ไม่ถูกต้อง — จะนำกลับมาทบทวนใน 3 วัน';
+    resultEl.hidden = false;
+    doneBtn.hidden  = false;
+
+    if (user) await DB.Missions.completeRecall(user.id, loreNodeId, correct);
+  }
+
+  return { load, openRecall, _handleRecallAnswer };
 })();
 
 window.MissionModule = MissionModule;

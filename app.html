@@ -603,6 +603,46 @@
   </div>
 
 
+  <!-- ════ RECALL QUIZ MODAL ════ -->
+  <div class="modal fade" id="recall-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:330px;margin:auto">
+      <div class="modal-content">
+        <div class="modal-header" style="border:none;padding-bottom:4px">
+          <span style="font-size:9px;text-transform:uppercase;letter-spacing:1.5px;
+                       color:#7BC67E;font-weight:700">Recall Quiz</span>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"
+                  style="filter:invert(1);margin-left:auto"></button>
+        </div>
+        <div class="modal-body" style="padding:0 var(--space-md) var(--space-md)">
+          <h6 id="recall-modal-title"
+              style="font-family:var(--font-heading);font-weight:700;margin-bottom:10px"></h6>
+          <p id="recall-modal-question"
+             style="font-size:13px;color:var(--color-muted);margin-bottom:12px"></p>
+          <div id="recall-modal-options"
+               style="display:flex;flex-direction:column;gap:8px"></div>
+          <div id="recall-modal-result" hidden
+               style="margin-top:12px;padding:10px;border-radius:var(--radius-md);font-size:12px"></div>
+        </div>
+        <div class="modal-footer" style="border:none;padding-top:0">
+          <button class="btn btn-primary btn-full" id="recall-modal-done"
+                  data-bs-dismiss="modal" hidden>ปิด</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ UNSOLVED HISTORY DEBATE SHEET ════ -->
+  <div class="bottom-sheet" id="debate-sheet">
+    <div class="sheet-handle"></div>
+    <div class="lore-sheet-head">
+      <span class="lore-type-badge">ประวัติศาสตร์ที่ถกเถียง</span>
+      <span class="lore-pts-badge" id="debate-vote-count">0 เสียง</span>
+    </div>
+    <h3 class="sheet-title lore-title" id="debate-title"></h3>
+    <div id="debate-body" style="overflow-y:auto;max-height:55vh;padding-bottom:var(--space-md)"></div>
+  </div>
+  <div class="bottom-sheet-overlay" id="debate-overlay" onclick="DebateModule.close()"></div>
+
 </div><!-- end app-wrapper -->
 
 <!-- ════ SCRIPTS ════ -->
@@ -623,6 +663,7 @@
 <script src="js/raid.js"></script>
 <script src="js/discussion.js"></script>
 <script src="js/community-forum.js"></script>
+<script src="js/debates.js"></script>
 
 <script>
   // Sync settings panel with loaded profile
