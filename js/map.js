@@ -628,7 +628,8 @@ const MapModule = (() => {
       const marker = L.marker([figure.lat, figure.lng], { icon }).addTo(map);
       marker.on('click', () => {
         if (figure.raid_only) _startRaidEncounter(figure);
-        else if (figure.class === 'C' || figure.class === 'B') openQuizForFigure(figure.id);
+        else if (figure.class === 'C') _completeCapture(figure, 0);
+        else if (figure.class === 'B') openQuizForFigure(figure.id);
         else openLegendaryEncounter(figure.districtId, figure.id);
       });
       markers[`figure-${figure.id}`] = marker;
@@ -644,6 +645,23 @@ const MapModule = (() => {
       return;
     }
     window.RaidModule.openRaidModal(figure);
+  }
+
+  async function _completeCapture(figure, quizScore) {
+    const u = window.AppCore?.App?.user;
+    try { if (u) await DB.Figures.capture(u.id, figure.id, quizScore); } catch {}
+    if (u) DB.Missions?.updateChallengeProgress(u.id, 'capture').catch(() => {});
+    window.CollectionModule?.markCaptured?.(figure.id);
+    const distId = figure.districtId;
+    if (distId && userDistrictState[distId]?.fogged !== false) {
+      if (u) DB.Districts.checkIn(u.id, distId).catch(() => {});
+      userDistrictState[distId] = { ...(userDistrictState[distId] || {}), fogged: false };
+      buildFogLayer(allDistrictsCache || []);
+      renderWatchtowers(allDistrictsCache || []);
+    }
+    window.AppCore?.closeAllSheets();
+    showFloatPtsOnMap(figure.legacy_pts || 0);
+    window.AppCore?.showCaptureReveal(figure);
   }
 
   function renderLoreMarkers() {
@@ -944,7 +962,7 @@ const MapModule = (() => {
     let quizQuestions = questions;
     try {
       if (!quizQuestions) {
-        const count = figure.class === 'C' ? 1 : 3;
+        const count = figure.class === 'B' ? 1 : 3;
         const data = await DB.Quiz.getForFigure(figureId, count);
         quizQuestions = Array.isArray(data) ? data : [data].filter(Boolean);
       }
@@ -1062,28 +1080,10 @@ const MapModule = (() => {
       return;
     }
 
-    try {
-      if (user) await DB.Figures.capture(user.id, activeQuiz.figure.id, activeQuiz.questions.length);
-    } catch { /* offline capture below */ }
-
-    if (user) DB.Missions?.updateChallengeProgress(user.id, 'capture').catch(() => {});
-    window.CollectionModule?.markCaptured?.(activeQuiz.figure.id);
-
-    // Clear district fog when capturing — the encounter proves physical presence.
-    // Handles the case where the user opens "ปลดล็อค Encounter" before clicking
-    // "Check In & Clear Fog", leaving the district fogged after capture.
-    const capturedDistrictId = activeQuiz.figure.districtId;
-    if (capturedDistrictId && userDistrictState[capturedDistrictId]?.fogged !== false) {
-      if (user) DB.Districts.checkIn(user.id, capturedDistrictId).catch(() => {});
-      userDistrictState[capturedDistrictId] = { ...(userDistrictState[capturedDistrictId] || {}), fogged: false };
-      buildFogLayer(allDistrictsCache || []);
-      renderWatchtowers(allDistrictsCache || []);
-    }
-
-    window.AppCore?.closeAllSheets();
-    showFloatPtsOnMap(activeQuiz.figure.legacy_pts || 0);
-    window.AppCore?.showCaptureReveal(activeQuiz.figure);
+    const _fig = activeQuiz.figure;
+    const _score = activeQuiz.questions.length;
     activeQuiz = null;
+    await _completeCapture(_fig, _score);
   }
 
   // ── Perform check-in ────────────────────────────────
