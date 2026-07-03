@@ -25,8 +25,6 @@ const MapModule = (() => {
   const _walkedCells = new Set();
   const HOME_KEY = 'tam_roi_home';
   const LEGACY_HOME_KEY = 'siam' + 'echo_home';
-  const LORE_KEY = 'tam_roi_lore_unlocked';
-  const LORE_SEEN_KEY = 'tam_roi_lore_seen';
   const CHECKIN_TOLERANCE_M = 500;
 
   // ── BTS/MRT stations — loaded from Supabase bts_mrt_stations ──
@@ -279,7 +277,8 @@ const MapModule = (() => {
 
   async function loadLoreData() {
     loreNodes = [];
-    loadLocalLoreState();
+    unlockedLoreIds.clear();
+    pendingLoreIds.clear();
 
     const user = window.AppCore?.App?.user;
     if (!user) return;
@@ -294,25 +293,8 @@ const MapModule = (() => {
         const id = row.lore_id || row.lore_nodes?.id;
         if (id) unlockedLoreIds.add(id);
       });
-      persistLocalLoreState();
       if (map) renderLoreMarkers();
-    } catch { /* keep mock/local lore state */ }
-  }
-
-  function loadLocalLoreState() {
-    try {
-      JSON.parse(localStorage.getItem(LORE_KEY) || '[]').forEach(id => unlockedLoreIds.add(id));
-      // Lore already shown once (arrived + auto-opened) but not necessarily saved —
-      // must survive reload or the proximity trigger fires again on re-entry.
-      JSON.parse(localStorage.getItem(LORE_SEEN_KEY) || '[]').forEach(id => pendingLoreIds.add(id));
-    } catch { /* ignore */ }
-  }
-
-  function persistLocalLoreState() {
-    try {
-      localStorage.setItem(LORE_KEY, JSON.stringify([...unlockedLoreIds]));
-      localStorage.setItem(LORE_SEEN_KEY, JSON.stringify([...pendingLoreIds]));
-    } catch { /* ignore */ }
+    } catch (e) { console.error('[lore] failed to load from Supabase:', e); }
   }
 
   function haversineDistance(lat1, lng1, lat2, lng2) {
@@ -339,7 +321,6 @@ const MapModule = (() => {
   function unlockLore(node) {
     activeLoreNode = node;
     pendingLoreIds.add(node.id);
-    persistLocalLoreState();
 
     const banner = document.getElementById('proximity-banner');
     const name = document.getElementById('proximity-name');
@@ -431,7 +412,6 @@ const MapModule = (() => {
 
     unlockedLoreIds.add(node.id);
     pendingLoreIds.delete(node.id);
-    persistLocalLoreState();
     renderLoreMarkers();
     window.AppCore?.closeAllSheets();
     const earned = (node.lore_pts || 0) * getTransportMultiplier();
