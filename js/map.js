@@ -427,7 +427,7 @@ const MapModule = (() => {
         await DB.Lore.unlock(user.id, node.id);
         await DB.Profiles.addLegacyPoints(user.id, (node.lore_pts || 0) * getTransportMultiplier());
       }
-    } catch { /* offline — persists locally */ }
+    } catch (e) { console.error('[lore unlock] DB write failed:', e); }
 
     unlockedLoreIds.add(node.id);
     pendingLoreIds.delete(node.id);

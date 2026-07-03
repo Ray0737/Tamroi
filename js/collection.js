@@ -62,7 +62,10 @@ const CollectionModule = (() => {
       return;
     }
     try {
-      loreEntries = normalizeLoreRows(await DB.Lore.getUserUnlocked(user.id));
+      const dbRows = normalizeLoreRows(await DB.Lore.getUserUnlocked(user.id));
+      const dbIds = new Set(dbRows.map(e => e.id));
+      const localOnly = getLocalLoreEntries().filter(e => !dbIds.has(e.id));
+      loreEntries = [...dbRows, ...localOnly];
     } catch {
       loreEntries = getLocalLoreEntries();
     }
