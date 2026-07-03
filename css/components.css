@@ -986,7 +986,7 @@
   background: var(--color-card-dark);
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
-  padding: 10px var(--space-md);
+  padding: 7px var(--space-md);
   margin-bottom: var(--space-md);
 }
 
