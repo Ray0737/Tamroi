@@ -19,6 +19,10 @@ const MapModule = (() => {
   const pendingLoreIds = new Set();
   const completedLoreChains = new Set();
   const visitedSupportNodeIds = new Set();
+  const _WALK_KEY = 'tam_roi_walk_cells';
+  let _walkGridCells = null;
+  let _walkGridMap   = null;
+  const _walkedCells = new Set();
   const HOME_KEY = 'tam_roi_home';
   const LEGACY_HOME_KEY = 'siam' + 'echo_home';
   const LORE_KEY = 'tam_roi_lore_unlocked';
@@ -111,6 +115,7 @@ const MapModule = (() => {
 
     // Start GPS tracking
     startLocationTracking();
+    _initWalkGrid();
   }
 
   // ── Real-time location dot ─────────────────────────
@@ -146,10 +151,41 @@ const MapModule = (() => {
         lastKnownPosition = { lat: latitude, lng: longitude, accuracy };
         updateLocationDot(latitude, longitude, accuracy);
         checkLoreProximity(latitude, longitude);
+        _revealWalkCell(latitude, longitude);
       },
       err => console.warn('[GPS]', err.message),
       { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
     );
+  }
+
+  function _initWalkGrid() {
+    if (!window.FogGrid) return;
+    _walkGridCells = window.FogGrid.createGridCells({
+      bounds: { south: 13.45, north: 14.10, west: 100.20, east: 100.90 },
+      rows: 65, cols: 70,
+    });
+    _walkGridMap = new Map(_walkGridCells.map(c => [c.id, c]));
+    try {
+      JSON.parse(localStorage.getItem(_WALK_KEY) || '[]').forEach(id => _walkedCells.add(id));
+    } catch {}
+  }
+
+  function _pointInPoly(lat, lng, coords) {
+    let inside = false;
+    for (let i = 0, j = coords.length - 1; i < coords.length; j = i++) {
+      const [yi, xi] = coords[i], [yj, xj] = coords[j];
+      if ((yi > lat) !== (yj > lat) && lng < (xj - xi) * (lat - yi) / (yj - yi) + xi)
+        inside = !inside;
+    }
+    return inside;
+  }
+
+  function _revealWalkCell(lat, lng) {
+    const cell = _walkGridCells && window.FogGrid.findCellForLatLng(lat, lng, _walkGridCells);
+    if (!cell || _walkedCells.has(cell.id)) return;
+    _walkedCells.add(cell.id);
+    try { localStorage.setItem(_WALK_KEY, JSON.stringify([..._walkedCells])); } catch {}
+    buildFogLayer(allDistrictsCache || []);
   }
 
   function updateLocationDot(lat, lng, accuracy) {
@@ -441,18 +477,24 @@ const MapModule = (() => {
   // One polygon covers all Bangkok; holes are cut for each explored district.
   // Uses SVG evenodd fill rule — clean, no per-district artifacts.
   function buildFogLayer(districts) {
-    const holes = districts
+    const clearedPolys = districts
       .filter(d => !(userDistrictState[d.id]?.fogged ?? true))
       .map(d => {
         const raw = d.polygon_coords;
-        const coords = typeof raw === 'string' ? JSON.parse(raw) : (raw || []);
-        return coords.map(c => [c[0], c[1]]);
+        return (typeof raw === 'string' ? JSON.parse(raw) : (raw || [])).map(c => [c[0], c[1]]);
       })
       .filter(h => h.length > 0);
 
+    // Walk-cell holes: skip cells already inside a cleared district polygon to avoid
+    // evenodd fill-rule cancellation (overlapping holes re-fog the overlap area).
+    const cellHoles = [..._walkedCells]
+      .map(id => _walkGridMap?.get(id))
+      .filter(cell => cell && !clearedPolys.some(poly => _pointInPoly(cell.center.lat, cell.center.lng, poly)))
+      .map(cell => cell.bounds);
+
     if (fogLayer) { map.removeLayer(fogLayer); fogLayer = null; }
 
-    fogLayer = L.polygon([FOG_OUTER, ...holes], {
+    fogLayer = L.polygon([FOG_OUTER, ...clearedPolys, ...cellHoles], {
       fillColor:   '#0d0c1d',
       fillOpacity: 0.80,
       stroke:      false,
