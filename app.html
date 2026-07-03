@@ -737,7 +737,12 @@
       const u = window.AppCore?.App?.user;
       if (p) {
         document.getElementById('settings-username').textContent = p.username || 'Traveler';
-        document.getElementById('settings-avatar').textContent   = (p.username || 'T').substring(0,2).toUpperCase();
+        const avatarEl = document.getElementById('settings-avatar');
+        if (p.avatar_url) {
+          avatarEl.innerHTML = `<img src="${p.avatar_url}" alt="avatar">`;
+        } else {
+          avatarEl.textContent = (p.username || 'T').substring(0,2).toUpperCase();
+        }
       }
       if (u) {
         document.getElementById('settings-email').textContent = u.email || '';
