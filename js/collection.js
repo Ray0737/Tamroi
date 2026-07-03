@@ -383,10 +383,9 @@ const CollectionModule = (() => {
     if (!modal) return;
     bindFigureModalCleanup(modal);
 
-    document.getElementById('modal-figure-emoji').textContent = fig.image_emoji || '👤';
     document.getElementById('modal-figure-name').textContent  = fig.name_th;
     document.getElementById('modal-figure-en').textContent    = fig.name_en;
-    document.getElementById('modal-figure-badge').className   = `badge badge-${fig.class.toLowerCase()}`;
+    document.getElementById('modal-figure-badge').className   = `figure-class-label ${fig.class.toLowerCase()}`;
     document.getElementById('modal-figure-badge').textContent = `${fig.class}-Class`;
     document.getElementById('modal-figure-pts').textContent   = `+${fig.legacy_pts} Legacy Points`;
 

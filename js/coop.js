@@ -95,7 +95,7 @@ const CoopModule = (() => {
           <div class="coop-progress-fill ${done ? 'done' : 'pending'}" style="width:${pct}%"></div>
         </div>
         ${!myCheckin && !done ? `
-          <button class="btn btn-primary btn-full coop-checkin-btn" data-checkin-btn style="font-size:13px">
+          <button class="btn btn-primary btn-full coop-checkin-btn" data-checkin-btn style="font-size:12px;padding:9px">
             เช็คอินภารกิจนี้
           </button>` : ''}
       </div>`;

@@ -154,13 +154,13 @@
     .btn-close { filter: invert(1) !important; }
 
     .figure-modal-portrait {
-      width: 96px; height: 96px;
+      width: 80px; height: 80px;
       border-radius: 50%;
       background: var(--color-card-darker);
-      border: 3px solid var(--color-primary);
       display: flex; align-items: center; justify-content: center;
-      font-size: 44px;
-      margin: 0 auto var(--space-md);
+      font-size: 32px;
+      color: var(--color-muted);
+      margin: 0 auto var(--space-sm);
     }
   </style>
 </head>
@@ -522,31 +522,31 @@
 
   <!-- ════ FIGURE DETAIL MODAL ════ -->
   <div class="modal fade" id="figure-modal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered" style="padding:0 var(--space-md)">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:300px;margin-left:auto;margin-right:auto">
       <div class="modal-content">
         <div class="modal-header" style="border:none;padding-bottom:0">
           <div class="anim-stamp" style="width:100%;text-align:center">
             <div class="figure-modal-portrait" id="modal-figure-emoji">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:44px;height:44px;color:var(--color-muted)"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <i class="bi bi-person-fill"></i>
             </div>
           </div>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" style="position:absolute;top:12px;right:12px"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" style="position:absolute;top:20px;right:16px"></button>
         </div>
-        <div class="modal-body" style="text-align:center;padding:var(--space-md)">
-          <span class="badge" id="modal-figure-badge">C-Class</span>
-          <h3 style="font-family:var(--font-heading);font-size:var(--text-xl);margin:var(--space-sm) 0 4px" id="modal-figure-name">–</h3>
-          <p style="font-size:var(--text-sm);color:var(--color-muted);margin-bottom:var(--space-md)" id="modal-figure-en">–</p>
-          <div class="card" style="text-align:left">
-            <p style="font-size:var(--text-sm);color:var(--color-muted);margin-bottom:4px">Legacy Points Earned</p>
-            <p style="font-size:var(--text-lg);font-weight:700;color:var(--color-primary)" id="modal-figure-pts">–</p>
-          </div>
-          <div class="card" id="modal-figure-bio-card" style="text-align:left;margin-top:var(--space-sm)">
-            <p style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--color-muted);margin-bottom:4px" id="modal-figure-era">–</p>
-            <p style="font-size:var(--text-sm);line-height:1.6;margin:0" id="modal-figure-bio">–</p>
+        <div class="modal-body" style="text-align:left;padding:4px var(--space-md) var(--space-md)">
+          <span class="figure-class-label" id="modal-figure-badge"
+                style="display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;
+                       letter-spacing:0.5px;padding:3px 12px;border-radius:var(--radius-full);
+                       background:var(--color-primary-dim);color:var(--color-primary);margin-bottom:8px">C-Class</span>
+          <h3 style="font-family:var(--font-heading);font-size:var(--text-lg);font-weight:800;margin:0 0 2px" id="modal-figure-name">–</h3>
+          <p style="font-size:var(--text-xs);color:var(--color-muted);margin-bottom:6px" id="modal-figure-en">–</p>
+          <p style="font-size:var(--text-sm);font-weight:700;color:var(--color-primary);margin-bottom:12px" id="modal-figure-pts">–</p>
+          <div id="modal-figure-bio-card" style="text-align:left">
+            <p style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--color-muted);margin-bottom:5px" id="modal-figure-era">–</p>
+            <p style="font-size:var(--text-xs);line-height:1.5;margin:0;color:var(--color-muted)" id="modal-figure-bio">–</p>
           </div>
         </div>
-        <div class="modal-footer" style="border:none;justify-content:center;padding-top:0;padding-bottom:var(--space-md)">
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">ปิด</button>
+        <div class="modal-footer" style="border:none;justify-content:center;padding-top:var(--space-sm);padding-bottom:var(--space-md)">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" style="font-size:12px;padding:7px;width:60%">ปิด</button>
         </div>
       </div>
     </div>
