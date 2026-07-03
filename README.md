@@ -7,7 +7,7 @@
 ทีม **ปลามึกยักษ์** · โรงเรียนสาธิตมหาวิทยาลัยศรีนครินทรวิโรฒ ประสานมิตร (ฝ่ายมัธยม)  
 วิชาเอกวิศวกรรมปัญญาประดิษฐ์ (AI)
 
-> **Branch: `Co-op`** — Adds guilds, collaborative missions, raid encounters, and discussion threads on top of the solo prototype. Deployed on Vercel.
+> **Branch: `main`** — `Co-op` (guilds, collaborative missions, raid encounters, discussion threads) has been merged into main. Deployed on Vercel.
 
 ---
 
