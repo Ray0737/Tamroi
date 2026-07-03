@@ -668,6 +668,81 @@ document.getElementById('btn-username-save')?.addEventListener('click', async ()
   track.addEventListener('click', () => apply(!checkbox.checked));
 })();
 
+// ── Settings: GPS Permission ──────────────────────────
+(function initGpsStatus() {
+  const label = document.getElementById('gps-status-label');
+  const btn   = document.getElementById('btn-request-gps');
+  if (!label) return;
+
+  const render = (state) => {
+    if (state === 'granted') {
+      label.textContent = 'อนุญาต ✓';
+      label.style.color = 'var(--color-success)';
+      btn.hidden = true;
+    } else if (state === 'denied') {
+      label.textContent = 'ถูกปฏิเสธ — เปิดในเบราว์เซอร์';
+      label.style.color = '#e57373';
+      btn.hidden = true;
+    } else {
+      label.textContent = 'ยังไม่อนุญาต';
+      label.style.color = 'var(--color-muted)';
+      btn.hidden = false;
+    }
+  };
+
+  if (navigator.permissions) {
+    navigator.permissions.query({ name: 'geolocation' }).then(result => {
+      render(result.state);
+      result.onchange = () => render(result.state);
+    }).catch(() => render('prompt'));
+  } else {
+    render('prompt');
+  }
+
+  btn?.addEventListener('click', () => {
+    navigator.geolocation?.getCurrentPosition(
+      () => render('granted'),
+      () => render('denied')
+    );
+  });
+})();
+
+// ── Settings: Home District ───────────────────────────
+(function initHomeDistrict() {
+  const sel = document.getElementById('select-home-district');
+  if (!sel) return;
+
+  const DISTRICTS = [
+    { id: 'rattanakosin', name_th: 'รัตนโกสินทร์',    lat: 13.7519, lng: 100.4930 },
+    { id: 'dusit',        name_th: 'ดุสิต-พระนคร',    lat: 13.7740, lng: 100.5109 },
+    { id: 'pathumwan',    name_th: 'ปทุมวัน-สยาม',    lat: 13.7442, lng: 100.5320 },
+    { id: 'silom',        name_th: 'สีลม-บางรัก',     lat: 13.7274, lng: 100.5329 },
+    { id: 'sukhumvit',    name_th: 'สุขุมวิท',         lat: 13.7339, lng: 100.5614 },
+    { id: 'watthana',     name_th: 'วัฒนา-ทองหล่อ',   lat: 13.7297, lng: 100.5826 },
+    { id: 'chatuchak',    name_th: 'จตุจักร',          lat: 13.8022, lng: 100.5507 },
+    { id: 'ladphrao',     name_th: 'ลาดพร้าว',         lat: 13.8100, lng: 100.5900 },
+    { id: 'bang_kapi',    name_th: 'บางกะปิ-มีนบุรี',  lat: 13.7775, lng: 100.6392 },
+    { id: 'phra_khanong', name_th: 'พระโขนง-อ่อนนุช',  lat: 13.7009, lng: 100.5953 },
+    { id: 'bang_na',      name_th: 'บางนา',             lat: 13.6571, lng: 100.6123 },
+    { id: 'nonthaburi',   name_th: 'นนทบุรี',           lat: 13.8621, lng: 100.5144 },
+  ];
+
+  const current = (() => {
+    try { return JSON.parse(localStorage.getItem('tam_roi_home')); } catch { return null; }
+  })();
+
+  sel.innerHTML = DISTRICTS.map(d =>
+    `<option value="${d.id}" ${current?.id === d.id ? 'selected' : ''}>${d.name_th}</option>`
+  ).join('');
+
+  sel.addEventListener('change', () => {
+    const d = DISTRICTS.find(x => x.id === sel.value);
+    if (!d) return;
+    localStorage.setItem('tam_roi_home', JSON.stringify({ id: d.id, lat: d.lat, lng: d.lng, name_th: d.name_th }));
+    showToast(`เขตบ้านเกิด: ${d.name_th}`);
+  });
+})();
+
 // ── Mock fallback data ────────────────────────────────
 function getMockNotifications() {
   return [

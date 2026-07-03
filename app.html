@@ -603,9 +603,9 @@
       <div class="card" style="color:#ffffff;display:flex;flex-direction:column;gap:0">
         <p style="font-size:var(--text-xs);color:#9DA3AE;margin-bottom:var(--space-sm);text-transform:uppercase;letter-spacing:1px">การตั้งค่า</p>
         <!-- Notifications toggle -->
-        <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:4px 0">
+        <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:4px 0;border-bottom:1px solid var(--color-border)">
           <span style="font-size:var(--text-sm)">การแจ้งเตือน</span>
-          <div class="settings-toggle" id="notif-toggle-wrap">
+          <div id="notif-toggle-wrap">
             <input type="checkbox" id="toggle-notifications" style="display:none" checked>
             <div id="notif-toggle-track"
               style="width:40px;height:22px;border-radius:11px;background:var(--color-success);
@@ -616,6 +616,28 @@
             </div>
           </div>
         </label>
+
+        <!-- GPS Permission -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--color-border)">
+          <span style="font-size:var(--text-sm)">ตำแหน่ง GPS</span>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span id="gps-status-label" style="font-size:12px;color:var(--color-muted)">กำลังตรวจสอบ…</span>
+            <button id="btn-request-gps" hidden
+              style="font-size:11px;padding:3px 8px;border-radius:8px;border:1px solid var(--color-primary);
+                     background:transparent;color:var(--color-primary);cursor:pointer">ขอสิทธิ์</button>
+          </div>
+        </div>
+
+        <!-- Home District -->
+        <div style="padding:8px 0">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:var(--text-sm)">เขตบ้านเกิด</span>
+          </div>
+          <select id="select-home-district"
+            style="width:100%;background:var(--color-bg);border:1px solid var(--color-border);
+                   border-radius:var(--radius-md);padding:6px 10px;color:#fff;font-size:var(--text-sm);cursor:pointer">
+          </select>
+        </div>
       </div>
 
       <!-- App version -->
