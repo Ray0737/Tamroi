@@ -1,7 +1,7 @@
 # ตามรอย · Tamroi — Game Logic Reference
 
 > Pure gameplay mechanics: what each part of the game is, and exactly when/how it triggers. No theory, no code/file references — see `docs/PROJECT_SUMMARY.md` for the technical side.
-> Last accurate as of: 2026-07-01
+> Last accurate as of: 2026-07-03
 
 ---
 
@@ -12,12 +12,12 @@
 - **Fog of War** — the whole map starts covered in dark fog. It only clears where you've actually physically been — nothing unlocks remotely.
 - **Watchtower check-in** — every district has one main landmark (a temple, monument, or historic site). Get within 500 meters of it to check in. A successful check-in clears about 1km² of fog around that spot (not the whole district at once, so there's always more to explore) and reveals any locked figures hiding in that area.
 - **Support Nodes** — smaller real spots in each district: 2 cafés, 1 local craft/OTOP shop, and 3 secondary landmarks. Visiting all of them is required before the rarest figures (S/A) become capturable. Common figures (B/C) don't need this step.
-- **Lore** — deeper story entries that unlock in two ways: either just by walking close to a specific spot, or by visiting a whole set of connected locations that together tell one story (for example, three different real sites that together unlock the story of a historical event). Reading Lore adds bonus points and gets saved to your personal archive.
+- **Lore** — deeper story entries that unlock in two ways: either just by walking close to a specific spot, or by visiting a whole set of connected locations that together tell one story (for example, three different real sites that together unlock the story of a historical event). Reading Lore adds bonus points and gets saved to your personal archive. Some Lore now runs a quick 1-2 question quiz right before the story is shown, then the same questions again right after you finish reading — the point is to measure whether reading actually taught you something, and you'll see a score delta once both are answered.
 - **Quiz** — pops up once a figure becomes available to capture. Common figures need one easy question. Rare figures need three questions, and you have to get all three right.
 - **Capture** — answering the quiz correctly (or just discovering a common figure) adds that figure to your collection and increases your score automatically.
 - **Score & Leaderboard** — your score goes up automatically every time you capture a figure or unlock Lore. The leaderboard updates instantly for everyone whenever anyone's score changes.
 - **Notifications** — you get alerted when new places to explore open up nearby, when your leaderboard rank changes, or when something needs your action (like a group invite you can accept or decline).
-- **Mission tab** — one shared screen that stacks several panels: a seasonal-event banner (if today matches a special date), a public-transport bonus banner, your personal **Active Quest** card (auto-picks the next uncaptured Rare/Legendary figure in a district you've unlocked and tracks a 4-step checklist toward it), and your **Daily Challenges** list (small tasks that reset every 24 hours). These panels are the same whether you're solo or in a group — they're always about your own personal progress. The one part of this tab that's group-only is the **Group Missions** section in the middle: if you're not in a group it just shows a "join a group" prompt, but if you are, it lists your group's shared check-in objectives with a live progress bar.
+- **Mission tab** — one shared screen that stacks several panels: a seasonal-event banner (if today matches a special date), a public-transport bonus banner, your personal **Active Quest** card (auto-picks the next uncaptured Rare/Legendary figure in a district you've unlocked and tracks a 4-step checklist toward it), your group's shared mission cards (if you're in one), and your **Daily Challenges** list (small tasks that reset every 24 hours). ⚠️ Group mission cards now show up in *two* places — this same Mission tab, and again inside the Guild panel's own "ภารกิจ" tab (see below) — same data, shown twice, not de-duplicated.
 
 ## Figure Rarity Tiers
 
@@ -26,7 +26,7 @@
 - **Rare (A)** — must visit all Support Nodes in the district first, then answer 3 quiz questions correctly.
 - **Legendary (S)** — same requirement as Rare, unless it's a Raid-only figure, in which case it can only be captured through a group Raid (see below).
 - **How rarity is decided** — figures are ranked by how big their historical impact was, how long that impact lasted, and how well-documented it is in real history.
-- **Content rule — no Rama-line kings** — reigning/historical Kings of the Chakri dynasty (Rama I–X) are excluded from the figure pool entirely, regardless of tier. This is a permanent content restriction, not a future task.
+- **Content rule — no Rama-line kings** — reigning/historical Kings of the Chakri dynasty (Rama I–IX) are excluded from the figure pool entirely, regardless of tier. This is a permanent content restriction, not a future task — verified: all 9 were actually still in the figure pool as of 2026-07-02 despite two earlier removal attempts, both of which silently failed (see Bugs & Fixes Needed history); confirmed gone as of 2026-07-03.
 
 ## Keeping the Game Interesting Over Time
 
@@ -36,8 +36,10 @@
 
 ## Group / Co-op Play
 
-- **Creating and joining a group (Guild)** — one player creates a group (up to 6 people) and gets a 6-digit invite code to share; anyone else joins just by entering that code, or by requesting to join a group they found through search.
-- **Group status** — you can see which of your groupmates are currently online.
+- **Creating and joining a group (Guild)** — one player creates a group (up to 6 people) and gets a 6-digit invite code to share; anyone else joins just by entering that code, or by requesting to join a group they found through search. The invite code lives inside the group panel's Members tab now (with a one-tap copy button), not in the group's header.
+- **Group panel layout** — the group screen opens on a compact header (group emblem showing its initials, name, online count, score) with quick action buttons (Rally, Discuss, Leave/Delete group) right underneath. Below that, the rest of the group's content — Members, Announcements, Activity Log, and Missions — is organized into its own row of tabs at the top of the content area, the same visual style as the app's main bottom navigation (icon + label, one highlighted at a time), so you switch between them instead of scrolling through one long stacked page.
+- **Group status** — you can see which of your groupmates are currently online, and a live activity log shows recent group actions (someone captured a figure, cleared fog, unlocked Lore) as they happen.
+- **Rally Pin** — any member can drop a one-tap map pin broadcasting "I'm here, come join me" to the rest of the group; it notifies everyone and expires after 2 hours.
 - **Shared exploration map** — a group's combined "explored" map shows every district any member has personally cleared, so the whole group benefits from each other's travel.
 - **Group leaderboard** — groups are ranked against each other too, based on their combined discovery, captures, and score.
 - **Group management** — the group's leader can remove members, hand off leadership to someone else, post announcements to the group, or disband the group entirely.
@@ -59,21 +61,26 @@
 - No offline mode yet — you need a live internet connection the whole time you're playing.
 - Long play sessions use up battery quickly because of continuous location tracking.
 
-## Bugs & Fixes Needed (cross-checked against code, 2026-07-02)
+## Bugs & Fixes Needed (cross-checked against the live game/database, 2026-07-03)
 
 - **Some figures never appear on the map at all** — if a figure doesn't have a saved map location, it silently doesn't render anywhere, with no error and no placeholder marker — it just doesn't exist as far as a player can tell. The fix is either to guarantee every figure always has a location before it's ever shown to players, or to show some visible fallback marker instead of just dropping it. Still outstanding.
 - ✅ **Fixed — Raid figures now have a distinct map marker.** Figures that require a group Raid show a red ⚔️ icon instead of the normal locked-figure marker, and tapping one now checks whether enough guild members are online and opens the raid lobby directly — it no longer offers a regular solo quiz at all (previously it silently let players solo-capture a raid figure through the normal encounter flow, skipping the raid entirely).
 - ✅ **Fixed — Raid-start notifications now open the raid.** Tapping a "Raid เริ่มแล้ว!" notification now joins you straight into that raid's lobby instead of just marking it read.
+- ✅ **Fixed — Guild join requests no longer get stuck.** Approving or rejecting a request used to add the member (or not) but leave the request itself sitting there forever, showing up as a phantom pending request for someone already in the group. The permission that let a group leader clear someone else's request was simply missing.
+- ✅ **Fixed — Group announcements can now actually be read.** Posting an announcement always worked, but reading the list back was silently failing for everyone due to a missing data link between an announcement and its poster's name — the leader could write but nobody, including the leader, could see what was written.
+- ✅ **Fixed — Two earlier "no Rama kings" removal attempts didn't work.** Both silently failed to remove anything (wrong figure identifiers), so all 9 Rama-line kings stayed capturable despite the content rule saying otherwise. A corrected fix confirmed they're actually gone now.
+- **Historical era text isn't showing yet** — every figure is supposed to show a real historical era label (e.g. "Early Rattanakosin period"), but that feature was never actually turned on — every figure currently just shows a generic fallback label instead ("[Tier]-Class · [district name]"), even though this was previously reported as working.
+- **Group missions show up twice** — the same group mission cards now appear both in the regular Mission tab and again inside the group panel's own Missions tab, with no reason given for the duplication.
 - **Lore/quiz review-status check isn't wired in yet** — the intent is that only content which has been officially reviewed and approved should ever be shown to a player, but that check isn't actually being enforced right now, so unreviewed content could theoretically be served. Still outstanding.
 - **A hidden test area exists in the game** — there's a school-field-test-only district, figure, and quiz set built for a specific pilot test. Kept intentionally for now, not something to remove.
 
 ## In Progress (Intended Features — Actively Being Worked On)
 
-These are committed features, not just ideas. Each is cross-checked against the actual code in `C:\Users\LENOVO\Documents\Lieutenant Hecker\Primary Data\AI\Coding\Website - Tamroi - Coop` as of 2026-07-01, not just taken on intent.
+These are committed features, not just ideas. Each is cross-checked against the actual game as of 2026-07-03, not just taken on intent.
 
-- **Capture notification + collection pop-up** — ✅ **Already done in code.** Capturing a figure already shows a full-screen celebration overlay (rank-based header — "CAPTURED!" up to "LEGENDARY CAPTURE!" — plus a glow ring, and confetti for S/A-tier figures), not a silent archive update. Verified in `js/map.js` (`submitQuizAnswer`, which calls `AppCore.showCaptureReveal` right after a successful capture) and `js/app.js` (`showCaptureReveal`, which builds the overlay and confetti). This item can be considered shipped rather than in-progress.
-- **Sector-based fog clearing while moving** — ❌ **Not started.** Verified: fog only ever clears as one single lump, and only at the moment of an explicit Watchtower check-in (`js/map.js`, `performCheckIn`, which sets the district's `fogged` flag and rebuilds one big polygon reveal). Continuous GPS updates while walking (`watchPosition()`) currently only move the player's dot and check Lore proximity — they don't touch fog state at all. A grid system does exist (`js/fog-grid.js`, `window.FogGrid`), but right now it's only used to draw a decorative gridline overlay on the map, not to track or reveal individual cells as the player moves through them. Genuinely still to be built.
-- **Rebalance common vs. gated captures (target 80% ungated / 20% gated)** — ⚠️ **Partially there, not at target.** The gating mechanism itself is fully built and working (`js/map.js`: `canCheckIn()` blocks S/A-tier figures behind the Support Node visit count; `renderFigureNodes()` already routes B/C figures straight to the quiz while S/A go through the gated Legendary Encounter). But the actual figure roster isn't at the 80/20 split yet: the live 26-figure set (figure IDs referenced in `supabase/patch_era.sql`) currently breaks down as 7 S-tier + 3 A-tier = 10 gated figures against 6 B-tier + 10 C-tier = 16 ungated figures — roughly 38% gated / 62% ungated. That's already leaning toward more ungated figures than gated, but it's well short of the intended 80/20 ratio, so more B/C-tier figures still need to be added (or some A-tier figures reclassified) to hit the target.
+- **Capture notification + collection pop-up** — ✅ **Done and shipped.** Capturing a figure shows a full-screen celebration overlay (rank-based header — "CAPTURED!" up to "LEGENDARY CAPTURE!" — plus a glow ring, and confetti for S/A-tier figures), not a silent archive update.
+- **Sector-based fog clearing while moving** — ❌ **Not started.** Fog still only ever clears as one single lump, and only at the moment of an explicit Watchtower check-in. Walking around while the fog is still covering an area does nothing on its own — a grid system exists on the map but is currently only used to draw a decorative gridline overlay, not to track or reveal cells as the player moves through them. Genuinely still to be built.
+- **Rebalance common vs. gated captures (target 80% ungated / 20% gated)** — ⚠️ **Further from the target than before.** The gating mechanism itself works correctly. But the figure roster has grown substantially (72 total figures now, up from the ~26 previously documented) and the ratio moved the wrong direction: 11 S-tier + 20 A-tier = 31 gated figures against 21 B-tier + 20 C-tier = 41 ungated — roughly 43% gated / 57% ungated. Better than 50/50, but still far short of 80/20, and worse than the ~38%/62% split measured previously. More B/C-tier figures (or reclassifying some A-tier ones) are still needed to hit the target.
 
 ## What's Planned Next (not in the game yet)
 
@@ -84,7 +91,7 @@ These are committed features, not just ideas. Each is cross-checked against the 
 - Real-world partnerships: limited-edition figures tied to media releases, real discounts at partner locations, and government-sponsored travel quests to lesser-visited provinces.
 - **Lore with decisions and consequences** — let some Lore entries present the player with a choice partway through, where different answers lead to different follow-up content or outcomes, instead of every Lore entry being a single fixed read.
 - **Environmental Puzzles (Lore as an on-site escape room)** — instead of just telling the player a fact outright, rewrite some Lore unlocks as a puzzle that can only be solved by physically reading the real location. Example: rather than stating "this town was built in 1907 by a noble," the mission becomes "find the family crest hidden on an old building's pillar, then decode the founding year from the architecture to open the next clue." The point is that the player's eyes have to actually scan the building, notice the stucco detailing, and engage with the real, aged place to find the answer — rather than just reading text at it.
-- **Formal evaluation via Google Form** — build the player-facing pretest/posttest survey (Intrinsic Motivation Inventory + learning outcome questions from the proposal's testing methodology) as an actual Google Form, since none of that evaluation has been run yet.
+- **Formal evaluation via Google Form** — this is a separate, broader thing from the in-game Lore quiz above: a proper judge-facing survey (Intrinsic Motivation Inventory, System Usability Scale, satisfaction/NPS questions) to measure the project's educational impact as a whole, not just per-lore-node knowledge. Still needs to actually be built as a real Google Form and run with test players — none of that evaluation has happened yet, even though the measurement plan for it is now fully written up.
 - **Historical AI (later dev phase)** — a further-out idea to use the Gemini API as a historical-content assistant, using the player's location to sort and surface the most relevant figures/Lore/quiz content for wherever they currently are, rather than showing everything in a district at once.
 
 ## Still Thinking About (Not Committed Yet)

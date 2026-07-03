@@ -1,8 +1,9 @@
 # ตามรอย · Tamroi — Project Summary (Co-op branch)
 
-> **Folder role:** Active co-op development branch. Builds on the expanded solo dataset (26 figures, 20 lore nodes, 47 support nodes) with a full guild/party layer: guilds, collaborative missions, synchronous raid encounters, discussion threads, and a community forum.
+> **Folder role:** Active co-op development branch. Full guild/party layer (guilds, collaborative missions, synchronous raid encounters, discussion threads, community forum) on top of the solo prototype.
+> ⚠️ **The production content dataset (figures/lore/support nodes) is NOT reproducible from this repo's committed SQL files** — the live Supabase project holds a much larger dataset (72 figures) than any committed seed file creates (schema.sql's toy 7-figure example is the only figure INSERT in git history). See "Current Data" below.
 > For the solo/base state see the `main`/`Co-op` history before 2026-06-28. For the Next.js/TypeScript production rewrite, see **Website - Tamroi - Round2**.
-> Last accurate as of: 2026-07-01
+> Last accurate as of: 2026-07-03 (cross-checked directly against the live Supabase project, not just committed files)
 
 ---
 
@@ -80,10 +81,23 @@ Website - Tamroi - Coop/
 │   ├── patch_guild_leader_rls.sql      Fix: leaders weren't visible to non-members (broke join-request notifications)
 │   ├── patch_notification_ref.sql      notifications.ref_id — deep-link to source row
 │   ├── patch_notifications_rls.sql     Allow cross-user notification INSERT (needed for join requests)
-│   ├── patch_era.sql                   figures.era column + seed
+│   ├── patch_era.sql                   ⚠️ Never applied live — figures.era column doesn't exist on the DB, see Feature Status
 │   ├── patch_daily_challenges.sql      daily_challenges + user_daily_progress
-│   ├── patch_support_nodes.sql         figures.lat/lng, support_nodes (47 nodes), bts_mrt_stations
-│   └── patch_mock_satit.sql            ⚠️ Test-only district/figure/lore/quiz for field test — remove before production
+│   ├── patch_support_nodes.sql         figures.lat/lng, support_nodes (51 nodes live), bts_mrt_stations
+│   ├── patch_mock_satit.sql            ⚠️ Test-only district/figure/lore/quiz for field test — kept intentionally, not scheduled for removal
+│   ├── patch_fix_user_fk.sql           Re-points user_id FKs (community_posts, figure_discussions, discussion_flags,
+│   │                                   collab_mission_checkins, raid_session_members) from auth.users → profiles(id)
+│   ├── patch_guild_description.sql     guilds.description column
+│   ├── patch_prepost.sql               Lore pre/post-test schema + 16 seeded questions — ⚠️ file still has 4 dead
+│   │                                   questions using lore IDs that don't exist live (fixed directly on the DB, not in git)
+│   ├── patch_remove_rama.sql           ❌ Dead/no-op — targets figure id 'rama-i', which never matched the live dataset
+│   ├── patch_remove_all_rama.sql       ❌ Dead/no-op — targets 'rama-ii'..'rama-ix', same mismatch
+│   ├── patch_remove_rama_kings_fixed.sql  ✅ The one that actually worked — targets the real fig-s-NN ids; all 9 Rama
+│   │                                   kings (I–IX) are confirmed removed live
+│   ├── patch_guild_announcements_fk.sql   Fixes guild_announcements.posted_by → profiles(id) FK (was missing;
+│   │                                   announcements could be posted but never read back — PostgREST embed failed)
+│   └── patch_join_request_leader_delete.sql  Adds the missing leader DELETE policy on guild_join_requests — without
+│                                       it, approving/rejecting a request added the member but left the request stuck
 │
 ├── tests/
 │   ├── run-static.mjs                  Runner: node tests/run-static.mjs
@@ -103,6 +117,9 @@ Website - Tamroi - Coop/
     ├── gps-spoofing.md            GPS anti-cheat notes
     ├── production-smoke.md        Vercel + Supabase smoke-test checklist
     ├── system_architect.md        Architecture overview
+    ├── coop-features-backlog.md   Player-perspective co-op feature ideas, prioritized (guild expedition log, rally
+    │                              pin, territory claiming, raid LFG, role-split raids, relay missions)
+    ├── pre-post_test_plan.md      Formal pretest/posttest measurement plan (IMI, learning outcome, SUS, etc.)
     ├── superpowers/               Dated design specs behind COOP.md (coop-mode, coop-community, guild-fog)
     ├── used/                      Archived, already-applied task briefs
     └── proposal/ตามรอย_NSC_2026_v20.md   ⭐ Official NSC 2026 proposal (Thai) — source of truth for game rules
@@ -118,15 +135,18 @@ Website - Tamroi - Coop/
 
 ## Current Data
 
+**Verified live against the Supabase project on 2026-07-03** (not just read from committed SQL — the actual production dataset is bigger than any file in this repo creates):
+
 | Object | Count | Notes |
 |---|---|---|
-| Districts | 13 | Bangkok (12) + Ayutthaya (1) |
-| Figures | 26 | All wired to real Supabase `figures.id`; `era` field seeded via `patch_era.sql` |
-| Support nodes | **47** | Up from 40 — expanded by `patch_support_nodes.sql` |
-| Lore nodes | 20 | All wired to real `lore_nodes.id` |
-| Quiz questions | 164 | Thai MCQ, 4-option; `is_raid_question` flag added for raid mode |
+| Districts | 14 | 13 real + `satit_test` (mock field-test district) |
+| Figures | **72** | S:11 · A:20 · B:21 (20 real + 1 mock) · C:20. IDs follow `fig-{class}-{NN}` (e.g. `fig-a-07`); the base INSERT for this set is not in git — only patches that reference/update these ids (`patch_era.sql`, `patch_support_nodes.sql`, `patch_remove_rama_kings_fixed.sql`) are committed |
+| Support nodes | 51 | Up from the 47 documented previously |
+| Lore nodes | 23 | Up from 20 |
+| Quiz questions | 171 | Thai MCQ, 4-option; `is_raid_question` flag for raid mode, `lore_id`/`assessment_type` columns for pre/post-test |
 | BTS/MRT stations | 6 | 300m radius bonus zones |
-| Mock/test data | +1 district, +1 figure, +1 lore chain (3 nodes), +3 quiz Qs | `patch_mock_satit.sql` — **scoped to a school field test, remove before production** |
+| King Rama figures | **0** | All 9 (Rama I–IX) confirmed removed — see Feature Status for the fix history |
+| Mock/test data | 1 district, 1 figure, lore chain, quiz Qs | `patch_mock_satit.sql` — kept intentionally for a school field test, not scheduled for removal |
 
 ---
 
@@ -134,15 +154,27 @@ Website - Tamroi - Coop/
 
 ### ✅ Working
 
-Fog of War · GPS watchPosition · Watchtower check-in · Support node tracking · S/A encounter gate · Quiz capture (all tiers) · Legacy Score trigger · Archive grid · Lore Journal + proximity · Leaderboard (Realtime) · Notifications (Realtime, actionable) · Seasonal/BTS-MRT bonuses · Active Mission + Daily Challenges (real DB) · Guild create/join/leave/kick/delete/transfer · Invite-code + join-request flow · Guild presence · Guild fog overlay on map · Guild leaderboard (Realtime) · Guild announcements · Collaborative missions with live progress + auto-complete trigger · Raid encounters (lobby/broadcast quiz/host failover, distinct ⚔️ map marker, notification deep-link) · Discussion threads · Community forum
+Fog of War · GPS watchPosition · Watchtower check-in · Support node tracking · S/A encounter gate · Quiz capture (all tiers) · Legacy Score trigger · Archive grid (class-sorted S→A→B→C, "Owned" filter) · Lore Journal + proximity · Pre/post-test knowledge check on Lore entries (`docs/pre-post_test_plan.md`) · Leaderboard (Realtime, flattened plain-row style, no more duplicate podium) · Notifications (Realtime, actionable, plain Bootstrap icons) · Seasonal/BTS-MRT bonuses · Active Mission + Daily Challenges (real DB) · Guild create/join/leave/kick/delete/transfer · Invite-code + join-request flow (now correctly clears on approve/reject, see fixes below) · Guild presence · Guild fog overlay on map · Guild leaderboard (Realtime) · Guild announcements (now actually readable after the FK fix below) · Collaborative missions with live progress + auto-complete trigger · Raid encounters (lobby/broadcast quiz/host failover, distinct ⚔️ map marker, notification deep-link) · Discussion threads · Community forum · Profile pictures propagated across leaderboard/guild/raid UI
+
+### ✅ Fixed this session (real bugs found and resolved)
+
+| Issue | Fix | Detail |
+|---|---|---|
+| Guild join requests stuck as "pending" forever | `patch_join_request_leader_delete.sql` | `guild_join_requests` only had a DELETE policy for the requester canceling their own request — no policy let the **leader** delete someone else's request on approve/reject. Supabase RLS silently filters instead of erroring, so the member got added but the request row never cleared. Confirmed live and one stale request manually cleaned up |
+| Guild announcements postable but never readable | `patch_guild_announcements_fk.sql` | `guild_announcements.posted_by` had no FK to `profiles`, and PostgREST needs a real FK to resolve the `profiles(username)` embed — so every read failed even though writes worked fine |
+| `community_posts` FK violation for some users | `patch_fix_user_fk.sql` (already existed) + manual backfill | 3 old accounts (incl. one teammate) had auth records but no matching `profiles` row — any FK-to-profiles write (posting, capturing, joining a guild) failed for them. Backfilled the missing profile rows directly |
+| Raid figures bypassable via solo quiz | Fixed in `js/map.js` (prior session) | `raid_only` figures previously routed through the normal Legendary Encounter solo quiz, completely skipping the raid requirement |
+| Two Rama-removal patches were no-ops | `patch_remove_rama_kings_fixed.sql` | `patch_remove_rama.sql`/`patch_remove_all_rama.sql` targeted figure ids (`rama-i`..`rama-ix`) that never matched the live dataset's actual ids (`fig-s-NN`) — silently deleted 0 rows. All 9 Rama kings are now confirmed actually gone |
 
 ### ⚠️ Broken / incomplete
 
 | Issue | File | Detail |
 |---|---|---|
 | Lore/quiz content gating | `js/supabase-client.js` | Missing `.eq('review_status','approved')` and `.not('source_ref','is',null)` on `DB.Lore.getAll()` / `DB.Quiz.getForFigure()` — `FUNCTION_LOG.md` incorrectly marks this as done; `VERIFYLOGIC.md` (stale, 2026-06-27) still has full fix instructions for it |
+| `figures.era` column doesn't exist live | `supabase/patch_era.sql` | Despite being committed and despite docs previously claiming this was fixed, the `era` column was **never actually applied** to the live database — every figure silently falls back to the generic `${class}-Class · district` string in `js/collection.js`. Needs the migration actually run |
 | Playwright portability | `playwright.config.mjs` | Hardcoded Linux paths (`/home/papajittan/...`) for both the static server root and the `playwright` import — won't run as-is on this Windows machine without editing |
 | Mock Satit test data | `supabase/patch_mock_satit.sql` | Field-test-only district/figure/lore/quiz seed; kept intentionally for now, not scheduled for removal |
+| `patch_prepost.sql` seed has 4 dead rows | `supabase/patch_prepost.sql` | Seed data references lore ids (`lore-rattanakosin-wall`, `lore-grand-palace-axis`, `lore-wat-pho-learning`, `lore-silom-trade`, `lore-chatuchak-market`) that don't exist live; the real 16 working questions were inserted directly against the correct ids (`lore-rk-1`, `lore-rk-2`, `lore-silom`, `lore-chatuchak`) on the DB, but the committed file itself is unfixed — a fresh run would silently seed 0 of these 4 |
 
 ### ❌ Out of scope / deferred
 
@@ -156,14 +188,15 @@ PWA offline support · GeoJSON district polygons (currently approximate) · serv
 |---|---|
 | `profiles` | username, legacy_score, map_discovery, archive_count |
 | `districts` / `user_districts` | Watchtower coords, support thresholds, polygon coords, per-user fog + node counters |
-| `figures` | name_th/en, class S/A/B/C, era, legacy_pts, district_id, lat/lng, `raid_only`, `raid_min_players` |
+| `figures` | name_th/en, class S/A/B/C, legacy_pts, district_id, lat/lng, `raid_only`, `raid_min_players` — **no `era` column live**, despite `patch_era.sql` |
 | `user_captures` | Captured figures + quiz_score |
 | `lore_nodes` / `user_lore` | Lore content (lat/lng/radius/chain_id/review_status) + per-user unlock state |
 | `user_support_node_visits` | Deduplicated visit tracking |
-| `quiz_questions` | figure_id, Thai question/options, correct answer, `source_ref`, `is_raid_question` |
-| `support_nodes` / `bts_mrt_stations` | 47 support nodes + 6 transit bonus stations |
+| `quiz_questions` | figure_id, Thai question/options, correct answer, `source_ref`, `is_raid_question`, `lore_id`, `assessment_type` (pretest/posttest/capture) |
+| `user_lore_assessments` | Pre/post-test scores per user per lore node (`phase`: pre/post) |
+| `support_nodes` / `bts_mrt_stations` | 51 support nodes + 6 transit bonus stations |
 | `leaderboard_legacy` (view) | Solo ranking |
-| `guilds` / `guild_members` / `guild_join_requests` / `guild_announcements` | Party system: membership, invite codes, pending requests, leader posts |
+| `guilds` (incl. `description`) / `guild_members` / `guild_join_requests` / `guild_announcements` | Party system: membership, invite codes, pending requests, leader posts |
 | `guild_leaderboard` (view) | Guild ranking (discovery, captures, summed score) |
 | `collab_missions` / `collab_mission_checkins` / `collab_mission_completions` | Async group missions + auto-complete trigger |
 | `raid_sessions` / `raid_session_members` | Synchronous multiplayer raid state |
@@ -172,7 +205,7 @@ PWA offline support · GeoJSON district polygons (currently approximate) · serv
 | `daily_challenges` / `user_daily_progress` | Daily challenge tracking |
 | `notifications` | Includes `ref_id` for deep-linking (e.g. to a join request) |
 
-**SQL run order:** `schema.sql` → `patch_auth_fix.sql` → `patch_lore.sql` → `patch_district_seed.sql` → `patch_coop.sql` → `patch_coop_fix.sql` → `patch_group_management.sql` → `patch_community.sql` → `patch_community_likes.sql` → `patch_guild_leader_rls.sql` → `patch_notification_ref.sql` → `patch_notifications_rls.sql` → `patch_era.sql` / `patch_daily_challenges.sql` / `patch_support_nodes.sql` (order-independent) → `patch_mock_satit.sql` (test only, skip in production)
+**SQL run order:** `schema.sql` → `patch_auth_fix.sql` → `patch_lore.sql` → `patch_district_seed.sql` → `patch_coop.sql` → `patch_coop_fix.sql` → `patch_group_management.sql` → `patch_community.sql` → `patch_community_likes.sql` → `patch_guild_leader_rls.sql` → `patch_notification_ref.sql` → `patch_notifications_rls.sql` → `patch_era.sql` / `patch_daily_challenges.sql` / `patch_support_nodes.sql` (order-independent) → `patch_fix_user_fk.sql` → `patch_guild_description.sql` → `patch_guild_announcements_fk.sql` → `patch_join_request_leader_delete.sql` → `patch_prepost.sql` (⚠️ fix the 4 dead lore ids first, see Feature Status) → `patch_remove_rama_kings_fixed.sql` (skip the two older `patch_remove_rama*.sql` files — dead/no-op) → `patch_mock_satit.sql` (test only, skip in production)
 
 **Key triggers:** `handle_new_user` · `on_capture_update_score` · `increment_legacy_score` · `increment_node_visit` · `check_collab_mission_threshold` (auto-completes collab missions) · `check_discussion_flag_count` (auto-flags at 3 reports)
 
@@ -190,8 +223,9 @@ PWA offline support · GeoJSON district polygons (currently approximate) · serv
 | Discussion + community forum | `js/discussion.js`, `js/community-forum.js` |
 | Map / fog / GPS / quiz / capture | `js/map.js` |
 | Schema + patches | `supabase/schema.sql`, `supabase/patch_*.sql` |
-| Co-op feature design | `docs/COOP.md`, `docs/superpowers/` |
+| Co-op feature design | `docs/COOP.md`, `docs/superpowers/`, `docs/coop-features-backlog.md` |
 | Phase tracking | `docs/dev-plan.md`, `docs/progress.md` |
+| Pre/post-test evaluation plan | `docs/pre-post_test_plan.md` |
 | Static tests | `tests/run-static.mjs` |
 | Browser e2e test | `tests/guild.spec.mjs` (via `playwright.config.mjs`) |
 | Game rules (authoritative) | `docs/proposal/ตามรอย_NSC_2026_v20.md` |
