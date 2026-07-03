@@ -438,6 +438,7 @@ const MapModule = (() => {
     if (earned > (node.lore_pts || 0)) window.AppCore?.showToast('BTS/MRT Bonus! x2 Legacy Points');
     showFloatPtsOnMap(earned);
     if (user) DB.Missions?.updateChallengeProgress(user.id, 'lore').catch(() => {});
+    window.CollectionModule?.load?.();
     checkLoreChainComplete(node, user);
   }
 
