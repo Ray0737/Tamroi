@@ -289,6 +289,7 @@ const Lore = {
       .from('lore_nodes')
       .select('*, districts(name_th,name_en,province)')
       .eq('is_active', true)
+      .eq('review_status', 'approved')
       .order('chain_id', { ascending: true, nullsFirst: false })
       .order('chain_part', { ascending: true });
     if (error) throw error;
@@ -323,7 +324,8 @@ const Lore = {
       .from('quiz_questions')
       .select('id, question_th, option_a, option_b, option_c, option_d, correct_option')
       .eq('lore_id', loreId)
-      .eq('assessment_type', 'pretest');
+      .eq('assessment_type', 'pretest')
+      .eq('review_status', 'approved');
     if (error) throw error;
     return data;
   },
@@ -353,7 +355,8 @@ const Lore = {
       .from('quiz_questions')
       .select('id, question_th, option_a, option_b, option_c, option_d, correct_option')
       .eq('lore_id', loreNodeId)
-      .eq('assessment_type', 'recall');
+      .eq('assessment_type', 'recall')
+      .eq('review_status', 'approved');
     if (error) throw error;
     return data || [];
   }
@@ -366,6 +369,7 @@ const Quiz = {
       .from('quiz_questions')
       .select('*')
       .eq('district_id', districtId)
+      .eq('review_status', 'approved')
       .limit(1);
     if (error) throw error;
     return data?.[0] || null;
@@ -376,6 +380,7 @@ const Quiz = {
       .from('quiz_questions')
       .select('*')
       .eq('figure_id', figureId)
+      .eq('review_status', 'approved')
       .limit(count);
     if (error) throw error;
     return count === 1 ? (data?.[0] || null) : data;
@@ -387,6 +392,7 @@ const Quiz = {
       .select('*')
       .eq('figure_id', figureId)
       .eq('is_raid_question', true)
+      .eq('review_status', 'approved')
       .limit(count);
     if (error) throw error;
     // Fallback: use any questions for this figure if none flagged as raid-only

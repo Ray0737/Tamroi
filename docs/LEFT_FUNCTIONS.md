@@ -22,22 +22,22 @@
 
 These are listed in v29 §13 (Limitations) and §17 (Problems) as known issues requiring resolution before wider deployment.
 
-### B1 — `review_status` not enforced in queries
+### B1 — `review_status` not enforced in queries ✅ Fixed 2026-07-03
 
 **v29 reference:** §13 item 5, §17 item 4, §18.2 item 3  
 **Location:** `js/supabase-client.js` — all `lore_nodes` and `quiz_questions` fetch calls  
 **Problem:** `lore_nodes.review_status` existed but `quiz_questions.review_status` did not, and neither table had a `source_ref` column (doc previously assumed both existed — verified false against live DB 2026-07-03). Queries don't filter on review_status either way, so unreviewed content can appear in the app.  
 **DB side — done (2026-07-03):** `supabase/patch_review_status.sql` adds `quiz_questions.review_status` and backfills all existing `lore_nodes`/`quiz_questions` rows to `'approved'` (23/23 and 173/173). No `source_ref` column added — nothing in the codebase reads/writes it, so it'd be dead schema until something needs source citations.  
-**Still needed (code side):** Add `.eq('review_status', 'approved')` to every `lore_nodes` and `quiz_questions` SELECT in `supabase-client.js`. Add a guard so new content defaults to `'pending'` at insert (already the column default — just needs an admin/review workflow before content goes live).
+**Code side — done (2026-07-03):** Added `.eq('review_status', 'approved')` to `Lore.getAll()`, `Lore.getLoreQuestions()`, `Lore.getRecallQuestions()`, `Quiz.getForDistrict()`, `Quiz.getForFigure()`, and `Quiz.getRaidQuestions()`. `Lore.getUserUnlocked()` intentionally excluded — already-unlocked journal content should remain visible regardless of post-hoc review status changes.
 
 ---
 
-### B2 — Figures without `lat`/`lng` silently disappear from map
+### B2 — Figures without `lat`/`lng` silently disappear from map ✅ Fixed 2026-07-03
 
 **v29 reference:** §17 item 7 (ปัญหาที่ 323)  
-**Location:** `js/map.js:259` — `.filter(f => f.lat != null && f.lng != null)` drops figures silently  
+**Location:** `js/map.js` — `loadFigureNodes()` / `renderFigureNodes()`  
 **Problem:** Players have no way to know these figures exist; no fallback pin is shown, no console warning.  
-**Fix:** For figures with `lat == null`, render a fallback mystery marker at the district centroid (`watchtower_lat`/`watchtower_lng`) with a distinct icon and tooltip "ตำแหน่งยังไม่ระบุ". Log a warning to console listing the missing figure IDs so data gaps are visible during dev.
+**Fix:** Removed the `.filter()` that dropped null-coord figures. `loadFigureNodes()` now warns to console with the missing IDs. `renderFigureNodes()` renders a dashed `?` marker at the district's `watchtower_lat`/`watchtower_lng` centroid with tooltip "ตำแหน่งยังไม่ระบุ" for any figure missing coordinates.
 
 ---
 

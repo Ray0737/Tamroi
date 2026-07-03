@@ -253,9 +253,9 @@ const MapModule = (() => {
     try {
       const data = await DB.Figures.getAll();
       if (data?.length) {
-        figureNodes = data
-          .filter(f => f.lat != null && f.lng != null)
-          .map(f => ({ ...f, districtId: f.district_id }));
+        figureNodes = data.map(f => ({ ...f, districtId: f.district_id }));
+        const missing = figureNodes.filter(f => f.lat == null || f.lng == null).map(f => f.id);
+        if (missing.length) console.warn('[map] figures missing lat/lng ids:', missing);
       }
     } catch { /* figureNodes stays empty */ }
   }
@@ -587,6 +587,21 @@ const MapModule = (() => {
     figureNodes.forEach(figure => {
       const state = userDistrictState[figure.districtId] || { fogged: true };
       if (state.fogged) return;
+
+      if (figure.lat == null || figure.lng == null) {
+        const district = (allDistrictsCache || []).find(d => d.id === figure.districtId);
+        const lat = district?.watchtower_lat ?? district?.center_lat;
+        const lng = district?.watchtower_lng ?? district?.center_lng;
+        if (lat == null || lng == null) return;
+        const icon = L.divIcon({
+          className: '',
+          html: `<div class="marker-node" style="opacity:0.55;border-style:dashed" title="ตำแหน่งยังไม่ระบุ">?</div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
+        });
+        markers[`figure-${figure.id}`] = L.marker([lat, lng], { icon }).addTo(map);
+        return;
+      }
 
       const icon = figure.raid_only
         ? L.divIcon({
