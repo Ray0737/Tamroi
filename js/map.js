@@ -587,6 +587,7 @@ const MapModule = (() => {
     figureNodes.forEach(figure => {
       const state = userDistrictState[figure.districtId] || { fogged: true };
       if (state.fogged) return;
+      if (window.CollectionModule?.isCaptured?.(figure.id)) return;
 
       if (figure.lat == null || figure.lng == null) {
         const district = (allDistrictsCache || []).find(d => d.id === figure.districtId);
@@ -648,6 +649,8 @@ const MapModule = (() => {
     try { if (u) await DB.Figures.capture(u.id, figure.id, quizScore); } catch {}
     if (u) DB.Missions?.updateChallengeProgress(u.id, 'capture').catch(() => {});
     window.CollectionModule?.markCaptured?.(figure.id);
+    const mk = markers[`figure-${figure.id}`];
+    if (mk) { map.removeLayer(mk); delete markers[`figure-${figure.id}`]; }
     const distId = figure.districtId;
     if (distId && userDistrictState[distId]?.fogged !== false) {
       if (u) DB.Districts.checkIn(u.id, distId).catch(() => {});

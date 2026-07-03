@@ -466,7 +466,7 @@ const CollectionModule = (() => {
     </svg>`;
   }
 
-  return { load, showDetail, markCaptured, dismissNew };
+  return { load, showDetail, markCaptured, dismissNew, isCaptured: id => captures.has(id) };
 })();
 
 window.CollectionModule = CollectionModule;
