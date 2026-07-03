@@ -150,7 +150,7 @@ const CollectionModule = (() => {
 
     const renderCard = (f, isNew) => {
       const isCaptured = captures.has(f.id);
-      const isLocked   = f.class === 'S' && !isCaptured;
+      const isLocked   = (f.class === 'S' || f.class === 'A') && !isCaptured;
       const onclick = isNew
         ? `CollectionModule.dismissNew('${f.id}')`
         : isCaptured ? `CollectionModule.showDetail('${f.id}')` : '';
