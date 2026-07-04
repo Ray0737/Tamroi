@@ -24,6 +24,14 @@ const CollectionModule = (() => {
 
   async function load() {
     if (loaded) {
+      const user = window.AppCore?.App?.user;
+      if (user) {
+        try {
+          const caps = await DB.Figures.getUserCaptures(user.id);
+          captures = new Set(caps.map(c => c.figure_id));
+          loadNewCaptures();
+        } catch {}
+      }
       await refreshLoreEntries();
       render();
       return;
@@ -45,8 +53,6 @@ const CollectionModule = (() => {
         loadNewCaptures();
       }
     } catch {
-      allFigures   = [];
-      allArtifacts = [];
       loreEntries  = getLocalLoreEntries();
       window.AppCore?.showToast?.('ไม่สามารถโหลดข้อมูลได้ กรุณาตรวจสอบการเชื่อมต่อ');
     }
