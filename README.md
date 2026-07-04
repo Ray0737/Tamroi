@@ -7,7 +7,7 @@
 ทีม **ปลามึกยักษ์** · โรงเรียนสาธิตมหาวิทยาลัยศรีนครินทรวิโรฒ ประสานมิตร (ฝ่ายมัธยม)  
 วิชาเอกวิศวกรรมปัญญาประดิษฐ์ (AI)
 
-> **Branch: `main`** — `Co-op` (guilds, collaborative missions, raid encounters, discussion threads) has been merged into main. Deployed on Vercel.
+> **Branch: `main`** — `Co-op` (guilds, collaborative missions, raid encounters, discussion threads) plus Retrieval Practice, Unsolved History, and Jigsaw Learning are all merged into main. Deployed on Vercel.
 
 ---
 
@@ -32,6 +32,14 @@ Travel to a District
 Lore narration now runs a short pre-test/post-test knowledge check either side of each entry, so learning gains from reading Lore in the field can be measured directly (feeds into the NSC learning-outcome evaluation methodology — see `docs/pre-post_test_plan.md` for the full measurement plan).
 
 The Collection/Archive tab sorts captured figures by class (S → A → B → C) and has an "Owned" filter pill to show only figures you've actually captured.
+
+### Educational Features
+
+| Feature | What it does |
+|---|---|
+| **Retrieval Practice** | Spaced-repetition recall mission queued 3 days after a lore node is read — no re-reading, answer from memory |
+| **Unsolved History** | Present both sides of a real historiographical debate, players vote + reason, then see the community breakdown — no "correct answer" |
+| **Jigsaw Learning** | Legendary figure lore is split into chapters across guild members, who must share summaries to unlock the full picture together |
 
 ### Figure Classes
 
