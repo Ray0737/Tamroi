@@ -352,6 +352,11 @@
 
         <div class="district-grid-2col" id="district-grid"></div>
 
+        <label style="display:flex;gap:8px;align-items:flex-start;font-size:var(--text-xs);color:var(--color-muted);text-align:left;width:100%">
+          <input type="checkbox" id="chk-age-consent" onchange="checkStep2Ready()" style="margin-top:3px">
+          <span>ข้าพเจ้า (ก) มีอายุ 20 ปีขึ้นไป หรือ (ข) ได้รับอนุญาตจากผู้ปกครองให้ใช้งานแอปนี้แล้ว</span>
+        </label>
+
         <button class="btn btn-primary btn-full" id="btn-confirm-home"
                 onclick="confirmHomeAndStart()" disabled
                 style="opacity:0.45;pointer-events:none">
@@ -478,15 +483,21 @@
     document.querySelectorAll('.dc-card').forEach(c => c.classList.remove('selected'));
     document.getElementById('dc-' + id).classList.add('selected');
 
+    checkStep2Ready();
+  }
+
+  /* ── Step 2 is ready once a district AND the age/guardian consent are set ── */
+  function checkStep2Ready() {
+    const ready = !!selectedDistrictId && !!document.getElementById('chk-age-consent')?.checked;
     const btn = document.getElementById('btn-confirm-home');
-    btn.disabled = false;
-    btn.style.opacity = '1';
-    btn.style.pointerEvents = 'auto';
+    btn.disabled = !ready;
+    btn.style.opacity = ready ? '1' : '0.45';
+    btn.style.pointerEvents = ready ? 'auto' : 'none';
   }
 
   /* ── Confirm and launch app ─────────────────────────────── */
-  function confirmHomeAndStart() {
-    if (!selectedDistrictId) return;
+  async function confirmHomeAndStart() {
+    if (!selectedDistrictId || !document.getElementById('chk-age-consent')?.checked) return;
 
     const district = DISTRICTS.find(d => d.id === selectedDistrictId);
     if (!district) return;
@@ -501,6 +512,13 @@
       }));
       localStorage.setItem('tam_roi_onboarded', '1');
     } catch { /* ignore storage errors */ }
+
+    try {
+      const session = await DB.Auth.getSession();
+      if (session?.user) {
+        await DB.Profiles.update(session.user.id, { age_consent_at: new Date().toISOString() });
+      }
+    } catch { /* consent record best-effort — don't block onboarding on it */ }
 
     window.location.href = 'app.html';
   }

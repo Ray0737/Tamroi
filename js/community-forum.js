@@ -150,6 +150,7 @@ const CommunityForumModule = (() => {
     const ta   = document.getElementById('forum-compose');
     const text = ta?.value?.trim();
     if (!text || !user) return;
+    if (!(await _ensureGuidelinesAccepted(user))) return;
     try {
       const newPost = await DB.Community.postMessage(user.id, text);
       ta.value = '';
@@ -176,6 +177,7 @@ const CommunityForumModule = (() => {
     const input = document.getElementById(`reply-input-${parentId}`);
     const text  = input?.value?.trim();
     if (!text || !user) return;
+    if (!(await _ensureGuidelinesAccepted(user))) return;
     try {
       await DB.Community.postMessage(user.id, text, parentId);
       const el = document.getElementById(`replies-${parentId}`);
@@ -190,6 +192,25 @@ const CommunityForumModule = (() => {
     const user = window.AppCore?.App?.user;
     if (!user) return;
     try { await DB.Community.flagPost(postId, user.id); } catch {}
+  }
+
+  // One-time consent gate — required before a user's first post/reply.
+  async function _ensureGuidelinesAccepted(user) {
+    const profile = window.AppCore?.App?.profile;
+    if (profile?.guidelines_accepted_at) return true;
+
+    const accepted = confirm(
+      'กติกาชุมชน: ห้ามใช้ถ้อยคำหยาบคาย คุกคาม หรือละเมิดสิทธิผู้อื่น ' +
+      'ความคิดเห็นที่ถูกรายงานจะถูกซ่อนอัตโนมัติและทีมงานจะตรวจสอบ ' +
+      'กดตกลงเพื่อยืนยันว่าคุณรับทราบและจะปฏิบัติตาม'
+    );
+    if (!accepted) return false;
+
+    try {
+      await DB.Profiles.update(user.id, { guidelines_accepted_at: new Date().toISOString() });
+      if (profile) profile.guidelines_accepted_at = new Date().toISOString();
+    } catch { /* best-effort — don't block the post on this write */ }
+    return true;
   }
 
   function _timeAgo(ts) {

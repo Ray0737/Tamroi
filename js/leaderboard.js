@@ -2,7 +2,6 @@
 const LeaderboardModule = (() => {
   let loaded = false;
   let activeMetric = 'legacy';
-  let activePeriod = 'all';
   let currentPlayers = [];
   let realtimeChannel = null;
   let guildRealtimeChannel = null;
@@ -85,16 +84,11 @@ function load() {
   }
 
   function bindControls() {
-    ['leaderboard-view', 'leaderboard-period', 'leaderboard-metric'].forEach(buildCustomSelect);
+    ['leaderboard-view', 'leaderboard-metric'].forEach(buildCustomSelect);
 
     document.getElementById('leaderboard-metric')?.addEventListener('change', e => {
       activeMetric = e.target.value;
       render();
-    });
-
-    document.getElementById('leaderboard-period')?.addEventListener('change', e => {
-      activePeriod = e.target.value;
-      fetchAndRender();
     });
 
     // Immediate refresh when a guild is created or deleted
