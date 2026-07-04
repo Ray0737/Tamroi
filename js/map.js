@@ -94,7 +94,7 @@ const MapModule = (() => {
       attributionControl: false,
     });
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       maxZoom: 19,
       subdomains: 'abcd',
     }).addTo(map);
@@ -476,8 +476,8 @@ const MapModule = (() => {
     if (fogLayer) { map.removeLayer(fogLayer); fogLayer = null; }
 
     fogLayer = L.polygon([FOG_OUTER, ...clearedPolys, ...cellHoles], {
-      fillColor:   '#0d0c1d',
-      fillOpacity: 0.80,
+      fillColor:   '#08070f',
+      fillOpacity: 0.88,
       stroke:      false,
       interactive: false,
       fillRule:    'evenodd',
@@ -761,14 +761,14 @@ const MapModule = (() => {
           </svg>
         </div>
         <div style="flex:1;min-width:0">
-          <p style="margin:0;font-weight:600;font-size:13px;color:#fff;line-height:1.3;
+          <p style="margin:0;font-weight:600;font-size:13px;color:#1C1B2E;line-height:1.3;
                     white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(node.name)}</p>
-          <p style="margin:2px 0 0;font-size:10px;color:#8986A8">
+          <p style="margin:2px 0 0;font-size:10px;color:#6b6884">
             ${escapeHtml(cfg.label)}${district ? ' · ' + escapeHtml(district.name_th) : ''}
           </p>
         </div>
         <button onclick="document.getElementById('node-info-card').classList.remove('show')"
-                style="background:none;border:none;color:#8986A8;padding:4px;cursor:pointer;
+                style="background:none;border:none;color:#6b6884;padding:4px;cursor:pointer;
                        flex-shrink:0;display:flex;align-items:center;justify-content:center">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                style="width:16px;height:16px">
