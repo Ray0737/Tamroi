@@ -902,6 +902,16 @@ const MapModule = (() => {
     const container = document.getElementById('checkin-encounter');
     if (!container) return;
 
+    if (!state.has_encounter_key) {
+      container.innerHTML = `
+        <div class="card-outlined mb-3" style="text-align:center;padding:var(--space-md)">
+          <span style="font-size:1.4rem">🗝️</span>
+          <p style="font-size:var(--text-sm);color:var(--color-muted);margin:var(--space-xs) 0 0">เช็กอิน Watchtower เพื่อรับกุญแจ Encounter</p>
+        </div>
+      `;
+      return;
+    }
+
     const rows = [
       { label: 'Cafe', count: state.cafes_visited || 0, required: district.required_cafes || 2 },
       { label: 'OTOP', count: state.otops_visited || 0, required: district.required_otops || 1 },
@@ -912,7 +922,7 @@ const MapModule = (() => {
     if (canUnlock) {
       container.innerHTML = `
         <button class="btn btn-primary btn-full mb-3" onclick="MapModule.openLegendaryEncounter('${escapeHtml(district.id)}')">
-          ปลดล็อค Encounter
+          🗝️ ใช้กุญแจ Encounter
         </button>
       `;
       return;
@@ -920,7 +930,7 @@ const MapModule = (() => {
 
     container.innerHTML = `
       <div class="card-outlined mb-3">
-        <p style="font-size:var(--text-sm);font-weight:700;margin-bottom:var(--space-sm);color:var(--color-muted)">Legendary Encounter Locked</p>
+        <p style="font-size:var(--text-sm);font-weight:700;margin-bottom:var(--space-sm);color:var(--color-muted)">🗝️ มีกุญแจแล้ว — รอ Support Nodes</p>
         ${rows.map(row => {
           const pct = Math.min(100, Math.round((row.count / row.required) * 100));
           return `
@@ -1104,7 +1114,7 @@ const MapModule = (() => {
       if (user) await DB.Districts.checkIn(user.id, d.id);
     } catch { /* offline — continue locally */ }
 
-    userDistrictState[d.id] = { ...userDistrictState[d.id], fogged: false };
+    userDistrictState[d.id] = { ...userDistrictState[d.id], fogged: false, has_encounter_key: true };
 
     // Rebuild the entire fog layer (removes the old polygon, adds new with extra hole)
     buildFogLayer(allDistrictsCache || []);
@@ -1119,6 +1129,7 @@ const MapModule = (() => {
     renderWatchtowers(allDistrictsCache || []);
 
     window.AppCore?.closeAllSheets();
+    window.AppCore?.showToast('ได้รับกุญแจ Encounter แล้ว! 🗝️');
     updateStatsBar();
     updateDiscoveryPercentFromDB(window.AppCore?.App?.user?.id);
     showFloatPtsOnMap(150 * getTransportMultiplier());

@@ -140,7 +140,7 @@ const Districts = {
   async checkIn(userId, districtId) {
     const { data, error } = await _sb
       .from('user_districts')
-      .upsert({ user_id: userId, district_id: districtId, fogged: false, checked_in_at: new Date().toISOString() },
+      .upsert({ user_id: userId, district_id: districtId, fogged: false, has_encounter_key: true, checked_in_at: new Date().toISOString() },
                { onConflict: 'user_id,district_id' })
       .select()
       .single();
