@@ -167,7 +167,7 @@ const CollectionModule = (() => {
       return `
         <div class="figure-card ${isCaptured ? `captured-${f.class.toLowerCase()}` : ''} ${isLocked ? 'locked' : ''}"
              style="position:relative" onclick="${onclick}">
-          ${isNew ? `<span style="position:absolute;top:4px;left:4px;width:8px;height:8px;border-radius:50%;background:#FF3B30;z-index:2;display:block"></span>` : ''}
+          ${isNew ? `<span style="position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--color-primary);z-index:2;display:block"></span>` : ''}
           ${isCaptured ? `<div class="captured-ribbon">${checkSVG()}</div>` : ''}
           ${isLocked   ? `<div class="lock-overlay">${lockSVG()}</div>` : ''}
           <div class="figure-portrait" style="color:var(--color-muted)">${personSVG}</div>
