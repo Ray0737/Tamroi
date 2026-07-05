@@ -6,7 +6,9 @@ const CollectionModule = (() => {
   let ownedArtifacts = new Set();
   let newCaptures  = new Set();
   let loreEntries = [];
-  let activeFilter = 'all';
+  let activeView        = 'figures'; // 'figures' | 'artifacts' | 'journal'
+  let activeClassFilter = 'all';     // 'all' | 'S' | 'A' | 'B' | 'C'
+  let ownedOnly         = false;
   let loaded = false;
   let figureModalBound = false;
 
@@ -78,11 +80,38 @@ const CollectionModule = (() => {
   }
 
   function bindFilters() {
-    document.querySelectorAll('#collection-filters .pill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        document.querySelectorAll('#collection-filters .pill').forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-        activeFilter = pill.dataset.filter;
+    const classSelect = document.getElementById('collection-class-filter');
+    if (classSelect) {
+      classSelect.addEventListener('change', () => {
+        activeClassFilter = classSelect.value;
+        classSelect.classList.toggle('has-value', activeClassFilter !== 'all');
+        render();
+      });
+    }
+
+    const ownedBtn = document.getElementById('collection-owned-toggle');
+    if (ownedBtn) {
+      ownedBtn.addEventListener('click', () => {
+        ownedOnly = !ownedOnly;
+        ownedBtn.classList.toggle('active', ownedOnly);
+        render();
+      });
+    }
+
+    ['collection-artifacts-pill', 'collection-journal-pill'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        const view = btn.dataset.view;
+        if (activeView === view) {
+          activeView = 'figures';
+          btn.classList.remove('active');
+        } else {
+          document.querySelectorAll('#collection-filters .pill').forEach(p => p.classList.remove('active'));
+          btn.classList.add('active');
+          if (ownedOnly) document.getElementById('collection-owned-toggle')?.classList.add('active');
+          activeView = view;
+        }
         render();
       });
     });
@@ -104,7 +133,7 @@ const CollectionModule = (() => {
     const el = document.getElementById('collection-stats');
     if (!el) return;
 
-    if (activeFilter === 'journal') {
+    if (activeView === 'journal') {
       const totalLore    = window.MapModule?.getLoreNodes?.()?.length || 0;
       const completeChains = groupLoreEntries(loreEntries).filter(g => g.chainId && g.entries.length >= 3).length;
       const lorePts      = loreEntries.reduce((s, e) => s + (e.lore_pts || 0), 0);
@@ -140,16 +169,16 @@ const CollectionModule = (() => {
     const journal = document.getElementById('lore-journal');
 
     let filtered = allFigures.filter(f => {
-      if (activeFilter === 'journal' || activeFilter === 'artifacts') return false;
-      if (activeFilter === 'owned') return captures.has(f.id) && (!query || f.name_en.toLowerCase().includes(query) || f.name_th.includes(query));
-      if (activeFilter !== 'all' && f.class !== activeFilter.toUpperCase()) return false;
+      if (activeView === 'journal' || activeView === 'artifacts') return false;
+      if (ownedOnly && !captures.has(f.id)) return false;
+      if (activeClassFilter !== 'all' && f.class !== activeClassFilter.toUpperCase()) return false;
       if (query && !f.name_en.toLowerCase().includes(query) && !f.name_th.includes(query)) return false;
       return true;
     });
 
     if (!grid) return;
-    grid.hidden = activeFilter === 'journal';
-    if (journal) journal.hidden = activeFilter !== 'journal';
+    grid.hidden = activeView === 'journal';
+    if (journal) journal.hidden = activeView !== 'journal';
 
     const classOrder = { S: 0, A: 1, B: 2, C: 3 };
     filtered.sort((a, b) => (classOrder[a.class] ?? 9) - (classOrder[b.class] ?? 9));
@@ -167,7 +196,7 @@ const CollectionModule = (() => {
       return `
         <div class="figure-card ${isCaptured ? `captured-${f.class.toLowerCase()}` : ''} ${isLocked ? 'locked' : ''}"
              style="position:relative" onclick="${onclick}">
-          ${isNew ? `<span style="position:absolute;top:4px;left:4px;width:8px;height:8px;border-radius:50%;background:#FF3B30;z-index:2;display:block"></span>` : ''}
+          ${isNew ? `<span style="position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--color-primary);z-index:2;display:block"></span>` : ''}
           ${isCaptured ? `<div class="captured-ribbon">${checkSVG()}</div>` : ''}
           ${isLocked   ? `<div class="lock-overlay">${lockSVG()}</div>` : ''}
           <div class="figure-portrait" style="color:var(--color-muted)">${personSVG}</div>
@@ -204,13 +233,11 @@ const CollectionModule = (() => {
     const container = document.getElementById('artifact-scroll');
     const section = document.getElementById('collection-artifacts-section');
     if (!container) return;
-    if (section) section.hidden = activeFilter === 'journal';
+    if (section) section.hidden = activeView === 'journal';
 
-    const list = activeFilter === 'all' || activeFilter === 'artifacts'
-      ? allArtifacts
-      : activeFilter === 'owned'
-        ? allArtifacts.filter(a => ownedArtifacts.has(a.id))
-        : [];
+    const showArtifacts = activeView !== 'journal' && (activeView === 'artifacts' || activeClassFilter === 'all');
+    let list = showArtifacts ? allArtifacts : [];
+    if (ownedOnly && list.length) list = list.filter(a => ownedArtifacts.has(a.id));
 
     if (!list.length) { container.innerHTML = ''; return; }
 
@@ -251,7 +278,7 @@ const CollectionModule = (() => {
     const journal = document.getElementById('lore-journal');
     if (!journal) return;
 
-    if (activeFilter !== 'journal') {
+    if (activeView !== 'journal') {
       journal.hidden = true;
       return;
     }

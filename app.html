@@ -272,14 +272,16 @@
 
           <!-- Filters -->
           <div class="filter-pills" id="collection-filters">
-            <button class="pill active" data-filter="all">ทั้งหมด</button>
-            <button class="pill" data-filter="S">S-Class</button>
-            <button class="pill" data-filter="A">A-Class</button>
-            <button class="pill" data-filter="B">B-Class</button>
-            <button class="pill" data-filter="C">C-Class</button>
-            <button class="pill" data-filter="owned">Owned</button>
-            <button class="pill" data-filter="artifacts">Artifacts</button>
-            <button class="pill" data-filter="journal">Journal</button>
+            <select id="collection-class-filter" class="filter-select">
+              <option value="all">ทั้งหมด</option>
+              <option value="S">S-Class</option>
+              <option value="A">A-Class</option>
+              <option value="B">B-Class</option>
+              <option value="C">C-Class</option>
+            </select>
+            <button class="pill" id="collection-owned-toggle">Owned</button>
+            <button class="pill" id="collection-artifacts-pill" data-view="artifacts">Artifacts</button>
+            <button class="pill" id="collection-journal-pill" data-view="journal">Journal</button>
           </div>
 
           <!-- Stats -->

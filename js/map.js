@@ -90,6 +90,9 @@ const MapModule = (() => {
     map = L.map('map-view', {
       center: [13.756, 100.502],
       zoom: 12,
+      minZoom: 10,
+      maxBounds: [[5.5, 97.3], [20.5, 105.7]],
+      maxBoundsViscosity: 1.0,
       zoomControl: true,
       attributionControl: false,
     });
@@ -229,7 +232,14 @@ const MapModule = (() => {
         stateData.forEach(s => {
           userDistrictState[s.district_id] = s;
         });
-        updateDiscoveryPercentFromDB(user.id);
+        syncDiscoveryPercent(user.id);
+        DB.Districts.subscribeUserDistricts(user.id, payload => {
+          const row = payload.new;
+          if (row && !row.fogged) {
+            userDistrictState[row.district_id] = { ...(userDistrictState[row.district_id] || {}), ...row };
+            buildFogLayer(allDistrictsCache || []);
+          }
+        });
       } else {
         await Promise.all(baseLoaders);
       }
@@ -839,7 +849,7 @@ const MapModule = (() => {
         </button>
       </div>
       <div style="padding:0 14px 12px">
-        <button class="btn btn-sm ${visited ? 'btn-ghost' : 'btn-primary'} btn-full"
+        <button class="btn btn-sm ${visited ? 'btn-outline' : 'btn-primary'} btn-full"
                 id="btn-visit-support-node"
                 onclick="MapModule.visitSupportNode('${escapeHtml(id)}')"
                 ${visited ? 'disabled' : ''}>
@@ -1193,7 +1203,7 @@ const MapModule = (() => {
     window.AppCore?.closeAllSheets();
     window.AppCore?.showToast('ได้รับกุญแจ Encounter แล้ว! 🗝️');
     updateStatsBar();
-    updateDiscoveryPercentFromDB(window.AppCore?.App?.user?.id);
+    syncDiscoveryPercent(window.AppCore?.App?.user?.id);
     showFloatPtsOnMap(150 * getTransportMultiplier());
     const _ciUser = window.AppCore?.App?.user;
     if (_ciUser) DB.Missions?.updateChallengeProgress(_ciUser.id, 'checkin').catch(() => {});
@@ -1265,7 +1275,7 @@ const MapModule = (() => {
 
     userDistrictState[districtId] = { ...(userDistrictState[districtId] || {}), fogged: false };
     renderAll(allDistrictsCache || []);
-    updateDiscoveryPercentFromDB(window.AppCore?.App?.user?.id);
+    syncDiscoveryPercent(window.AppCore?.App?.user?.id);
     window.AppCore?.showFloatPts(50, window.innerWidth / 2, window.innerHeight / 2);
 
     // Persist home district fog clear to DB so it survives reload.
@@ -1304,18 +1314,14 @@ const MapModule = (() => {
     if (el) el.textContent = pct + '%';
   }
 
-  async function updateDiscoveryPercentFromDB(userId) {
-    if (!userId) {
-      updateStatsBar();
-      return;
-    }
+  async function syncDiscoveryPercent(userId) {
+    if (!userId) { updateStatsBar(); return; }
     try {
       const pct = await DB.Districts.getDiscoveryPercent(userId);
       const el = document.getElementById('map-stat-explored');
       if (el) el.textContent = pct + '%';
-    } catch {
-      updateStatsBar();
-    }
+      await DB.Districts.setDiscoveryPercent(userId, pct);
+    } catch { updateStatsBar(); }
   }
 
   function getTransportMultiplier() {

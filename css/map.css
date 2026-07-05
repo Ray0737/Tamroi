@@ -77,7 +77,7 @@
   position: absolute;
   bottom: calc(var(--space-xl) + 4px);
   right: var(--space-md);
-  z-index: 10;
+  z-index: 900;
   width: 56px;
   height: 56px;
   border-radius: 50%;
