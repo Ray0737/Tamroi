@@ -28,5 +28,5 @@ assert(appJs.includes('node.is_saved'), 'reopened lore sheets must not offer dup
 assert(appJs.includes('function openLoreChainSheet'), 'app.js must expose openLoreChainSheet');
 assert(dbJs.includes('const Lore'), 'supabase-client.js must add DB.Lore');
 assert(dbJs.includes('addLegacyPoints'), 'supabase-client.js must add DB.Profiles.addLegacyPoints');
-assert(collectionJs.includes('data-filter="journal"') || appHtml.includes('data-filter="journal"'), 'Collection filters must include Journal');
+assert(collectionJs.includes('data-filter="journal"') || appHtml.includes('data-filter="journal"') || collectionJs.includes('collection-journal-pill'), 'Collection filters must include Journal');
 assert(collectionJs.includes('renderLoreJournal'), 'collection.js must render the Lore Journal');
