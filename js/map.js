@@ -19,7 +19,7 @@ const MapModule = (() => {
   const pendingLoreIds = new Set();
   const completedLoreChains = new Set();
   const visitedSupportNodeIds = new Set();
-  const _WALK_KEY = 'tam_roi_walk_cells';
+  const _WALK_KEY = 'tam_roi_walk_cells_v2';
   let _walkGridCells = null;
   let _walkGridMap   = null;
   const _walkedCells = new Set();
@@ -148,7 +148,8 @@ const MapModule = (() => {
         lastKnownPosition = { lat: latitude, lng: longitude, accuracy };
         updateLocationDot(latitude, longitude, accuracy);
         checkLoreProximity(latitude, longitude);
-        _revealWalkCell(latitude, longitude);
+        // ponytail: 100m cap — walk cells are ~1.1km wide, so ≥100m accuracy still lands in the right cell most of the time; tighter than this kills indoor dev GPS
+        if (accuracy <= 100) _revealWalkCell(latitude, longitude);
       },
       err => console.warn('[GPS]', err.message),
       { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
