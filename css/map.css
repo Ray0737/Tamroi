@@ -95,6 +95,13 @@
 
 .fab-primary svg { width: 24px; height: 24px; }
 
+.fab-locate {
+  bottom: calc(var(--space-xl) + 72px);
+  background: var(--color-card-dark);
+  color: var(--color-white);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+}
+
 .fab-primary:active {
   transform: scale(0.93);
   box-shadow: 0 3px 12px rgba(255,126,85,0.3);
