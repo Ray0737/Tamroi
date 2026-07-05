@@ -8,7 +8,7 @@
 วิชาเอกวิศวกรรมปัญญาประดิษฐ์ (AI)
 
 > **Branch: `main`** — `Co-op` (guilds, collaborative missions, raid encounters, discussion threads, community feed) plus Retrieval Practice, Historical Debates (Unsolved History), and Jigsaw Learning are all merged into main. Deployed on Vercel.  
-> **Latest:** C-Class proximity capture (80m radius circle, always-visible markers, tap-to-capture sheet) with 3 new C-Class figures, walk-cell fog reveal gated on GPS accuracy ≤100m, lore unlocks now persist to `user_lore` correctly, light-theme map (white CartoDB tiles, darker Fog of War), fog rebuild fixes, figure cameo on lore chain completion, watchtower check-in gates A-tier encounters, forum moderation with probation status, and a PDPA age-consent step at onboarding.  
+> **Latest:** C-Class proximity capture (80m radius circle, always-visible markers, tap-to-capture sheet) with 3 new C-Class figures, captured figures now hidden from the map at init, walk-cell fog reveal gated on GPS accuracy ≤100m, lore unlocks now persist to `user_lore` correctly, light-theme map (white CartoDB tiles, darker Fog of War), fog rebuild fixes, figure cameo on lore chain completion, watchtower check-in gates A-tier encounters, forum moderation with probation status, and a PDPA age-consent step at onboarding.  
 > **Latest:** light-theme map (white CartoDB tiles, darker Fog of War), fog rebuild fixes (Thailand-bbox outer ring, walk cells no longer cancel cleared districts), figure cameo + speech bubble on lore chain completion, watchtower check-in gates A-tier encounters, 100m support-node check-in radius, forum moderation with probation status, and a PDPA age-consent step at onboarding.
 
 ---
