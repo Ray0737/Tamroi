@@ -44,6 +44,7 @@ const MapModule = (() => {
 
   // ── Figure nodes — loaded from Supabase figures table ─
   let figureNodes = [];
+  const capturedFigureIds = new Set();
 
 
   // ── Lore nodes — loaded from Supabase lore_nodes table ─
@@ -213,11 +214,13 @@ const MapModule = (() => {
       const user = window.AppCore?.App?.user;
       const baseLoaders = [loadSupportNodes(), loadFigureNodes(), loadBtsMrtStations()];
       if (user) {
-        const [stateData] = await Promise.all([
+        const [stateData, capsData] = await Promise.all([
           DB.Districts.getUserState(user.id),
+          DB.Figures.getUserCaptures(user.id),
           loadVisitedSupportNodes(user.id),
           ...baseLoaders,
         ]);
+        (capsData || []).forEach(c => capturedFigureIds.add(c.figure_id));
         stateData.forEach(s => {
           userDistrictState[s.district_id] = s;
         });
@@ -601,7 +604,7 @@ const MapModule = (() => {
     });
 
     figureNodes.forEach(figure => {
-      if (window.CollectionModule?.isCaptured?.(figure.id)) return;
+      if (capturedFigureIds.has(figure.id) || window.CollectionModule?.isCaptured?.(figure.id)) return;
 
       // C-class: proximity-based, always visible regardless of fog
       if (figure.class === 'C') {
@@ -699,6 +702,7 @@ const MapModule = (() => {
     const u = window.AppCore?.App?.user;
     try { if (u) await DB.Figures.capture(u.id, figure.id, quizScore); } catch {}
     if (u) DB.Missions?.updateChallengeProgress(u.id, 'capture').catch(() => {});
+    capturedFigureIds.add(figure.id);
     window.CollectionModule?.markCaptured?.(figure.id);
     const mk = markers[`figure-${figure.id}`];
     if (mk) { map.removeLayer(mk); delete markers[`figure-${figure.id}`]; }
