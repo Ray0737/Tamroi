@@ -157,6 +157,17 @@ const Districts = {
     return (data || []).map(row => row.node_id).filter(Boolean);
   },
 
+  async setDiscoveryPercent(userId, pct) {
+    const { error } = await _sb.from('profiles').update({ map_discovery: pct }).eq('id', userId);
+    if (error) throw error;
+  },
+
+  subscribeUserDistricts(userId, callback) {
+    return _sb.channel(`user-districts-${userId}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_districts', filter: `user_id=eq.${userId}` }, callback)
+      .subscribe();
+  },
+
   async updateNodeVisit(userId, districtId, nodeType, nodeId) {
     const { data: rpcData, error: rpcError } = await _sb.rpc('increment_node_visit', {
       p_user_id: userId,
