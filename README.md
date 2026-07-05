@@ -7,7 +7,8 @@
 ทีม **ปลามึกยักษ์** · โรงเรียนสาธิตมหาวิทยาลัยศรีนครินทรวิโรฒ ประสานมิตร (ฝ่ายมัธยม)  
 วิชาเอกวิศวกรรมปัญญาประดิษฐ์ (AI)
 
-> **Branch: `main`** — `Co-op` (guilds, collaborative missions, raid encounters, discussion threads, community feed) plus Retrieval Practice, Historical Debates (Unsolved History), and Jigsaw Learning are all merged into main. Deployed on Vercel.
+> **Branch: `main`** — `Co-op` (guilds, collaborative missions, raid encounters, discussion threads, community feed) plus Retrieval Practice, Historical Debates (Unsolved History), and Jigsaw Learning are all merged into main. Deployed on Vercel.  
+> **Latest:** light-theme map (white CartoDB tiles, darker Fog of War), fog rebuild fixes (Thailand-bbox outer ring, walk cells no longer cancel cleared districts), figure cameo + speech bubble on lore chain completion, watchtower check-in gates A-tier encounters, 100m support-node check-in radius, forum moderation with probation status, and a PDPA age-consent step at onboarding.
 
 ---
 
