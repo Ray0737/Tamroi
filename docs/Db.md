@@ -1,9 +1,9 @@
 # Historical Figures Database (Supabase `figures` table)
 
-Source: Supabase project `NSC` (`lnvpolwznueiklfgycei`), table `public.figures`, 72 rows.
-Snapshot date: 2026-07-04.
+Source: Supabase project `NSC` (`lnvpolwznueiklfgycei`), table `public.figures`, 74 rows.
+Snapshot date: 2026-07-05.
 
-Columns: `id`, `name_th`, `name_en`, `class` (S/A/B/C), `legacy_pts`, `district_id` → `district_name`, `description`, `image_emoji`, `is_active`, `raid_only`, `raid_min_players`.
+Columns: `id`, `name_th`, `name_en`, `class` (S/A/B/C), `legacy_pts`, `district_id` → `district_name`, `description`, `image_emoji`, `is_active`, `raid_only`, `raid_min_players`, `lat`, `lng`.
 
 ## Class S — Legendary (500 pts, 10 figures)
 
@@ -73,10 +73,12 @@ Columns: `id`, `name_th`, `name_en`, `class` (S/A/B/C), `legacy_pts`, `district_
 
 *(Also present in class B: `fig-mock-satit-b-01` — "Satit Pioneer [MOCK]", a test/mock figure at district `satit_test`, 40 pts — clearly a QA fixture, not a real historical figure.)*
 
-## Class C — Common (50 pts, 20 figures)
+## Class C — Common (50 pts, 22 figures)
 
 | Emoji | Name (EN) | Name (TH) | District | Description |
 |---|---|---|---|---|
+| 🧑 | Ancient Trader | พ่อค้าโบราณ | สุขุมวิท | Local trader carrying on Sukhumvit's commercial heritage (proximity-capture pilot, `fig-c-21`). |
+| 🎨 | Art Teacher | ครูสอนศิลป์ | ลาดพร้าว | Local teacher preserving folk art in Ladphrao (proximity-capture pilot, `fig-c-22`). |
 | 🌾 | Ancestors of Bang Na | บรรพบุรุษชุมชนบางนา | บางนา | Farming/salt-producing communities of Bangkok's eastern fringe. |
 | 🎣 | Bangkok Fishermen of the Chao Phraya | ชาวประมงบางกอก | พระนคร | Original inhabitants of Bang Makok before Bangkok was founded. |
 | 🚔 | Bangkok's First Metropolitan Police | ตำรวจนครบาลยุคแรก | ดุสิต | First modern police force, British-trained, est. 1897 under Rama V. |
@@ -101,7 +103,8 @@ Columns: `id`, `name_th`, `name_en`, `class` (S/A/B/C), `legacy_pts`, `district_
 ---
 
 ## Notes
-- All 72 rows are `is_active = true`.
+- All 74 rows are `is_active = true`.
+- Coordinates: `fig-c-21`/`fig-c-22` were inserted with lat/lng, and `fig-c-14` (Muay Thai Teachers, วัฒนา) had its missing coords backfilled on 2026-07-05 (`patch_c_class_proximity.sql`) so every proximity-capture pilot district (sukhumvit/watthana/ladphrao) has a capturable C-class figure on the map. Figures without lat/lng still do not render.
 - Only `fig-s-01` (King Taksin) has `raid_only = true` — all others are capturable normally.
 - All figures have `raid_min_players = 2`.
 - District names are in Thai; district IDs (`rattanakosin`, `dusit`, `pathumwan`, `silom`, etc.) map to the `districts` table (14 districts total).

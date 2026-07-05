@@ -10,7 +10,6 @@ const dbJs = read('js/supabase-client.js');
 const buildJs = read('build.js');
 const progress = read('docs/progress.md');
 const agents = read('AGENTS.md');
-const devPlan = read('docs/dev-plan.md');
 
 assert(dbJs.includes('emailRedirectTo'), 'Auth.signUp must set emailRedirectTo for production verification');
 assert(dbJs.includes('/login.html'), 'emailRedirectTo should return users to login.html');
@@ -19,4 +18,4 @@ assert(existsSync(new URL('supabase/patch_district_seed.sql', root)), 'district 
 assert(existsSync(new URL('docs/production-smoke.md', root)), 'production smoke checklist doc must exist');
 assert(progress.includes('patch_district_seed.sql'), 'docs/progress.md must mention district seed patch');
 assert(agents.includes('patch_district_seed.sql'), 'AGENTS.md must mention district seed patch');
-assert(devPlan.includes('production-smoke.md'), 'docs/dev-plan.md must mention production smoke checklist');
+assert(read('docs/progress.md').includes('production-smoke.md'), 'docs/progress.md must mention production smoke checklist');

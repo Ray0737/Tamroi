@@ -67,8 +67,6 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `supabase/patch_lore.sql`: lore nodes, user lore, persistent support-node visits, quiz questions, score functions/triggers, and seed content.
 - `supabase/patch_district_seed.sql`: MVP district seed parity with `js/map.js`.
 - `docs/CODING_INSTRUCTIONS.md`: design system and implementation rules.
-- `docs/dev-plan.md`: Phase 1 development plan and next-step tracking.
-- `docs/dev-plan-prompt.xml`: planning prompt and historical task detail.
 - `docs/progress.md`: current implementation status.
 - `docs/production-smoke.md`: production Supabase/Vercel smoke-test checklist.
 - `docs/proposal/tam_roi_nsc_proposal.md`: detailed NSC/game proposal.
@@ -239,7 +237,7 @@ Follow a Karpathy-style engineering discipline for this repo:
 - When uncertain, instrument lightly, inspect the DOM/runtime state, and remove temporary debugging before finishing.
 - Do not rewrite working UI or documents just to make them cleaner.
 - Respect the educational/travel-game product intent when naming, copywriting, and arranging UI.
-- Constantly keep Markdown project documents updated as work changes the repo or agent guidance. Documentation files include `README.md`, `CLAUDE.md`, `docs/CODING_INSTRUCTIONS.md`, `docs/progress.md`, `docs/dev-plan.md`, `AGENTS.md`, and proposal files. Keep `docs/dev-plan-prompt.xml` and the development plan in `docs/dev-plan.md` updated to match the agent's current progress, decisions, blockers, and next steps. If the agent realizes it is approaching the context or execution limit, update the relevant Markdown files, `docs/dev-plan-prompt.xml`, and `docs/dev-plan.md` with current status, decisions, and next steps, then stop instead of continuing.
+- Constantly keep Markdown project documents updated as work changes the repo or agent guidance. Documentation files include `README.md`, `CLAUDE.md`, `docs/CODING_INSTRUCTIONS.md`, `docs/progress.md`, `AGENTS.md`, and proposal files. If the agent realizes it is approaching the context or execution limit, update the relevant Markdown files with current status, decisions, and next steps, then stop instead of continuing.
 
 ## Do Not Do
 

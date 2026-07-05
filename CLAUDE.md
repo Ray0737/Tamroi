@@ -83,18 +83,18 @@
 └── docs/
     ├── CODING_INSTRUCTIONS.md  Design system and implementation rules
     ├── COOP.md                 Phase 3 Co-op design spec (guilds, raids, discussions)
-    ├── dev-plan.md             Phase 1 development plan
-    ├── FUNCTION_AUDIT.md       Function-by-function audit vs. NSC proposal
+    ├── Db.md                   Figure roster snapshot from the live Supabase DB
     ├── FUNCTION_LOG.md         Live log of all gameplay/DB functions; update each session
+    ├── GAME_LOGIC.md           Player-facing gameplay mechanics reference
     ├── gps-spoofing.md         GPS anti-cheat threat analysis + mitigation status
+    ├── pre-post_test_plan.md   Lore pre/post-test measurement plan
     ├── production-smoke.md     Supabase/Vercel smoke-test checklist
     ├── progress.md             Current implementation progress
-    ├── PROJECT_SUMMARY.md      Project overview
+    ├── PROJECT_SUMMARY.md      Project overview + function completion / errors / security audit
     ├── system_architect.md     System architecture notes
     ├── VERIFYLOGIC.md          Game logic, rules, and verification status
-    ├── used/                   One-time-use docs (fix guides, beta test scripts)
     └── proposal/
-        └── ตามรอย_NSC_2026_v20.md NSC proposal
+        └── ตามรอย_NSC_2026_v20.md NSC proposal (+ v29 docx, flowchart)
 └── tests/
     ├── coop-static.test.mjs     Static regression check for Co-op module
     ├── district-seed-static.test.mjs Static regression check for DB/map district parity

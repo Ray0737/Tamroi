@@ -1,6 +1,6 @@
 # VERIFYLOGIC — ตามรอย Game Logic, Intent & Agent Task Board
 > Cross-reference: `Website - Tamroi - Edited` ↔ `ตามรอย_NSC_2026_v20.md`
-> See also: `FUNCTION_AUDIT.md` (code-level status), `AGENTS.md` (coding rules)
+> See also: `FUNCTION_LOG.md` (code-level status), `AGENTS.md` (coding rules)
 > Last updated: 2026-06-27
 
 ---
@@ -220,7 +220,7 @@ Archive
 
 ### ✅ DONE — Fully Working
 
-All items from **FUNCTION_AUDIT Phase 1 (23 items)** and **Phase 2 (10 items)** are complete. Summary:
+All items from the Phase 1 (23 items) and Phase 2 (10 items) function audit are complete (audit doc since removed; history in git). Summary:
 
 | System | Status | Key File |
 |--------|--------|----------|

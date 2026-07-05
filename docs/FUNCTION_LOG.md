@@ -89,7 +89,7 @@
 | `DB.Figures.getAll()` | figures | ✅ Working |
 | `DB.Figures.capture(userId, figureId)` | user_captures | ✅ Working |
 | `DB.Lore.getAll()` | lore_nodes | ✅ Filters: is_active=true, review_status='approved', source_ref not null/empty |
-| `DB.Lore.unlock(userId, nodeId)` | user_lore | ✅ Working |
+| `DB.Lore.unlock(userId, nodeId)` | user_lore | ✅ Fixed 2026-07-05 — upsert used nonexistent column `lore_id` (correct: `lore_node_id`); every write had silently failed since launch |
 | `DB.Lore.getUserUnlocked(userId)` | user_lore | ✅ Working |
 | `DB.Lore.getLoreQuestions(loreId)` | quiz_questions | ✅ Added 2026-07-02; fetches pretest MCQs for a lore node |
 | `DB.Lore.saveAssessment(userId, loreId, phase, score, total)` | user_lore_assessments | ✅ Added 2026-07-02; upserts one phase result (pre/post) |
@@ -139,6 +139,22 @@
 | `DB.Community.flagPost(postId, userId)` | community_post_flags | ✅ Working |
 | `DB.Community.likePost(postId, userId)` | community_post_likes | ✅ Working |
 | `DB.Community.unlikePost(postId, userId)` | community_post_likes | ✅ Working |
+
+---
+
+## Map & Capture Additions (2026-07-04 → 07-05)
+
+| Function | File | Purpose | Supabase Tables | Status |
+|----------|------|---------|-----------------|--------|
+| `_initWalkGrid()` / `_revealWalkCell(lat, lng)` | js/map.js | Walk-cell fog reveal: FogGrid cell per GPS fix, persisted to localStorage (`tam_roi_walk_cells`), skipped when GPS accuracy > 100m | — (localStorage only, not per-account) | ✅ Working |
+| `buildFogLayer()` walk-cell filter | js/map.js | Drops walk cells whose bbox intersects a cleared district so evenodd fill can't re-fog district holes | user_districts | ✅ Fixed 2026-07-05 |
+| `DB.Districts.checkIn()` encounter key | js/supabase-client.js | Check-in now also sets `has_encounter_key = true`; A-tier encounters require the key + support chain | user_districts | ✅ Added 2026-07-04 |
+| C-class proximity capture (`_pendingCaptureC`, `btn-c-capture`, `_completeCapture`) | js/map.js, app.html | C figures render through fog with an 80m orange circle; tap inside radius opens `#c-capture-sheet`, capture completes without quiz; marker + circle removed on capture | user_captures, profiles | ✅ Added 2026-07-05 |
+| Captured-figure hiding at init | js/map.js | `loadDistrictData` fetches the user's captures and skips those figure markers on first render | user_captures | ✅ Added 2026-07-05 |
+| `DB.Lore.getRecallQuestions(loreNodeId)` | js/supabase-client.js | Fetches recall MCQs for retrieval practice | quiz_questions | ✅ Added 2026-07-03 |
+| `DB.Missions.getRecallMissions(userId)` / `completeRecall(...)` | js/supabase-client.js | Spaced-repetition recall missions due 3 days after lore read | user_lore, user_daily_progress | ✅ Added 2026-07-03 |
+| `DB.Debates.getForFigure / getStats / vote` | js/supabase-client.js | Unsolved History debate prompts, aggregate stats RPC, per-user vote | history_debates, debate_votes | ✅ Added 2026-07-03 |
+| `DB.Coop.getJigsawAssignments / assignJigsawChapters / postJigsawSummary` | js/supabase-client.js | Jigsaw Learning chapter split + member summaries | guild_jigsaw_assignments | ✅ Added 2026-07-03 |
 
 ---
 
