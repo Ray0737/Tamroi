@@ -325,6 +325,31 @@
   color: var(--color-on-primary);
 }
 
+.filter-select {
+  flex-shrink: 0;
+  padding: 6px 28px 6px 14px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-border);
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239DA3AE' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center;
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: inherit;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+.filter-select:focus { outline: none; border-color: rgba(255,255,255,0.2); }
+.filter-select.has-value {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+.filter-select option {
+  background: var(--color-card-dark);
+  color: var(--color-white);
+}
+
 /* ── Progress Bar ─────────────────────────────────────── */
 .progress-track {
   height: 6px;
