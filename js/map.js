@@ -114,6 +114,11 @@ const MapModule = (() => {
     // Start GPS tracking
     startLocationTracking();
     _initWalkGrid();
+
+    document.getElementById('btn-locate-me').addEventListener('click', () => {
+      if (!lastKnownPosition) { window.AppCore?.showToast('กำลังรอสัญญาณ GPS...'); return; }
+      map.flyTo([lastKnownPosition.lat, lastKnownPosition.lng], 13, { duration: 0.8 });
+    });
   }
 
   // ── Real-time location dot ─────────────────────────
