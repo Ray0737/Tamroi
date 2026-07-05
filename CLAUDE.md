@@ -19,7 +19,7 @@
 | Layer | Technology |
 |---|---|
 | Frontend | HTML5 · Bootstrap 5.3 · Vanilla JS (ES6 modules) |
-| Map | Leaflet.js + CartoDB Dark tiles |
+| Map | Leaflet.js + CartoDB Light tiles |
 | Backend / Auth | Supabase — PostgreSQL · Auth · Row Level Security |
 | Deployment | Vercel (static + Node.js `build.js` for env injection) |
 

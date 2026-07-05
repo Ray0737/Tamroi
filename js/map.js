@@ -182,7 +182,7 @@ const MapModule = (() => {
     if (!cell || _walkedCells.has(cell.id)) return;
     _walkedCells.add(cell.id);
     try { localStorage.setItem(_WALK_KEY, JSON.stringify([..._walkedCells])); } catch {}
-    buildFogLayer(allDistrictsCache || []);
+    if (allDistrictsCache) buildFogLayer(allDistrictsCache);
   }
 
   function updateLocationDot(lat, lng, accuracy) {
