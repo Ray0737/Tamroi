@@ -601,9 +601,30 @@ const MapModule = (() => {
     });
 
     figureNodes.forEach(figure => {
+      if (window.CollectionModule?.isCaptured?.(figure.id)) return;
+
+      // C-class: proximity-based, always visible regardless of fog
+      if (figure.class === 'C') {
+        if (figure.lat == null || figure.lng == null) return;
+        const cIcon = L.divIcon({
+          className: '',
+          html: `<div class="marker-node" style="color:var(--color-primary);background:rgba(255,126,85,0.15);border-color:var(--color-primary)" title="${escapeHtml(figure.name_th || '')}">🧑</div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
+        });
+        const circle = L.circle([figure.lat, figure.lng], {
+          radius: 80, color: '#FF7E55', fillColor: '#FF7E55',
+          fillOpacity: 0.12, weight: 2, interactive: false,
+        }).addTo(map);
+        markers[`figure-circle-${figure.id}`] = circle;
+        const marker = L.marker([figure.lat, figure.lng], { icon: cIcon }).addTo(map);
+        marker.on('click', () => _openCaptureSheet(figure));
+        markers[`figure-${figure.id}`] = marker;
+        return;
+      }
+
       const state = userDistrictState[figure.districtId] || { fogged: true };
       if (state.fogged) return;
-      if (window.CollectionModule?.isCaptured?.(figure.id)) return;
 
       if (figure.lat == null || figure.lng == null) {
         const district = (allDistrictsCache || []).find(d => d.id === figure.districtId);
@@ -641,12 +662,26 @@ const MapModule = (() => {
       const marker = L.marker([figure.lat, figure.lng], { icon }).addTo(map);
       marker.on('click', () => {
         if (figure.raid_only) _startRaidEncounter(figure);
-        else if (figure.class === 'C') _completeCapture(figure, 0);
         else if (figure.class === 'B') openQuizForFigure(figure.id);
         else openLegendaryEncounter(figure.districtId, figure.id);
       });
       markers[`figure-${figure.id}`] = marker;
     });
+  }
+
+  let _pendingCaptureC = null;
+
+  function _openCaptureSheet(figure) {
+    const pos = lastKnownPosition;
+    const inRange = isDev() || (pos && haversineDistance(pos.lat, pos.lng, figure.lat, figure.lng) <= 80);
+    if (!inRange) {
+      window.AppCore?.showToast('เข้าใกล้กว่านี้ (80 ม.)');
+      return;
+    }
+    _pendingCaptureC = figure;
+    document.getElementById('c-capture-emoji').textContent = figure.image_emoji || '🧑';
+    document.getElementById('c-capture-name').textContent = figure.name_th || figure.name_en || '';
+    window.AppCore?.openSheet('c-capture-sheet');
   }
 
   // Raid-only figures skip the solo quiz entirely — they can only be captured
@@ -667,6 +702,8 @@ const MapModule = (() => {
     window.CollectionModule?.markCaptured?.(figure.id);
     const mk = markers[`figure-${figure.id}`];
     if (mk) { map.removeLayer(mk); delete markers[`figure-${figure.id}`]; }
+    const ck = markers[`figure-circle-${figure.id}`];
+    if (ck) { map.removeLayer(ck); delete markers[`figure-circle-${figure.id}`]; }
     const distId = figure.districtId;
     if (distId && userDistrictState[distId]?.fogged !== false) {
       if (u) DB.Districts.checkIn(u.id, distId).catch(() => {});
@@ -1293,6 +1330,10 @@ const MapModule = (() => {
   function resize() { map?.invalidateSize(); }
 
   document.getElementById('btn-checkin')?.addEventListener('click', performCheckIn);
+  document.getElementById('btn-c-capture')?.addEventListener('click', () => {
+    if (_pendingCaptureC) _completeCapture(_pendingCaptureC, 0);
+    _pendingCaptureC = null;
+  });
 
   function getLoreNodes() { return loreNodes; }
   function getUnlockedLoreIds() { return [...unlockedLoreIds]; }

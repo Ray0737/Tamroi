@@ -516,6 +516,17 @@
     <button class="btn btn-ghost btn-full mt-2" onclick="AppCore.closeAllSheets()" style="margin-top:8px">ปิด</button>
   </div>
 
+  <!-- ════ C-CLASS CAPTURE SHEET ════ -->
+  <div class="bottom-sheet" id="c-capture-sheet">
+    <div class="sheet-handle"></div>
+    <div style="text-align:center;padding:16px 0 8px">
+      <div id="c-capture-emoji" style="font-size:48px;line-height:1;margin-bottom:8px"></div>
+      <h3 class="sheet-title" id="c-capture-name" style="margin:0"></h3>
+    </div>
+    <button class="btn btn-primary btn-full" id="btn-c-capture">จับ!</button>
+    <button class="btn btn-ghost btn-full mt-2" onclick="AppCore.closeAllSheets()" style="margin-top:8px">ยกเลิก</button>
+  </div>
+
   <!-- ════ FIGURE DETAIL MODAL ════ -->
   <div class="modal fade" id="figure-modal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered" style="max-width:300px;margin-left:auto;margin-right:auto">
