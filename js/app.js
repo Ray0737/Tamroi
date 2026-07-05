@@ -658,8 +658,9 @@ document.getElementById('btn-username-save')?.addEventListener('click', async ()
     document.getElementById('settings-avatar').textContent = newName.substring(0, 2).toUpperCase();
     updateTopBar();
     showToast('เปลี่ยนชื่อสำเร็จ');
-  } catch {
-    showToast('เปลี่ยนชื่อไม่สำเร็จ — ชื่อนี้อาจถูกใช้แล้ว');
+  } catch(e) {
+    console.error('[username update]', e?.code, e?.message, e);
+    showToast(e?.code === '23505' ? 'เปลี่ยนชื่อไม่สำเร็จ — ชื่อนี้ถูกใช้แล้ว' : 'เปลี่ยนชื่อไม่สำเร็จ');
   }
   document.getElementById('settings-username-view').style.display = 'flex';
   document.getElementById('settings-username-edit').style.display = 'none';
