@@ -438,9 +438,13 @@ const MapModule = (() => {
       if (user) await DB.Profiles.addLegacyPoints(user.id, 50);
     } catch { /* keep chain completion visible even if score write fails */ }
 
+    const chainFigure = chainNodes[0].figure_id
+      ? (figureNodes.find(f => f.id === chainNodes[0].figure_id) || null)
+      : null;
     window.AppCore?.openLoreChainSheet({
       title: `${chainNodes[0].name_th || 'Lore Chain'} Complete`,
       content: chainNodes.map(item => item.content_th || item.content_en || '').join('\n\n'),
+      figure: chainFigure,
     });
     showFloatPtsOnMap(50);
   }

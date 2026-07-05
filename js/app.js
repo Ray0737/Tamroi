@@ -410,9 +410,24 @@ async function openLoreSheet(node) {
 function openLoreChainSheet(chain) {
   const title = document.getElementById('chain-title');
   const narrative = document.getElementById('chain-narrative');
+  const figureEl = document.getElementById('chain-figure');
   if (!title || !narrative) return;
   title.textContent = chain.title || 'เรื่องราวสมบูรณ์';
   narrative.textContent = chain.content || '';
+  if (figureEl) {
+    if (chain.figure) {
+      const bubble = chain.figure.quote_th
+        ? `<div class="figure-speech-bubble">"${escapeHtml(chain.figure.quote_th)}"</div>`
+        : '';
+      figureEl.innerHTML = `
+        <div class="figure-cameo">
+          <div class="figure-cameo-emoji">${escapeHtml(chain.figure.image_emoji || '👤')}</div>
+          ${bubble}
+        </div>`;
+    } else {
+      figureEl.innerHTML = '';
+    }
+  }
   openSheet('chain-sheet');
 }
 
