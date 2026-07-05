@@ -33,8 +33,7 @@ const MapModule = (() => {
   // ── Bounding box for the fog overlay ────────────────
   // Covers Bangkok, Nonthaburi AND Ayutthaya province
   const FOG_OUTER = [
-    [13.40, 100.20], [13.40, 101.10],
-    [14.50, 101.10], [14.50, 100.20],
+    [0, 90], [0, 115], [25, 115], [25, 90],
   ];
 
   // ── Districts — loaded from Supabase districts table ──
@@ -470,11 +469,23 @@ const MapModule = (() => {
       })
       .filter(h => h.length > 0);
 
-    // Walk-cell holes: skip cells already inside a cleared district polygon to avoid
-    // evenodd fill-rule cancellation (overlapping holes re-fog the overlap area).
+    // Walk-cell holes: skip any cell that overlaps a cleared district polygon.
+    // Checking only the center misses edge cells — a cell partially inside a cleared
+    // district ring adds a 3rd ring crossing (evenodd: odd = re-fogged), which cancels
+    // the district hole. Bbox intersection catches all overlap cases for rect districts.
+    const clearedBboxes = clearedPolys.map(poly => {
+      let s = Infinity, n = -Infinity, w = Infinity, e = -Infinity;
+      poly.forEach(([lat, lng]) => { s = Math.min(s, lat); n = Math.max(n, lat); w = Math.min(w, lng); e = Math.max(e, lng); });
+      return { s, n, w, e };
+    });
     const cellHoles = [..._walkedCells]
       .map(id => _walkGridMap?.get(id))
-      .filter(cell => cell && !clearedPolys.some(poly => _pointInPoly(cell.center.lat, cell.center.lng, poly)))
+      .filter(cell => {
+        if (!cell) return false;
+        const cs = cell.bounds[0][0], cn = cell.bounds[2][0];
+        const cw = cell.bounds[0][1], ce = cell.bounds[1][1];
+        return !clearedBboxes.some(b => cs < b.n && cn > b.s && cw < b.e && ce > b.w);
+      })
       .map(cell => cell.bounds);
 
     if (fogLayer) { map.removeLayer(fogLayer); fogLayer = null; }
