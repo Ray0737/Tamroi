@@ -9,7 +9,7 @@
 | Feature | Status | Notes |
 |---|---|---|
 | Auth (Email + Google OAuth) | ✅ Done | login.html, supabase-client.js |
-| Map + Leaflet | ✅ Done | js/map.js, CartoDB Dark tiles |
+| Map + MapLibre GL (45° tilt) | ✅ Done | js/map.js, CartoDB Light raster tiles |
 | Fog of War | ✅ Done | fog-grid.js, `user_districts` table |
 | Watchtower check-in (GPS) | ✅ Done | 500 m Haversine, localhost bypass |
 | Figure collection grid | ✅ Done | js/collection.js |

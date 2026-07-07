@@ -19,7 +19,7 @@
 | Layer | Technology |
 |---|---|
 | Frontend | HTML5 · Bootstrap 5.3 · Vanilla JS (ES6 modules) |
-| Map | Leaflet.js + CartoDB Light tiles |
+| Map | MapLibre GL JS + CartoDB Light raster tiles (45° pitch camera) |
 | Backend / Auth | Supabase — PostgreSQL · Auth · Row Level Security |
 | Deployment | Vercel (static + Node.js `build.js` for env injection) |
 
@@ -40,7 +40,7 @@
 │   ├── variables.css    Design tokens (DO NOT override these inline)
 │   ├── layout.css       Top bar, bottom nav, tab shell
 │   ├── components.css   Buttons, cards, inputs, bottom sheets, badges
-│   ├── map.css          Leaflet overrides, fog layer, markers, GPS dot
+│   ├── map.css          MapLibre GL overrides, fog layer, markers, GPS dot
 │   └── animations.css   Keyframes
 ├── js/
 │   ├── config.js        Reads window.ENV → window.APP_CONFIG
@@ -49,7 +49,7 @@
 │   ├── utils.js         escapeHtml() — always use for user-visible strings
 │   ├── supabase-client.js  All DB & Auth calls live here
 │   ├── app.js           Boot · auth guard · tab navigation · notifications
-│   ├── map.js           Leaflet · Fog of War · watchtowers · GPS dot · Lore proximity · Guild fog
+│   ├── map.js           MapLibre GL (45° tilt) · Fog of War · watchtowers · GPS dot · Lore proximity · Guild fog
 │   ├── fog-grid.js      Reusable Thailand grid Fog helper exposed as window.FogGrid
 │   ├── collection.js    Figures + artifacts grid · Lore Journal
 │   ├── missions.js      Active quest + daily challenges
