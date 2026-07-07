@@ -544,7 +544,7 @@ const MapModule = (() => {
     const node = loreNodes.find(item => item.id === loreId) || activeLoreNode;
     if (!node) return;
 
-    if (!isDev() && lastKnownPosition && haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, node.lat, node.lng) > (node.radius_m || 50)) {
+    if (!isDev() && (!lastKnownPosition || haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, node.lat, node.lng) > (node.radius_m || 50))) {
       window.AppCore?.showToast('คุณอยู่ไกลเกินไป — เดินทางให้ใกล้กว่านี้');
       return;
     }
@@ -1127,7 +1127,7 @@ const MapModule = (() => {
     const node = supportNodes.find(item => getSupportNodeId(item) === nodeId);
     if (!node || visitedSupportNodeIds.has(nodeId)) return;
 
-    if (!isDev() && lastKnownPosition && haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, node.lat, node.lng) > 100) {
+    if (!isDev() && (!lastKnownPosition || haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, node.lat, node.lng) > 100)) {
       window.AppCore?.showToast('คุณอยู่ไกลเกินไป — เดินทางให้ใกล้กว่านี้');
       return;
     }
