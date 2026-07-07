@@ -6,7 +6,9 @@
 }
 
 #map-view .maplibregl-canvas {
-  filter: contrast(1.05) saturate(0.85);
+  /* light warm shift only — sepia muddied the base tiles too much, dropped it.
+     just enough saturation + hue nudge to read cream/warm instead of stock CartoDB grey. */
+  filter: contrast(1.05) saturate(1.15) hue-rotate(-6deg) brightness(1.02);
 }
 
 /* Override MapLibre default controls */
@@ -99,6 +101,18 @@
   box-shadow: 0 4px 20px rgba(0,0,0,0.25);
 }
 
+.fab-tilt {
+  bottom: calc(var(--space-xl) + 144px);
+  background: var(--color-card-dark);
+  color: var(--color-white);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+}
+
+.fab-tilt--active {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
 .fab-primary:active {
   transform: scale(0.93);
   box-shadow: 0 3px 12px rgba(255,126,85,0.3);
@@ -179,10 +193,14 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  /* transform is NOT transitioned: MapLibre sets this element's transform directly every
+     frame to position it (this IS the element passed as marker.element). Transitioning
+     transform here made every position update ease/lag instead of snap — read as the
+     pin drifting on its own during pan/pitch. box-shadow is safe to animate. */
+  transition: box-shadow 0.15s ease;
 }
 
-.marker-node:hover { transform: scale(1.2); }
+.marker-node:hover { box-shadow: 0 0 0 4px rgba(255,255,255,0.25); }
 
 .marker-cafe     { background: rgba(123,198,126,0.85); }
 .marker-otop     { background: rgba(246,193,158,0.85); border-radius: 4px; }

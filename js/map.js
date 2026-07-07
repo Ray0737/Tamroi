@@ -18,10 +18,12 @@ const MapModule = (() => {
   const pendingLoreIds = new Set();
   const completedLoreChains = new Set();
   const visitedSupportNodeIds = new Set();
-  const _WALK_KEY = 'tam_roi_walk_cells_v2';
-  let _walkGridCells = null;
-  let _walkGridMap   = null;
-  const _walkedCells = new Set();
+  // v3: replaced the rectangular grid-cell walk reveal with circle-per-point holes
+  // (same ring-hole technique already used for districts) — smooth trail, not squares.
+  const _WALK_KEY = 'tam_roi_walk_trail_v3';
+  const WALK_REVEAL_RADIUS_M = 30;
+  const WALK_MIN_SPACING_M = 15; // skip recording a new point closer than this to the last one
+  let _walkedPoints = []; // [{lat, lng}, ...]
   const HOME_KEY = 'tam_roi_home';
   const LEGACY_HOME_KEY = 'siam' + 'echo_home';
   const CHECKIN_TOLERANCE_M = 500;
@@ -98,6 +100,11 @@ const MapModule = (() => {
       element: el,
       anchor: 'top-left',
       offset: [-(opts.anchorX || 0), -(opts.anchorY || 0)],
+      // MapLibre default is pitchAlignment:'map', which skews/foreshortens the icon with
+      // the tilted ground plane — reads as the pin "moving" as camera pitch/pan changes.
+      // 'viewport' billboards it: always upright, facing camera, fixed to its lng/lat only.
+      pitchAlignment: 'viewport',
+      rotationAlignment: 'viewport',
     }).setLngLat([lng, lat]).addTo(map);
   }
 
@@ -161,6 +168,14 @@ const MapModule = (() => {
     map.addLayer({ id: 'fog-layer', type: 'fill', source: 'fog-source',
       paint: { 'fill-color': '#08070f', 'fill-opacity': 0.88 } });
 
+    // Fog-clear sweep: buildFogLayer() swaps the fog polygon's shape instantly (geometry
+    // changes can't tween), so this is a separate real MapLibre fill layer shaped like the
+    // just-revealed district, faded out via a native paint-property transition. Being a real
+    // 3D layer (not a CSS/DOM overlay) it tilts with the map's pitch exactly like fog-layer does.
+    map.addSource('fog-clear-fx-source', { type: 'geojson', data: _emptyFC() });
+    map.addLayer({ id: 'fog-clear-fx-layer', type: 'fill', source: 'fog-clear-fx-source',
+      paint: { 'fill-color': '#08070f', 'fill-opacity': 0, 'fill-opacity-transition': { duration: 800 } } });
+
     map.addSource('guild-fog-source', { type: 'geojson', data: _emptyFC() });
     map.addLayer({ id: 'guild-fog-fill', type: 'fill', source: 'guild-fog-source',
       paint: { 'fill-color': '#7BC67E', 'fill-opacity': 0.22 } });
@@ -201,23 +216,66 @@ const MapModule = (() => {
             tileSize: 256,
             maxzoom: 19,
           },
+          // Vector building footprints + water (OpenFreeMap, no API key) — used only for
+          // fill-extrusion depth and river color; ground/roads/labels still come from the carto raster above.
+          ofm: {
+            type: 'vector',
+            url: 'https://tiles.openfreemap.org/planet',
+            generateId: true, // assigns a numeric feature id per building, used to pick a retro color bucket below
+          },
         },
-        layers: [{ id: 'carto-layer', type: 'raster', source: 'carto' }],
+        layers: [
+          { id: 'carto-layer', type: 'raster', source: 'carto' },
+          {
+            id: 'water-fill',
+            type: 'fill',
+            source: 'ofm',
+            'source-layer': 'water',
+            paint: { 'fill-color': '#4A6B7A', 'fill-opacity': 0.9 },
+          },
+          {
+            id: 'waterway-line',
+            type: 'line',
+            source: 'ofm',
+            'source-layer': 'waterway',
+            paint: { 'line-color': '#4A6B7A', 'line-width': 2.5 },
+          },
+          {
+            id: '3d-buildings',
+            type: 'fill-extrusion',
+            source: 'ofm',
+            'source-layer': 'building',
+            minzoom: 15,
+            paint: {
+              // retro palette bucketed by feature id — looks random per building, stable on re-render
+              'fill-extrusion-color': [
+                'match', ['%', ['id'], 6],
+                0, '#B8402F', // terracotta red
+                1, '#E0A82E', // mustard
+                2, '#7A9B6C', // sage green
+                3, '#C9702E', // burnt orange
+                4, '#F2C230', // yellow
+                '#EFE3C8',    // cream (fallback bucket)
+              ],
+              'fill-extrusion-height': ['coalesce', ['get', 'render_height'], 6],
+              'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
+              'fill-extrusion-opacity': 0.85,
+            },
+          },
+        ],
       },
       center: [100.502, 13.756],
       zoom: 12,
       minZoom: 10,
       maxBounds: [[97.3, 5.5], [105.7, 20.5]],
-      pitch: 45,
+      pitch: 60,
       bearing: 0,
-      dragRotate: false,
       attributionControl: false,
     });
 
-    // Tilted "Pokémon GO"-style camera (pitch), but keep north-up free panning —
-    // rotation is intentionally disabled so the tilt doesn't disorient the player.
-    map.touchZoomRotate.disableRotation();
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+    // Full 360 camera rotation enabled (right-drag / two-finger twist), plus the tilt.
+    // Compass control shown so the player can tap it to reset bearing back to north-up.
+    map.addControl(new maplibregl.NavigationControl({ showCompass: true, visualizePitch: true }), 'top-right');
 
     const dismissNodeCard = () => {
       const card = document.getElementById('node-info-card');
@@ -242,6 +300,14 @@ const MapModule = (() => {
     document.getElementById('btn-locate-me').addEventListener('click', () => {
       if (!lastKnownPosition) { window.AppCore?.showToast('กำลังรอสัญญาณ GPS...'); return; }
       map.flyTo({ center: [lastKnownPosition.lng, lastKnownPosition.lat], zoom: 13, duration: 800 });
+    });
+
+    // Top-down <-> tilted camera toggle
+    let _isTopDown = false;
+    document.getElementById('btn-toggle-tilt').addEventListener('click', (e) => {
+      _isTopDown = !_isTopDown;
+      map.easeTo({ pitch: _isTopDown ? 0 : 60, duration: 500 });
+      e.currentTarget.classList.toggle('fab-tilt--active', _isTopDown);
     });
   }
 
@@ -287,15 +353,9 @@ const MapModule = (() => {
   }
 
   function _initWalkGrid() {
-    if (!window.FogGrid) return;
-    _walkGridCells = window.FogGrid.createGridCells({
-      bounds: { south: 13.45, north: 14.10, west: 100.20, east: 100.90 },
-      rows: 65, cols: 70,
-    });
-    _walkGridMap = new Map(_walkGridCells.map(c => [c.id, c]));
     try {
-      JSON.parse(localStorage.getItem(_WALK_KEY) || '[]').forEach(id => _walkedCells.add(id));
-    } catch {}
+      _walkedPoints = JSON.parse(localStorage.getItem(_WALK_KEY) || '[]');
+    } catch { _walkedPoints = []; }
   }
 
   function _pointInPoly(lat, lng, coords) {
@@ -309,10 +369,10 @@ const MapModule = (() => {
   }
 
   function _revealWalkCell(lat, lng) {
-    const cell = _walkGridCells && window.FogGrid.findCellForLatLng(lat, lng, _walkGridCells);
-    if (!cell || _walkedCells.has(cell.id)) return;
-    _walkedCells.add(cell.id);
-    try { localStorage.setItem(_WALK_KEY, JSON.stringify([..._walkedCells])); } catch {}
+    const last = _walkedPoints[_walkedPoints.length - 1];
+    if (last && haversineDistance(last.lat, last.lng, lat, lng) < WALK_MIN_SPACING_M) return;
+    _walkedPoints.push({ lat, lng });
+    try { localStorage.setItem(_WALK_KEY, JSON.stringify(_walkedPoints)); } catch {}
     if (allDistrictsCache) buildFogLayer(allDistrictsCache);
   }
 
@@ -588,6 +648,42 @@ const MapModule = (() => {
     renderFigureNodes();
   }
 
+  // ── Fog clear sweep: growing radial reveal (Civ6/RTS fog-of-war pattern,
+  //    same visual family as Far Cry/AC tower-sync reveals) ──
+  // The real fog hole is already cut instantly by buildFogLayer() underneath. This layer
+  // covers the same district with a fog-colored donut whose hole (a circle centered on the
+  // watchtower) grows from 0 to full district radius, so the reveal reads as fog peeling
+  // back from the check-in point outward, instead of an instant pop. Real MapLibre fill
+  // layer (not CSS/canvas), so it tilts/rotates with the camera exactly like fog-layer does.
+  function playFogClearSweep(polygonCoords, centerLat, centerLng, maxRadiusM = 700) {
+    const src = map?.getSource('fog-clear-fx-source');
+    if (!src || !polygonCoords || centerLat == null || centerLng == null) return;
+
+    const raw = typeof polygonCoords === 'string' ? JSON.parse(polygonCoords) : polygonCoords;
+    const exterior = _ringWithWinding(raw.map(c => [c[1], c[0]]), true); // CCW
+
+    const DURATION = 1400;
+    const startZoom = map.getZoom();
+    map.easeTo({ zoom: startZoom - 0.6, duration: 400 }); // brief pull-back, "establishing shot"
+
+    const start = performance.now();
+    function frame(now) {
+      const t = Math.min(1, (now - start) / DURATION);
+      const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic: fast start, slow settle
+      const r = Math.max(20, eased * maxRadiusM);
+      const hole = _ringWithWinding(_circleRing(centerLat, centerLng, r), false); // CW hole
+      src.setData({ type: 'Feature', properties: {}, geometry: { type: 'Polygon', coordinates: [exterior, hole] } });
+      if (t < 1) {
+        requestAnimationFrame(frame);
+      } else {
+        src.setData(_emptyFC());
+        map.easeTo({ zoom: startZoom, duration: 600 });
+      }
+    }
+    map.setPaintProperty('fog-clear-fx-layer', 'fill-opacity', 0.88);
+    requestAnimationFrame(frame);
+  }
+
   // ── Fog: single inverted polygon ───────────────────
   // One polygon covers all Bangkok; holes are cut for each explored district.
   // Ring winding (exterior CCW, holes CW) marks holes — no evenodd fill rule in MapLibre.
@@ -600,24 +696,18 @@ const MapModule = (() => {
       })
       .filter(h => h.length > 0);
 
-    // Walk-cell holes: skip any cell that overlaps a cleared district polygon.
-    // Checking only the center misses edge cells — a cell partially inside a cleared
-    // district ring adds a 3rd ring crossing which would cancel the district hole.
-    // Bbox intersection catches all overlap cases for rect districts.
+    // Walk-trail holes: a small circle per walked point (smooth trail, not grid squares).
+    // Skip any point that falls inside a cleared district polygon's bbox — a circle hole
+    // straddling a district hole's edge would add a 3rd ring crossing there and cancel it,
+    // same reason the old grid-cell version filtered by bbox instead of just the center.
     const clearedBboxes = clearedPolys.map(poly => {
       let s = Infinity, n = -Infinity, w = Infinity, e = -Infinity;
       poly.forEach(([lng, lat]) => { s = Math.min(s, lat); n = Math.max(n, lat); w = Math.min(w, lng); e = Math.max(e, lng); });
       return { s, n, w, e };
     });
-    const cellHoles = [..._walkedCells]
-      .map(id => _walkGridMap?.get(id))
-      .filter(cell => {
-        if (!cell) return false;
-        const cs = cell.bounds[0][0], cn = cell.bounds[2][0];
-        const cw = cell.bounds[0][1], ce = cell.bounds[1][1];
-        return !clearedBboxes.some(b => cs < b.n && cn > b.s && cw < b.e && ce > b.w);
-      })
-      .map(cell => cell.bounds.map(([lat, lng]) => [lng, lat]));
+    const cellHoles = _walkedPoints
+      .filter(({ lat, lng }) => !clearedBboxes.some(b => lat > b.s && lat < b.n && lng > b.w && lng < b.e))
+      .map(({ lat, lng }) => _circleRing(lat, lng, WALK_REVEAL_RADIUS_M));
 
     const outer = _ringWithWinding(FOG_OUTER_LL, true);
     const holes = [...clearedPolys, ...cellHoles].map(ring => _ringWithWinding(ring, false));
@@ -1253,6 +1343,7 @@ const MapModule = (() => {
 
     // Rebuild the entire fog layer (removes the old polygon, adds new with extra hole)
     buildFogLayer(allDistrictsCache || []);
+    playFogClearSweep(d.polygon_coords, d.watchtower_lat ?? d.center_lat, d.watchtower_lng ?? d.center_lng);
 
     // Reveal nodes in this district
     renderNodes();
