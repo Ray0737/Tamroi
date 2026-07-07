@@ -1,8 +1,7 @@
-﻿// ── Map Module ────────────────────────────────────────
+// ── Map Module ────────────────────────────────────────
 const MapModule = (() => {
-  let map        = null;
-  let fogLayer         = null;    // single unified fog polygon
-  let guildFogLayer    = null;    // tinted overlay for guild-cleared districts
+  let map              = null;
+  let guildFogLayer    = null;    // truthy flag: guild fog currently rendered
   let markers          = {};
   let activeDistrict   = null;
   let _nodeCardTimer   = null;    // auto-dismiss timer for node info card
@@ -35,6 +34,7 @@ const MapModule = (() => {
   const FOG_OUTER = [
     [0, 90], [0, 115], [25, 115], [25, 90],
   ];
+  const FOG_OUTER_LL = FOG_OUTER.map(([lat, lng]) => [lng, lat]);
 
   // ── Districts — loaded from Supabase districts table ──
   // (allDistrictsCache holds the live data after loadDistrictData runs)
@@ -45,6 +45,8 @@ const MapModule = (() => {
   // ── Figure nodes — loaded from Supabase figures table ─
   let figureNodes = [];
   const capturedFigureIds = new Set();
+  const _figureCircleFeatures = {};  // figure.id -> GeoJSON circle Feature (80m proximity)
+  const _loreRingFeatures     = {};  // node.id   -> GeoJSON circle Feature (50m proximity)
 
 
   // ── Lore nodes — loaded from Supabase lore_nodes table ─
@@ -82,45 +84,164 @@ const MapModule = (() => {
     landmark: { label: 'สถานที่สำคัญ',   color: '#8986A8', bg: 'rgba(137,134,168,0.18)', svg: _SVG.temple },
   };
 
+  // ── MapLibre helpers ─────────────────────────────────
+  // Internal state stays {lat,lng}; flip to [lng,lat] only at the MapLibre API boundary.
+  function _emptyFC() { return { type: 'FeatureCollection', features: [] }; }
+
+  function _addMarker(lat, lng, html, opts = {}) {
+    const wrap = document.createElement('div');
+    wrap.innerHTML = html;
+    const el = wrap.firstElementChild;
+    if (opts.interactive === false) el.style.pointerEvents = 'none';
+    if (opts.zIndex) el.style.zIndex = String(opts.zIndex);
+    return new maplibregl.Marker({
+      element: el,
+      anchor: 'top-left',
+      offset: [-(opts.anchorX || 0), -(opts.anchorY || 0)],
+    }).setLngLat([lng, lat]).addTo(map);
+  }
+
+  // Great-circle destination-point formula, sampled around a full bearing sweep —
+  // gives a geodesic circle polygon since MapLibre has no native circle primitive.
+  function _circleRing(lat, lng, radiusM, steps = 48) {
+    const distRad = radiusM / 6371000;
+    const latRad = lat * Math.PI / 180;
+    const lngRad = lng * Math.PI / 180;
+    const ring = [];
+    for (let i = 0; i <= steps; i++) {
+      const brng = (i / steps) * 2 * Math.PI;
+      const lat2 = Math.asin(Math.sin(latRad) * Math.cos(distRad) + Math.cos(latRad) * Math.sin(distRad) * Math.cos(brng));
+      const lng2 = lngRad + Math.atan2(
+        Math.sin(brng) * Math.sin(distRad) * Math.cos(latRad),
+        Math.cos(distRad) - Math.sin(latRad) * Math.sin(lat2)
+      );
+      ring.push([lng2 * 180 / Math.PI, lat2 * 180 / Math.PI]);
+    }
+    return ring;
+  }
+
+  function _circleFeature(lat, lng, radiusM) {
+    return { type: 'Feature', properties: {}, geometry: { type: 'Polygon', coordinates: [_circleRing(lat, lng, radiusM)] } };
+  }
+
+  function _syncFigureCircleSource() {
+    map?.getSource('figure-proximity-source')?.setData({ type: 'FeatureCollection', features: Object.values(_figureCircleFeatures) });
+  }
+
+  function _syncLoreRingSource() {
+    map?.getSource('lore-ring-source')?.setData({ type: 'FeatureCollection', features: Object.values(_loreRingFeatures) });
+  }
+
+  // Fog polygons use ring winding (not evenodd) to mark holes — normalize direction
+  // so exterior/holes are unambiguous regardless of how the source data was wound.
+  function _signedArea(ring) {
+    let sum = 0;
+    for (let i = 0; i < ring.length - 1; i++) {
+      const [x1, y1] = ring[i], [x2, y2] = ring[i + 1];
+      sum += x1 * y2 - x2 * y1;
+    }
+    return sum / 2;
+  }
+
+  function _ringWithWinding(ring, wantCCW) {
+    const closed = (ring[0][0] === ring[ring.length - 1][0] && ring[0][1] === ring[ring.length - 1][1])
+      ? ring.slice()
+      : [...ring, ring[0]];
+    const isCCW = _signedArea(closed) > 0;
+    return isCCW === wantCCW ? closed : closed.slice().reverse();
+  }
+
+  function _initOverlaySources() {
+    // Order = paint order (bottom -> top): grid, fog, guild fog, proximity rings.
+    map.addSource('grid-source', { type: 'geojson', data: _emptyFC() });
+    map.addLayer({ id: 'grid-layer', type: 'line', source: 'grid-source',
+      paint: { 'line-color': 'rgba(255,255,255,0.15)', 'line-width': 1 } });
+
+    map.addSource('fog-source', { type: 'geojson', data: _emptyFC() });
+    map.addLayer({ id: 'fog-layer', type: 'fill', source: 'fog-source',
+      paint: { 'fill-color': '#08070f', 'fill-opacity': 0.88 } });
+
+    map.addSource('guild-fog-source', { type: 'geojson', data: _emptyFC() });
+    map.addLayer({ id: 'guild-fog-fill', type: 'fill', source: 'guild-fog-source',
+      paint: { 'fill-color': '#7BC67E', 'fill-opacity': 0.22 } });
+    map.addLayer({ id: 'guild-fog-line', type: 'line', source: 'guild-fog-source',
+      paint: { 'line-color': '#7BC67E', 'line-width': 1, 'line-opacity': 0.35 } });
+
+    map.addSource('figure-proximity-source', { type: 'geojson', data: _emptyFC() });
+    map.addLayer({ id: 'figure-proximity-fill', type: 'fill', source: 'figure-proximity-source',
+      paint: { 'fill-color': '#FF7E55', 'fill-opacity': 0.12 } });
+    map.addLayer({ id: 'figure-proximity-line', type: 'line', source: 'figure-proximity-source',
+      paint: { 'line-color': '#FF7E55', 'line-width': 2 } });
+
+    map.addSource('lore-ring-source', { type: 'geojson', data: _emptyFC() });
+    map.addLayer({ id: 'lore-ring-fill', type: 'fill', source: 'lore-ring-source',
+      paint: { 'fill-color': '#8986A8', 'fill-opacity': 0.05 } });
+    map.addLayer({ id: 'lore-ring-line', type: 'line', source: 'lore-ring-source',
+      paint: { 'line-color': '#8986A8', 'line-width': 1, 'line-dasharray': [4, 4] } });
+  }
+
   // ── Init ───────────────────────────────────────────
   function init() {
     const container = document.getElementById('map-view');
     if (!container || map) return;
 
-    map = L.map('map-view', {
-      center: [13.756, 100.502],
+    map = new maplibregl.Map({
+      container: 'map-view',
+      style: {
+        version: 8,
+        sources: {
+          carto: {
+            type: 'raster',
+            tiles: [
+              'https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+              'https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+              'https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+              'https://d.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+            ],
+            tileSize: 256,
+            maxzoom: 19,
+          },
+        },
+        layers: [{ id: 'carto-layer', type: 'raster', source: 'carto' }],
+      },
+      center: [100.502, 13.756],
       zoom: 12,
       minZoom: 10,
-      maxBounds: [[5.5, 97.3], [20.5, 105.7]],
-      maxBoundsViscosity: 1.0,
-      zoomControl: true,
+      maxBounds: [[97.3, 5.5], [105.7, 20.5]],
+      pitch: 45,
+      bearing: 0,
+      dragRotate: false,
       attributionControl: false,
     });
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      maxZoom: 19,
-      subdomains: 'abcd',
-    }).addTo(map);
+    // Tilted "Pokémon GO"-style camera (pitch), but keep north-up free panning —
+    // rotation is intentionally disabled so the tilt doesn't disorient the player.
+    map.touchZoomRotate.disableRotation();
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
 
-    renderThailandGrid();
-
-    loadDistrictData();
-    loadLoreData();
-    updateStatsBar();
-
-    // Dismiss node info card on map click/drag
-    map.on('click mousedown', () => {
+    const dismissNodeCard = () => {
       const card = document.getElementById('node-info-card');
       if (card) { card.classList.remove('show'); clearTimeout(_nodeCardTimer); }
-    });
+    };
+    map.on('click', dismissNodeCard);
+    map.on('mousedown', dismissNodeCard);
 
-    // Start GPS tracking
-    startLocationTracking();
-    _initWalkGrid();
+    map.on('load', () => {
+      _initOverlaySources();
+      renderThailandGrid();
+
+      loadDistrictData();
+      loadLoreData();
+      updateStatsBar();
+
+      // Start GPS tracking
+      startLocationTracking();
+      _initWalkGrid();
+    });
 
     document.getElementById('btn-locate-me').addEventListener('click', () => {
       if (!lastKnownPosition) { window.AppCore?.showToast('กำลังรอสัญญาณ GPS...'); return; }
-      map.flyTo([lastKnownPosition.lat, lastKnownPosition.lng], 13, { duration: 0.8 });
+      map.flyTo({ center: [lastKnownPosition.lng, lastKnownPosition.lat], zoom: 13, duration: 800 });
     });
   }
 
@@ -196,21 +317,12 @@ const MapModule = (() => {
   }
 
   function updateLocationDot(lat, lng, accuracy) {
-    if (_locationMarker)  { map.removeLayer(_locationMarker);  _locationMarker = null; }
+    if (_locationMarker) { _locationMarker.remove(); _locationMarker = null; }
 
     // Dot marker with pulsing CSS animation
-    const icon = L.divIcon({
-      className: '',
-      html: `<div class="marker-location-dot"></div>`,
-      iconSize:   [18, 18],
-      iconAnchor: [9, 9],
+    _locationMarker = _addMarker(lat, lng, `<div class="marker-location-dot"></div>`, {
+      anchorX: 9, anchorY: 9, interactive: false, zIndex: 1000,
     });
-
-    _locationMarker = L.marker([lat, lng], {
-      icon,
-      interactive: false,
-      zIndexOffset: 1000,
-    }).addTo(map);
   }
 
   async function loadDistrictData() {
@@ -251,7 +363,7 @@ const MapModule = (() => {
     if (!homeLocation) {
       showHomeLocationPicker(districts);
     } else {
-      map.setView([homeLocation.lat, homeLocation.lng], 13, { animate: false });
+      map.jumpTo({ center: [homeLocation.lng, homeLocation.lat], zoom: 13 });
       addHomeMarker(homeLocation);
       renderAll(districts);
     }
@@ -478,23 +590,23 @@ const MapModule = (() => {
 
   // ── Fog: single inverted polygon ───────────────────
   // One polygon covers all Bangkok; holes are cut for each explored district.
-  // Uses SVG evenodd fill rule — clean, no per-district artifacts.
+  // Ring winding (exterior CCW, holes CW) marks holes — no evenodd fill rule in MapLibre.
   function buildFogLayer(districts) {
     const clearedPolys = districts
       .filter(d => !(userDistrictState[d.id]?.fogged ?? true))
       .map(d => {
         const raw = d.polygon_coords;
-        return (typeof raw === 'string' ? JSON.parse(raw) : (raw || [])).map(c => [c[0], c[1]]);
+        return (typeof raw === 'string' ? JSON.parse(raw) : (raw || [])).map(c => [c[1], c[0]]);
       })
       .filter(h => h.length > 0);
 
     // Walk-cell holes: skip any cell that overlaps a cleared district polygon.
     // Checking only the center misses edge cells — a cell partially inside a cleared
-    // district ring adds a 3rd ring crossing (evenodd: odd = re-fogged), which cancels
-    // the district hole. Bbox intersection catches all overlap cases for rect districts.
+    // district ring adds a 3rd ring crossing which would cancel the district hole.
+    // Bbox intersection catches all overlap cases for rect districts.
     const clearedBboxes = clearedPolys.map(poly => {
       let s = Infinity, n = -Infinity, w = Infinity, e = -Infinity;
-      poly.forEach(([lat, lng]) => { s = Math.min(s, lat); n = Math.max(n, lat); w = Math.min(w, lng); e = Math.max(e, lng); });
+      poly.forEach(([lng, lat]) => { s = Math.min(s, lat); n = Math.max(n, lat); w = Math.min(w, lng); e = Math.max(e, lng); });
       return { s, n, w, e };
     });
     const cellHoles = [..._walkedCells]
@@ -505,83 +617,75 @@ const MapModule = (() => {
         const cw = cell.bounds[0][1], ce = cell.bounds[1][1];
         return !clearedBboxes.some(b => cs < b.n && cn > b.s && cw < b.e && ce > b.w);
       })
-      .map(cell => cell.bounds);
+      .map(cell => cell.bounds.map(([lat, lng]) => [lng, lat]));
 
-    if (fogLayer) { map.removeLayer(fogLayer); fogLayer = null; }
+    const outer = _ringWithWinding(FOG_OUTER_LL, true);
+    const holes = [...clearedPolys, ...cellHoles].map(ring => _ringWithWinding(ring, false));
 
-    fogLayer = L.polygon([FOG_OUTER, ...clearedPolys, ...cellHoles], {
-      fillColor:   '#08070f',
-      fillOpacity: 0.88,
-      stroke:      false,
-      interactive: false,
-      fillRule:    'evenodd',
-    }).addTo(map);
+    map?.getSource('fog-source')?.setData({
+      type: 'Feature',
+      properties: {},
+      geometry: { type: 'Polygon', coordinates: [outer, ...holes] },
+    });
   }
 
   function renderThailandGrid() {
     if (!window.FogGrid) return;
-    const layers = window.FogGrid.createGridCells().map(cell => L.polygon(cell.bounds, {
-      color:       'rgba(255,255,255,0.15)',
-      weight:      1,
-      fill:        false,
-      interactive: false,
-    }));
-    L.layerGroup(layers).addTo(map);
+    const src = map?.getSource('grid-source');
+    if (!src) return;
+    const features = window.FogGrid.createGridCells().map(cell => {
+      const ring = cell.bounds.map(([lat, lng]) => [lng, lat]);
+      ring.push(ring[0]);
+      return { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: ring } };
+    });
+    src.setData({ type: 'FeatureCollection', features });
   }
 
   function renderGuildFog(clearedDistrictIds) {
-    if (guildFogLayer) { map.removeLayer(guildFogLayer); guildFogLayer = null; }
-    if (!clearedDistrictIds?.length || !allDistrictsCache) return;
+    const src = map?.getSource('guild-fog-source');
+    if (!src) return;
+    guildFogLayer = clearedDistrictIds?.length ? true : null;
+    if (!clearedDistrictIds?.length || !allDistrictsCache) {
+      src.setData(_emptyFC());
+      return;
+    }
     const userCleared = new Set(
       Object.keys(userDistrictState).filter(id => !userDistrictState[id].fogged)
     );
-    const layers = allDistrictsCache
+    const features = allDistrictsCache
       .filter(d => clearedDistrictIds.includes(d.id) && !userCleared.has(d.id))
       .map(d => {
         const raw = d.polygon_coords;
         const coords = typeof raw === 'string' ? JSON.parse(raw) : (raw || []);
         if (!coords.length) return null;
-        return L.polygon(coords.map(c => [c[0], c[1]]), {
-          fillColor:   '#7BC67E',
-          fillOpacity: 0.22,
-          color:       '#7BC67E',
-          weight:      1,
-          opacity:     0.35,
-          interactive: false,
-        });
+        const ring = coords.map(c => [c[1], c[0]]);
+        ring.push(ring[0]);
+        return { type: 'Feature', properties: {}, geometry: { type: 'Polygon', coordinates: [ring] } };
       })
       .filter(Boolean);
-    if (!layers.length) return;
-    guildFogLayer = L.layerGroup(layers).addTo(map);
+    src.setData({ type: 'FeatureCollection', features });
   }
 
   // ── Watchtower markers ─────────────────────────────
   function renderWatchtowers(districts) {
     districts.forEach(d => {
-      if (markers[`wt-${d.id}`]) {
-        map.removeLayer(markers[`wt-${d.id}`]);
-      }
+      if (markers[`wt-${d.id}`]) markers[`wt-${d.id}`].remove();
 
       const fogged = userDistrictState[d.id]?.fogged ?? true;
-      const icon = L.divIcon({
-        className: '',
-        html: `<div class="marker-watchtower ${fogged ? '' : 'visited'}" title="${d.name_th}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-               stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px">
-            <rect x="4" y="2" width="16" height="4" rx="1"/>
-            <line x1="6" y1="6" x2="6" y2="22"/><line x1="18" y1="6" x2="18" y2="22"/>
-            <line x1="12" y1="6" x2="12" y2="22"/><line x1="4" y1="22" x2="20" y2="22"/>
-            <line x1="6" y1="12" x2="18" y2="12"/>
-          </svg>
-        </div>`,
-        iconSize: [32, 38],
-        iconAnchor: [16, 38],
-      });
+      const html = `<div class="marker-watchtower ${fogged ? '' : 'visited'}" title="${d.name_th}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px">
+          <rect x="4" y="2" width="16" height="4" rx="1"/>
+          <line x1="6" y1="6" x2="6" y2="22"/><line x1="18" y1="6" x2="18" y2="22"/>
+          <line x1="12" y1="6" x2="12" y2="22"/><line x1="4" y1="22" x2="20" y2="22"/>
+          <line x1="6" y1="12" x2="18" y2="12"/>
+        </svg>
+      </div>`;
 
-      const wt = L.marker([d.center_lat, d.center_lng], { icon }).addTo(map);
+      const wt = _addMarker(d.center_lat, d.center_lng, html, { anchorX: 16, anchorY: 38 });
 
       // Always show check-in sheet — the sheet handles locked/unlocked state
-      wt.on('click', () => showCheckInSheet(d));
+      wt.getElement().addEventListener('click', () => showCheckInSheet(d));
 
       markers[`wt-${d.id}`] = wt;
     });
@@ -591,7 +695,7 @@ const MapModule = (() => {
   function renderNodes() {
     // Clear existing node markers
     Object.keys(markers).forEach(k => {
-      if (k.startsWith('node-')) { map.removeLayer(markers[k]); delete markers[k]; }
+      if (k.startsWith('node-')) { markers[k].remove(); delete markers[k]; }
     });
 
     supportNodes.forEach((node, i) => {
@@ -599,24 +703,20 @@ const MapModule = (() => {
       if (state.fogged) return;
 
       const cfg  = NODE_CFG[node.type] || NODE_CFG.landmark;
-      const icon = L.divIcon({
-        className: '',
-        html: `<div class="marker-node marker-${node.type}" style="color:${cfg.color}">${cfg.svg}</div>`,
-        iconSize: [22, 22],
-        iconAnchor: [11, 11],
-      });
+      const html = `<div class="marker-node marker-${node.type}" style="color:${cfg.color}">${cfg.svg}</div>`;
 
-      const nodeMarker = L.marker([node.lat, node.lng], { icon }).addTo(map);
-      // Use custom card instead of Leaflet popup — avoids z-index conflict with bottom-nav
-      nodeMarker.on('click', () => showNodeInfoCard(node));
+      const nodeMarker = _addMarker(node.lat, node.lng, html, { anchorX: 11, anchorY: 11 });
+      // Use custom card instead of a map popup — avoids z-index conflict with bottom-nav
+      nodeMarker.getElement().addEventListener('click', () => showNodeInfoCard(node));
       markers[`node-${i}`] = nodeMarker;
     });
   }
 
   function renderFigureNodes() {
     Object.keys(markers).forEach(k => {
-      if (k.startsWith('figure-')) { map.removeLayer(markers[k]); delete markers[k]; }
+      if (k.startsWith('figure-')) { markers[k].remove(); delete markers[k]; }
     });
+    Object.keys(_figureCircleFeatures).forEach(k => delete _figureCircleFeatures[k]);
 
     figureNodes.forEach(figure => {
       if (capturedFigureIds.has(figure.id) || window.CollectionModule?.isCaptured?.(figure.id)) return;
@@ -624,19 +724,10 @@ const MapModule = (() => {
       // C-class: proximity-based, always visible regardless of fog
       if (figure.class === 'C') {
         if (figure.lat == null || figure.lng == null) return;
-        const cIcon = L.divIcon({
-          className: '',
-          html: `<div class="marker-node" style="color:var(--color-primary);background:rgba(255,126,85,0.15);border-color:var(--color-primary)" title="${escapeHtml(figure.name_th || '')}">🧑</div>`,
-          iconSize: [24, 24],
-          iconAnchor: [12, 12],
-        });
-        const circle = L.circle([figure.lat, figure.lng], {
-          radius: 80, color: '#FF7E55', fillColor: '#FF7E55',
-          fillOpacity: 0.12, weight: 2, interactive: false,
-        }).addTo(map);
-        markers[`figure-circle-${figure.id}`] = circle;
-        const marker = L.marker([figure.lat, figure.lng], { icon: cIcon }).addTo(map);
-        marker.on('click', () => _openCaptureSheet(figure));
+        const cHtml = `<div class="marker-node" style="color:var(--color-primary);background:rgba(255,126,85,0.15);border-color:var(--color-primary)" title="${escapeHtml(figure.name_th || '')}">🧑</div>`;
+        _figureCircleFeatures[figure.id] = _circleFeature(figure.lat, figure.lng, 80);
+        const marker = _addMarker(figure.lat, figure.lng, cHtml, { anchorX: 12, anchorY: 12 });
+        marker.getElement().addEventListener('click', () => _openCaptureSheet(figure));
         markers[`figure-${figure.id}`] = marker;
         return;
       }
@@ -649,42 +740,29 @@ const MapModule = (() => {
         const lat = district?.watchtower_lat ?? district?.center_lat;
         const lng = district?.watchtower_lng ?? district?.center_lng;
         if (lat == null || lng == null) return;
-        const icon = L.divIcon({
-          className: '',
-          html: `<div class="marker-node" style="opacity:0.55;border-style:dashed" title="ตำแหน่งยังไม่ระบุ">?</div>`,
-          iconSize: [24, 24],
-          iconAnchor: [12, 12],
-        });
-        markers[`figure-${figure.id}`] = L.marker([lat, lng], { icon }).addTo(map);
+        const html = `<div class="marker-node" style="opacity:0.55;border-style:dashed" title="ตำแหน่งยังไม่ระบุ">?</div>`;
+        markers[`figure-${figure.id}`] = _addMarker(lat, lng, html, { anchorX: 12, anchorY: 12 });
         return;
       }
 
-      const icon = figure.raid_only
-        ? L.divIcon({
-            className: '',
-            html: `<div class="marker-node" style="color:#EF5350;background:rgba(239,83,80,0.15);border-color:#EF5350" title="Raid Encounter">⚔️</div>`,
-            iconSize: [24, 24],
-            iconAnchor: [12, 12],
-          })
-        : L.divIcon({
-            className: '',
-            html: `<div class="marker-node" style="color:var(--color-primary);background:var(--color-primary-dim);border-color:var(--color-primary)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
-                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
-              </svg>
-            </div>`,
-            iconSize: [24, 24],
-            iconAnchor: [12, 12],
-          });
+      const html = figure.raid_only
+        ? `<div class="marker-node" style="color:#EF5350;background:rgba(239,83,80,0.15);border-color:#EF5350" title="Raid Encounter">⚔️</div>`
+        : `<div class="marker-node" style="color:var(--color-primary);background:var(--color-primary-dim);border-color:var(--color-primary)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>`;
 
-      const marker = L.marker([figure.lat, figure.lng], { icon }).addTo(map);
-      marker.on('click', () => {
+      const marker = _addMarker(figure.lat, figure.lng, html, { anchorX: 12, anchorY: 12 });
+      marker.getElement().addEventListener('click', () => {
         if (figure.raid_only) _startRaidEncounter(figure);
         else if (figure.class === 'B') openQuizForFigure(figure.id);
         else openLegendaryEncounter(figure.districtId, figure.id);
       });
       markers[`figure-${figure.id}`] = marker;
     });
+
+    _syncFigureCircleSource();
   }
 
   let _pendingCaptureC = null;
@@ -720,9 +798,11 @@ const MapModule = (() => {
     capturedFigureIds.add(figure.id);
     window.CollectionModule?.markCaptured?.(figure.id);
     const mk = markers[`figure-${figure.id}`];
-    if (mk) { map.removeLayer(mk); delete markers[`figure-${figure.id}`]; }
-    const ck = markers[`figure-circle-${figure.id}`];
-    if (ck) { map.removeLayer(ck); delete markers[`figure-circle-${figure.id}`]; }
+    if (mk) { mk.remove(); delete markers[`figure-${figure.id}`]; }
+    if (_figureCircleFeatures[figure.id]) {
+      delete _figureCircleFeatures[figure.id];
+      _syncFigureCircleSource();
+    }
     const distId = figure.districtId;
     if (distId && userDistrictState[distId]?.fogged !== false) {
       if (u) DB.Districts.checkIn(u.id, distId).catch(() => {});
@@ -737,8 +817,9 @@ const MapModule = (() => {
 
   function renderLoreMarkers() {
     Object.keys(markers).forEach(k => {
-      if (k.startsWith('lore-')) { map.removeLayer(markers[k]); delete markers[k]; }
+      if (k.startsWith('lore-')) { markers[k].remove(); delete markers[k]; }
     });
+    Object.keys(_loreRingFeatures).forEach(k => delete _loreRingFeatures[k]);
 
     getLoreNodes().forEach(node => {
       const districtId = node.district_id || node.districtId;
@@ -749,47 +830,29 @@ const MapModule = (() => {
 
       if (!discovered) {
         // Radius ring so players can see how close they need to be
-        const ring = L.circle([node.lat, node.lng], {
-          radius: 50,
-          color: '#8986A8',
-          weight: 1,
-          dashArray: '4,4',
-          fillColor: '#8986A8',
-          fillOpacity: 0.05,
-          interactive: false,
-        }).addTo(map);
-        markers[`lore-ring-${node.id}`] = ring;
+        _loreRingFeatures[node.id] = _circleFeature(node.lat, node.lng, 50);
 
-        const mysteryIcon = L.divIcon({
-          className: '',
-          html: `<div class="marker-node marker-lore-mystery" title="???">???</div>`,
-          iconSize: [24, 24],
-          iconAnchor: [12, 12],
-        });
-
-        const mysteryMarker = L.marker([node.lat, node.lng], { icon: mysteryIcon }).addTo(map);
-        mysteryMarker.on('click', () => openVisitedLore(node.id));
+        const mysteryHtml = `<div class="marker-node marker-lore-mystery" title="???">???</div>`;
+        const mysteryMarker = _addMarker(node.lat, node.lng, mysteryHtml, { anchorX: 12, anchorY: 12 });
+        mysteryMarker.getElement().addEventListener('click', () => openVisitedLore(node.id));
         markers[`lore-${node.id}`] = mysteryMarker;
         return;
       }
 
-      const icon = L.divIcon({
-        className: '',
-        html: `<div class="marker-node marker-lore" title="${escapeHtml(node.name_th || node.name_en || 'Lore')}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-               stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px">
-            <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
-            <path d="M4 4.5A2.5 2.5 0 016.5 2H20v20H6.5A2.5 2.5 0 014 19.5z"/>
-          </svg>
-        </div>`,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12],
-      });
+      const html = `<div class="marker-node marker-lore" title="${escapeHtml(node.name_th || node.name_en || 'Lore')}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px">
+          <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
+          <path d="M4 4.5A2.5 2.5 0 016.5 2H20v20H6.5A2.5 2.5 0 014 19.5z"/>
+        </svg>
+      </div>`;
 
-      const marker = L.marker([node.lat, node.lng], { icon }).addTo(map);
-      marker.on('click', () => openVisitedLore(node.id));
+      const marker = _addMarker(node.lat, node.lng, html, { anchorX: 12, anchorY: 12 });
+      marker.getElement().addEventListener('click', () => openVisitedLore(node.id));
       markers[`lore-${node.id}`] = marker;
     });
+
+    _syncLoreRingSource();
   }
 
   function openVisitedLore(loreId) {
@@ -1270,7 +1333,7 @@ const MapModule = (() => {
     } catch { /* ignore */ }
 
     window.AppCore?.closeAllSheets();
-    map.flyTo([homeLocation.lat, homeLocation.lng], 13, { duration: 1 });
+    map.flyTo({ center: [homeLocation.lng, homeLocation.lat], zoom: 13, duration: 1000 });
     addHomeMarker(homeLocation);
 
     userDistrictState[districtId] = { ...(userDistrictState[districtId] || {}), fogged: false };
@@ -1289,20 +1352,16 @@ const MapModule = (() => {
   }
 
   function addHomeMarker(home) {
-    if (markers['home']) { map.removeLayer(markers['home']); }
-    const icon = L.divIcon({
-      className: '',
-      html: `<div class="marker-home" title="${home.name_th || 'Home'}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-             stroke-linecap="round" stroke-linejoin="round"
-             style="width:16px;height:16px;transform:rotate(45deg)">
-          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
-          <polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
-      </div>`,
-      iconSize: [38, 46], iconAnchor: [19, 46],
-    });
-    markers['home'] = L.marker([home.lat, home.lng], { icon }).addTo(map);
+    if (markers['home']) markers['home'].remove();
+    const html = `<div class="marker-home" title="${home.name_th || 'Home'}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+           stroke-linecap="round" stroke-linejoin="round"
+           style="width:16px;height:16px;transform:rotate(45deg)">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+    </div>`;
+    markers['home'] = _addMarker(home.lat, home.lng, html, { anchorX: 19, anchorY: 46 });
   }
 
   // ── Stats bar ───────────────────────────────────────
@@ -1332,8 +1391,8 @@ const MapModule = (() => {
   }
 
   function showFloatPtsOnMap(pts) {
-    const sz = map.getSize();
-    window.AppCore?.showFloatPts(pts, sz.x / 2, sz.y / 2);
+    const rect = map.getContainer().getBoundingClientRect();
+    window.AppCore?.showFloatPts(pts, rect.width / 2, rect.height / 2);
   }
 
   function checkSVG() {
@@ -1342,7 +1401,7 @@ const MapModule = (() => {
     </svg>`;
   }
 
-  function resize() { map?.invalidateSize(); }
+  function resize() { map?.resize(); }
 
   document.getElementById('btn-checkin')?.addEventListener('click', performCheckIn);
   document.getElementById('btn-c-capture')?.addEventListener('click', () => {
@@ -1356,16 +1415,12 @@ const MapModule = (() => {
   const _rallyPins = {};
   function renderRallyPin(userId, username, lat, lng) {
     if (!map) return;
-    if (_rallyPins[userId]) map.removeLayer(_rallyPins[userId]);
-    const icon = L.divIcon({
-      className: '',
-      html: `<div style="background:var(--color-primary);color:#fff;font-size:10px;font-weight:700;
-                         padding:3px 8px;border-radius:10px;white-space:nowrap;
-                         box-shadow:0 2px 8px rgba(0,0,0,0.4);pointer-events:none">
-               📍 ${escapeHtml(username)}</div>`,
-      iconSize: [null, null], iconAnchor: [0, 16],
-    });
-    _rallyPins[userId] = L.marker([lat, lng], { icon, zIndexOffset: 900, interactive: false }).addTo(map);
+    if (_rallyPins[userId]) _rallyPins[userId].remove();
+    const html = `<div style="background:var(--color-primary);color:#fff;font-size:10px;font-weight:700;
+                       padding:3px 8px;border-radius:10px;white-space:nowrap;
+                       box-shadow:0 2px 8px rgba(0,0,0,0.4);pointer-events:none">
+             📍 ${escapeHtml(username)}</div>`;
+    _rallyPins[userId] = _addMarker(lat, lng, html, { anchorX: 0, anchorY: 16, interactive: false, zIndex: 900 });
   }
 
   return { init, resize, confirmHome, skipHomePicker, saveLoreUnlock, visitSupportNode, openLegendaryEncounter, openQuizForFigure, submitQuizAnswer, getLoreNodes, getUnlockedLoreIds, renderGuildFog, renderRallyPin, getLastKnownPosition: () => lastKnownPosition };

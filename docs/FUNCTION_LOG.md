@@ -9,9 +9,9 @@
 
 | Function | File | Purpose | Supabase Tables | Status |
 |----------|------|---------|-----------------|--------|
-| `buildFogLayer()` | js/map.js | Constructs Leaflet evenodd polygon for fog of war; punches holes for unfogged districts | user_districts | ✅ Working |
+| `buildFogLayer()` | js/map.js | Builds a MapLibre GeoJSON polygon (ring winding marks holes) for fog of war; punches holes for unfogged districts | user_districts | ✅ Working |
 | `startGPSWatch()` | js/map.js | Starts `navigator.geolocation.watchPosition()`; on position update triggers district polygon match and lore proximity check | — (GPS only) | ✅ Working |
-| `renderWatchtowers()` | js/map.js | Draws watchtower markers on the Leaflet map; locked vs. visited state from local district state | — | ✅ Working |
+| `renderWatchtowers()` | js/map.js | Draws watchtower markers on the MapLibre map; locked vs. visited state from local district state | — | ✅ Working |
 | `renderFigureNodes()` | js/map.js | Draws S/A/B/C figure markers on map in cleared districts; S/A shown as phase-locked if support gate not met | figures | ✅ Working |
 | `visitSupportNode(userId, districtId, type, nodeId)` | js/map.js | Records support node visit to Supabase; prevents duplicate visits across sessions using `user_support_node_visits` unique constraint | user_support_node_visits, user_districts | ✅ Working |
 | `canCheckIn(districtId)` | js/map.js | Returns true if support node thresholds (2 cafes, 1 OTOP, 3 landmarks) are met for a district | user_districts (local cache) | ✅ Working |
@@ -24,7 +24,7 @@
 | `getTransportMultiplier(lat, lng)` | js/map.js | Returns ×2 if user GPS is within 300m of a BTS/MRT station | — (seeded station list) | ✅ Working |
 | `confirmHome(districtId)` | js/map.js | Sets home district during onboarding; clears fog for home district; grants +50 pts | user_districts, profiles | ✅ Working |
 | `updateStatsBar()` | js/map.js | Updates the map stats pill (Explored %, Captured count, Legacy score) from live DB profile | profiles | ✅ Working |
-| `renderGuildFog(clearedDistrictIds)` | js/map.js | Overlays tinted polygon for guild territory (union of all members' cleared districts); called from GuildModule after init and on member change | — (client-side Leaflet) | ✅ Added 2026-07-01 |
+| `renderGuildFog(clearedDistrictIds)` | js/map.js | Overlays tinted GeoJSON polygon for guild territory (union of all members' cleared districts); called from GuildModule after init and on member change | — (client-side MapLibre) | ✅ Added 2026-07-01 · replatformed to MapLibre GL 2026-07-07 |
 
 ---
 

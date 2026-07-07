@@ -19,7 +19,7 @@ assert(mapJs.includes('checkLoreProximity'), 'map.js must check lore proximity f
 assert(mapJs.includes('unlockLore'), 'map.js must unlock lore when user enters a lore radius');
 assert(mapJs.includes('renderLoreMarkers'), 'map.js must render map icons for visited lore places');
 assert(mapJs.includes('openVisitedLore'), 'map.js must reopen visited lore from a lore icon click');
-assert(mapJs.includes("marker.on('click', () => openVisitedLore(node.id))"), 'visited lore markers must open lore on icon click');
+assert(mapJs.includes("marker.getElement().addEventListener('click', () => openVisitedLore(node.id))"), 'visited lore markers must open lore on icon click');
 assert(mapJs.includes('renderLoreMarkers();'), 'map.js must refresh lore icons after lore state changes');
 assert(appHtml.includes('id="lore-sheet"'), 'app.html must include the lore unlock bottom sheet');
 assert(appHtml.includes('id="chain-sheet"'), 'app.html must include the chain completion bottom sheet');

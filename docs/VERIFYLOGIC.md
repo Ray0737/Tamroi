@@ -225,7 +225,7 @@ All items from the Phase 1 (23 items) and Phase 2 (10 items) function audit are 
 | System | Status | Key File |
 |--------|--------|----------|
 | Authentication (Google OAuth + Email) | ✅ | `supabase-client.js`, `login.html` |
-| Fog of War — Leaflet evenodd polygon | ✅ | `map.js` `buildFogLayer()` |
+| Fog of War — MapLibre GeoJSON polygon (ring winding) | ✅ | `map.js` `buildFogLayer()` |
 | GPS watchPosition + district polygon match | ✅ | `map.js` `startGPSWatch()` |
 | Watchtower markers (locked/visited state) | ✅ | `map.js` `renderWatchtowers()` |
 | Support node markers + visit tracking | ✅ | `map.js` `MOCK_NODES`, `visitSupportNode()` |
@@ -710,7 +710,7 @@ All agents **must** maintain `docs/FUNCTION_LOG.md`. After any task, add a row p
 | `updateChallengeProgress(userId, type)` | js/supabase-client.js | Increments user progress for a challenge type | user_daily_progress | ❌ Not yet built |
 | `showDetail(fig)` | js/collection.js | Renders figure bio modal; reads era from DB | figures | ⚠️ era field fix needed |
 | `saveLoreUnlock(nodeId, pts)` | js/map.js | Persists lore unlock to Supabase; triggers chain bonus check | user_lore, profiles | ✅ Working |
-| `buildFogLayer()` | js/map.js | Constructs Leaflet evenodd polygon for fog of war | user_districts | ✅ Working |
+| `buildFogLayer()` | js/map.js | Builds a MapLibre GeoJSON polygon (ring winding marks holes) for fog of war | user_districts | ✅ Working |
 | `visitSupportNode(userId, districtId, type, nodeId)` | js/map.js | Records support node visit to DB; updates local counter | user_support_node_visits, user_districts | ✅ Working |
 | ... | ... | ... | ... | ... |
 ```

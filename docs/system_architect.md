@@ -11,7 +11,7 @@ The system is intentionally simple:
 - Static HTML/CSS/JS files are served from Vercel or a local static server.
 - Browser modules expose stable global APIs on `window`.
 - Supabase Auth, PostgreSQL, Row Level Security, RPC functions, and Realtime provide backend behavior.
-- Leaflet renders the exploration map, district Watchtowers, support nodes, Lore nodes, GPS state, and Fog of War overlays.
+- MapLibre GL JS renders the exploration map (45° tilted camera), district Watchtowers, support nodes, Lore nodes, GPS state, and Fog of War overlays.
 - Local fallback state keeps the prototype usable when Supabase or GPS is unavailable.
 
 ## Runtime Topology
@@ -40,7 +40,7 @@ Supabase
 | `index.html` | Splash / landing page and session redirect handling | `env.js`, `config.js`, `supabase-client.js` |
 | `login.html` | Email/password login, registration, Google OAuth | `env.js`, `config.js`, `supabase-client.js`, Bootstrap |
 | `onboarding.html` | First-run location permission and home district picker | `env.js`, `config.js`, `supabase-client.js`, localStorage |
-| `app.html` | Main authenticated app shell with Map, Collection, Missions, Leaderboard | All app CSS, Leaflet, Bootstrap, `app.js`, feature modules |
+| `app.html` | Main authenticated app shell with Map, Collection, Missions, Leaderboard | All app CSS, MapLibre GL, Bootstrap, `app.js`, feature modules |
 
 `app.html` is the primary runtime shell. It owns the mobile frame, top bar, bottom navigation, tab containers, Bootstrap offcanvas panels, custom bottom sheets, map container, and shared modal surfaces.
 
@@ -54,7 +54,7 @@ js/config.js
 js/utils.js                app.html only where dynamic HTML helpers are needed
 Supabase JS CDN
 js/supabase-client.js
-Leaflet JS CDN             app.html only
+MapLibre GL JS CDN         app.html only
 Bootstrap bundle CDN
 js/app.js
 js/map.js
@@ -73,7 +73,7 @@ Do not replace this with ES module imports during Phase 1. Feature modules commu
 | `js/utils.js` | Shared escaping helper for dynamic HTML |
 | `js/supabase-client.js` | Only approved Supabase access boundary; exposes `window.DB` |
 | `js/app.js` | Auth guard, boot state, profile state, navigation, sheets, toast, notifications, shared app API |
-| `js/map.js` | Leaflet map, districts, Watchtowers, Fog of War, GPS, support nodes, Lore proximity, quiz/capture entry points |
+| `js/map.js` | MapLibre GL map (45° tilt), districts, Watchtowers, Fog of War, GPS, support nodes, Lore proximity, quiz/capture entry points |
 | `js/fog-grid.js` | Reusable Thailand grid cell helper exposed as `window.FogGrid` |
 | `js/collection.js` | Captured figures, artifacts, figure detail modal, Lore Journal |
 | `js/missions.js` | Active mission and daily challenge rendering |
@@ -145,7 +145,7 @@ User opens app
 
 ```text
 Map loads
-  -> MapModule initializes Leaflet and local district data
+  -> MapModule initializes MapLibre GL (45° tilt) and local district data
   -> DB.Districts.getUserState(userId) loads persisted cleared districts
   -> fog polygon renders with punched holes for cleared districts
   -> player taps Watchtower check-in
