@@ -24,6 +24,12 @@ const MapModule = (() => {
   const WALK_REVEAL_RADIUS_M = 30;
   const WALK_MIN_SPACING_M = 15; // skip recording a new point closer than this to the last one
   let _walkedPoints = []; // [{lat, lng}, ...]
+
+  // Watchtower check-in reveal radius — sized to roughly one school/campus premises
+  // (e.g. Satit PSM/SWU), not a multi-block area. Used both for the permanent fog hole
+  // (buildFogLayer) and the growing-reveal animation (playFogClearSweep), so the sweep's
+  // final frame and the persisted state are the exact same shape.
+  const WATCHTOWER_REVEAL_RADIUS_M = 180;
   const HOME_KEY = 'tam_roi_home';
   const LEGACY_HOME_KEY = 'siam' + 'echo_home';
   const CHECKIN_TOLERANCE_M = 500;
@@ -43,6 +49,12 @@ const MapModule = (() => {
 
   // ── Nodes — loaded from Supabase support_nodes table ──
   let supportNodes = [];
+
+  // ── Watchtowers — loaded from Supabase watchtowers table ──
+  // Districts with zero rows here fall back to their own watchtower_lat/watchtower_lng
+  // (legacy single-watchtower behavior).
+  let allWatchtowersCache = [];
+  const visitedWatchtowerIds = new Set();
 
   // ── Figure nodes — loaded from Supabase figures table ─
   let figureNodes = [];
@@ -247,15 +259,16 @@ const MapModule = (() => {
             'source-layer': 'building',
             minzoom: 15,
             paint: {
-              // retro palette bucketed by feature id — looks random per building, stable on re-render
+              // Starry Night palette bucketed by feature id — looks random per building, stable
+              // on re-render. Blue-family weighted higher (4/6 buckets) per request.
               'fill-extrusion-color': [
                 'match', ['%', ['id'], 6],
-                0, '#B8402F', // terracotta red
-                1, '#E0A82E', // mustard
-                2, '#7A9B6C', // sage green
-                3, '#C9702E', // burnt orange
-                4, '#F2C230', // yellow
-                '#EFE3C8',    // cream (fallback bucket)
+                0, '#F2E199', // Starlight
+                1, '#6FB8E6', // Blue Skies
+                2, '#ECB44D', // Crescent Moon
+                3, '#1B3A68', // City at Night
+                4, '#3D7DC9', // extra mid-tone blue
+                '#191939',    // Darkest Blue (fallback bucket)
               ],
               'fill-extrusion-height': ['coalesce', ['get', 'render_height'], 6],
               'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
@@ -392,26 +405,22 @@ const MapModule = (() => {
       if (data?.length) districts = data;
 
       const user = window.AppCore?.App?.user;
-      const baseLoaders = [loadSupportNodes(), loadFigureNodes(), loadBtsMrtStations()];
+      const baseLoaders = [loadWatchtowers(), loadSupportNodes(), loadFigureNodes(), loadBtsMrtStations()];
       if (user) {
-        const [stateData, capsData] = await Promise.all([
+        const [stateData, capsData, visitedWtIds] = await Promise.all([
           DB.Districts.getUserState(user.id),
           DB.Figures.getUserCaptures(user.id),
+          DB.Watchtowers?.getUserVisitedIds(user.id) ?? Promise.resolve([]),
           loadVisitedSupportNodes(user.id),
           ...baseLoaders,
         ]);
         (capsData || []).forEach(c => capturedFigureIds.add(c.figure_id));
+        (visitedWtIds || []).forEach(id => visitedWatchtowerIds.add(id));
         stateData.forEach(s => {
           userDistrictState[s.district_id] = s;
         });
         syncDiscoveryPercent(user.id);
-        DB.Districts.subscribeUserDistricts(user.id, payload => {
-          const row = payload.new;
-          if (row && !row.fogged) {
-            userDistrictState[row.district_id] = { ...(userDistrictState[row.district_id] || {}), ...row };
-            buildFogLayer(allDistrictsCache || []);
-          }
-        });
+        _subscribeUserDistrictsWithReconnect(user.id);
       } else {
         await Promise.all(baseLoaders);
       }
@@ -427,6 +436,13 @@ const MapModule = (() => {
       addHomeMarker(homeLocation);
       renderAll(districts);
     }
+  }
+
+  async function loadWatchtowers() {
+    try {
+      const data = await DB.Watchtowers?.getAll();
+      if (data?.length) allWatchtowersCache = data;
+    } catch { /* allWatchtowersCache stays empty — every district falls back to legacy single-watchtower */ }
   }
 
   async function loadSupportNodes() {
@@ -651,16 +667,49 @@ const MapModule = (() => {
   // ── Fog clear sweep: growing radial reveal (Civ6/RTS fog-of-war pattern,
   //    same visual family as Far Cry/AC tower-sync reveals) ──
   // The real fog hole is already cut instantly by buildFogLayer() underneath. This layer
+  // ── Real-time fog sync, with reconnect ──────────────
+  // The postgres_changes subscription existed but had no status handling: Supabase Realtime
+  // websockets drop on tab backgrounding / network blips, and with no reconnect logic the
+  // subscription silently goes stale — another device's check-in stops arriving until a
+  // full page reload. Track the channel and re-subscribe with backoff on CHANNEL_ERROR/
+  // TIMED_OUT/CLOSED instead of leaving it dead.
+  let _userDistrictsChannel = null;
+  let _userDistrictsRetryDelay = 2000;
+  function _subscribeUserDistrictsWithReconnect(userId) {
+    if (_userDistrictsChannel) DB.removeChannel(_userDistrictsChannel);
+    _userDistrictsChannel = DB.Districts.subscribeUserDistricts(
+      userId,
+      payload => {
+        const row = payload.new;
+        if (row && !row.fogged) {
+          userDistrictState[row.district_id] = { ...(userDistrictState[row.district_id] || {}), ...row };
+          buildFogLayer(allDistrictsCache || []);
+        }
+      },
+      (status) => {
+        if (status === 'SUBSCRIBED') {
+          _userDistrictsRetryDelay = 2000; // reset backoff once healthy
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+          setTimeout(() => _subscribeUserDistrictsWithReconnect(userId), _userDistrictsRetryDelay);
+          _userDistrictsRetryDelay = Math.min(_userDistrictsRetryDelay * 2, 30000); // cap at 30s
+        }
+      }
+    );
+  }
+
   // covers the same district with a fog-colored donut whose hole (a circle centered on the
   // watchtower) grows from 0 to full district radius, so the reveal reads as fog peeling
   // back from the check-in point outward, instead of an instant pop. Real MapLibre fill
   // layer (not CSS/canvas), so it tilts/rotates with the camera exactly like fog-layer does.
-  function playFogClearSweep(polygonCoords, centerLat, centerLng, maxRadiusM = 700) {
+  function playFogClearSweep(centerLat, centerLng, maxRadiusM = WATCHTOWER_REVEAL_RADIUS_M) {
     const src = map?.getSource('fog-clear-fx-source');
-    if (!src || !polygonCoords || centerLat == null || centerLng == null) return;
+    if (!src || centerLat == null || centerLng == null) return;
 
-    const raw = typeof polygonCoords === 'string' ? JSON.parse(polygonCoords) : polygonCoords;
-    const exterior = _ringWithWinding(raw.map(c => [c[1], c[0]]), true); // CCW
+    // Exterior is a fixed circle at the final reveal radius (matching buildFogLayer's real
+    // hole exactly) — NOT the district's polygon_coords placeholder rectangle. The donut
+    // (exterior minus a growing inner hole) starts as a full solid circle covering the area
+    // and shrinks to nothing, so it lines up seamlessly with the real circular hole underneath.
+    const exterior = _ringWithWinding(_circleRing(centerLat, centerLng, maxRadiusM), true); // CCW
 
     const DURATION = 1400;
     const startZoom = map.getZoom();
@@ -688,13 +737,34 @@ const MapModule = (() => {
   // One polygon covers all Bangkok; holes are cut for each explored district.
   // Ring winding (exterior CCW, holes CW) marks holes — no evenodd fill rule in MapLibre.
   function buildFogLayer(districts) {
-    const clearedPolys = districts
-      .filter(d => !(userDistrictState[d.id]?.fogged ?? true))
-      .map(d => {
-        const raw = d.polygon_coords;
-        return (typeof raw === 'string' ? JSON.parse(raw) : (raw || [])).map(c => [c[1], c[0]]);
-      })
-      .filter(h => h.length > 0);
+    // Cleared districts reveal as a circle around the watchtower, not the raw district
+    // polygon — polygon_coords is a known-approximate placeholder shape (rough rectangle,
+    // not a real administrative boundary), so using it made every check-in reveal a square.
+    // A circle at WATCHTOWER_REVEAL_RADIUS_M matches the "~1km2 around the checkpoint" area
+    // the game already describes, and matches playFogClearSweep's animation radius exactly
+    // so the sweep doesn't visually snap to a different final shape when it hands off here.
+    //
+    // Multi-watchtower districts (allWatchtowersCache has rows for this district_id):
+    // fully-cleared reveals the union of every watchtower's circle; not-yet-complete
+    // reveals only the circles of the watchtowers this user has personally visited so far.
+    const clearedPolys = [];
+    districts.forEach(d => {
+      const districtWatchtowers = allWatchtowersCache.filter(w => w.district_id === d.id);
+      const fullyCleared = !(userDistrictState[d.id]?.fogged ?? true);
+
+      if (districtWatchtowers.length === 0) {
+        if (!fullyCleared) return;
+        const lat = d.watchtower_lat ?? d.center_lat;
+        const lng = d.watchtower_lng ?? d.center_lng;
+        if (lat != null && lng != null) clearedPolys.push(_circleRing(lat, lng, WATCHTOWER_REVEAL_RADIUS_M));
+        return;
+      }
+
+      const relevant = fullyCleared
+        ? districtWatchtowers
+        : districtWatchtowers.filter(w => visitedWatchtowerIds.has(w.id));
+      relevant.forEach(w => clearedPolys.push(_circleRing(w.lat, w.lng, WATCHTOWER_REVEAL_RADIUS_M)));
+    });
 
     // Walk-trail holes: a small circle per walked point (smooth trail, not grid squares).
     // Skip any point that falls inside a cleared district polygon's bbox — a circle hole
@@ -757,27 +827,53 @@ const MapModule = (() => {
   }
 
   // ── Watchtower markers ─────────────────────────────
+  function watchtowerIconHtml(visited, title) {
+    return `<div class="marker-watchtower ${visited ? 'visited' : ''}" title="${title}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px">
+        <rect x="4" y="2" width="16" height="4" rx="1"/>
+        <line x1="6" y1="6" x2="6" y2="22"/><line x1="18" y1="6" x2="18" y2="22"/>
+        <line x1="12" y1="6" x2="12" y2="22"/><line x1="4" y1="22" x2="20" y2="22"/>
+        <line x1="6" y1="12" x2="18" y2="12"/>
+      </svg>
+    </div>`;
+  }
+
   function renderWatchtowers(districts) {
+    // Clear every previous watchtower marker (both legacy per-district and multi
+    // per-watchtower keys) before re-adding, same cleanup pattern as renderNodes.
+    Object.keys(markers).forEach(k => {
+      if (k.startsWith('wt-')) { markers[k].remove(); delete markers[k]; }
+    });
+
     districts.forEach(d => {
-      if (markers[`wt-${d.id}`]) markers[`wt-${d.id}`].remove();
+      const districtWatchtowers = allWatchtowersCache.filter(w => w.district_id === d.id);
 
-      const fogged = userDistrictState[d.id]?.fogged ?? true;
-      const html = `<div class="marker-watchtower ${fogged ? '' : 'visited'}" title="${d.name_th}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-             stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px">
-          <rect x="4" y="2" width="16" height="4" rx="1"/>
-          <line x1="6" y1="6" x2="6" y2="22"/><line x1="18" y1="6" x2="18" y2="22"/>
-          <line x1="12" y1="6" x2="12" y2="22"/><line x1="4" y1="22" x2="20" y2="22"/>
-          <line x1="6" y1="12" x2="18" y2="12"/>
-        </svg>
-      </div>`;
+      if (districtWatchtowers.length === 0) {
+        // Legacy single-watchtower district — unchanged behavior.
+        const fogged = userDistrictState[d.id]?.fogged ?? true;
+        const wt = _addMarker(d.center_lat, d.center_lng, watchtowerIconHtml(!fogged, d.name_th),
+          { anchorX: 16, anchorY: 38 });
+        wt.getElement().addEventListener('click', () => showCheckInSheet({
+          ...d, checkinLat: d.center_lat, checkinLng: d.center_lng, watchtowerId: null,
+        }));
+        markers[`wt-${d.id}`] = wt;
+        return;
+      }
 
-      const wt = _addMarker(d.center_lat, d.center_lng, html, { anchorX: 16, anchorY: 38 });
-
-      // Always show check-in sheet — the sheet handles locked/unlocked state
-      wt.getElement().addEventListener('click', () => showCheckInSheet(d));
-
-      markers[`wt-${d.id}`] = wt;
+      // Multi-watchtower district — one marker per watchtower, each tracked individually.
+      // District-level "fogged" only flips once every watchtower here has been visited
+      // (handled server-side by the completion trigger); each marker's own visited state
+      // is purely "did THIS user check in at THIS point".
+      districtWatchtowers.forEach(w => {
+        const visited = visitedWatchtowerIds.has(w.id);
+        const title = w.name_th || d.name_th;
+        const wt = _addMarker(w.lat, w.lng, watchtowerIconHtml(visited, title), { anchorX: 16, anchorY: 38 });
+        wt.getElement().addEventListener('click', () => showCheckInSheet({
+          ...d, name_th: title, checkinLat: w.lat, checkinLng: w.lng, watchtowerId: w.id,
+        }));
+        markers[`wt-${w.id}`] = wt;
+      });
     });
   }
 
@@ -1060,7 +1156,11 @@ const MapModule = (() => {
   function showCheckInSheet(district) {
     activeDistrict = district;
     const state = userDistrictState[district.id] || {};
-    const fogged = state.fogged ?? true;
+    // Multi-watchtower district: "already visited" is per-watchtower, not per-district —
+    // the district only flips fogged=false once every watchtower in it is done.
+    const fogged = district.watchtowerId
+      ? !visitedWatchtowerIds.has(district.watchtowerId)
+      : (state.fogged ?? true);
 
     document.getElementById('checkin-district-name').textContent     = district.name_th;
     document.getElementById('checkin-district-province').textContent = district.province;
@@ -1192,6 +1292,19 @@ const MapModule = (() => {
   async function openQuizForFigure(figureId, questionIndex = 0, questions = null) {
     const figure = figureNodes.find(item => item.id === figureId);
     if (!figure) return;
+
+    // Proximity gate — every other capture/interact path on the map has one (C-class 80m,
+    // watchtower 500m, lore 50m, support node 100m); this was the one gap where a B/A/S
+    // quiz could be started from anywhere once district/support-node prerequisites were met.
+    // Only checked on a fresh quiz start (questionIndex 0, no carried-over questions), not
+    // on advancing between questions within the same quiz.
+    const isFreshStart = questionIndex === 0 && !questions;
+    if (isFreshStart && !isDev() && figure.lat != null && figure.lng != null) {
+      if (!lastKnownPosition || haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, figure.lat, figure.lng) > 80) {
+        window.AppCore?.showToast('เข้าใกล้กว่านี้ (80 ม.)');
+        return;
+      }
+    }
 
     let quizQuestions = questions;
     try {
@@ -1334,16 +1447,42 @@ const MapModule = (() => {
     btn.innerHTML = `<div class="spinner"></div>`;
     btn.disabled  = true;
 
-    try {
-      const user = window.AppCore?.App?.user;
-      if (user) await DB.Districts.checkIn(user.id, d.id);
-    } catch { /* offline — continue locally */ }
+    const user = window.AppCore?.App?.user;
+    const sweepLat = d.checkinLat ?? d.watchtower_lat ?? d.center_lat;
+    const sweepLng = d.checkinLng ?? d.watchtower_lng ?? d.center_lng;
 
-    userDistrictState[d.id] = { ...userDistrictState[d.id], fogged: false, has_encounter_key: true };
+    if (d.watchtowerId) {
+      // Multi-watchtower district: insert-only visit row — the completion trigger
+      // decides server-side whether this finishes the district. We mirror that same
+      // "all watchtowers visited?" check locally so fog updates instantly, without
+      // waiting on the realtime round-trip.
+      try {
+        if (user) await DB.Watchtowers.checkIn(user.id, d.watchtowerId);
+      } catch { /* offline — continue locally */ }
+      visitedWatchtowerIds.add(d.watchtowerId);
+
+      const siblingIds = allWatchtowersCache.filter(w => w.district_id === d.id).map(w => w.id);
+      const districtComplete = siblingIds.every(id => visitedWatchtowerIds.has(id));
+
+      if (districtComplete) {
+        userDistrictState[d.id] = { ...userDistrictState[d.id], fogged: false, has_encounter_key: true };
+        window.AppCore?.showToast('ครบทุก Watchtower แล้ว — ได้รับกุญแจ Encounter! 🗝️');
+      } else {
+        const remaining = siblingIds.length - siblingIds.filter(id => visitedWatchtowerIds.has(id)).length;
+        window.AppCore?.showToast(`เช็คอินแล้ว — เหลืออีก ${remaining} จุดในเขตนี้`);
+      }
+    } else {
+      // Legacy single-watchtower district — unchanged behavior.
+      try {
+        if (user) await DB.Districts.checkIn(user.id, d.id);
+      } catch { /* offline — continue locally */ }
+      userDistrictState[d.id] = { ...userDistrictState[d.id], fogged: false, has_encounter_key: true };
+      window.AppCore?.showToast('ได้รับกุญแจ Encounter แล้ว! 🗝️');
+    }
 
     // Rebuild the entire fog layer (removes the old polygon, adds new with extra hole)
     buildFogLayer(allDistrictsCache || []);
-    playFogClearSweep(d.polygon_coords, d.watchtower_lat ?? d.center_lat, d.watchtower_lng ?? d.center_lng);
+    playFogClearSweep(sweepLat, sweepLng);
 
     // Reveal nodes in this district
     renderNodes();
@@ -1355,12 +1494,10 @@ const MapModule = (() => {
     renderWatchtowers(allDistrictsCache || []);
 
     window.AppCore?.closeAllSheets();
-    window.AppCore?.showToast('ได้รับกุญแจ Encounter แล้ว! 🗝️');
     updateStatsBar();
-    syncDiscoveryPercent(window.AppCore?.App?.user?.id);
+    syncDiscoveryPercent(user?.id);
     showFloatPtsOnMap(150 * getTransportMultiplier());
-    const _ciUser = window.AppCore?.App?.user;
-    if (_ciUser) DB.Missions?.updateChallengeProgress(_ciUser.id, 'checkin').catch(() => {});
+    if (user) DB.Missions?.updateChallengeProgress(user.id, 'checkin').catch(() => {});
   }
 
   // ── Check-in eligibility ────────────────────────────
@@ -1374,8 +1511,8 @@ const MapModule = (() => {
   function isWithinCheckInRange(district) {
     if (!lastKnownPosition) return false;
     if (lastKnownPosition.accuracy === 0 || lastKnownPosition.accuracy > 2000) return false;
-    const lat = district.watchtower_lat || district.center_lat;
-    const lng = district.watchtower_lng || district.center_lng;
+    const lat = district.checkinLat ?? district.watchtower_lat ?? district.center_lat;
+    const lng = district.checkinLng ?? district.watchtower_lng ?? district.center_lng;
     return haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, lat, lng) <= CHECKIN_TOLERANCE_M;
   }
 

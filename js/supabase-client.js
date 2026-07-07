@@ -162,10 +162,14 @@ const Districts = {
     if (error) throw error;
   },
 
-  subscribeUserDistricts(userId, callback) {
+  subscribeUserDistricts(userId, callback, onStatus) {
     return _sb.channel(`user-districts-${userId}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'user_districts', filter: `user_id=eq.${userId}` }, callback)
-      .subscribe();
+      .subscribe(onStatus);
+  },
+
+  removeChannel(channel) {
+    if (channel) _sb.removeChannel(channel);
   },
 
   async updateNodeVisit(userId, districtId, nodeType, nodeId) {
@@ -213,6 +217,35 @@ const Districts = {
     if (error) throw error;
     return data;
   }
+};
+
+// ── Watchtowers (multi-watchtower districts, e.g. Wattana: Satit PSM + Terminal 21) ──
+// Districts with no rows here fall back to the legacy single-watchtower behavior
+// (districts.watchtower_lat/watchtower_lng), handled client-side in map.js.
+const Watchtowers = {
+  async getAll() {
+    const { data, error } = await _sb.from('watchtowers').select('*');
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getUserVisitedIds(userId) {
+    const { data, error } = await _sb
+      .from('user_watchtower_visits')
+      .select('watchtower_id')
+      .eq('user_id', userId);
+    if (error) throw error;
+    return (data || []).map(row => row.watchtower_id);
+  },
+
+  // Insert-only — the DB trigger (check_district_watchtowers_complete) decides
+  // whether this completes the district and flips user_districts.fogged itself.
+  async checkIn(userId, watchtowerId) {
+    const { error } = await _sb
+      .from('user_watchtower_visits')
+      .insert({ user_id: userId, watchtower_id: watchtowerId });
+    if (error && error.code !== '23505') throw error; // 23505 = already visited, not an error
+  },
 };
 
 // ── Figures ───────────────────────────────────────────
@@ -1186,4 +1219,4 @@ const Debates = {
 };
 
 // Expose globally
-window.DB = { Auth, Profiles, Districts, Figures, SupportNodes, BtsMrtStations, Artifacts, Leaderboard, Lore, Quiz, Notifications, Missions, Coop, Raid, Discussion, Community, Debates };
+window.DB = { Auth, Profiles, Districts, Watchtowers, Figures, SupportNodes, BtsMrtStations, Artifacts, Leaderboard, Lore, Quiz, Notifications, Missions, Coop, Raid, Discussion, Community, Debates };
