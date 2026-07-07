@@ -1668,7 +1668,12 @@ const MapModule = (() => {
     _rallyPins[userId] = _addMarker(lat, lng, html, { anchorX: 0, anchorY: 16, interactive: false, zIndex: 900 });
   }
 
-  return { init, resize, confirmHome, skipHomePicker, saveLoreUnlock, visitSupportNode, openLegendaryEncounter, openQuizForFigure, submitQuizAnswer, getLoreNodes, getUnlockedLoreIds, renderGuildFog, renderRallyPin, getLastKnownPosition: () => lastKnownPosition };
+  function flyToLocation(lat, lng, zoom = 16) {
+    if (!map) return;
+    map.flyTo({ center: [lng, lat], zoom, pitch: 45, duration: 800 });
+  }
+
+  return { init, resize, confirmHome, skipHomePicker, saveLoreUnlock, visitSupportNode, openLegendaryEncounter, openQuizForFigure, submitQuizAnswer, getLoreNodes, getUnlockedLoreIds, renderGuildFog, renderRallyPin, flyToLocation, getLastKnownPosition: () => lastKnownPosition };
 })();
 
 window.MapModule = MapModule;

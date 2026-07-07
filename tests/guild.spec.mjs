@@ -82,6 +82,10 @@ const Coop = {
   async rejectRequest()        {},
   async checkInToMission()     {},
   async getPendingRequestForUser() { return null; },
+  async getMyPendingRequest()      { return null; },
+  async getGuildClearedDistrictIds() { return []; },
+  async getGuildScore()            { return 0; },
+  openRallyChannel()               { const ch = { on(){ return ch; }, subscribe(){ return ch; }, unsubscribe(){} }; return ch; },
   subscribeGuildPresence()     { return { presenceState(){ return {}; }, track(){}, unsubscribe(){} }; },
   subscribeGuildMembers(id,cb) { return { unsubscribe(){} }; },
   subscribeMissionProgress(m,g,cb) { return { unsubscribe(){} }; },
@@ -170,7 +174,8 @@ test.describe('Guild module', () => {
 
     await page.evaluate(() => {
       window.AppCore?.switchTab('community');
-      document.querySelector('#leaderboard-view [data-view="guild"]')?.click();
+      const sel = document.getElementById('leaderboard-view');
+      if (sel) { sel.value = 'guild'; sel.dispatchEvent(new Event('change')); }
     });
     await page.waitForTimeout(400);
 

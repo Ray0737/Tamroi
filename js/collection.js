@@ -419,22 +419,36 @@ const CollectionModule = (() => {
     if (!modal) return;
     bindFigureModalCleanup(modal);
 
-    document.getElementById('modal-figure-name').textContent  = fig.name_th;
-    document.getElementById('modal-figure-en').textContent    = fig.name_en;
+    // Portrait emoji
+    const emojiEl = document.getElementById('modal-figure-emoji');
+    if (emojiEl) emojiEl.textContent = fig.image_emoji || '🏛️';
+
+    document.getElementById('modal-figure-name').textContent  = escapeHtml(fig.name_th);
+    document.getElementById('modal-figure-en').textContent    = escapeHtml(fig.name_en || '');
     document.getElementById('modal-figure-badge').className   = `figure-class-label ${fig.class.toLowerCase()}`;
     document.getElementById('modal-figure-badge').textContent = `${fig.class}-Class`;
     document.getElementById('modal-figure-pts').textContent   = `+${fig.legacy_pts} Legacy Points`;
 
-    const bioCard = document.getElementById('modal-figure-bio-card');
-    const eraEl   = document.getElementById('modal-figure-era');
-    const bioEl   = document.getElementById('modal-figure-bio');
-    if (eraEl) eraEl.textContent = fig.era || `${fig.class}-Class · ${(fig.district_id || '').replace(/_/g, ' ')}` || '–';
-    if (bioEl) bioEl.textContent = fig.description || fig.description_th || '–';
-    if (bioCard) bioCard.hidden = !fig.description && !fig.description_th;
+    const eraEl = document.getElementById('modal-figure-era');
+    const bioEl = document.getElementById('modal-figure-bio');
+    if (eraEl) eraEl.textContent = escapeHtml(fig.era || `${fig.class}-Class · ${(fig.district_id || '').replace(/_/g, ' ')}`);
+    if (bioEl) bioEl.textContent = escapeHtml(fig.description || '–');
+
+    // Clear async sections
+    ['modal-figure-relations','modal-figure-lore','modal-figure-locations'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
 
     cleanupModalState();
     const bsModal = bootstrap.Modal.getOrCreateInstance(modal);
     bsModal.show();
+
+    // Wire graph button
+    const graphBtn = document.getElementById('btn-figure-graph');
+    if (graphBtn) {
+      graphBtn.onclick = () => { bsModal.hide(); window.FigureGraphModule?.open(figureId); };
+    }
 
     // Inject "Unsolved History" button if figure is captured and has a debate
     const footerEl = modal.querySelector('.modal-footer');
@@ -454,6 +468,122 @@ const CollectionModule = (() => {
         footerEl.insertBefore(btn, footerEl.firstChild);
       }).catch(() => {});
     }
+
+    // Async bio sections — fire-and-forget, fills in as data arrives
+    _fillBioSections(fig, figureId, bsModal);
+  }
+
+  async function _fillBioSections(fig, figureId, bsModal) {
+    const [bioRes, relRes, loreRes] = await Promise.allSettled([
+      DB.Figures.getBio(figureId),
+      DB.Figures.getRelations(figureId),
+      DB.Lore.getForFigure(figureId),
+    ]);
+
+    // Long-form bio
+    if (bioRes.status === 'fulfilled' && bioRes.value) {
+      const bio = bioRes.value;
+      const bioEl = document.getElementById('modal-figure-bio');
+      const eraEl = document.getElementById('modal-figure-era');
+      if (bioEl && bio.bio_th) bioEl.textContent = escapeHtml(bio.bio_th);
+      if (eraEl && (bio.birth_year || bio.death_year)) {
+        const years = [bio.birth_year ? `พ.ศ. ${bio.birth_year + 543}` : null,
+                       bio.death_year ? `พ.ศ. ${bio.death_year + 543}` : null].filter(Boolean).join(' – ');
+        eraEl.textContent = escapeHtml((bio.era || fig.era || '') + (years ? `  ·  ${years}` : ''));
+      }
+    }
+
+    // Relations chips
+    if (relRes.status === 'fulfilled' && relRes.value?.length) {
+      const relList = document.getElementById('modal-figure-relations-list');
+      const relSec  = document.getElementById('modal-figure-relations');
+      if (relList && relSec) {
+        relList.innerHTML = relRes.value.map(r => {
+          const captured = captures.has(r.id);
+          const emoji    = escapeHtml(r.image_emoji || '🏛️');
+          const name     = escapeHtml(r.name_th || r.id);
+          const rel      = escapeHtml(r.relation_th || '');
+          if (captured) {
+            return `<button class="fig-relation-chip" onclick="CollectionModule.showDetail('${escapeHtml(r.id)}')">
+              <span class="fig-chip-emoji">${emoji}</span>
+              <span class="fig-chip-name">${name}</span>
+              <span class="fig-chip-rel">${rel}</span>
+            </button>`;
+          }
+          return `<span class="fig-relation-chip fig-chip-locked" title="ยังไม่ถูกจับ">
+            <span class="fig-chip-emoji">🔒</span>
+            <span class="fig-chip-name">???</span>
+            <span class="fig-chip-rel">${rel}</span>
+          </span>`;
+        }).join('');
+        relSec.style.display = '';
+      }
+    }
+
+    // Related lore
+    if (loreRes.status === 'fulfilled' && loreRes.value?.length) {
+      const loreSec  = document.getElementById('modal-figure-lore');
+      const loreList = document.getElementById('modal-figure-lore-list');
+      const unlockedIds = new Set(loreEntries.map(e => e.lore_nodes?.id || e.id));
+      if (loreList && loreSec) {
+        loreList.innerHTML = loreRes.value.map(node => {
+          const unlocked = unlockedIds.has(node.id);
+          const name     = escapeHtml(node.name_th || node.name_en || '');
+          if (unlocked) {
+            return `<button class="fig-lore-row fig-lore-unlocked" onclick="CollectionModule._openLoreFromModal('${escapeHtml(node.id)}', event)">
+              <span class="fig-lore-icon">📜</span>
+              <span class="fig-lore-name">${name}</span>
+            </button>`;
+          }
+          return `<div class="fig-lore-row fig-lore-locked">
+            <span class="fig-lore-icon">🔒</span>
+            <span class="fig-lore-name fig-lore-teaser">??? — ไปสำรวจเพื่อปลดล็อก</span>
+          </div>`;
+        }).join('');
+        loreSec.style.display = '';
+      }
+    }
+
+    // Related locations — figure's own pin + lore node coords
+    const locations = [];
+    if (fig.lat && fig.lng) {
+      locations.push({ name: escapeHtml(fig.name_th), sub: escapeHtml((fig.district_id || '').replace(/_/g, ' ')), lat: fig.lat, lng: fig.lng });
+    }
+    if (loreRes.status === 'fulfilled') {
+      (loreRes.value || []).filter(n => n.lat && n.lng).forEach(n => {
+        locations.push({ name: escapeHtml(n.name_th || n.name_en || ''), sub: 'Lore', lat: n.lat, lng: n.lng });
+      });
+    }
+    if (locations.length) {
+      const locSec  = document.getElementById('modal-figure-locations');
+      const locList = document.getElementById('modal-figure-locations-list');
+      if (locList && locSec) {
+        locList.innerHTML = locations.map(loc =>
+          `<div class="fig-location-row">
+            <span class="fig-loc-name">${loc.name}</span>
+            <span class="fig-loc-sub">${loc.sub}</span>
+            <button class="fig-loc-map-btn" onclick="CollectionModule._goToMap(${loc.lat},${loc.lng})">ดูบนแผนที่</button>
+          </div>`
+        ).join('');
+        locSec.style.display = '';
+      }
+    }
+  }
+
+  function _openLoreFromModal(loreId, e) {
+    e?.stopPropagation();
+    const node = loreEntries.find(entry => (entry.lore_nodes?.id || entry.id) === loreId)?.lore_nodes
+               || loreEntries.find(entry => entry.id === loreId);
+    if (node) window.AppCore?.openLoreSheet?.(node);
+  }
+
+  function _goToMap(lat, lng) {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('figure-modal'));
+    modal?.hide();
+    // Switch to map tab
+    const mapTab = document.querySelector('[data-tab="map"]');
+    if (mapTab) mapTab.click();
+    setTimeout(() => window.MapModule?.flyToLocation?.(lat, lng), 300);
   }
 
   function bindFigureModalCleanup(modal) {
@@ -499,7 +629,7 @@ const CollectionModule = (() => {
     </svg>`;
   }
 
-  return { load, showDetail, markCaptured, dismissNew, isCaptured: id => captures.has(id) };
+  return { load, showDetail, markCaptured, dismissNew, isCaptured: id => captures.has(id), _openLoreFromModal, _goToMap };
 })();
 
 window.CollectionModule = CollectionModule;

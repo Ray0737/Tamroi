@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/map.css">
   <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/figure-graph.css">
 
   <style>
     /* ── Notification panel styles ── */
@@ -545,7 +546,7 @@
 
   <!-- ════ FIGURE DETAIL MODAL ════ -->
   <div class="modal fade" id="figure-modal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered" style="max-width:300px;margin-left:auto;margin-right:auto">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width:360px;margin-left:auto;margin-right:auto">
       <div class="modal-content">
         <div class="modal-header" style="border:none;padding-bottom:0">
           <div class="anim-stamp" style="width:100%;text-align:center">
@@ -555,7 +556,7 @@
           </div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" style="position:absolute;top:20px;right:16px"></button>
         </div>
-        <div class="modal-body" style="text-align:left;padding:4px var(--space-md) var(--space-md)">
+        <div class="modal-body" style="text-align:left;padding:4px var(--space-md) var(--space-md);overflow-y:auto">
           <span class="figure-class-label" id="modal-figure-badge"
                 style="display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;
                        letter-spacing:0.5px;padding:3px 12px;border-radius:var(--radius-full);
@@ -567,13 +568,32 @@
             <p style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--color-muted);margin-bottom:5px" id="modal-figure-era">–</p>
             <p style="font-size:var(--text-xs);line-height:1.5;margin:0;color:var(--color-muted)" id="modal-figure-bio">–</p>
           </div>
+          <!-- Relations -->
+          <div id="modal-figure-relations" class="fig-bio-section" style="display:none">
+            <p class="fig-bio-section-title">ความสัมพันธ์</p>
+            <div id="modal-figure-relations-list" class="fig-relation-chips"></div>
+          </div>
+          <!-- Related lore -->
+          <div id="modal-figure-lore" class="fig-bio-section" style="display:none">
+            <p class="fig-bio-section-title">Lore ที่เกี่ยวข้อง</p>
+            <div id="modal-figure-lore-list"></div>
+          </div>
+          <!-- Related locations -->
+          <div id="modal-figure-locations" class="fig-bio-section" style="display:none">
+            <p class="fig-bio-section-title">สถานที่ที่เกี่ยวข้อง</p>
+            <div id="modal-figure-locations-list"></div>
+          </div>
         </div>
-        <div class="modal-footer" style="border:none;justify-content:center;padding-top:var(--space-sm);padding-bottom:var(--space-md)">
+        <div class="modal-footer" style="border:none;flex-direction:column;gap:8px;padding-top:var(--space-sm);padding-bottom:var(--space-md)">
+          <button type="button" id="btn-figure-graph" class="btn btn-ghost btn-full" style="font-size:12px;padding:7px">🕸️ ดูแผนผังความสัมพันธ์</button>
           <button type="button" class="btn btn-primary" data-bs-dismiss="modal" style="font-size:12px;padding:7px;width:60%">ปิด</button>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- ════ FIGURE GRAPH OVERLAY ════ -->
+  <div id="figure-graph-overlay" style="display:none;position:fixed;inset:0;z-index:1055;background:var(--color-bg)"></div>
 
   <!-- ════ NOTIFICATION OFFCANVAS ════ -->
   <div class="offcanvas offcanvas-end" tabindex="-1" id="notif-panel"
@@ -751,6 +771,7 @@
 <script src="js/discussion.js"></script>
 <script src="js/community-forum.js"></script>
 <script src="js/debates.js"></script>
+<script src="js/figure-graph.js"></script>
 
 <script>
   // Sync settings panel with loaded profile

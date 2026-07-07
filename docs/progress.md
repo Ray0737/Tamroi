@@ -112,6 +112,8 @@
 | Figure cameo on chain completion | ✅ Done | Linked figure + speech bubble in the chain-complete sheet |
 | Settings overhaul | ✅ Done | Edit username, notifications toggle, GPS permission status, home district picker, profile picture |
 
+| Figure Biography + Relation Graph | ✅ Done | `patch_figure_bio.sql` · `figure_relations` table · extended figure modal (bio_th, birth/death year, relation chips, related lore, related locations) · `FigureGraphModule` SVG canvas with pan/zoom/drag/focus animations · `MapModule.flyToLocation` |
+
 ### Known Gaps (Deferred)
 
 - CoopModule GPS gate for mission checkin (currently DB-only, no distance check)

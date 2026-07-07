@@ -1,0 +1,283 @@
+/* figure-graph.css — styles for biography bio sections + graph overlay */
+
+/* ── Bio modal sections ─────────────────────────────── */
+.fig-bio-section {
+  margin-top: 20px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  padding-top: 14px;
+}
+
+.fig-bio-section-title {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-muted);
+  margin: 0 0 8px;
+}
+
+/* Relation chips */
+.fig-relation-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.fig-relation-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--color-bg);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 20px;
+  padding: 4px 10px 4px 6px;
+  font-size: 11px;
+  color: var(--color-white);
+  cursor: pointer;
+  transition: border-color .2s, opacity .2s;
+}
+
+.fig-relation-chip:hover {
+  border-color: var(--color-primary);
+}
+
+.fig-chip-locked {
+  opacity: .45;
+  cursor: default;
+}
+
+.fig-chip-emoji { font-size: 14px; }
+
+.fig-chip-name {
+  font-weight: 600;
+  font-family: var(--font-heading);
+}
+
+.fig-chip-rel {
+  font-size: 9px;
+  color: var(--color-muted);
+}
+
+/* Lore rows */
+.fig-lore-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  width: 100%;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  text-align: left;
+  cursor: default;
+}
+
+.fig-lore-unlocked {
+  color: var(--color-white);
+  cursor: pointer;
+}
+
+.fig-lore-unlocked:hover .fig-lore-name {
+  color: var(--color-primary);
+}
+
+.fig-lore-locked { opacity: .45; }
+
+.fig-lore-icon { font-size: 14px; flex-shrink: 0; }
+
+.fig-lore-name { font-size: 12px; }
+
+.fig-lore-teaser { color: var(--color-muted); font-style: italic; }
+
+/* Location rows */
+.fig-location-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  flex-wrap: wrap;
+}
+
+.fig-loc-name { font-size: 12px; font-weight: 600; flex: 1; min-width: 80px; }
+
+.fig-loc-sub { font-size: 10px; color: var(--color-muted); }
+
+.fig-loc-map-btn {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: rgba(255,126,85,.12);
+  color: var(--color-primary);
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.fig-loc-map-btn:hover { background: rgba(255,126,85,.25); }
+
+/* ── Graph overlay ──────────────────────────────────── */
+#figure-graph-overlay {
+  overflow: hidden;
+  touch-action: none;
+}
+
+#fg-topbar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  background: linear-gradient(to bottom, var(--color-bg) 70%, transparent);
+  z-index: 10;
+}
+
+#fg-back-btn {
+  background: rgba(255,255,255,.1);
+  border: none;
+  border-radius: 50%;
+  width: 36px; height: 36px;
+  color: var(--color-white);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s;
+}
+
+#fg-back-btn:hover { background: rgba(255,255,255,.2); }
+
+#fg-title {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-white);
+  flex: 1;
+}
+
+#fg-svg {
+  width: 100%; height: 100%;
+  display: block;
+  cursor: grab;
+}
+
+#fg-svg:active { cursor: grabbing; }
+
+/* Node styles (applied via SVG class attributes) */
+.fg-node circle {
+  transition: opacity .35s, filter .35s;
+}
+
+.fg-node text {
+  transition: opacity .35s;
+  pointer-events: none;
+  user-select: none;
+}
+
+.fg-edge {
+  stroke: rgba(255,255,255,.2);
+  stroke-width: 1.5;
+  fill: none;
+  transition: opacity .35s;
+}
+
+/* Focus state */
+.fg-focused .fg-node:not(.fg-selected) circle { opacity: .15; filter: blur(1px); }
+.fg-focused .fg-node:not(.fg-selected) text   { opacity: .15; }
+.fg-focused .fg-edge:not(.fg-connected)        { opacity: .08; }
+
+/* Trait chips (absolutely positioned over overlay) */
+#fg-trait-chips {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.fg-trait-chip {
+  position: absolute;
+  transform: translate(-50%, -50%) scale(.6);
+  opacity: 0;
+  background: var(--color-card-dark);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 12px;
+  padding: 3px 9px;
+  font-size: 10px;
+  color: var(--color-white);
+  white-space: nowrap;
+  pointer-events: none;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), opacity .25s ease;
+}
+
+.fg-trait-chip.fg-chip-visible {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+/* Detail card */
+#fg-detail-card {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  max-width: 430px;
+  margin: 0 auto;
+  background: var(--color-card-dark);
+  border-radius: 20px 20px 0 0;
+  padding: 20px 20px 32px;
+  transform: translateY(100%);
+  transition: transform .3s cubic-bezier(.2,.8,.2,1);
+  z-index: 20;
+  box-shadow: 0 -8px 40px rgba(0,0,0,.5);
+}
+
+#fg-detail-card.fg-card-visible {
+  transform: translateY(0);
+}
+
+#fg-detail-name {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-white);
+  margin: 0 0 2px;
+}
+
+#fg-detail-sub {
+  font-size: 11px;
+  color: var(--color-muted);
+  margin: 0 0 8px;
+}
+
+#fg-detail-desc {
+  font-size: 12px;
+  color: rgba(255,255,255,.7);
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+
+#fg-detail-relations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 16px;
+}
+
+.fg-detail-rel-chip {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.08);
+  color: var(--color-muted);
+}
+
+#btn-fg-open-bio {
+  width: 100%;
+  background: var(--color-primary);
+  border: none;
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+}

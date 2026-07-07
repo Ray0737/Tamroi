@@ -182,6 +182,23 @@
 
 ---
 
+## Figure Biography + Graph Functions
+
+| Function | File | Purpose | Supabase Tables | Status |
+|----------|------|---------|-----------------|--------|
+| `getBio(figureId)` | js/supabase-client.js → `DB.Figures` | Fetches full figure row incl. bio_th, birth_year, death_year | figures | ✅ Done |
+| `getRelations(figureId)` | js/supabase-client.js → `DB.Figures` | Returns neighbours (both directions) joined with figure meta | figure_relations, figures | ✅ Done |
+| `getAllRelations()` | js/supabase-client.js → `DB.Figures` | Returns all edges — used by graph builder | figure_relations | ✅ Done |
+| `getForFigure(figureId)` | js/supabase-client.js → `DB.Lore` | Lore nodes linked to a figure via figure_id column | lore_nodes | ✅ Done |
+| `_fillBioSections(fig, figureId, modal)` | js/collection.js | Async fills relations, lore, locations sections in figure modal | — | ✅ Done |
+| `_openLoreFromModal(loreId, e)` | js/collection.js | Opens lore sheet (saved/read-only) from the bio modal | — | ✅ Done |
+| `_goToMap(lat, lng)` | js/collection.js | Closes modal, switches to map tab, flies to location | — | ✅ Done |
+| `open(figureId)` | js/figure-graph.js → `FigureGraphModule` | Opens full-screen graph overlay, builds neighbourhood, lays out nodes | figure_relations, figures | ✅ Done |
+| `close()` | js/figure-graph.js → `FigureGraphModule` | Tears down overlay and clears state | — | ✅ Done |
+| `flyToLocation(lat, lng, zoom?)` | js/map.js → `MapModule` | MapLibre flyTo wrapper for bio modal location links | — | ✅ Done |
+
+---
+
 ## Notes
 - Functions marked ❌ must be built before the NSC demo is "complete per proposal"
 - Functions marked ⚠️ have known issues documented in `docs/VERIFYLOGIC.md`

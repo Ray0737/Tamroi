@@ -272,6 +272,42 @@ const Figures = {
       .select().single();
     if (error) throw error;
     return data;
+  },
+
+  async getBio(figureId) {
+    const { data, error } = await _sb
+      .from('figures')
+      .select('id, name_th, name_en, class, era, bio_th, birth_year, death_year, description, image_emoji, district_id, lat, lng')
+      .eq('id', figureId)
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async getRelations(figureId) {
+    const [fwd, rev] = await Promise.all([
+      _sb.from('figure_relations').select('related_id, relation_th').eq('figure_id', figureId),
+      _sb.from('figure_relations').select('figure_id, relation_th').eq('related_id', figureId),
+    ]);
+    if (fwd.error) throw fwd.error;
+    if (rev.error) throw rev.error;
+    const ids = [
+      ...fwd.data.map(r => ({ id: r.related_id, relation_th: r.relation_th })),
+      ...rev.data.map(r => ({ id: r.figure_id, relation_th: r.relation_th })),
+    ];
+    if (!ids.length) return [];
+    const { data: figures, error: fe } = await _sb
+      .from('figures')
+      .select('id, name_th, name_en, class, image_emoji')
+      .in('id', ids.map(i => i.id));
+    if (fe) throw fe;
+    return ids.map(i => ({ ...i, ...(figures.find(f => f.id === i.id) || {}) }));
+  },
+
+  async getAllRelations() {
+    const { data, error } = await _sb.from('figure_relations').select('figure_id, related_id, relation_th');
+    if (error) throw error;
+    return data;
   }
 };
 
@@ -401,6 +437,16 @@ const Lore = {
       .eq('lore_id', loreNodeId)
       .eq('assessment_type', 'recall')
       .eq('review_status', 'approved');
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getForFigure(figureId) {
+    const { data, error } = await _sb
+      .from('lore_nodes')
+      .select('id, name_en, name_th, content_th, lat, lng, chain_id, chain_part, figure_id')
+      .eq('figure_id', figureId)
+      .eq('is_active', true);
     if (error) throw error;
     return data || [];
   }

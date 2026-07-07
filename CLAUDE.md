@@ -41,7 +41,8 @@
 │   ├── layout.css       Top bar, bottom nav, tab shell
 │   ├── components.css   Buttons, cards, inputs, bottom sheets, badges
 │   ├── map.css          MapLibre GL overrides, fog layer, markers, GPS dot
-│   └── animations.css   Keyframes
+│   ├── animations.css   Keyframes
+│   └── figure-graph.css Bio modal sections + SVG graph overlay styles
 ├── js/
 │   ├── config.js        Reads window.ENV → window.APP_CONFIG
 │   ├── env.js           Public Supabase anon config for local/static runtime
@@ -59,7 +60,8 @@
 │   ├── raid.js          Raid lobby · Broadcast quiz · host failover
 │   ├── discussion.js    Figure discussion threads (1-level replies + auto-flag)
 │   ├── debates.js          Historical Debate bottom sheet · vote form · results
-│   └── community-forum.js  Community feed · likes · replies · flag
+│   ├── community-forum.js  Community feed · likes · replies · flag
+│   └── figure-graph.js     Interactive relationship graph overlay · SVG canvas · pan/zoom/drag
 └── supabase/
     ├── schema.sql              Full DB schema + Bangkok district seed data
     ├── patch_auth_fix.sql      Auth trigger fix + RLS INSERT policy
@@ -79,6 +81,8 @@
     ├── patch_retrieval_practice.sql recall_due_at on user_lore · assessment_type on quiz_questions · lore_recall challenge type
     ├── patch_debates.sql       history_debates · debate_votes · get_debate_stats SECURITY DEFINER RPC
     ├── patch_jigsaw.sql        chapter_index on lore_nodes · type on collab_missions · guild_jigsaw_assignments table
+    ├── patch_figure_bio.sql    bio_th/birth_year/death_year columns on figures + figure_relations table + seed edges
+    ├── patch_lore_coord_fix.sql Fix lore-wat-pho-learning lng (100.4930→100.4883)
     └── patch_mock_satit.sql    Test-only seed data — REMOVE before production
 └── docs/
     ├── CODING_INSTRUCTIONS.md  Design system and implementation rules
@@ -220,9 +224,11 @@ Run patches in this order:
 18. SQL Editor → `supabase/patch_retrieval_practice.sql`
 19. SQL Editor → `supabase/patch_debates.sql`
 20. SQL Editor → `supabase/patch_jigsaw.sql`
-21. Authentication → Email → **disable "Confirm email"** for dev
-22. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
-23. Settings → API → copy URL + anon key into `js/env.js`
+21. SQL Editor → `supabase/patch_figure_bio.sql`
+22. SQL Editor → `supabase/patch_lore_coord_fix.sql`
+23. Authentication → Email → **disable "Confirm email"** for dev
+24. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
+25. Settings → API → copy URL + anon key into `js/env.js`
 
 ---
 
@@ -310,6 +316,7 @@ Run patches in this order:
 | `debate_votes` | patch_debates | Per-user votes + optional reason; own-row RLS |
 | `get_debate_stats(p_debate_id)` RPC | patch_debates | SECURITY DEFINER — returns aggregate vote counts + reasons |
 | `guild_jigsaw_assignments` | patch_jigsaw | Chapter assignments + summaries per member per jigsaw mission |
+| `figure_relations` | patch_figure_bio | Directed relation edges (figure_id → related_id + relation_th); public SELECT RLS |
 | `quiz_questions.lore_id` | patch_retrieval_practice | Links recall questions to their source lore node |
 | `quiz_questions.assessment_type` | patch_retrieval_practice | `'capture'` / `'pretest'` / `'recall'` |
 | `user_lore.recall_due_at` | patch_retrieval_practice | Spaced-repetition due timestamp; auto-set by DB trigger |
@@ -330,6 +337,13 @@ Run patches in this order:
 - `window.AppCore.openLoreSheet(node)`, `openLoreChainSheet(chain)`, `showToast(message)`
 - `window.MapModule.renderGuildFog(clearedDistrictIds)`: overlays tinted fog for guild territory
 - `window.MapModule.renderRallyPin(userId, username, lat, lng)`: places/updates a rally pin marker on the map
+- `window.MapModule.flyToLocation(lat, lng, zoom?)`: MapLibre flyTo — used by bio modal location links
+- `window.DB.Figures.getBio(figureId)`: full figure row incl. bio_th, birth_year, death_year
+- `window.DB.Figures.getRelations(figureId)`: neighbour edges (both directions) joined with figure meta
+- `window.DB.Figures.getAllRelations()`: all figure_relations edges (used by graph builder)
+- `window.DB.Lore.getForFigure(figureId)`: lore_nodes where figure_id = X
+- `window.FigureGraphModule.open(figureId)`: opens SVG relationship graph overlay
+- `window.FigureGraphModule.close()`: closes and tears down graph overlay
 
 **Phase 3 — Co-op**
 - `window.DB.Coop`: `getMyGuild(userId)`, `getGuildMembers(guildId)`, `getGuildClearedDistrictIds(guildId)`, `createGuild(name, userId)`, `leaveGuild(guildId, userId)`, `kickMember(guildId, targetUserId)`, `deleteGuild(guildId)`, `updateGuild(guildId, fields)`, `searchGuilds(query)`, `sendJoinRequest(guildId, userId)`, `getMyPendingRequest(userId)`, `getJoinRequests(guildId)`, `approveRequest(requestId, guildId, targetUserId)`, `rejectRequest(requestId)`, `getCollabMissions()`, `checkInToMission(missionId, guildId, userId)`, `getMissionCheckins(missionId, guildId)`, `getAllGuildCheckins(guildId)`, `getGuildLeaderboard()`, `subscribeGuildPresence(guildId, {onSync, onJoin, onLeave})`, `subscribeGuildMembers(guildId, callback)`, `subscribeGuildChanges(callback)`, `subscribeMissionProgress(missionId, guildId, callback)`, `getMyMemberships(userId)`, `getExpeditionLog(memberIds, limit?)`, `openRallyChannel(guildId)`, `getJigsawAssignments(guildId, missionId)`, `assignJigsawChapters(guildId, missionId, memberIds)`, `postJigsawSummary(guildId, missionId, userId, summary)`
