@@ -520,7 +520,7 @@ const MapModule = (() => {
       const districtId = node.district_id || node.districtId;
       if (districtId && userDistrictState[districtId]?.fogged !== false) return;
       const distance = haversineDistance(userLat, userLng, node.lat, node.lng);
-      if (distance <= (Math.min(node.radius_m || 50, 50))) unlockLore(node);
+      if (distance <= (node.radius_m || 50)) unlockLore(node);
     });
   }
 
@@ -544,7 +544,7 @@ const MapModule = (() => {
     const node = loreNodes.find(item => item.id === loreId) || activeLoreNode;
     if (!node) return;
 
-    if (!isDev() && lastKnownPosition && haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, node.lat, node.lng) > (Math.min(node.radius_m || 50, 50))) {
+    if (!isDev() && lastKnownPosition && haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, node.lat, node.lng) > (node.radius_m || 50)) {
       window.AppCore?.showToast('คุณอยู่ไกลเกินไป — เดินทางให้ใกล้กว่านี้');
       return;
     }
@@ -745,8 +745,8 @@ const MapModule = (() => {
     // so the sweep doesn't visually snap to a different final shape when it hands off here.
     //
     // Multi-watchtower districts (allWatchtowersCache has rows for this district_id):
-    // fully-cleared reveals the union of every watchtower's circle; not-yet-complete
-    // reveals only the circles of the watchtowers this user has personally visited so far.
+    // fully-cleared reveals the district polygon (one contiguous hole, no gaps between circles);
+    // not-yet-complete reveals only the circles of the watchtowers this user has visited so far.
     const clearedPolys = [];
     districts.forEach(d => {
       const districtWatchtowers = allWatchtowersCache.filter(w => w.district_id === d.id);
@@ -760,10 +760,21 @@ const MapModule = (() => {
         return;
       }
 
-      const relevant = fullyCleared
-        ? districtWatchtowers
-        : districtWatchtowers.filter(w => visitedWatchtowerIds.has(w.id));
-      relevant.forEach(w => clearedPolys.push(_circleRing(w.lat, w.lng, WATCHTOWER_REVEAL_RADIUS_M)));
+      // All watchtowers visited → reveal full district polygon so the cleared area
+      // looks contiguous, not two separate circles with fog between them.
+      if (fullyCleared) {
+        const raw = d.polygon_coords;
+        const coords = (typeof raw === 'string' ? JSON.parse(raw) : raw) || [];
+        if (coords.length) {
+          clearedPolys.push(coords.map(c => [c[1], c[0]])); // [lat,lng] → [lng,lat]
+          return;
+        }
+        // No polygon_coords → fall back to all watchtower circles
+        districtWatchtowers.forEach(w => clearedPolys.push(_circleRing(w.lat, w.lng, WATCHTOWER_REVEAL_RADIUS_M)));
+        return;
+      }
+      districtWatchtowers.filter(w => visitedWatchtowerIds.has(w.id))
+        .forEach(w => clearedPolys.push(_circleRing(w.lat, w.lng, WATCHTOWER_REVEAL_RADIUS_M)));
     });
 
     // Walk-trail holes: a small circle per walked point (smooth trail, not grid squares).
@@ -1633,8 +1644,14 @@ const MapModule = (() => {
 
   document.getElementById('btn-checkin')?.addEventListener('click', performCheckIn);
   document.getElementById('btn-c-capture')?.addEventListener('click', () => {
-    if (_pendingCaptureC) _completeCapture(_pendingCaptureC, 0);
+    if (!_pendingCaptureC) return;
+    const fig = _pendingCaptureC;
     _pendingCaptureC = null;
+    if (!isDev() && (!lastKnownPosition || haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, fig.lat, fig.lng) > 80)) {
+      window.AppCore?.showToast('เข้าใกล้กว่านี้ (80 ม.)');
+      return;
+    }
+    _completeCapture(fig, 0);
   });
 
   function getLoreNodes() { return loreNodes; }

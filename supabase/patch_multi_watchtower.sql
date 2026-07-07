@@ -83,10 +83,9 @@ CREATE TRIGGER on_watchtower_visit_check_district_complete
   AFTER INSERT ON user_watchtower_visits
   FOR EACH ROW EXECUTE FUNCTION check_district_watchtowers_complete();
 
--- ── Example seed for Asok/Wattana (Satit PSM + Terminal 21) ──
--- Adjust district_id to your actual Wattana/Asok row's id before running.
--- Satit PSM coordinate is search-derived, NOT independently verified against a
--- live map — confirm it lands on the real campus before relying on it.
--- INSERT INTO watchtowers (district_id, name_th, name_en, lat, lng) VALUES
---   ('wattana', 'สาธิต มศว ประสานมิตร', 'Satit PSM', 13.742906, 100.56555),
---   ('wattana', 'เทอร์มินอล 21', 'Terminal 21', 13.7373, 100.5605);
+-- ── Wattana: two watchtowers (Satit PSM + Terminal 21) ──
+-- ponytail: Satit PSM lat/lng from Google Maps — verify on device before demo
+INSERT INTO watchtowers (district_id, name_th, name_en, lat, lng) VALUES
+  ('watthana', 'สาธิต มศว ประสานมิตร', 'Satit PSM',   13.7429, 100.5656),
+  ('watthana', 'เทอร์มินอล 21',        'Terminal 21', 13.7373, 100.5605)
+ON CONFLICT DO NOTHING;
