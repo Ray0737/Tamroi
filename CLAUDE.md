@@ -83,6 +83,8 @@
     ├── patch_jigsaw.sql        chapter_index on lore_nodes · type on collab_missions · guild_jigsaw_assignments table
     ├── patch_figure_bio.sql    bio_th/birth_year/death_year columns on figures + figure_relations table + seed edges
     ├── patch_lore_coord_fix.sql Fix lore-wat-pho-learning lng (100.4930→100.4883)
+    ├── patch_multi_watchtower.sql watchtowers + user_watchtower_visits tables + district-completion trigger (multi-tower districts, e.g. Wattana)
+    ├── patch_encounter_key.sql has_encounter_key column on user_districts + backfill for existing check-ins
     └── patch_mock_satit.sql    Test-only seed data — REMOVE before production
 └── docs/
     ├── CODING_INSTRUCTIONS.md  Design system and implementation rules
@@ -226,9 +228,11 @@ Run patches in this order:
 20. SQL Editor → `supabase/patch_jigsaw.sql`
 21. SQL Editor → `supabase/patch_figure_bio.sql`
 22. SQL Editor → `supabase/patch_lore_coord_fix.sql`
-23. Authentication → Email → **disable "Confirm email"** for dev
-24. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
-25. Settings → API → copy URL + anon key into `js/env.js`
+23. SQL Editor → `supabase/patch_multi_watchtower.sql`
+24. SQL Editor → `supabase/patch_encounter_key.sql`
+25. Authentication → Email → **disable "Confirm email"** for dev
+26. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
+27. Settings → API → copy URL + anon key into `js/env.js`
 
 ---
 
@@ -317,6 +321,10 @@ Run patches in this order:
 | `get_debate_stats(p_debate_id)` RPC | patch_debates | SECURITY DEFINER — returns aggregate vote counts + reasons |
 | `guild_jigsaw_assignments` | patch_jigsaw | Chapter assignments + summaries per member per jigsaw mission |
 | `figure_relations` | patch_figure_bio | Directed relation edges (figure_id → related_id + relation_th); public SELECT RLS |
+| `watchtowers` | patch_multi_watchtower | Multiple check-in points per district (e.g. Wattana: Satit PSM + Terminal 21); empty for districts still on the legacy single-watchtower flow |
+| `user_watchtower_visits` | patch_multi_watchtower | Per-user, per-watchtower visit rows; unique per `(user_id, watchtower_id)` |
+| `check_district_watchtowers_complete` trigger | patch_multi_watchtower | Flips `user_districts.fogged = false` once a user has visited every watchtower in a district |
+| `user_districts.has_encounter_key` | patch_encounter_key | Set true on check-in; required alongside support-node chain to start an A-tier Legendary Encounter |
 | `quiz_questions.lore_id` | patch_retrieval_practice | Links recall questions to their source lore node |
 | `quiz_questions.assessment_type` | patch_retrieval_practice | `'capture'` / `'pretest'` / `'recall'` |
 | `user_lore.recall_due_at` | patch_retrieval_practice | Spaced-repetition due timestamp; auto-set by DB trigger |
