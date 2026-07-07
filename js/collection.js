@@ -80,12 +80,16 @@ const CollectionModule = (() => {
   }
 
   function bindFilters() {
-    const classSelect = document.getElementById('collection-class-filter');
-    if (classSelect) {
-      classSelect.addEventListener('change', () => {
-        activeClassFilter = classSelect.value;
-        classSelect.classList.toggle('has-value', activeClassFilter !== 'all');
-        render();
+    const classToggle = document.getElementById('collection-class-filter');
+    if (classToggle) {
+      classToggle.parentElement.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', () => {
+          activeClassFilter = item.dataset.value;
+          classToggle.textContent = item.textContent;
+          classToggle.dataset.value = activeClassFilter;
+          classToggle.classList.toggle('has-value', activeClassFilter !== 'all');
+          render();
+        });
       });
     }
 

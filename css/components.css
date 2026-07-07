@@ -350,6 +350,32 @@
   color: var(--color-white);
 }
 
+/* Bootstrap dropdown replacing the native <select> — the open <select> popup is
+   OS-rendered in Chrome/Edge and CSS can't reach it (that's why .filter-select option
+   above never actually themed the open list). A real dropdown-menu element is a normal
+   DOM node, fully themeable. Suppress Bootstrap's default caret since .filter-select
+   already draws its own chevron via background-image. */
+.filter-select.dropdown-toggle::after { display: none; }
+
+.filter-select-menu {
+  background: var(--color-card-dark);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  min-width: 140px;
+}
+.filter-select-menu .dropdown-item {
+  color: var(--color-white);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+}
+.filter-select-menu .dropdown-item:hover,
+.filter-select-menu .dropdown-item:focus {
+  background: var(--color-primary-dim);
+  color: var(--color-primary);
+}
+
 /* ── Progress Bar ─────────────────────────────────────── */
 .progress-track {
   height: 6px;

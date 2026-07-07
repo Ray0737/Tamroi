@@ -280,13 +280,17 @@
 
           <!-- Filters -->
           <div class="filter-pills" id="collection-filters">
-            <select id="collection-class-filter" class="filter-select">
-              <option value="all">ทั้งหมด</option>
-              <option value="S">S-Class</option>
-              <option value="A">A-Class</option>
-              <option value="B">B-Class</option>
-              <option value="C">C-Class</option>
-            </select>
+            <div class="dropdown">
+              <button class="filter-select dropdown-toggle" type="button" id="collection-class-filter"
+                      data-value="all" data-bs-toggle="dropdown" aria-expanded="false">ทั้งหมด</button>
+              <ul class="dropdown-menu filter-select-menu" aria-labelledby="collection-class-filter">
+                <li><button class="dropdown-item" type="button" data-value="all">ทั้งหมด</button></li>
+                <li><button class="dropdown-item" type="button" data-value="S">S-Class</button></li>
+                <li><button class="dropdown-item" type="button" data-value="A">A-Class</button></li>
+                <li><button class="dropdown-item" type="button" data-value="B">B-Class</button></li>
+                <li><button class="dropdown-item" type="button" data-value="C">C-Class</button></li>
+              </ul>
+            </div>
             <button class="pill" id="collection-owned-toggle">Owned</button>
             <button class="pill" id="collection-artifacts-pill" data-view="artifacts">Artifacts</button>
             <button class="pill" id="collection-journal-pill" data-view="journal">Journal</button>
