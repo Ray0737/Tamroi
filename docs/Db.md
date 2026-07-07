@@ -109,3 +109,20 @@ Columns: `id`, `name_th`, `name_en`, `class` (S/A/B/C), `legacy_pts`, `district_
 - All figures have `raid_min_players = 2`.
 - District names are in Thai; district IDs (`rattanakosin`, `dusit`, `pathumwan`, `silom`, etc.) map to the `districts` table (14 districts total).
 - `fig-mock-satit-b-01` is a test fixture (marked `[TEST]`/`[MOCK]` in its own data) — flag for removal before production data cleanup.
+
+## Multi-watchtower districts (new: `watchtowers` table)
+
+Added 2026-07 (`patch_multi_watchtower.sql`, applied live to the NSC project). Most of
+the 14 districts still use the original single-watchtower model (`districts.watchtower_lat`/
+`watchtower_lng`, one check-in point). Districts that instead have rows in the new
+`watchtowers` table require checking in at **every** watchtower listed before the whole
+district's fog clears (completion tracked per-user in `user_watchtower_visits`, enforced
+by trigger `check_district_watchtowers_complete`).
+
+| District | Watchtowers |
+|---|---|
+| `watthana` (วัฒนา) | สาธิต มศว ประสานมิตร / Satit PSM (13.742906, 100.56555), เทอร์มินอล 21 / Terminal 21 (13.7373, 100.5605) |
+
+Both `watthana` coordinates are search-derived, **not** independently verified against a
+live map — confirm they land on the real premises before relying on them for actual
+GPS check-ins.
