@@ -139,6 +139,39 @@ const MapModule = (() => {
     return ring;
   }
 
+  // Same destination-point math as _circleRing's inner loop, factored out so the
+  // walk-trail strip below can place points at an arbitrary bearing instead of a full sweep.
+  function _destPoint(lat, lng, bearingRad, distM) {
+    const distRad = distM / 6371000;
+    const latRad = lat * Math.PI / 180;
+    const lngRad = lng * Math.PI / 180;
+    const lat2 = Math.asin(Math.sin(latRad) * Math.cos(distRad) + Math.cos(latRad) * Math.sin(distRad) * Math.cos(bearingRad));
+    const lng2 = lngRad + Math.atan2(
+      Math.sin(bearingRad) * Math.sin(distRad) * Math.cos(latRad),
+      Math.cos(distRad) - Math.sin(latRad) * Math.sin(lat2)
+    );
+    return [lng2 * 180 / Math.PI, lat2 * 180 / Math.PI];
+  }
+
+  function _bearing(lat1, lng1, lat2, lng2) {
+    const phi1 = lat1 * Math.PI / 180, phi2 = lat2 * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    return Math.atan2(Math.sin(dLng) * Math.cos(phi2), Math.cos(phi1) * Math.sin(phi2) - Math.sin(phi1) * Math.cos(phi2) * Math.cos(dLng));
+  }
+
+  // Rectangular strip spanning two walked points, radiusM wide on each side — fills the
+  // waist between two overlapping trail circles so a sparse GPS trail still reads as one
+  // continuous ribbon instead of a string of separate bubbles.
+  function _stripRing(lat1, lng1, lat2, lng2, radiusM) {
+    const brng = _bearing(lat1, lng1, lat2, lng2);
+    const perpA = brng + Math.PI / 2, perpB = brng - Math.PI / 2;
+    const p1 = _destPoint(lat1, lng1, perpA, radiusM);
+    const p2 = _destPoint(lat2, lng2, perpA, radiusM);
+    const p3 = _destPoint(lat2, lng2, perpB, radiusM);
+    const p4 = _destPoint(lat1, lng1, perpB, radiusM);
+    return [p1, p2, p3, p4, p1];
+  }
+
   function _circleFeature(lat, lng, radiusM) {
     return { type: 'Feature', properties: {}, geometry: { type: 'Polygon', coordinates: [_circleRing(lat, lng, radiusM)] } };
   }
@@ -609,12 +642,19 @@ const MapModule = (() => {
     if (btn) { btn.disabled = true; btn.innerHTML = `<div class="spinner"></div>`; }
 
     const user = window.AppCore?.App?.user;
-    try {
-      if (user) {
+    if (user) {
+      try {
         await DB.Lore.unlock(user.id, node.id);
         await DB.Profiles.addLegacyPoints(user.id, (node.lore_pts || 0) * getTransportMultiplier());
+      } catch (e) {
+        console.error('[lore unlock] DB write failed:', e);
+        if (navigator.onLine) {
+          window.AppCore?.showToast('บันทึกไม่สำเร็จ ลองใหม่อีกครั้ง');
+          if (btn) { btn.disabled = false; btn.innerHTML = 'อ่านแล้ว บันทึก →'; }
+          return;
+        }
       }
-    } catch (e) { console.error('[lore unlock] DB write failed:', e); }
+    }
 
     unlockedLoreIds.add(node.id);
     pendingLoreIds.delete(node.id);
@@ -786,9 +826,17 @@ const MapModule = (() => {
       poly.forEach(([lng, lat]) => { s = Math.min(s, lat); n = Math.max(n, lat); w = Math.min(w, lng); e = Math.max(e, lng); });
       return { s, n, w, e };
     });
-    const cellHoles = _walkedPoints
-      .filter(({ lat, lng }) => !clearedBboxes.some(b => lat > b.s && lat < b.n && lng > b.w && lng < b.e))
-      .map(({ lat, lng }) => _circleRing(lat, lng, WALK_REVEAL_RADIUS_M));
+    const walkPts = _walkedPoints
+      .filter(({ lat, lng }) => !clearedBboxes.some(b => lat > b.s && lat < b.n && lng > b.w && lng < b.e));
+    const cellHoles = walkPts.map(({ lat, lng }) => _circleRing(lat, lng, WALK_REVEAL_RADIUS_M));
+    for (let i = 1; i < walkPts.length; i++) {
+      const a = walkPts[i - 1], b = walkPts[i];
+      // Skip far-apart pairs (session gap / driving between points) — only bridge
+      // consecutive on-foot steps, not the whole trail with one long sliver.
+      if (haversineDistance(a.lat, a.lng, b.lat, b.lng) <= 150) {
+        cellHoles.push(_stripRing(a.lat, a.lng, b.lat, b.lng, WALK_REVEAL_RADIUS_M));
+      }
+    }
 
     const outer = _ringWithWinding(FOG_OUTER_LL, true);
     const holes = [...clearedPolys, ...cellHoles].map(ring => _ringWithWinding(ring, false));
@@ -990,7 +1038,17 @@ const MapModule = (() => {
 
   async function _completeCapture(figure, quizScore) {
     const u = window.AppCore?.App?.user;
-    try { if (u) await DB.Figures.capture(u.id, figure.id, quizScore); } catch {}
+    if (u) {
+      try {
+        await DB.Figures.capture(u.id, figure.id, quizScore);
+      } catch (err) {
+        console.error('[Figures.capture] failed to save', err);
+        if (navigator.onLine && err?.code !== '23505') {
+          window.AppCore?.showToast('บันทึกไม่สำเร็จ ลองใหม่อีกครั้ง');
+          return;
+        }
+      }
+    }
     if (u) DB.Missions?.updateChallengeProgress(u.id, 'capture').catch(() => {});
     capturedFigureIds.add(figure.id);
     window.CollectionModule?.markCaptured?.(figure.id);
@@ -1140,9 +1198,18 @@ const MapModule = (() => {
 
     let nextState = null;
     const user = window.AppCore?.App?.user;
-    try {
-      if (user) nextState = await DB.Districts.updateNodeVisit(user.id, node.districtId, node.type, nodeId);
-    } catch { /* offline fallback below */ }
+    if (user) {
+      try {
+        nextState = await DB.Districts.updateNodeVisit(user.id, node.districtId, node.type, nodeId);
+      } catch (err) {
+        console.error('[Districts.updateNodeVisit] failed to save', err);
+        if (navigator.onLine) {
+          window.AppCore?.showToast('บันทึกไม่สำเร็จ ลองใหม่อีกครั้ง');
+          if (btn) { btn.disabled = false; btn.innerHTML = 'เยี่ยมชมสถานที่นี้'; }
+          return;
+        }
+      }
+    }
 
     const current = userDistrictState[node.districtId] || { fogged: false, cafes_visited: 0, otops_visited: 0, landmarks_visited: 0 };
     const field = node.type === 'cafe' ? 'cafes_visited'
@@ -1467,9 +1534,19 @@ const MapModule = (() => {
       // decides server-side whether this finishes the district. We mirror that same
       // "all watchtowers visited?" check locally so fog updates instantly, without
       // waiting on the realtime round-trip.
-      try {
-        if (user) await DB.Watchtowers.checkIn(user.id, d.watchtowerId);
-      } catch { /* offline — continue locally */ }
+      if (user) {
+        try {
+          await DB.Watchtowers.checkIn(user.id, d.watchtowerId);
+        } catch (err) {
+          console.error('[Watchtowers.checkIn] failed to save', err);
+          if (navigator.onLine) {
+            window.AppCore?.showToast('บันทึกไม่สำเร็จ ลองใหม่อีกครั้ง');
+            btn.disabled = false;
+            btn.textContent = 'Check In & Clear Fog ✓';
+            return;
+          }
+        }
+      }
       visitedWatchtowerIds.add(d.watchtowerId);
 
       const siblingIds = allWatchtowersCache.filter(w => w.district_id === d.id).map(w => w.id);
@@ -1484,9 +1561,19 @@ const MapModule = (() => {
       }
     } else {
       // Legacy single-watchtower district — unchanged behavior.
-      try {
-        if (user) await DB.Districts.checkIn(user.id, d.id);
-      } catch { /* offline — continue locally */ }
+      if (user) {
+        try {
+          await DB.Districts.checkIn(user.id, d.id);
+        } catch (err) {
+          console.error('[Districts.checkIn] failed to save', err);
+          if (navigator.onLine) {
+            window.AppCore?.showToast('บันทึกไม่สำเร็จ ลองใหม่อีกครั้ง');
+            btn.disabled = false;
+            btn.textContent = 'Check In & Clear Fog ✓';
+            return;
+          }
+        }
+      }
       userDistrictState[d.id] = { ...userDistrictState[d.id], fogged: false, has_encounter_key: true };
       window.AppCore?.showToast('ได้รับกุญแจ Encounter แล้ว! 🗝️');
     }
