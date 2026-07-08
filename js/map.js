@@ -944,7 +944,13 @@ const MapModule = (() => {
         const lng = district?.watchtower_lng ?? district?.center_lng;
         if (lat == null || lng == null) return;
         const html = `<div class="marker-node" style="opacity:0.55;border-style:dashed" title="ตำแหน่งยังไม่ระบุ">?</div>`;
-        markers[`figure-${figure.id}`] = _addMarker(lat, lng, html, { anchorX: 12, anchorY: 12 });
+        const placeholderMarker = _addMarker(lat, lng, html, { anchorX: 12, anchorY: 12 });
+        placeholderMarker.getElement().addEventListener('click', () => {
+          if (figure.raid_only) _startRaidEncounter(figure);
+          else if (figure.class === 'B') openQuizForFigure(figure.id);
+          else openLegendaryEncounter(figure.districtId, figure.id);
+        });
+        markers[`figure-${figure.id}`] = placeholderMarker;
         return;
       }
 
