@@ -4,7 +4,6 @@ const MapModule = (() => {
   let guildFogLayer    = null;    // truthy flag: guild fog currently rendered
   let markers          = {};
   let activeDistrict   = null;
-  let _nodeCardTimer   = null;    // auto-dismiss timer for node info card
   let _locationMarker  = null;    // real-time GPS dot
   let _locationWatcher = null;    // watchPosition handle
   let _posHistory      = [];      // recent positions for speed/teleport detection
@@ -323,12 +322,6 @@ const MapModule = (() => {
     // Compass control shown so the player can tap it to reset bearing back to north-up.
     map.addControl(new maplibregl.NavigationControl({ showCompass: true, visualizePitch: true }), 'top-right');
 
-    const dismissNodeCard = () => {
-      const card = document.getElementById('node-info-card');
-      if (card) { card.classList.remove('show'); clearTimeout(_nodeCardTimer); }
-    };
-    map.on('click', dismissNodeCard);
-    map.on('mousedown', dismissNodeCard);
 
     map.on('load', () => {
       _initOverlaySources();
@@ -1087,11 +1080,10 @@ const MapModule = (() => {
     window.AppCore?.openLoreSheet({ ...node, is_saved: unlockedLoreIds.has(loreId) });
   }
 
-  // ── Node info card (above nav, no z-index conflicts) ──
+  // ── Support node info sheet ──────────────────────────
   function showNodeInfoCard(node) {
-    const card    = document.getElementById('node-info-card');
     const content = document.getElementById('node-info-content');
-    if (!card || !content) return;
+    if (!content) return;
 
     const cfg      = NODE_CFG[node.type] || NODE_CFG.landmark;
     const district = (allDistrictsCache || []).find(d => d.id === node.districtId);
@@ -1115,34 +1107,22 @@ const MapModule = (() => {
           </svg>
         </div>
         <div style="flex:1;min-width:0">
-          <p style="margin:0;font-weight:600;font-size:13px;color:#1C1B2E;line-height:1.3;
+          <p style="margin:0;font-weight:600;font-size:15px;color:var(--color-white);line-height:1.3;
                     white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(node.name)}</p>
-          <p style="margin:2px 0 0;font-size:10px;color:#6b6884">
+          <p style="margin:2px 0 0;font-size:11px;color:var(--color-muted)">
             ${escapeHtml(cfg.label)}${district ? ' · ' + escapeHtml(district.name_th) : ''}
           </p>
         </div>
-        <button onclick="document.getElementById('node-info-card').classList.remove('show')"
-                style="background:none;border:none;color:#6b6884;padding:4px;cursor:pointer;
-                       flex-shrink:0;display:flex;align-items:center;justify-content:center">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-               style="width:16px;height:16px">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
       </div>
-      <div style="padding:0 14px 12px">
-        <button class="btn btn-sm ${visited ? 'btn-outline' : 'btn-primary'} btn-full"
-                id="btn-visit-support-node"
-                onclick="MapModule.visitSupportNode('${escapeHtml(id)}')"
-                ${visited ? 'disabled' : ''}>
-          ${visited ? 'เยี่ยมชมแล้ว' : 'เยี่ยมชมสถานที่นี้'}
-        </button>
-      </div>
+      <button class="btn ${visited ? 'btn-outline' : 'btn-primary'} btn-full"
+              id="btn-visit-support-node"
+              onclick="MapModule.visitSupportNode('${escapeHtml(id)}')"
+              ${visited ? 'disabled' : ''}>
+        ${visited ? 'เยี่ยมชมแล้ว' : 'เยี่ยมชมสถานที่นี้'}
+      </button>
     `;
 
-    card.classList.add('show');
-    clearTimeout(_nodeCardTimer);
-    _nodeCardTimer = setTimeout(() => card.classList.remove('show'), 4000);
+    window.AppCore?.openSheet('node-info-sheet');
   }
 
   async function visitSupportNode(nodeId) {

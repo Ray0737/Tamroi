@@ -432,15 +432,15 @@
     </button>
   </nav>
 
-  <!-- ════ NODE INFO CARD ════
-       Floats above the bottom-nav when a map node is tapped.
-       Avoids Leaflet popup z-index conflicts with the nav. -->
-  <div class="node-info-card" id="node-info-card">
-    <div id="node-info-content"></div>
-  </div>
-
   <!-- ════ SHEET OVERLAY ════ -->
   <div id="sheet-overlay" class="sheet-overlay"></div>
+
+  <!-- ════ SUPPORT NODE INFO SHEET ════ -->
+  <div class="bottom-sheet" id="node-info-sheet">
+    <div class="sheet-handle"></div>
+    <div id="node-info-content"></div>
+    <button class="btn btn-ghost btn-full mt-2" onclick="AppCore.closeAllSheets()" style="margin-top:8px">ปิด</button>
+  </div>
 
   <!-- ════ CHECK-IN BOTTOM SHEET ════ -->
   <div class="bottom-sheet" id="checkin-sheet">
