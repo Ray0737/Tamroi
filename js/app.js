@@ -340,8 +340,9 @@ async function openLoreSheet(node) {
         } else {
           closeAllSheets();
         }
-      } catch (_) {
-        closeAllSheets();
+      } catch (err) {
+        console.error('[lore] saveLoreUnlock failed', err);
+        showToast('บันทึกไม่สำเร็จ ลองใหม่อีกครั้ง');
       }
     };
   }
@@ -363,7 +364,7 @@ async function openLoreSheet(node) {
             : preScore === 0 && score === total ? 20
             : score > preScore ? 10 : 0;
           if (bonus > 0) await DB.Profiles.addLegacyPoints(userId, bonus);
-        } catch (_) {}
+        } catch (err) { console.error('[lore] assessment save failed', err); }
       }
       showResultPhase(preScore, score, questions.length);
     });
