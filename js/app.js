@@ -271,6 +271,7 @@ async function openLoreSheet(node) {
     if (phasePanel) phasePanel.hidden = true;
     saveBtn.disabled = true;
     saveBtn.textContent = 'บันทึกแล้ว';
+    saveBtn.className = 'btn btn-outline btn-sm btn-full';
     saveBtn.onclick = null;
     openSheet('lore-sheet');
     return;
@@ -331,6 +332,7 @@ async function openLoreSheet(node) {
   function showContentPhase() {
     if (phasePanel) phasePanel.hidden = true;
     saveBtn.disabled    = false;
+    saveBtn.className   = 'btn btn-primary btn-full';
     saveBtn.textContent = 'อ่านแล้ว บันทึก →';
     saveBtn.onclick     = async () => {
       try {

@@ -1114,7 +1114,7 @@ const MapModule = (() => {
           </p>
         </div>
       </div>
-      <button class="btn ${visited ? 'btn-outline' : 'btn-primary'} btn-full"
+      <button class="btn ${visited ? 'btn-outline' : 'btn-primary'} btn-sm btn-full"
               id="btn-visit-support-node"
               onclick="MapModule.visitSupportNode('${escapeHtml(id)}')"
               ${visited ? 'disabled' : ''}>
