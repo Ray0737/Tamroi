@@ -1097,7 +1097,7 @@ const MapModule = (() => {
         : '<line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><polygon points="12 2 20 7 4 7"/>';
 
     content.innerHTML = `
-      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:var(--space-md)">
         <div style="width:36px;height:36px;border-radius:50%;background:${cfg.bg};
                     display:flex;align-items:center;justify-content:center;
                     flex-shrink:0;color:${cfg.color}">
