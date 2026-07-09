@@ -20,7 +20,6 @@
 | Leaderboard + Realtime | ✅ Done | `leaderboard_legacy` view, Supabase Realtime |
 | Notifications (Realtime) | ✅ Done | `notifications` table, offcanvas |
 | Daily challenges | ✅ Done | `daily_challenges`, `user_daily_progress` |
-| BTS/MRT bonus | ✅ Done | Seeded station radius data |
 | Seasonal events | ✅ Done | Date-range multipliers in missions.js |
 
 ### DB Patches Applied
@@ -42,7 +41,7 @@
 | Guild invite code (6-char auto-gen) | ✅ Done | DB trigger `on_guild_insert_code` |
 | Guild Presence (online members) | ✅ Done | Supabase Presence `presence:guild:{id}` |
 | Guild leaderboard tab | ✅ Done | `guild_leaderboard` VIEW, leaderboard.js toggle |
-| Collaborative missions | ✅ Done | js/coop.js, `collab_missions`, `collab_mission_checkins` |
+| Collaborative missions | ⏸️ Disabled (built, feature-flagged off) | `CoopModule.load()` shows a locked placeholder card; real logic moved to `CoopModule._liveLoad()`, unused for now |
 | Real-time mission progress bar | ✅ Done | `subscribeMissionProgress` postgres_changes |
 | Threshold trigger (auto-complete) | ✅ Done | `on_collab_checkin_threshold` trigger |
 | Raid encounters (Broadcast quiz) | ✅ Done | js/raid.js, `raid_sessions`, `raid_session_members` |

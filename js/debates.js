@@ -84,7 +84,7 @@ const DebateModule = (() => {
           เลือก ${escapeHtml(d.case_a_title)}
         </button>
         <button id="btn-vote-b" class="btn btn-full"
-                style="flex:1;background:rgba(255,126,85,0.12);border:1px solid var(--color-primary);
+                style="flex:1;background:rgba(234,231,225,0.12);border:1px solid var(--color-primary);
                        color:var(--color-primary);font-size:12px;font-weight:700">
           เลือก ${escapeHtml(d.case_b_title)}
         </button>

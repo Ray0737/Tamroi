@@ -64,7 +64,7 @@ const FigureGraphModule = (() => {
   function _ns(tag) { return document.createElementNS('http://www.w3.org/2000/svg', tag); }
 
   function _classColor(cls) {
-    return { S: '#FF7E55', A: '#7BC67E', B: '#66A3D9', C: '#9DA3AE' }[cls] || '#9DA3AE';
+    return { S: '#EAE7E1', A: '#7BC67E', B: '#66A3D9', C: '#9DA3AE' }[cls] || '#9DA3AE';
   }
 
   function _renderEdges() {

@@ -201,7 +201,7 @@
 
 .capture-reveal-card.capture-reveal-legendary {
   border: 1.5px solid var(--glow-color, var(--color-primary));
-  box-shadow: 0 0 40px rgba(246, 193, 158, 0.25), var(--shadow-card);
+  box-shadow: 0 0 40px rgba(234,231,225, 0.25), var(--shadow-card);
 }
 
 .capture-glow-ring {

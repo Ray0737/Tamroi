@@ -223,7 +223,7 @@ const CollectionModule = (() => {
 
   // SVG icons for each artifact type — fixed-size container prevents overflow
   const ARTIFACT_SVG = {
-    'bronze-sword':  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4L4 20"/><path d="M20 4l-5 1-1 5L20 4z" fill="rgba(246,193,158,0.3)"/><path d="M8 16l-2 2"/><path d="M6.5 14.5l-3 3 1 1 3-3"/></svg>`,
+    'bronze-sword':  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4L4 20"/><path d="M20 4l-5 1-1 5L20 4z" fill="rgba(234,231,225,0.3)"/><path d="M8 16l-2 2"/><path d="M6.5 14.5l-3 3 1 1 3-3"/></svg>`,
     'old-map':       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>`,
     'ceramic-bowl':  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-2 8H8L6 8z"/><path d="M4 8h16"/><path d="M9 16v2a2 2 0 004 0v-2"/></svg>`,
     'silk-fragment': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6c0 0 2-2 4 0s4 0 4 0 2-2 4 0 4 0 4 0"/><path d="M3 12c0 0 2-2 4 0s4 0 4 0 2-2 4 0 4 0 4 0"/><path d="M3 18c0 0 2-2 4 0s4 0 4 0 2-2 4 0 4 0 4 0"/></svg>`,
@@ -231,7 +231,7 @@ const CollectionModule = (() => {
   };
   const ARTIFACT_SVG_DEFAULT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>`;
 
-  const RARITY_COLORS = { legendary: '#F6C19E', rare: '#7BC67E', common: '#8986A8' };
+  const RARITY_COLORS = { legendary: '#EAE7E1', rare: '#7BC67E', common: '#8986A8' };
 
   function renderArtifacts() {
     const container = document.getElementById('artifact-scroll');

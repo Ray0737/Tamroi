@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
   <title>Tamroi</title>
 
   <!-- Bootstrap + Bootstrap Icons + MapLibre GL CSS -->
@@ -65,7 +66,7 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    .home-district-card:hover  { border-color: rgba(246,193,158,0.4); background: rgba(246,193,158,0.05); }
+    .home-district-card:hover  { border-color: rgba(234,231,225,0.4); background: rgba(234,231,225,0.05); }
     .home-district-card:active { transform: scale(0.96); }
 
     .home-district-icon {
@@ -91,7 +92,7 @@
       color: var(--color-muted);
       margin: 0;
     }
-    .notif-row.unread { background: rgba(255,126,85,0.05); }
+    .notif-row.unread { background: rgba(234,231,225,0.05); }
 
     .notif-icon { width: 28px; height: 28px; flex-shrink: 0; margin-top: 1px; display:flex; align-items:center; justify-content:center; }
     .notif-body { flex: 1; }
@@ -329,23 +330,17 @@
     <!-- ── TAB: MISSION ──────────────────────────── -->
     <section id="tab-mission" class="tab-section">
       <div class="section-scroll">
-        <div class="section-inner" style="display:flex;flex-direction:column;gap:var(--space-md)">
+        <div id="mission-section-inner" class="section-inner" style="display:flex;flex-direction:column;gap:var(--space-md)">
           <!-- Seasonal events banner -->
           <div id="seasonal-events"></div>
           <!-- Co-op missions -->
           <div id="coop-missions"></div>
-          <!-- BKK bonus banner -->
-          <div id="bkk-bonus"></div>
           <!-- Active mission -->
           <div id="active-mission"></div>
           <!-- Daily challenges -->
           <div id="daily-challenges"></div>
-          <!-- Completed missions placeholder -->
-          <div>
-            <p style="font-size:var(--text-xs);color:var(--color-muted);text-align:center;padding:var(--space-md)">
-              Complete missions to unlock more S-Class figures
-            </p>
-          </div>
+          <!-- Shown instead of the above 3 when they're all empty at once -->
+          <div id="mission-merged-empty" style="display:none"></div>
         </div>
       </div>
     </section>
@@ -439,7 +434,7 @@
   <div class="bottom-sheet" id="node-info-sheet">
     <div class="sheet-handle"></div>
     <div id="node-info-content"></div>
-    <button class="btn btn-ghost btn-sm btn-full mt-2" onclick="AppCore.closeAllSheets()" style="margin-top:8px">ปิด</button>
+    <button class="btn btn-outline btn-sm btn-full mt-2" onclick="AppCore.closeAllSheets()" style="margin-top:8px">ปิด</button>
   </div>
 
   <!-- ════ CHECK-IN BOTTOM SHEET ════ -->
@@ -453,7 +448,10 @@
     </h2>
 
     <div class="district-preview">
-      <p class="district-preview-name" id="checkin-district-name">Select a Watchtower</p>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:2px">
+        <p class="district-preview-name" id="checkin-district-name" style="margin:0">Select a Watchtower</p>
+        <span class="explored-badge" id="checkin-explored-badge" hidden>✓ Explored</span>
+      </div>
       <p class="district-preview-province" id="checkin-district-province">Bangkok</p>
       <div class="district-reveals" id="checkin-reveals"></div>
     </div>
@@ -464,8 +462,8 @@
     </div>
     <div id="checkin-encounter"></div>
 
-    <button class="btn btn-primary btn-full" id="btn-checkin">Check In & Clear Fog ✓</button>
-    <button class="btn btn-ghost btn-full mt-2" onclick="AppCore.closeAllSheets()" style="margin-top:8px">Cancel</button>
+    <button class="btn btn-primary btn-sm btn-full" id="btn-checkin">Check In & Clear Fog ✓</button>
+    <button class="btn btn-outline btn-sm btn-full mt-2" onclick="AppCore.closeAllSheets()" style="margin-top:8px">Cancel</button>
   </div>
 
   <!-- ════ HOME LOCATION SHEET ════ -->
@@ -496,7 +494,10 @@
     <div class="sheet-handle"></div>
     <div class="lore-sheet-head">
       <span class="lore-type-badge" id="lore-type-badge">text</span>
-      <span class="lore-pts-badge" id="lore-pts-badge">+0 pts</span>
+      <span style="display:flex;align-items:center;gap:6px">
+        <span class="explored-badge" id="lore-explored-badge" hidden>✓ อ่านแล้ว</span>
+        <span class="lore-pts-badge" id="lore-pts-badge">+0 pts</span>
+      </span>
     </div>
     <h3 class="sheet-title lore-title" id="lore-title">Lore</h3>
     <img class="lore-media" id="lore-img" alt="" loading="lazy" hidden>
@@ -504,10 +505,18 @@
       <button class="btn btn-ghost btn-sm" id="lore-audio-toggle" type="button">เล่นเสียง</button>
       <audio id="lore-audio"></audio>
     </div>
-    <div class="lore-narrative" id="lore-narrative"></div>
+    <div class="lore-narrator-row">
+      <div class="lore-narrator-avatar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px">
+          <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/>
+        </svg>
+      </div>
+      <span class="lore-narrator-label">เรื่องเล่าจากอดีต</span>
+    </div>
+    <div class="lore-narrative lore-quote" id="lore-narrative"></div>
     <div id="lore-phase-panel" hidden></div>
-    <button class="btn btn-primary btn-full" id="btn-save-lore">อ่านแล้ว บันทึก →</button>
-    <button class="btn btn-ghost btn-full mt-2" onclick="AppCore.closeAllSheets()" style="margin-top:8px">ปิด</button>
+    <button class="btn btn-primary btn-sm btn-full" id="btn-save-lore">อ่านแล้ว บันทึก →</button>
+    <button class="btn btn-outline btn-sm btn-full mt-2" onclick="AppCore.closeAllSheets()" style="margin-top:8px">ปิด</button>
   </div>
 
   <!-- ════ LORE CHAIN COMPLETE SHEET ════ -->
@@ -533,19 +542,19 @@
     <h3 class="sheet-title lore-title" id="quiz-title">Historical Quiz</h3>
     <div class="lore-narrative" id="quiz-question"></div>
     <div id="quiz-options" style="display:flex;flex-direction:column;gap:var(--space-sm);margin-bottom:var(--space-md)"></div>
-    <button class="btn btn-primary btn-full" id="btn-submit-quiz">ตอบคำถาม</button>
-    <button class="btn btn-ghost btn-full mt-2" onclick="AppCore.closeAllSheets()" style="margin-top:8px">ปิด</button>
+    <button class="btn btn-primary btn-sm btn-full" id="btn-submit-quiz">ตอบคำถาม</button>
+    <button class="btn btn-outline btn-sm btn-full mt-2" onclick="AppCore.closeAllSheets()" style="margin-top:8px">ปิด</button>
   </div>
 
   <!-- ════ C-CLASS CAPTURE SHEET ════ -->
   <div class="bottom-sheet" id="c-capture-sheet">
     <div class="sheet-handle"></div>
-    <div style="text-align:center;padding:16px 0 8px">
-      <div id="c-capture-emoji" style="font-size:48px;line-height:1;margin-bottom:8px"></div>
-      <h3 class="sheet-title" id="c-capture-name" style="margin:0"></h3>
+    <div style="text-align:center;padding:16px 0">
+      <div id="c-capture-emoji" style="font-size:48px;line-height:1;margin-bottom:10px"></div>
+      <h3 class="sheet-title" id="c-capture-name" style="margin:0 0 20px"></h3>
     </div>
-    <button class="btn btn-primary btn-full" id="btn-c-capture">จับ!</button>
-    <button class="btn btn-ghost btn-full mt-2" onclick="AppCore.closeAllSheets()" style="margin-top:8px">ยกเลิก</button>
+    <button class="btn btn-primary btn-sm btn-full" id="btn-c-capture">จับ!</button>
+    <button class="btn btn-outline btn-sm btn-full mt-2" onclick="AppCore.closeAllSheets()" style="margin-top:8px">ยกเลิก</button>
   </div>
 
   <!-- ════ FIGURE DETAIL MODAL ════ -->

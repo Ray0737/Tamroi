@@ -2,7 +2,19 @@
 const CoopModule = (() => {
   let _progressChannels = [];
 
+  // ponytail: group missions are disabled for now — show a locked placeholder
+  // instead of the real panel. Bump/remove this to re-enable.
+  const GROUP_MISSIONS_UNLOCK_DAYS = 14;
+
   async function load() {
+    const el = document.getElementById('coop-missions');
+    if (!el) return;
+
+    el.innerHTML = _lockedCard();
+    return;
+  }
+
+  async function _liveLoad() {
     const el = document.getElementById('coop-missions');
     if (!el) return;
 
@@ -134,6 +146,15 @@ const CoopModule = (() => {
   function _cancelProgressSubs() {
     _progressChannels.forEach(ch => { try { ch.unsubscribe(); } catch {} });
     _progressChannels = [];
+  }
+
+  function _lockedCard() {
+    return `
+      <div class="coop-no-guild" data-empty>
+        <i class="bi bi-lock"></i>
+        <p>ภารกิจกลุ่มจะปลดล็อกใน ${GROUP_MISSIONS_UNLOCK_DAYS} วัน</p>
+        <p class="hint">เร็ว ๆ นี้</p>
+      </div>`;
   }
 
   function _noGuildCard() {

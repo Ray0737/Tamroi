@@ -1,26 +1,37 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kanit:wght@400;600;700&display=swap');
 
 :root {
-  /* ── Colors ─────────────────────────────────────────── */
-  --color-bg:           #1C1B2E;
-  --color-primary:      #F6C19E;   /* warm cream-peach — light, so on-primary text must be dark */
-  --color-primary-dim:  rgba(246,193,158,0.15);
+  /* Tells the browser this page is intentionally dark — without it, some browsers apply
+     their own auto-dark heuristic to any unstyled viewport sliver (rounding/dvh gaps,
+     scrollbar gutters), which tints it with their own dark palette instead of ours —
+     the stray maroon-ish strip some screenshots showed at the very bottom of the page. */
+  color-scheme: dark;
+
+  /* ── Colors — "Dither Ink" (deep indigo-ink dark mode + paper accent) ── */
+  --color-bg:           #23223A;   /* deep indigo ink — page bg */
+  --color-primary:      #EAE7E1;   /* paper cream — light, so on-primary text must be dark */
+  --color-primary-dim:  rgba(234,231,225,0.15);
   --color-success:      #7BC67E;
   --color-success-dim:  rgba(123,198,126,0.15);
-  --color-surface:      #E1F0E3;
+  --color-surface:      #EAE7E1;   /* paper cream — light cards/sheets */
   --color-white:        #FFFFFF;
-  --color-card-dark:    #252240;
-  --color-card-darker:  #201E38;
-  --color-muted:        #8986A8;
-  --color-border:       rgba(255,255,255,0.07);
+  --color-card-dark:    #2E2D4A;   /* lighter ink panel, sits on --color-bg */
+  --color-card-darker:  #1A1930;
+  --color-muted:        #8A89A6;   /* soft lavender-grey */
+  --color-border:       rgba(234,231,225,0.12);
   --color-overlay:      rgba(0,0,0,0.65);
   --color-danger:       #ef5350;   /* error / destructive actions */
+  --color-map-pin:      #FF4D6D;   /* vivid coral-red — map markers only; --color-primary
+                                       (pale cream) is nearly invisible against the map's
+                                       own cream-tinted tiles, so pins need their own accent */
+  --color-pastel-blue:  #7EB8E8;   /* OTOP node markers — distinct hue from cafe (green),
+                                       landmark (gold), and important pins (map-pin red) */
 
   /* Text ON a primary-coloured background (light bg needs dark ink) */
-  --color-on-primary:   #1C1B2E;
+  --color-on-primary:   #23223A;
 
   /* Class badge colors */
-  --color-class-s: #F6C19E;
+  --color-class-s: #EAE7E1;   /* paper cream — legendary readout */
   --color-class-a: #C0A060;
   --color-class-c: #7BC67E;
 
@@ -53,7 +64,7 @@
 
   /* Shadows */
   --shadow-card:    0 4px 20px rgba(0,0,0,0.35);
-  --shadow-primary: 0 6px 24px rgba(246,193,158,0.30);
+  --shadow-primary: 0 6px 24px rgba(234,231,225,0.30);
   --shadow-success: 0 6px 24px rgba(123,198,126,0.28);
   --shadow-up:      0 -4px 24px rgba(0,0,0,0.4);
 

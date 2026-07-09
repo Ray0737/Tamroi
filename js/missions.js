@@ -43,10 +43,49 @@ const MissionModule = (() => {
       _missionCtx = { figures: figures || [], capturedIds, districtMap };
       renderActive();
       renderDaily([...(challenges || []), ...(recallMissions || [])]);
+      _maybeMergeEmptyStates();
     } catch {
       _renderActiveFallback();
       _renderDailyFallback();
     }
+  }
+
+  // If group/active/daily missions are all empty at once, collapse the 3 near-identical
+  // empty cards into a single message instead of a wall of "nothing here" boxes.
+  function _maybeMergeEmptyStates() {
+    const coopEl   = document.getElementById('coop-missions');
+    const activeEl = document.getElementById('active-mission');
+    const dailyEl  = document.getElementById('daily-challenges');
+    const mergedEl = document.getElementById('mission-merged-empty');
+    const wrapEl   = document.getElementById('mission-section-inner');
+    if (!coopEl || !activeEl || !dailyEl || !mergedEl || !wrapEl) return;
+
+    const allEmpty = coopEl.querySelector('[data-empty]') &&
+                      activeEl.querySelector('[data-empty]') &&
+                      dailyEl.querySelector('[data-empty]');
+
+    coopEl.style.display   = allEmpty ? 'none' : '';
+    activeEl.style.display = allEmpty ? 'none' : '';
+    dailyEl.style.display  = allEmpty ? 'none' : '';
+    wrapEl.classList.toggle('mission-empty-centered', !!allEmpty);
+
+    if (!allEmpty) { mergedEl.style.display = 'none'; mergedEl.innerHTML = ''; return; }
+    mergedEl.style.display = '';
+    mergedEl.innerHTML = `
+      <div class="mission-empty">
+        <div class="mascot-wrap">
+          <div class="mascot-bubble">Hmm... เร็ว ๆ นี้...</div>
+          <svg class="mascot-blob" viewBox="0 0 64 64" width="56" height="56">
+            <circle cx="32" cy="32" r="26" fill="var(--color-primary)"/>
+            <circle cx="23" cy="29" r="3.2" fill="var(--color-on-primary)"/>
+            <circle cx="41" cy="29" r="3.2" fill="var(--color-on-primary)"/>
+            <path d="M24 40 Q32 36 40 40" stroke="var(--color-on-primary)" stroke-width="2.5"
+                  stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <p>ยังไม่มีภารกิจให้ทำตอนนี้</p>
+        <p class="sub">สำรวจพื้นที่ใหม่เพื่อปลดล็อคภารกิจส่วนตัว — ภารกิจกลุ่มจะเปิดให้เล่นเร็ว ๆ นี้</p>
+      </div>`;
   }
 
   // Thai historical seasonal events — month is 0-indexed (JS Date)
@@ -71,7 +110,7 @@ const MissionModule = (() => {
       name: 'วันปิยมหาราช — Legacy Surge',
       name_en: 'Chulalongkorn Day',
       start: { month: 9, day: 23 }, end: { month: 9, day: 23 },
-      color: '#F6C19E',
+      color: '#EAE7E1',
       multiplier: 2,
       desc: 'วันปิยมหาราช! Legacy Points จากบุคคล S-Class เพิ่มเป็น ×2 ตลอดวันนี้',
     },
@@ -139,7 +178,6 @@ const MissionModule = (() => {
     if (loaded) return;
     loaded = true;
     renderSeasonalContent();
-    renderBKKBonus();
     _renderActiveFallback();
     _renderDailyFallback();
     _loadMissionData(); // async — re-renders when data arrives
@@ -149,8 +187,11 @@ const MissionModule = (() => {
   function _renderActiveFallback() {
     const el = document.getElementById('active-mission');
     if (!el) return;
-    el.innerHTML = `<div style="padding:var(--space-md);color:var(--color-muted);font-size:12px;text-align:center">
-      กำลังโหลดภารกิจ...</div>`;
+    el.innerHTML = `
+      <div class="mission-empty">
+        <i class="bi bi-hourglass-split"></i>
+        <p>กำลังโหลดภารกิจ...</p>
+      </div>`;
   }
 
   function renderActive() {
@@ -177,7 +218,7 @@ const MissionModule = (() => {
       // All S/A figures captured or no districts explored yet
       const allDone = figures.filter(f => f.class === 'S' || f.class === 'A').every(f => capturedIds.has(f.id));
       el.innerHTML = `
-        <div class="mission-empty">
+        <div class="mission-empty" ${allDone ? '' : 'data-empty'}>
           <i class="bi ${allDone ? 'bi-trophy' : 'bi-compass'}"></i>
           <p>${allDone ? 'ทุกภารกิจเสร็จสมบูรณ์!' : 'สำรวจพื้นที่ใหม่เพื่อปลดล็อคภารกิจ'}</p>
           <p class="sub">${allDone ? 'คุณจับบุคคลสำคัญระดับ S/A ครบทั้งหมดแล้ว' : 'Check-in ที่ Watchtower ในเขตที่ยังไม่ได้สำรวจ'}</p>
@@ -202,13 +243,13 @@ const MissionModule = (() => {
 
     el.innerHTML = `
       <div style="background:var(--color-card-dark);border-radius:var(--radius-xl);
-                  border:1px solid rgba(246,193,158,0.2);overflow:hidden" class="anim-fade-up">
+                  border:1px solid rgba(234,231,225,0.2);overflow:hidden" class="anim-fade-up">
 
-        <div style="background:linear-gradient(135deg,rgba(246,193,158,0.18),rgba(246,193,158,0.05));
-                    padding:var(--space-md);border-bottom:1px solid rgba(246,193,158,0.12)">
+        <div style="background:linear-gradient(135deg,rgba(234,231,225,0.18),rgba(234,231,225,0.05));
+                    padding:var(--space-md);border-bottom:1px solid rgba(234,231,225,0.12)">
           <div style="display:flex;align-items:center;gap:10px">
             <div style="width:38px;height:38px;border-radius:var(--radius-md);
-                        background:rgba(246,193,158,0.15);border:1.5px solid rgba(246,193,158,0.4);
+                        background:rgba(234,231,225,0.15);border:1.5px solid rgba(234,231,225,0.4);
                         display:flex;align-items:center;justify-content:center;
                         flex-shrink:0;color:var(--color-primary)">${_crownSVG}</div>
             <div style="flex:1;min-width:0">
@@ -217,7 +258,7 @@ const MissionModule = (() => {
               <h3 style="margin:2px 0 0;font-family:var(--font-heading);font-size:15px;
                           font-weight:700;line-height:1.2">${escapeHtml(target.name_th)}</h3>
             </div>
-            <span class="badge badge-${target.class.toLowerCase()}">${target.class}-Class</span>
+            <span class="badge badge-${target.class.toLowerCase()}">${target.class}</span>
           </div>
           <p style="margin:6px 0 0;font-size:11px;color:var(--color-muted)">
             ${escapeHtml(era)} &nbsp;·&nbsp;
@@ -229,7 +270,7 @@ const MissionModule = (() => {
           ${steps.map((s, i) => `
             <div style="display:flex;align-items:center;flex:1">
               <div style="width:26px;height:26px;border-radius:50%;flex-shrink:0;
-                background:${s.done ? 'var(--color-success)' : i === progress ? 'rgba(246,193,158,0.15)' : 'var(--color-card-darker)'};
+                background:${s.done ? 'var(--color-success)' : i === progress ? 'rgba(234,231,225,0.15)' : 'var(--color-card-darker)'};
                 border:2px solid ${s.done ? 'var(--color-success)' : i === progress ? 'var(--color-primary)' : 'var(--color-border)'};
                 display:flex;align-items:center;justify-content:center;
                 font-size:10px;font-weight:700;
@@ -269,8 +310,8 @@ const MissionModule = (() => {
   // ── Daily challenges ──────────────────────────────
   const _DAILY_TYPE_STYLE = {
     lore:        { color: '#7BC67E', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>` },
-    checkin:     { color: '#FF7E55', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>` },
-    capture:     { color: '#F6C19E', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>` },
+    checkin:     { color: '#EAE7E1', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>` },
+    capture:     { color: '#EAE7E1', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>` },
     quiz:        { color: '#4FC3F7', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>` },
     lore_recall: { color: '#CE93D8', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>` },
   };
@@ -278,8 +319,11 @@ const MissionModule = (() => {
   function _renderDailyFallback() {
     const el = document.getElementById('daily-challenges');
     if (!el) return;
-    el.innerHTML = `<div style="padding:var(--space-md);color:var(--color-muted);font-size:12px;text-align:center">
-      กำลังโหลดภารกิจรายวัน...</div>`;
+    el.innerHTML = `
+      <div class="mission-empty">
+        <i class="bi bi-hourglass-split"></i>
+        <p>กำลังโหลดภารกิจรายวัน...</p>
+      </div>`;
   }
 
   function renderDaily(challenges) {
@@ -287,8 +331,11 @@ const MissionModule = (() => {
     if (!el) return;
 
     if (!challenges?.length) {
-      el.innerHTML = `<div style="padding:var(--space-md);color:var(--color-muted);font-size:12px;text-align:center">
-        ไม่สามารถโหลดภารกิจรายวันได้</div>`;
+      el.innerHTML = `
+        <div class="mission-empty" data-empty>
+          <i class="bi bi-calendar2-check"></i>
+          <p>ไม่มีภารกิจในขณะนี้</p>
+        </div>`;
       return;
     }
 
@@ -358,22 +405,6 @@ const MissionModule = (() => {
     `;
   }
 
-  // ── BKK transport bonus ───────────────────────────
-  function renderBKKBonus() {
-    const el = document.getElementById('bkk-bonus');
-    if (!el) return;
-    el.innerHTML = `
-      <div class="mission-banner">
-        <i class="bi bi-train-front"></i>
-        <div class="mission-banner-body">
-          <p class="mission-banner-title">BTS / MRT Bonus Active</p>
-          <p class="mission-banner-sub">Using public transport in Bangkok · +2× Points on all actions</p>
-        </div>
-        <span class="mission-banner-badge">×2</span>
-      </div>
-    `;
-  }
-
   function checkSVGSmall() {
     return `<svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
       <polyline points="1.5,5 3.5,7.5 8.5,2.5"/>
@@ -432,8 +463,8 @@ const MissionModule = (() => {
 
     const resultEl = document.getElementById('recall-modal-result');
     const doneBtn  = document.getElementById('recall-modal-done');
-    resultEl.style.background = correct ? 'rgba(123,198,126,0.12)' : 'rgba(255,126,85,0.12)';
-    resultEl.style.border     = `1px solid ${correct ? 'rgba(123,198,126,0.3)' : 'rgba(255,126,85,0.3)'}`;
+    resultEl.style.background = correct ? 'rgba(123,198,126,0.12)' : 'rgba(234,231,225,0.12)';
+    resultEl.style.border     = `1px solid ${correct ? 'rgba(123,198,126,0.3)' : 'rgba(234,231,225,0.3)'}`;
     resultEl.style.color      = correct ? 'var(--color-success)' : 'var(--color-primary)';
     resultEl.textContent      = correct
       ? '✓ ถูกต้อง! +30 pts · ยอดเยี่ยม'

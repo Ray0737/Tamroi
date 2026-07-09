@@ -239,6 +239,7 @@ async function openLoreSheet(node) {
   const audio     = document.getElementById('lore-audio');
   const audioToggle = document.getElementById('lore-audio-toggle');
   const saveBtn   = document.getElementById('btn-save-lore');
+  const exploredBadge = document.getElementById('lore-explored-badge');
   const phasePanel = document.getElementById('lore-phase-panel');
   if (!title || !typeBadge || !ptsBadge || !narrative || !saveBtn) return;
 
@@ -248,6 +249,7 @@ async function openLoreSheet(node) {
   typeBadge.textContent = contentType;
   ptsBadge.textContent  = `+${node.lore_pts || 0} pts`;
   narrative.textContent = node.content_th || node.content_en || '';
+  if (exploredBadge) exploredBadge.hidden = !node.is_saved;
 
   if (img) {
     const isImage = contentType === 'image' && node.media_url;
@@ -599,17 +601,21 @@ function showConfirm(message, { destructive = false, confirmLabel = 'ยืน�
     overlay.style.cssText = 'position:fixed;inset:0;background:var(--color-overlay);z-index:9999;display:flex;align-items:center;justify-content:center;padding:var(--space-md)';
 
     const confirmBg  = destructive ? '#ef5350' : 'var(--color-primary)';
-    const confirmClr = '#fff';
+    const confirmClr = destructive ? '#fff' : 'var(--color-on-primary)';
+    const accent     = destructive ? '#ef5350' : 'var(--color-primary)';
 
     overlay.innerHTML = `
-      <div style="background:var(--color-card-dark);border-radius:var(--radius-md);
-                  padding:18px;width:100%;max-width:260px;text-align:center;
-                  border:1px solid var(--color-border)">
-        <i class="bi ${destructive ? 'bi-exclamation-triangle-fill' : 'bi-question-circle'}"
-           style="font-size:32px;color:${destructive ? '#ef5350' : 'var(--color-muted)'};
-                  display:block;margin-bottom:12px"></i>
-        <p style="color:var(--color-white);font-family:var(--font-body);font-size:13px;
-                  font-weight:600;margin:0 0 16px;line-height:1.5">${message}</p>
+      <div style="background:var(--color-card-dark);border-radius:var(--radius-lg);
+                  padding:24px 20px 20px;width:100%;max-width:280px;text-align:center;
+                  border:1px solid var(--color-border);box-shadow:var(--shadow-card)">
+        <div style="width:44px;height:44px;border-radius:50%;margin:0 auto 14px;
+                    display:flex;align-items:center;justify-content:center;
+                    background:${destructive ? 'rgba(239,83,80,0.14)' : 'var(--color-primary-dim)'}">
+          <i class="bi ${destructive ? 'bi-exclamation-triangle-fill' : 'bi-info-circle-fill'}"
+             style="font-size:19px;color:${accent}"></i>
+        </div>
+        <p style="color:var(--color-white);font-family:var(--font-body);font-size:14px;
+                  font-weight:600;margin:0 0 18px;line-height:1.5">${message}</p>
         <div style="display:flex;gap:8px">
           <button data-cancel class="confirm-btn confirm-btn-cancel">${cancelLabel}</button>
           <button data-ok class="confirm-btn confirm-btn-ok"
@@ -789,12 +795,12 @@ function showCaptureReveal(figure) {
       <span class="capture-emoji">${escapeHtml(figure.image_emoji || '👤')}</span>
       <div class="capture-name-th">${escapeHtml(figure.name_th || '')}</div>
       <div class="capture-name-en">${escapeHtml(figure.name_en || '')}</div>
-      <span class="badge badge-${cls.toLowerCase()}">${cls}-Class</span>
+      <span class="badge badge-${cls.toLowerCase()}">${cls}</span>
       <div class="capture-pts" style="color:${glowColor}">+${figure.legacy_pts || 0} Legacy Points</div>
     </div>`;
 
   if (isLegendary) {
-    const colors = ['#F6C19E', '#7BC67E', '#ffffff', '#C0A060', '#F6C19E', '#7BC67E'];
+    const colors = ['#EAE7E1', '#7BC67E', '#ffffff', '#C0A060', '#EAE7E1', '#7BC67E'];
     for (let i = 0; i < 14; i++) {
       const dot = document.createElement('div');
       dot.className = 'capture-confetti';

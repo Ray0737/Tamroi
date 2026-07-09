@@ -525,15 +525,6 @@ const Notifications = {
   }
 };
 
-// ── BTS / MRT Stations ────────────────────────────────
-const BtsMrtStations = {
-  async getAll() {
-    const { data, error } = await _sb.from('bts_mrt_stations').select('*');
-    if (error) throw error;
-    return data;
-  }
-};
-
 // ── Support Nodes ─────────────────────────────────────
 const SupportNodes = {
   async getAll() {
@@ -1265,4 +1256,4 @@ const Debates = {
 };
 
 // Expose globally
-window.DB = { Auth, Profiles, Districts, Watchtowers, Figures, SupportNodes, BtsMrtStations, Artifacts, Leaderboard, Lore, Quiz, Notifications, Missions, Coop, Raid, Discussion, Community, Debates };
+window.DB = { Auth, Profiles, Districts, Watchtowers, Figures, SupportNodes, Artifacts, Leaderboard, Lore, Quiz, Notifications, Missions, Coop, Raid, Discussion, Community, Debates };

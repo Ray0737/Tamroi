@@ -199,10 +199,11 @@ const CommunityForumModule = (() => {
     const profile = window.AppCore?.App?.profile;
     if (profile?.guidelines_accepted_at) return true;
 
-    const accepted = confirm(
+    const accepted = await window.AppCore.showConfirm(
       'กติกาชุมชน: ห้ามใช้ถ้อยคำหยาบคาย คุกคาม หรือละเมิดสิทธิผู้อื่น ' +
       'ความคิดเห็นที่ถูกรายงานจะถูกซ่อนอัตโนมัติและทีมงานจะตรวจสอบ ' +
-      'กดตกลงเพื่อยืนยันว่าคุณรับทราบและจะปฏิบัติตาม'
+      'กดตกลงเพื่อยืนยันว่าคุณรับทราบและจะปฏิบัติตาม',
+      { confirmLabel: 'ตกลง' }
     );
     if (!accepted) return false;
 

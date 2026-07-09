@@ -21,7 +21,6 @@
 | `submitQuizAnswer(chosenOption, fig, question)` | js/map.js | Evaluates answer; on correct → capture + challenge progress; on wrong → highlights correct/wrong options; S/A closes sheet after 2s, B/C re-enables after 1.5s | user_captures, user_daily_progress | ✅ Fixed 2026-06-27 |
 | `checkLoreProximity(lat, lng)` / `unlockLore(node)` | js/map.js | Auto-opens the lore sheet once on first GPS entry into a node's radius; "seen" state persists to `tam_roi_lore_seen` in localStorage (mirrors `tam_roi_lore_unlocked`) so it survives page reload and does not re-trigger while lingering/re-entering — re-access via tapping the map marker (`openVisitedLore()`) | — (client-side; unlock itself still writes `user_lore` via `saveLoreUnlock`) | ✅ Fixed 2026-07-01 — was re-popping the sheet on reload because "seen" state was in-memory only |
 | `saveLoreUnlock(nodeId, pts)` | js/map.js | Persists lore unlock to `user_lore`; checks chain completion for bonus; adds points to `profiles.legacy_score`; increments lore daily challenge | user_lore, profiles, user_daily_progress | ✅ Working |
-| `getTransportMultiplier(lat, lng)` | js/map.js | Returns ×2 if user GPS is within 300m of a BTS/MRT station | — (seeded station list) | ✅ Working |
 | `confirmHome(districtId)` | js/map.js | Sets home district during onboarding; clears fog for home district; grants +50 pts | user_districts, profiles | ✅ Working |
 | `updateStatsBar()` | js/map.js | Updates the map stats pill (Explored %, Captured count, Legacy score) from live DB profile | profiles | ✅ Working |
 | `renderGuildFog(clearedDistrictIds)` | js/map.js | Overlays tinted GeoJSON polygon for guild territory (union of all members' cleared districts); called from GuildModule after init and on member change | — (client-side MapLibre) | ✅ Added 2026-07-01 · replatformed to MapLibre GL 2026-07-07 |
@@ -47,7 +46,6 @@
 | `renderDaily(challenges)` | js/missions.js | Renders Daily Challenges from DB array; shows progress bars for multi-step challenges | daily_challenges, user_daily_progress | ✅ Fixed 2026-06-27 |
 | `_renderDailyFallback()` | js/missions.js | Shows loading skeleton for daily challenges section | — | ✅ Added 2026-06-27 |
 | `renderSeasonalContent()` | js/missions.js | Checks current date against Thai historical dates; renders seasonal bonus banners | — (calendar check) | ✅ Working |
-| `renderBKKBonus()` | js/missions.js | Renders the BTS/MRT ×2 bonus banner when user is in Bangkok | — | ✅ Working |
 
 ---
 
@@ -166,7 +164,8 @@
 | `getState()` | js/guild.js | Returns current `{guild, members}` snapshot for other modules | — | ✅ Working |
 | `getOnlineMemberIds()` | js/guild.js | Returns Set of user_ids currently online via Presence | — (Presence) | ✅ Working |
 | `renderGuildPanel()` | js/guild.js | Renders guild hub (with guild) or no-guild CTA + inline guild search (without guild) | guilds, guild_members, guild_join_requests | ✅ Working |
-| `init()` | js/coop.js | Loads collab missions for current district and renders cards | collab_missions, collab_mission_checkins | ✅ Working |
+| `load()` | js/coop.js | Renders a locked "unlocks in N days" placeholder — group missions feature-flagged off for now | — | ⏸️ Disabled 2026-07-09 |
+| `_liveLoad()` | js/coop.js | The real collab-mission loader (was `load()`); loads collab missions for current district and renders cards | collab_missions, collab_mission_checkins | ✅ Working, unused while disabled |
 | `renderMissionCard(mission, checkins, myCheckin)` | js/coop.js | Renders co-op mission card with progress bar and checkin CTA | — | ✅ Working |
 | `subscribeProgress(missionId, guildId)` | js/coop.js | Real-time progress bar updates via postgres_changes on checkins | collab_mission_checkins (realtime) | ✅ Working |
 | `init(figureId)` | js/raid.js | Attaches click handlers to raid-only figure; validates party size + online count | raid_sessions, profiles | ✅ Working |

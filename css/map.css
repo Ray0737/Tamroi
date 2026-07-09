@@ -5,13 +5,13 @@
   height: calc(100dvh - var(--top-bar-height) - var(--bottom-nav-height));
 }
 
-/* Blue overlay tint (Starry Night palette) — sits above the map canvas, below markers/UI.
+/* Ink tint (Dither Ink palette) — sits above the map canvas, below markers/UI.
    pointer-events:none so it doesn't block map drag/click/rotate underneath. */
 #map-view::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: #1B3A68;
+  background: var(--color-bg);
   opacity: 0.08;
   mix-blend-mode: multiply;
   pointer-events: none;
@@ -53,40 +53,41 @@
 .map-stats-pill {
   position: absolute;
   top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: var(--space-md);
+  right: var(--space-md);
   z-index: 1001;
   display: flex;
   align-items: center;
+  justify-content: space-around;
   gap: 0;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: var(--radius-full);
-  padding: 8px 20px;
-  border: 1px solid rgba(0,0,0,0.08);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-  white-space: nowrap;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: var(--radius-lg);
+  padding: 6px 4px;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
 .map-stats-pill .stat-item {
   background: transparent;
   border-radius: 0;
-  padding: 0 14px;
+  padding: 0;
   text-align: center;
 }
 
-.map-stats-pill .stat-item:first-child { padding-left: 0; }
-.map-stats-pill .stat-item:last-child  { padding-right: 0; }
-
-.map-stats-pill .stat-value { font-size: var(--text-md); }
-.map-stats-pill .stat-label { font-size: 9px; color: #6b6884; }
-.map-stats-pill .text-white { color: #1C1B2E !important; }
+/* All stat text uses the app's own ink-purple (--color-bg) instead of red/green/orange
+   accent colors — keeps this pill visually tied to the rest of the theme. */
+.map-stats-pill .stat-value { font-size: var(--text-sm); font-weight: 600; color: var(--color-bg); }
+.map-stats-pill .stat-label { font-size: 9px; color: rgba(35,34,58,0.65); }
+.map-stats-pill .text-white,
+.map-stats-pill .text-orange,
+.map-stats-pill .text-green { color: var(--color-bg) !important; }
 
 .map-stat-divider {
   width: 1px;
-  height: 28px;
-  background: rgba(0,0,0,0.1);
+  height: 18px;
+  background: rgba(0,0,0,0.08);
   flex-shrink: 0;
 }
 
@@ -134,7 +135,7 @@
 
 .fab-primary:active {
   transform: scale(0.93);
-  box-shadow: 0 3px 12px rgba(255,126,85,0.3);
+  box-shadow: 0 3px 12px rgba(234,231,225,0.3);
 }
 
 /* ── Proximity Banner (map-level) ─────────────────────── */
@@ -159,6 +160,16 @@
   font-size: var(--text-xl);
   font-weight: 700;
   margin-bottom: 2px;
+}
+
+.explored-badge {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-success);
+  background: var(--color-success-dim);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
 }
 
 .district-preview-province {
@@ -197,10 +208,10 @@
 }
 
 .marker-watchtower.visited {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: var(--color-on-primary);
-  box-shadow: 0 0 12px rgba(246,193,158,0.45);
+  background: var(--color-map-pin);
+  border-color: var(--color-map-pin);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(255,77,109,0.45);
 }
 
 /* ── Node markers (SVG icons, no emoji) ──────────────── */
@@ -221,16 +232,13 @@
 
 .marker-node:hover { box-shadow: 0 0 0 4px rgba(255,255,255,0.25); }
 
-.marker-cafe     { background: rgba(123,198,126,0.85); }
-.marker-otop     { background: rgba(246,193,158,0.85); border-radius: 4px; }
-.marker-landmark { background: rgba(137,134,168,0.25); border-color: #8986A8; }
 .marker-lore {
   width: 24px;
   height: 24px;
-  color: var(--color-on-primary);
-  background: var(--color-primary);
+  color: #fff;
+  background: var(--color-map-pin);
   border-color: var(--color-white);
-  box-shadow: 0 0 12px rgba(246,193,158,0.45);
+  box-shadow: 0 0 12px rgba(255,77,109,0.45);
 }
 
 .marker-lore-mystery {
@@ -262,7 +270,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--color-primary);
+  background: var(--color-map-pin);
   border: 2px solid white;
   display: flex;
   align-items: center;
@@ -270,13 +278,13 @@
   font-size: 12px;
   font-weight: 700;
   color: white;
-  box-shadow: 0 0 10px rgba(255,126,85,0.5);
+  box-shadow: 0 0 10px rgba(255,77,109,0.5);
 }
 
 .marker-otop {
   width: 22px;
   height: 22px;
-  background: var(--color-primary);
+  background: var(--color-pastel-blue);
   border-radius: 4px;
   border: 1.5px solid white;
   display: flex;
@@ -296,7 +304,8 @@
 .marker-landmark {
   width: 22px;
   height: 22px;
-  background: transparent;
+  background: #F2B84B;
+  border-color: white;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -308,19 +317,19 @@
 .marker-home {
   width: 38px;
   height: 38px;
-  background: var(--color-primary);
+  background: var(--color-map-pin);
   border-radius: 50% 50% 50% 0;
   transform: rotate(-45deg);
   display: flex;
   align-items: center;
   justify-content: center;
   border: 2.5px solid rgba(255,255,255,0.85);
-  box-shadow: 0 4px 14px rgba(246,193,158,0.45);
+  box-shadow: 0 4px 14px rgba(255,77,109,0.45);
 }
 
 /* Icon sits upright inside the rotated container */
 .marker-home svg {
-  color: var(--color-on-primary);
+  color: #fff;
   flex-shrink: 0;
 }
 

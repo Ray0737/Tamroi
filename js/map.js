@@ -19,9 +19,11 @@ const MapModule = (() => {
   const visitedSupportNodeIds = new Set();
   // v3: replaced the rectangular grid-cell walk reveal with circle-per-point holes
   // (same ring-hole technique already used for districts) — smooth trail, not squares.
-  const _WALK_KEY = 'tam_roi_walk_trail_v3';
+  const _WALK_KEY = 'tam_roi_walk_trail_v4'; // bumped: v3 data was recorded under a spacing rule looser than the reveal radius, producing overlapping/jagged holes
   const WALK_REVEAL_RADIUS_M = 30;
-  const WALK_MIN_SPACING_M = 15; // skip recording a new point closer than this to the last one
+  // Must be >= WALK_REVEAL_RADIUS_M — spacing smaller than the reveal circle guarantees
+  // heavy overlap between adjacent circles even walking in a straight line.
+  const WALK_MIN_SPACING_M = 30;
   let _walkedPoints = []; // [{lat, lng}, ...]
 
   // Watchtower check-in reveal radius — sized to roughly one school/campus premises
@@ -32,9 +34,6 @@ const MapModule = (() => {
   const HOME_KEY = 'tam_roi_home';
   const LEGACY_HOME_KEY = 'siam' + 'echo_home';
   const CHECKIN_TOLERANCE_M = 500;
-
-  // ── BTS/MRT stations — loaded from Supabase bts_mrt_stations ──
-  let btsMrtStations = [];
 
   // ── Bounding box for the fog overlay ────────────────
   // Covers Bangkok, Nonthaburi AND Ayutthaya province
@@ -93,8 +92,8 @@ const MapModule = (() => {
 
   const NODE_CFG = {
     cafe:     { label: 'ร้านกาแฟ',      color: '#7BC67E', bg: 'rgba(123,198,126,0.18)', svg: _SVG.coffee },
-    otop:     { label: 'OTOP / ร้านค้า', color: '#F6C19E', bg: 'rgba(246,193,158,0.18)', svg: _SVG.shop },
-    landmark: { label: 'สถานที่สำคัญ',   color: '#8986A8', bg: 'rgba(137,134,168,0.18)', svg: _SVG.temple },
+    otop:     { label: 'OTOP / ร้านค้า', color: '#fff', bg: 'rgba(126,184,232,0.18)', svg: _SVG.shop },
+    landmark: { label: 'สถานที่สำคัญ',   color: '#fff', bg: 'rgba(242,184,75,0.18)', svg: _SVG.temple },
   };
 
   // ── MapLibre helpers ─────────────────────────────────
@@ -228,9 +227,9 @@ const MapModule = (() => {
 
     map.addSource('figure-proximity-source', { type: 'geojson', data: _emptyFC() });
     map.addLayer({ id: 'figure-proximity-fill', type: 'fill', source: 'figure-proximity-source',
-      paint: { 'fill-color': '#FF7E55', 'fill-opacity': 0.12 } });
+      paint: { 'fill-color': '#EAE7E1', 'fill-opacity': 0.12 } });
     map.addLayer({ id: 'figure-proximity-line', type: 'line', source: 'figure-proximity-source',
-      paint: { 'line-color': '#FF7E55', 'line-width': 2 } });
+      paint: { 'line-color': '#EAE7E1', 'line-width': 2 } });
 
     map.addSource('lore-ring-source', { type: 'geojson', data: _emptyFC() });
     map.addLayer({ id: 'lore-ring-fill', type: 'fill', source: 'lore-ring-source',
@@ -291,16 +290,16 @@ const MapModule = (() => {
             'source-layer': 'building',
             minzoom: 15,
             paint: {
-              // Starry Night palette bucketed by feature id — looks random per building, stable
-              // on re-render. Blue-family weighted higher (4/6 buckets) per request.
+              // Dither Ink palette bucketed by feature id — looks random per building, stable
+              // on re-render. Ink-navy family weighted higher (4/6 buckets), cream for pop.
               'fill-extrusion-color': [
                 'match', ['%', ['id'], 6],
-                0, '#F2E199', // Starlight
-                1, '#6FB8E6', // Blue Skies
-                2, '#ECB44D', // Crescent Moon
-                3, '#1B3A68', // City at Night
-                4, '#3D7DC9', // extra mid-tone blue
-                '#191939',    // Darkest Blue (fallback bucket)
+                0, '#EAE7E1', // paper cream
+                1, '#3A3960', // mid ink-lavender
+                2, '#2E2D4A', // card-dark ink
+                3, '#4A4870', // lighter ink-purple
+                4, '#C9C6BD', // darker paper/tan
+                '#23223A',    // bg ink (fallback bucket)
               ],
               'fill-extrusion-height': ['coalesce', ['get', 'render_height'], 6],
               'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
@@ -318,10 +317,9 @@ const MapModule = (() => {
       attributionControl: false,
     });
 
-    // Full 360 camera rotation enabled (right-drag / two-finger twist), plus the tilt.
-    // Compass control shown so the player can tap it to reset bearing back to north-up.
-    map.addControl(new maplibregl.NavigationControl({ showCompass: true, visualizePitch: true }), 'top-right');
-
+    // Full 360 camera rotation enabled (right-drag / two-finger twist), plus the tilt —
+    // no NavigationControl (zoom +/-, compass) added here; the app has its own
+    // fab-locate/fab-tilt buttons for the equivalent actions instead.
 
     map.on('load', () => {
       _initOverlaySources();
@@ -408,8 +406,12 @@ const MapModule = (() => {
   }
 
   function _revealWalkCell(lat, lng) {
-    const last = _walkedPoints[_walkedPoints.length - 1];
-    if (last && haversineDistance(last.lat, last.lng, lat, lng) < WALK_MIN_SPACING_M) return;
+    // Check against every kept point, not just the last one — a "last point only" check
+    // lets jittery/backtracking GPS (common on desktop or weak signal) re-stamp a fresh
+    // overlapping circle near a spot already covered, which is what produced the jagged
+    // scribble: MapLibre can't cleanly tessellate a polygon whose holes cross each other.
+    const tooClose = _walkedPoints.some(p => haversineDistance(p.lat, p.lng, lat, lng) < WALK_MIN_SPACING_M);
+    if (tooClose) return;
     _walkedPoints.push({ lat, lng });
     try { localStorage.setItem(_WALK_KEY, JSON.stringify(_walkedPoints)); } catch {}
     if (allDistrictsCache) buildFogLayer(allDistrictsCache);
@@ -431,7 +433,7 @@ const MapModule = (() => {
       if (data?.length) districts = data;
 
       const user = window.AppCore?.App?.user;
-      const baseLoaders = [loadWatchtowers(), loadSupportNodes(), loadFigureNodes(), loadBtsMrtStations()];
+      const baseLoaders = [loadWatchtowers(), loadSupportNodes(), loadFigureNodes()];
       if (user) {
         const [stateData, capsData, visitedWtIds] = await Promise.all([
           DB.Districts.getUserState(user.id),
@@ -490,13 +492,6 @@ const MapModule = (() => {
         if (missing.length) console.warn('[map] figures missing lat/lng ids:', missing);
       }
     } catch { /* figureNodes stays empty */ }
-  }
-
-  async function loadBtsMrtStations() {
-    try {
-      const data = await DB.BtsMrtStations.getAll();
-      if (data?.length) btsMrtStations = data;
-    } catch { /* btsMrtStations stays empty — transport multiplier returns 1 */ }
   }
 
   async function loadVisitedSupportNodes(userId) {
@@ -596,7 +591,7 @@ const MapModule = (() => {
     if (user) {
       try {
         await DB.Lore.unlock(user.id, node.id);
-        await DB.Profiles.addLegacyPoints(user.id, (node.lore_pts || 0) * getTransportMultiplier());
+        await DB.Profiles.addLegacyPoints(user.id, node.lore_pts || 0);
       } catch (e) {
         console.error('[lore unlock] DB write failed:', e);
         if (navigator.onLine) {
@@ -611,9 +606,7 @@ const MapModule = (() => {
     pendingLoreIds.delete(node.id);
     renderLoreMarkers();
     window.AppCore?.closeAllSheets();
-    const earned = (node.lore_pts || 0) * getTransportMultiplier();
-    if (earned > (node.lore_pts || 0)) window.AppCore?.showToast('BTS/MRT Bonus! x2 Legacy Points');
-    showFloatPtsOnMap(earned);
+    showFloatPtsOnMap(node.lore_pts || 0);
     if (user) DB.Missions?.updateChallengeProgress(user.id, 'lore').catch(() => {});
     window.CollectionModule?.load?.();
     checkLoreChainComplete(node, user);
@@ -692,9 +685,18 @@ const MapModule = (() => {
   // watchtower) grows from 0 to full district radius, so the reveal reads as fog peeling
   // back from the check-in point outward, instead of an instant pop. Real MapLibre fill
   // layer (not CSS/canvas), so it tilts/rotates with the camera exactly like fog-layer does.
+  // Bumped by every playFogClearSweep call so an older, still-running sweep can tell it's
+  // been superseded and stop — without this, checking in at a second watchtower before the
+  // first one's 1.4s animation finishes leaves two independent frame() loops both writing
+  // to the same fog-clear-fx-source every frame, which looks like two overlapping circles
+  // fighting each other (and can leave a stuck ghost shape if one loop "wins" mid-shrink).
+  let _sweepGeneration = 0;
+
   function playFogClearSweep(centerLat, centerLng, maxRadiusM = WATCHTOWER_REVEAL_RADIUS_M) {
     const src = map?.getSource('fog-clear-fx-source');
     if (!src || centerLat == null || centerLng == null) return;
+
+    const myGeneration = ++_sweepGeneration;
 
     // Exterior is a fixed circle at the final reveal radius (matching buildFogLayer's real
     // hole exactly) — NOT the district's polygon_coords placeholder rectangle. The donut
@@ -708,20 +710,43 @@ const MapModule = (() => {
 
     const start = performance.now();
     function frame(now) {
-      const t = Math.min(1, (now - start) / DURATION);
-      const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic: fast start, slow settle
-      const r = Math.max(20, eased * maxRadiusM);
-      const hole = _ringWithWinding(_circleRing(centerLat, centerLng, r), false); // CW hole
-      src.setData({ type: 'Feature', properties: {}, geometry: { type: 'Polygon', coordinates: [exterior, hole] } });
-      if (t < 1) {
-        requestAnimationFrame(frame);
-      } else {
+      if (myGeneration !== _sweepGeneration) return; // a newer sweep took over — stop quietly
+      try {
+        const t = Math.min(1, (now - start) / DURATION);
+        const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic: fast start, slow settle
+        const r = Math.max(20, eased * maxRadiusM);
+        const hole = _ringWithWinding(_circleRing(centerLat, centerLng, r), false); // CW hole
+        src.setData({ type: 'Feature', properties: {}, geometry: { type: 'Polygon', coordinates: [exterior, hole] } });
+        if (t < 1) {
+          requestAnimationFrame(frame);
+        } else {
+          src.setData(_emptyFC());
+          map.easeTo({ zoom: startZoom, duration: 600 });
+        }
+      } catch (err) {
+        // A thrown error mid-loop would otherwise silently kill the RAF chain and leave
+        // whatever partial donut shape was last drawn stuck on screen forever.
+        console.warn('[fog sweep] aborted:', err);
         src.setData(_emptyFC());
-        map.easeTo({ zoom: startZoom, duration: 600 });
       }
     }
     map.setPaintProperty('fog-clear-fx-layer', 'fill-opacity', 0.88);
     requestAnimationFrame(frame);
+  }
+
+  // A fixed 180m circle can leave a district's own support nodes sitting outside the
+  // revealed area — invisible (per _isRevealedAt) with no way to know they're there to
+  // walk toward. Grows the single-watchtower reveal radius just enough to cover every
+  // support node that belongs to this district, never shrinking below the base radius.
+  function _watchtowerRevealRadius(districtId, centerLat, centerLng) {
+    if (centerLat == null || centerLng == null) return WATCHTOWER_REVEAL_RADIUS_M;
+    let maxDist = WATCHTOWER_REVEAL_RADIUS_M;
+    supportNodes.forEach(n => {
+      if (n.districtId !== districtId || n.lat == null || n.lng == null) return;
+      const d = haversineDistance(centerLat, centerLng, n.lat, n.lng) + 40; // padding so the node isn't right on the fog edge
+      if (d > maxDist) maxDist = d;
+    });
+    return maxDist;
   }
 
   // ── Fog: single inverted polygon ───────────────────
@@ -739,6 +764,7 @@ const MapModule = (() => {
     // fully-cleared reveals the district polygon (one contiguous hole, no gaps between circles);
     // not-yet-complete reveals only the circles of the watchtowers this user has visited so far.
     const clearedPolys = [];
+    const clearedCircleCenters = []; // watchtower circle centers, for a precise overlap check below
     districts.forEach(d => {
       const districtWatchtowers = allWatchtowersCache.filter(w => w.district_id === d.id);
       const fullyCleared = !(userDistrictState[d.id]?.fogged ?? true);
@@ -747,7 +773,11 @@ const MapModule = (() => {
         if (!fullyCleared) return;
         const lat = d.watchtower_lat ?? d.center_lat;
         const lng = d.watchtower_lng ?? d.center_lng;
-        if (lat != null && lng != null) clearedPolys.push(_circleRing(lat, lng, WATCHTOWER_REVEAL_RADIUS_M));
+        if (lat != null && lng != null) {
+          const r = _watchtowerRevealRadius(d.id, lat, lng);
+          clearedPolys.push(_circleRing(lat, lng, r));
+          clearedCircleCenters.push({ lat, lng, r });
+        }
         return;
       }
 
@@ -761,33 +791,63 @@ const MapModule = (() => {
           return;
         }
         // No polygon_coords → fall back to all watchtower circles
-        districtWatchtowers.forEach(w => clearedPolys.push(_circleRing(w.lat, w.lng, WATCHTOWER_REVEAL_RADIUS_M)));
+        districtWatchtowers.forEach(w => {
+          clearedPolys.push(_circleRing(w.lat, w.lng, WATCHTOWER_REVEAL_RADIUS_M));
+          clearedCircleCenters.push({ lat: w.lat, lng: w.lng, r: WATCHTOWER_REVEAL_RADIUS_M });
+        });
         return;
       }
       districtWatchtowers.filter(w => visitedWatchtowerIds.has(w.id))
-        .forEach(w => clearedPolys.push(_circleRing(w.lat, w.lng, WATCHTOWER_REVEAL_RADIUS_M)));
+        .forEach(w => {
+          clearedPolys.push(_circleRing(w.lat, w.lng, WATCHTOWER_REVEAL_RADIUS_M));
+          clearedCircleCenters.push({ lat: w.lat, lng: w.lng, r: WATCHTOWER_REVEAL_RADIUS_M });
+        });
     });
 
+    // Bridge any two watchtower/district circles that overlap each other — nearby
+    // watchtowers in a multi-watchtower district, or a grown single-watchtower circle
+    // (from the support-node coverage fix above) reaching a neighboring one. Same reasoning
+    // as the walk-trail bridging below: two separate crossing rings can't be cleanly
+    // tessellated by MapLibre, so join them into one continuous shape with a strip instead.
+    for (let i = 0; i < clearedCircleCenters.length; i++) {
+      for (let j = i + 1; j < clearedCircleCenters.length; j++) {
+        const a = clearedCircleCenters[i], b = clearedCircleCenters[j];
+        if (haversineDistance(a.lat, a.lng, b.lat, b.lng) < a.r + b.r) {
+          clearedPolys.push(_stripRing(a.lat, a.lng, b.lat, b.lng, Math.min(a.r, b.r)));
+        }
+      }
+    }
+
     // Walk-trail holes: a small circle per walked point (smooth trail, not grid squares).
-    // Skip any point that falls inside a cleared district polygon's bbox — a circle hole
-    // straddling a district hole's edge would add a 3rd ring crossing there and cancel it,
-    // same reason the old grid-cell version filtered by bbox instead of just the center.
+    // Two exclusion passes so a walk circle never crosses a watchtower/district hole
+    // (crossing holes can't be cleanly tessellated — reads as a jagged wedge of fog
+    // poking through what should be a clean clearing):
+    //  1. bbox check — cheap approximation, catches points inside a revealed polygon
+    //  2. exact radius-sum check against watchtower circles — a bbox alone under-excludes
+    //     here, since a walk point can sit just outside a 180m bbox while its own 30m
+    //     circle still physically overlaps the watchtower's circle a ring further out.
     const clearedBboxes = clearedPolys.map(poly => {
       let s = Infinity, n = -Infinity, w = Infinity, e = -Infinity;
       poly.forEach(([lng, lat]) => { s = Math.min(s, lat); n = Math.max(n, lat); w = Math.min(w, lng); e = Math.max(e, lng); });
       return { s, n, w, e };
     });
-    const walkPts = _walkedPoints
-      .filter(({ lat, lng }) => !clearedBboxes.some(b => lat > b.s && lat < b.n && lng > b.w && lng < b.e));
-    const cellHoles = walkPts.map(({ lat, lng }) => _circleRing(lat, lng, WALK_REVEAL_RADIUS_M));
-    for (let i = 1; i < walkPts.length; i++) {
-      const a = walkPts[i - 1], b = walkPts[i];
-      // Skip far-apart pairs (session gap / driving between points) — only bridge
-      // consecutive on-foot steps, not the whole trail with one long sliver.
-      if (haversineDistance(a.lat, a.lng, b.lat, b.lng) <= 150) {
-        cellHoles.push(_stripRing(a.lat, a.lng, b.lat, b.lng, WALK_REVEAL_RADIUS_M));
-      }
-    }
+    const walkPts = _walkedPoints.filter(({ lat, lng }) => {
+      if (clearedBboxes.some(b => lat > b.s && lat < b.n && lng > b.w && lng < b.e)) return false;
+      if (clearedCircleCenters.some(c =>
+        haversineDistance(lat, lng, c.lat, c.lng) < c.r + WALK_REVEAL_RADIUS_M)) return false;
+      return true;
+    });
+    const bridgedToNext = walkPts.map((pt, i) =>
+      i < walkPts.length - 1 && haversineDistance(pt.lat, pt.lng, walkPts[i + 1].lat, walkPts[i + 1].lng) <= 150);
+    // A point's own circle is redundant (and just adds another overlapping ring for
+    // MapLibre to tessellate) once strips cover both sides of it — only keep circles
+    // at trail endpoints/gaps, where nothing else fills that footprint.
+    const cellHoles = walkPts
+      .filter((_, i) => !(bridgedToNext[i] && bridgedToNext[i - 1]))
+      .map(({ lat, lng }) => _circleRing(lat, lng, WALK_REVEAL_RADIUS_M));
+    walkPts.forEach((a, i) => {
+      if (bridgedToNext[i]) cellHoles.push(_stripRing(a.lat, a.lng, walkPts[i + 1].lat, walkPts[i + 1].lng, WALK_REVEAL_RADIUS_M));
+    });
 
     const outer = _ringWithWinding(FOG_OUTER_LL, true);
     const holes = [...clearedPolys, ...cellHoles].map(ring => _ringWithWinding(ring, false));
@@ -887,6 +947,26 @@ const MapModule = (() => {
     });
   }
 
+  // A district's `fogged` flag alone isn't enough to gate node/lore markers: for a
+  // multi-watchtower district, fogged=false already means every watchtower was visited
+  // (the completion trigger sets it), so the whole polygon is revealed and anything in
+  // the district should show. But a legacy single-watchtower district's check-in only
+  // ever punches a small WATCHTOWER_REVEAL_RADIUS_M circle — fogged flips false on the
+  // FIRST check-in while most of the district is still fogged, so without this distance
+  // check, nodes/lore across the whole district would appear floating outside the fog
+  // that's actually been cleared.
+  function _isRevealedAt(districtId, lat, lng) {
+    const state = userDistrictState[districtId];
+    if (!state || state.fogged !== false) return false;
+    if (allWatchtowersCache.some(w => w.district_id === districtId)) return true;
+
+    const d = (allDistrictsCache || []).find(dd => dd.id === districtId);
+    const wtLat = d?.watchtower_lat ?? d?.center_lat;
+    const wtLng = d?.watchtower_lng ?? d?.center_lng;
+    if (wtLat == null || wtLng == null || lat == null || lng == null) return false;
+    return haversineDistance(lat, lng, wtLat, wtLng) <= _watchtowerRevealRadius(districtId, wtLat, wtLng);
+  }
+
   // ── Node markers ────────────────────────────────────
   function renderNodes() {
     // Clear existing node markers
@@ -895,8 +975,7 @@ const MapModule = (() => {
     });
 
     supportNodes.forEach((node, i) => {
-      const state = userDistrictState[node.districtId] || { fogged: true };
-      if (state.fogged) return;
+      if (!_isRevealedAt(node.districtId, node.lat, node.lng)) return;
 
       const cfg  = NODE_CFG[node.type] || NODE_CFG.landmark;
       const html = `<div class="marker-node marker-${node.type}" style="color:${cfg.color}">${cfg.svg}</div>`;
@@ -920,7 +999,11 @@ const MapModule = (() => {
       // C-class: proximity-based, always visible regardless of fog
       if (figure.class === 'C') {
         if (figure.lat == null || figure.lng == null) return;
-        const cHtml = `<div class="marker-node" style="color:var(--color-primary);background:rgba(255,126,85,0.15);border-color:var(--color-primary)" title="${escapeHtml(figure.name_th || '')}">🧑</div>`;
+        const cHtml = `<div class="marker-node" style="color:#fff;background:var(--color-map-pin);border-color:var(--color-map-pin)" title="${escapeHtml(figure.name_th || '')}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>`;
         _figureCircleFeatures[figure.id] = _circleFeature(figure.lat, figure.lng, 80);
         const marker = _addMarker(figure.lat, figure.lng, cHtml, { anchorX: 12, anchorY: 12 });
         marker.getElement().addEventListener('click', () => _openCaptureSheet(figure));
@@ -949,7 +1032,7 @@ const MapModule = (() => {
 
       const html = figure.raid_only
         ? `<div class="marker-node" style="color:#EF5350;background:rgba(239,83,80,0.15);border-color:#EF5350" title="Raid Encounter">⚔️</div>`
-        : `<div class="marker-node" style="color:var(--color-primary);background:var(--color-primary-dim);border-color:var(--color-primary)">
+        : `<div class="marker-node" style="color:#fff;background:var(--color-map-pin);border-color:var(--color-map-pin)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
               <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
             </svg>
@@ -1035,8 +1118,7 @@ const MapModule = (() => {
 
     getLoreNodes().forEach(node => {
       const districtId = node.district_id || node.districtId;
-      const state = districtId ? userDistrictState[districtId] : null;
-      if (districtId && state?.fogged !== false) return;
+      if (districtId && !_isRevealedAt(districtId, node.lat, node.lng)) return;
 
       const discovered = unlockedLoreIds.has(node.id) || pendingLoreIds.has(node.id);
 
@@ -1107,19 +1189,22 @@ const MapModule = (() => {
           </svg>
         </div>
         <div style="flex:1;min-width:0">
-          <p style="margin:0;font-weight:600;font-size:15px;color:var(--color-white);line-height:1.3;
-                    white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(node.name)}</p>
+          <div style="display:flex;align-items:center;gap:6px">
+            <p style="margin:0;font-weight:600;font-size:15px;color:var(--color-white);line-height:1.3;
+                      white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(node.name)}</p>
+            ${visited ? '<span class="explored-badge">✓ เยี่ยมชมแล้ว</span>' : ''}
+          </div>
           <p style="margin:2px 0 0;font-size:11px;color:var(--color-muted)">
             ${escapeHtml(cfg.label)}${district ? ' · ' + escapeHtml(district.name_th) : ''}
           </p>
         </div>
       </div>
-      <button class="btn ${visited ? 'btn-outline' : 'btn-primary'} btn-sm btn-full"
+      ${visited ? '' : `
+      <button class="btn btn-primary btn-sm btn-full"
               id="btn-visit-support-node"
-              onclick="MapModule.visitSupportNode('${escapeHtml(id)}')"
-              ${visited ? 'disabled' : ''}>
-        ${visited ? 'เยี่ยมชมแล้ว' : 'เยี่ยมชมสถานที่นี้'}
-      </button>
+              onclick="MapModule.visitSupportNode('${escapeHtml(id)}')">
+        เยี่ยมชมสถานที่นี้
+      </button>`}
     `;
 
     window.AppCore?.openSheet('node-info-sheet');
@@ -1230,16 +1315,21 @@ const MapModule = (() => {
     `;
 
     const btn      = document.getElementById('btn-checkin');
+    const badge    = document.getElementById('checkin-explored-badge');
     const alreadyCleared = !fogged;
 
+    // Already-explored is redundant once checked in — the encounter/support-node
+    // content below already implies it — so it moves up to a small status badge
+    // next to the district name instead of a disabled ghost button in the action
+    // stack, leaving just the real actions (Encounter CTA / Cancel) down there.
+    if (badge) badge.hidden = !alreadyCleared;
     if (alreadyCleared) {
-      btn.textContent = 'Already Explored ✓';
-      btn.disabled    = true;
-      btn.className   = 'btn btn-full btn-ghost';
+      btn.hidden = true;
     } else {
+      btn.hidden      = false;
       btn.textContent = 'Check In & Clear Fog';
       btn.disabled    = false;
-      btn.className   = 'btn btn-full btn-primary';
+      btn.className   = 'btn btn-sm btn-full btn-primary';
     }
 
     window.AppCore?.openSheet('checkin-sheet');
@@ -1252,7 +1342,7 @@ const MapModule = (() => {
     if (!state.has_encounter_key) {
       container.innerHTML = `
         <div class="card-outlined mb-3" style="text-align:center;padding:var(--space-md)">
-          <span style="font-size:1.4rem">🗝️</span>
+          <span style="color:var(--color-muted)">${keySVG(22)}</span>
           <p style="font-size:var(--text-sm);color:var(--color-muted);margin:var(--space-xs) 0 0">เช็กอิน Watchtower เพื่อรับกุญแจ Encounter</p>
         </div>
       `;
@@ -1268,8 +1358,8 @@ const MapModule = (() => {
 
     if (canUnlock) {
       container.innerHTML = `
-        <button class="btn btn-primary btn-full mb-3" onclick="MapModule.openLegendaryEncounter('${escapeHtml(district.id)}')">
-          🗝️ ใช้กุญแจ Encounter
+        <button class="btn btn-primary btn-sm btn-full mb-3" onclick="MapModule.openLegendaryEncounter('${escapeHtml(district.id)}')">
+          ${keySVG(16)} ใช้กุญแจ Encounter
         </button>
       `;
       return;
@@ -1277,7 +1367,7 @@ const MapModule = (() => {
 
     container.innerHTML = `
       <div class="card-outlined mb-3">
-        <p style="font-size:var(--text-sm);font-weight:700;margin-bottom:var(--space-sm);color:var(--color-muted)">🗝️ มีกุญแจแล้ว — รอ Support Nodes</p>
+        <p style="font-size:var(--text-sm);font-weight:700;margin-bottom:var(--space-sm);color:var(--color-muted)">${keySVG(14)} มีกุญแจแล้ว — รอ Support Nodes</p>
         ${rows.map(row => {
           const pct = Math.min(100, Math.round((row.count / row.required) * 100));
           return `
@@ -1514,7 +1604,7 @@ const MapModule = (() => {
 
     // Rebuild the entire fog layer (removes the old polygon, adds new with extra hole)
     buildFogLayer(allDistrictsCache || []);
-    playFogClearSweep(sweepLat, sweepLng);
+    playFogClearSweep(sweepLat, sweepLng, d.watchtowerId ? undefined : _watchtowerRevealRadius(d.id, sweepLat, sweepLng));
 
     // Reveal nodes in this district
     renderNodes();
@@ -1528,7 +1618,7 @@ const MapModule = (() => {
     window.AppCore?.closeAllSheets();
     updateStatsBar();
     syncDiscoveryPercent(user?.id);
-    showFloatPtsOnMap(150 * getTransportMultiplier());
+    showFloatPtsOnMap(150);
     if (user) DB.Missions?.updateChallengeProgress(user.id, 'checkin').catch(() => {});
   }
 
@@ -1616,7 +1706,7 @@ const MapModule = (() => {
     const html = `<div class="marker-home" title="${home.name_th || 'Home'}">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
            stroke-linecap="round" stroke-linejoin="round"
-           style="width:16px;height:16px;transform:rotate(45deg)">
+           style="width:16px;height:16px">
         <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
         <polyline points="9 22 9 12 15 12 15 22"/>
       </svg>
@@ -1643,13 +1733,6 @@ const MapModule = (() => {
     } catch { updateStatsBar(); }
   }
 
-  function getTransportMultiplier() {
-    if (!lastKnownPosition) return 1;
-    return btsMrtStations.some(station => (
-      haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, station.lat, station.lng) <= station.radius_m
-    )) ? 2 : 1;
-  }
-
   function showFloatPtsOnMap(pts) {
     const rect = map.getContainer().getBoundingClientRect();
     window.AppCore?.showFloatPts(pts, rect.width / 2, rect.height / 2);
@@ -1658,6 +1741,12 @@ const MapModule = (() => {
   function checkSVG() {
     return `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5">
       <polyline points="1.5,6 4.5,9.5 10.5,2.5"/>
+    </svg>`;
+  }
+
+  function keySVG(size = 16) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:${size}px;height:${size}px;vertical-align:-3px;flex-shrink:0">
+      <circle cx="7" cy="15" r="4"/><path d="M10.5 11.5L21 1"/><path d="M17 5l3 3"/><path d="M14 8l2.5 2.5"/>
     </svg>`;
   }
 
@@ -1682,7 +1771,7 @@ const MapModule = (() => {
   function renderRallyPin(userId, username, lat, lng) {
     if (!map) return;
     if (_rallyPins[userId]) _rallyPins[userId].remove();
-    const html = `<div style="background:var(--color-primary);color:#fff;font-size:10px;font-weight:700;
+    const html = `<div style="background:var(--color-map-pin);color:#fff;font-size:10px;font-weight:700;
                        padding:3px 8px;border-radius:10px;white-space:nowrap;
                        box-shadow:0 2px 8px rgba(0,0,0,0.4);pointer-events:none">
              📍 ${escapeHtml(username)}</div>`;

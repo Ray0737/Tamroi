@@ -61,7 +61,7 @@ const DiscussionModule = (() => {
     return `
       <div style="background:var(--color-card-dark);border-radius:var(--radius-md);
                   border:1px solid var(--color-border);padding:10px var(--space-sm);
-                  ${isReply ? 'margin-left:24px;border-left:2px solid rgba(255,126,85,0.3)' : ''}">
+                  ${isReply ? 'margin-left:24px;border-left:2px solid rgba(234,231,225,0.3)' : ''}">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
           <div style="display:flex;align-items:center;gap:6px">
             ${avatarHTML(p.avatar_url, name.substring(0, 2).toUpperCase(), 24, 'rgba(255,255,255,0.2)')}

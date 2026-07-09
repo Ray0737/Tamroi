@@ -69,7 +69,7 @@
     ├── patch_district_seed.sql MVP district seed parity with map.js
     ├── patch_era.sql           era column on figures
     ├── patch_daily_challenges.sql daily_challenges + user_daily_progress tables
-    ├── patch_support_nodes.sql figure lat/lng coords + support_nodes + bts_mrt_stations tables
+    ├── patch_support_nodes.sql figure lat/lng coords + support_nodes + bts_mrt_stations tables (client-side BTS/MRT bonus removed 2026-07-09; table unused)
     ├── patch_coop.sql          Phase 3: guilds, raids, discussions, triggers, views, RLS
     ├── patch_coop_fix.sql      guild_join_requests table + split notification RLS
     ├── patch_group_management.sql guilds.announcement column
@@ -284,8 +284,6 @@ Run patches in this order:
 - S-Class/Legendary: up to 500 pts (King Taksin = 500) (via DB trigger)
 - Lore node unlocked: defined per node in `lore_nodes.lore_pts` (client-side write)
 - Lore chain complete bonus: +50 pts
-- BTS/MRT transport bonus: ×2 points multiplier on check-in
-- Current BTS/MRT MVP uses seeded station-radius points, not full rail polygons
 - Leaderboard metrics: Map Discovery % · Archive count · Legacy Score
 - Real-time leaderboard: Supabase Realtime subscription on `profiles` table
 - Real-time notifications: Supabase Realtime subscription on `notifications` inserts updates the badge/offcanvas
@@ -301,7 +299,7 @@ Run patches in this order:
 | `daily_challenges` | patch_daily_challenges | Challenge definitions (checkin/capture/lore/quiz types) |
 | `user_daily_progress` | patch_daily_challenges | Per-user daily challenge progress |
 | `support_nodes` | patch_support_nodes | Cafe/OTOP/landmark node definitions with lat/lng |
-| `bts_mrt_stations` | patch_support_nodes | Station coords for ×2 transport bonus |
+| `bts_mrt_stations` | patch_support_nodes | Station coords for ×2 transport bonus — client-side feature removed 2026-07-09, table unused |
 | `guilds` | patch_coop | Guild records (name, invite_code, max_members, announcement) |
 | `guild_members` | patch_coop | Guild membership + role (leader/member) |
 | `guild_join_requests` | patch_coop_fix | Join request flow (pending/approved/rejected) |
@@ -360,7 +358,7 @@ Run patches in this order:
 - `window.DB.Discussion`: `getComments(figureId)`, `postComment(figureId, userId, content, parentId)`, `flagComment(discussionId, userId)`
 - `window.DB.Community`: `getPosts(userId)`, `getReplies(parentId)`, `postMessage(userId, content, parentId)`, `flagPost(postId, userId)`, `likePost(postId, userId)`, `unlikePost(postId, userId)`
 - `window.GuildModule`: `init(userId)`, `getState()`, `getOnlineMemberIds()`, `renderGuildPanel()`
-- `window.CoopModule`: `init()`, `postJigsawSummary(guildId, missionId)`
+- `window.CoopModule`: `load()` (feature-flagged off 2026-07-09 — renders a locked "unlocks in N days" placeholder; real logic moved to `_liveLoad()`, unused), `renderMissionCard(mission, checkins, myCheckin)`, `subscribeProgress(missionId, guildId)`, `postJigsawSummary(guildId, missionId)`
 - `window.DebateModule`: `open(figureId)`, `close()`
 - `window.RaidModule`: `init(figureId)`
 - `window.DiscussionModule`: `init(figureId)`, `load(figureId)`
