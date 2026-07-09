@@ -142,10 +142,10 @@ const RaidModule = (() => {
             เริ่มได้เลย
           </button>` : `
           <p style="text-align:center;font-size:13px;color:var(--color-muted)">รอผู้นำ...</p>`}
-        <button class="btn btn-ghost btn-full" id="btn-ready-up" style="margin-top:8px">
+        <button class="btn btn-outline btn-full" id="btn-ready-up" style="margin-top:8px">
           พร้อม
         </button>
-        <button class="btn btn-ghost btn-full" onclick="RaidModule._close()"
+        <button class="btn btn-outline btn-full" onclick="RaidModule._close()"
                 style="margin-top:8px;font-size:12px;color:var(--color-muted)">
           ยกเลิก
         </button>
@@ -411,7 +411,7 @@ const RaidModule = (() => {
           Raid ล้มเหลว</h3>
         <p style="font-size:13px;color:var(--color-muted);margin-bottom:var(--space-md)">
           ${reason === 'disconnected' ? 'สมาชิกไม่ครบ' : 'ตอบผิดทั้งสองรอบ'} — ลองใหม่ได้หลัง 10 นาที</p>
-        <button class="btn btn-ghost btn-full" onclick="RaidModule._close()">ปิด</button>
+        <button class="btn btn-outline btn-full" onclick="RaidModule._close()">ปิด</button>
       </div>`;
   }
 

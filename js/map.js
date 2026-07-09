@@ -1408,8 +1408,9 @@ const MapModule = (() => {
     options.innerHTML = ['A', 'B', 'C', 'D'].map(option => {
       const key = `option_${option.toLowerCase()}`;
       return `
-        <button class="btn btn-ghost btn-full quiz-option" data-option="${option}" type="button">
-          ${option}. ${escapeHtml(question[key] || '')}
+        <button class="quiz-option" data-option="${option}" type="button">
+          <span class="quiz-option-letter">${option}</span>
+          <span class="quiz-option-text">${escapeHtml(question[key] || '')}</span>
         </button>
       `;
     }).join('');
@@ -1417,9 +1418,8 @@ const MapModule = (() => {
     options.querySelectorAll('.quiz-option').forEach(btn => {
       btn.addEventListener('click', () => {
         activeQuiz.selected = btn.dataset.option;
-        options.querySelectorAll('.quiz-option').forEach(item => { item.classList.remove('btn-primary'); item.classList.add('btn-ghost'); });
-        btn.classList.remove('btn-ghost');
-        btn.classList.add('btn-primary');
+        options.querySelectorAll('.quiz-option').forEach(item => item.classList.remove('selected'));
+        btn.classList.add('selected');
       });
     });
 

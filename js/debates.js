@@ -30,7 +30,7 @@ const DebateModule = (() => {
     const pctA  = total ? Math.round((s.count_a / total) * 100) : 50;
     const pctB  = 100 - pctA;
 
-    document.getElementById('debate-title').textContent      = escapeHtml(d.title_th);
+    document.getElementById('debate-title').textContent      = d.title_th;
     document.getElementById('debate-vote-count').textContent = `${total} เสียง`;
 
     const body = document.getElementById('debate-body');

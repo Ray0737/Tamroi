@@ -94,28 +94,36 @@
 .fig-location-row {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   padding: 6px 0;
   border-bottom: 1px solid rgba(255,255,255,.05);
   flex-wrap: wrap;
 }
+
+.fig-location-row:last-child { border-bottom: none; }
 
 .fig-loc-name { font-size: 12px; font-weight: 600; flex: 1; min-width: 80px; }
 
 .fig-loc-sub { font-size: 10px; color: var(--color-muted); }
 
 .fig-loc-map-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 10px;
-  padding: 3px 8px;
-  border-radius: 10px;
-  background: rgba(234,231,225,.12);
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-dim);
   color: var(--color-primary);
   border: none;
   cursor: pointer;
   white-space: nowrap;
 }
 
-.fig-loc-map-btn:hover { background: rgba(234,231,225,.25); }
+.fig-loc-map-btn svg { width: 11px; height: 11px; flex-shrink: 0; }
+
+.fig-loc-map-btn:hover { background: rgba(234,231,225,.28); }
 
 /* ── Graph overlay ──────────────────────────────────── */
 #figure-graph-overlay {
@@ -278,6 +286,6 @@
   padding: 10px;
   font-size: 13px;
   font-weight: 700;
-  color: #fff;
+  color: var(--color-on-primary);
   cursor: pointer;
 }

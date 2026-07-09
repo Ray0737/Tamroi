@@ -484,7 +484,7 @@
 
     <div id="home-picker-grid"></div>
 
-    <button class="btn btn-ghost btn-full" onclick="MapModule.skipHomePicker()" style="font-size:var(--text-sm)">
+    <button class="btn btn-outline btn-full" onclick="MapModule.skipHomePicker()" style="font-size:var(--text-sm)">
       ข้ามก่อน — เริ่มจากกลางกรุงเทพฯ
     </button>
   </div>
@@ -502,7 +502,7 @@
     <h3 class="sheet-title lore-title" id="lore-title">Lore</h3>
     <img class="lore-media" id="lore-img" alt="" loading="lazy" hidden>
     <div class="lore-audio-wrap" id="lore-audio-wrap" hidden>
-      <button class="btn btn-ghost btn-sm" id="lore-audio-toggle" type="button">เล่นเสียง</button>
+      <button class="btn btn-outline btn-sm" id="lore-audio-toggle" type="button">เล่นเสียง</button>
       <audio id="lore-audio"></audio>
     </div>
     <div class="lore-narrator-row">
@@ -535,13 +535,13 @@
   <!-- ════ QUIZ BOTTOM SHEET ════ -->
   <div class="bottom-sheet" id="quiz-sheet">
     <div class="sheet-handle"></div>
-    <div class="lore-sheet-head">
-      <span class="lore-type-badge" id="quiz-step">Quiz</span>
-      <span class="lore-pts-badge" id="quiz-pts">+0 pts</span>
+    <div class="lore-sheet-head" style="margin-bottom:6px">
+      <span style="font-size:var(--text-xs);font-weight:700;color:var(--color-primary)" id="quiz-step">Quiz</span>
+      <span style="font-size:var(--text-xs);font-weight:700;color:var(--color-muted)" id="quiz-pts">+0 pts</span>
     </div>
     <h3 class="sheet-title lore-title" id="quiz-title">Historical Quiz</h3>
-    <div class="lore-narrative" id="quiz-question"></div>
-    <div id="quiz-options" style="display:flex;flex-direction:column;gap:var(--space-sm);margin-bottom:var(--space-md)"></div>
+    <p id="quiz-question" style="margin:0 0 var(--space-sm);color:var(--color-muted);font-size:var(--text-sm);line-height:1.5"></p>
+    <div id="quiz-options" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:var(--space-sm)"></div>
     <button class="btn btn-primary btn-sm btn-full" id="btn-submit-quiz">ตอบคำถาม</button>
     <button class="btn btn-outline btn-sm btn-full mt-2" onclick="AppCore.closeAllSheets()" style="margin-top:8px">ปิด</button>
   </div>
@@ -561,25 +561,34 @@
   <div class="modal fade" id="figure-modal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width:360px;margin-left:auto;margin-right:auto">
       <div class="modal-content">
-        <div class="modal-header" style="border:none;padding-bottom:0">
-          <div class="anim-stamp" style="width:100%;text-align:center">
-            <div class="figure-modal-portrait" id="modal-figure-emoji">
+        <div class="modal-header" style="border:none;padding:22px var(--space-md) 18px;display:block">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" style="position:absolute;top:16px;right:16px;z-index:2"></button>
+          <!-- IG/Threads-style profile header: avatar left, name+handle right -->
+          <div class="anim-stamp" style="display:flex;align-items:flex-start;gap:16px">
+            <div class="figure-modal-portrait" id="modal-figure-emoji" style="width:64px;height:64px;font-size:26px;margin:0;flex-shrink:0">
               <i class="bi bi-person-fill"></i>
             </div>
+            <div style="flex:1;min-width:0;padding-top:8px">
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                <h3 style="font-family:var(--font-heading);font-size:var(--text-md);font-weight:800;margin:0" id="modal-figure-name">–</h3>
+                <span class="figure-class-label" id="modal-figure-badge"
+                      style="display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;
+                             letter-spacing:0.5px;padding:2px 8px;border-radius:var(--radius-full);
+                             background:var(--color-primary-dim);color:var(--color-primary);flex-shrink:0">C-Class</span>
+              </div>
+              <p style="font-size:var(--text-xs);color:var(--color-muted);margin:3px 0 0" id="modal-figure-en">–</p>
+              <!-- Compact stat line — was a big number-block row, moved here and shrunk -->
+              <p style="font-size:10px;color:var(--color-muted);margin:8px 0 0">
+                <span style="color:var(--color-primary);font-weight:700" id="modal-figure-pts">–</span> Legacy
+                &nbsp;·&nbsp; เขต <span id="modal-figure-district" style="font-weight:600">–</span>
+                <span id="modal-figure-years-row" hidden>&nbsp;·&nbsp; ปี <span id="modal-figure-years" style="font-weight:600">–</span></span>
+              </p>
+            </div>
           </div>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" style="position:absolute;top:20px;right:16px"></button>
         </div>
-        <div class="modal-body" style="text-align:left;padding:4px var(--space-md) var(--space-md);overflow-y:auto">
-          <span class="figure-class-label" id="modal-figure-badge"
-                style="display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;
-                       letter-spacing:0.5px;padding:3px 12px;border-radius:var(--radius-full);
-                       background:var(--color-primary-dim);color:var(--color-primary);margin-bottom:8px">C-Class</span>
-          <h3 style="font-family:var(--font-heading);font-size:var(--text-lg);font-weight:800;margin:0 0 2px" id="modal-figure-name">–</h3>
-          <p style="font-size:var(--text-xs);color:var(--color-muted);margin-bottom:6px" id="modal-figure-en">–</p>
-          <p style="font-size:var(--text-sm);font-weight:700;color:var(--color-primary);margin-bottom:12px" id="modal-figure-pts">–</p>
-          <div id="modal-figure-bio-card" style="text-align:left">
-            <p style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--color-muted);margin-bottom:5px" id="modal-figure-era">–</p>
-            <p style="font-size:var(--text-xs);line-height:1.5;margin:0;color:var(--color-muted)" id="modal-figure-bio">–</p>
+        <div class="modal-body" style="text-align:left;padding:8px var(--space-md) var(--space-md);overflow-y:auto">
+          <div id="modal-figure-bio-card" class="fig-bio-section">
+            <p style="font-size:var(--text-xs);line-height:1.6;margin:0;color:var(--color-white)" id="modal-figure-bio">–</p>
           </div>
           <!-- Relations -->
           <div id="modal-figure-relations" class="fig-bio-section" style="display:none">
@@ -598,8 +607,11 @@
           </div>
         </div>
         <div class="modal-footer" style="border:none;flex-direction:column;gap:8px;padding-top:var(--space-sm);padding-bottom:var(--space-md)">
-          <button type="button" id="btn-figure-graph" class="btn btn-ghost btn-full" style="font-size:12px;padding:7px">🕸️ ดูแผนผังความสัมพันธ์</button>
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" style="font-size:12px;padding:7px;width:60%">ปิด</button>
+          <button type="button" id="btn-figure-graph" class="btn btn-outline btn-sm btn-full">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;margin-right:4px;vertical-align:-2px"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8.2 7.2l2.4 8.6M15.8 7.2l-2.4 8.6M8.5 6h7"/></svg>
+            ดูแผนผังความสัมพันธ์
+          </button>
+          <button type="button" class="btn btn-primary btn-sm btn-full" data-bs-dismiss="modal">ปิด</button>
         </div>
       </div>
     </div>

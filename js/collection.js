@@ -11,6 +11,18 @@ const CollectionModule = (() => {
   let ownedOnly         = false;
   let loaded = false;
   let figureModalBound = false;
+  let districtNameMap = null; // district_id → name_th, lazy-loaded once for the figure modal
+
+  async function _getDistrictName(districtId) {
+    if (!districtId) return '';
+    if (!districtNameMap) {
+      districtNameMap = {};
+      try {
+        (await DB.Districts.getAll()).forEach(d => { districtNameMap[d.id] = d.name_th; });
+      } catch { /* keep the slug fallback below */ }
+    }
+    return districtNameMap[districtId] || '';
+  }
 
   function loadNewCaptures() {
     try {
@@ -290,9 +302,9 @@ const CollectionModule = (() => {
     journal.hidden = false;
     if (!loreEntries.length) {
       journal.innerHTML = `
-        <div class="lore-journal-card">
+        <div class="lore-chain-card" style="cursor:default">
           <p class="lore-journal-title">ยังไม่มี Lore</p>
-          <p class="lore-journal-preview">เดินเข้าใกล้จุดประวัติศาสตร์บนแผนที่เพื่อปลดล็อคเรื่องราว</p>
+          <p class="lore-journal-meta" style="margin-top:2px;line-height:1.5">เดินเข้าใกล้จุดประวัติศาสตร์บนแผนที่เพื่อปลดล็อคเรื่องราว</p>
         </div>
       `;
       return;
@@ -322,14 +334,14 @@ const CollectionModule = (() => {
       return `
         <div class="lore-chain-card">
           <div class="lore-chain-head">
-            <div>
-              <p class="lore-journal-title">${escapeHtml(group.title)}</p>
-              <p class="lore-journal-meta">${complete ? 'Complete' : `${group.entries.length}/3 parts`}</p>
-            </div>
+            <p class="lore-journal-title" style="margin:0;display:flex;align-items:center;gap:6px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex-shrink:0"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+              ${escapeHtml(group.title)}
+            </p>
             <span class="lore-type-badge">${complete ? 'Complete' : `${group.entries.length}/3`}</span>
           </div>
-          <div class="progress-track"><div class="progress-fill orange" style="width:${pct}%"></div></div>
-          <div style="display:flex;flex-direction:column;gap:var(--space-sm);margin-top:var(--space-sm)">
+          ${complete ? '' : `<div class="progress-track" style="margin-top:6px"><div class="progress-fill orange" style="width:${pct}%"></div></div>`}
+          <div style="display:flex;flex-direction:column;margin-top:2px">
             ${group.entries.map(e => renderLoreEntry(e, assessmentMap)).join('')}
           </div>
         </div>
@@ -393,7 +405,6 @@ const CollectionModule = (() => {
     const district = entry.districts?.name_th || entry.district_name || entry.district_id || 'Thailand';
     const date = entry.unlocked_at ? new Date(entry.unlocked_at).toLocaleDateString('th-TH') : '';
     const content = entry.content_th || entry.content_en || '';
-    const preview = content.length > 80 ? content.slice(0, 80) + '...' : content;
 
     const assessment = assessmentMap.get(entry.id);
     const pill = assessment
@@ -403,15 +414,13 @@ const CollectionModule = (() => {
     return `
       <div class="lore-journal-card" data-lore-id="${escapeHtml(entry.id)}">
         <div class="lore-chain-head">
-          <div>
-            <p class="lore-journal-title">${escapeHtml(entry.name_th || entry.name_en || 'Lore')}</p>
+          <div style="min-width:0">
+            <p class="lore-journal-title" style="margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(entry.name_th || entry.name_en || 'Lore')}</p>
             <p class="lore-journal-meta">${escapeHtml(district)}${date ? ' · ' + escapeHtml(date) : ''}</p>
           </div>
-          <span class="lore-type-badge">${escapeHtml(entry.content_type || 'text')}</span>
+          <svg class="lore-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
-        <p class="lore-journal-preview">${escapeHtml(preview)}</p>
-        <div class="lore-journal-full">${escapeHtml(content)}</div>
-        ${pill}
+        <div class="lore-journal-full">${escapeHtml(content)}${pill ? `<div style="margin-top:var(--space-sm)">${pill}</div>` : ''}</div>
       </div>
     `;
   }
@@ -427,16 +436,30 @@ const CollectionModule = (() => {
     const emojiEl = document.getElementById('modal-figure-emoji');
     if (emojiEl) emojiEl.textContent = fig.image_emoji || '🏛️';
 
-    document.getElementById('modal-figure-name').textContent  = escapeHtml(fig.name_th);
-    document.getElementById('modal-figure-en').textContent    = escapeHtml(fig.name_en || '');
+    // .textContent never parses HTML, so it needs no escaping — running these through
+    // escapeHtml() first was actively wrong: it turned a literal apostrophe into the
+    // string "&#x27;" and .textContent then displayed that string as-is (raw entity
+    // syntax on screen) instead of an apostrophe, since nothing ever decoded it back.
+    document.getElementById('modal-figure-name').textContent  = fig.name_th;
+    document.getElementById('modal-figure-en').textContent    = fig.name_en || '';
     document.getElementById('modal-figure-badge').className   = `figure-class-label ${fig.class.toLowerCase()}`;
     document.getElementById('modal-figure-badge').textContent = `${fig.class}-Class`;
-    document.getElementById('modal-figure-pts').textContent   = `+${fig.legacy_pts} Legacy Points`;
+    document.getElementById('modal-figure-pts').textContent   = `+${fig.legacy_pts}`;
 
-    const eraEl = document.getElementById('modal-figure-era');
+    const districtEl = document.getElementById('modal-figure-district');
     const bioEl = document.getElementById('modal-figure-bio');
-    if (eraEl) eraEl.textContent = escapeHtml(fig.era || `${fig.class}-Class · ${(fig.district_id || '').replace(/_/g, ' ')}`);
-    if (bioEl) bioEl.textContent = escapeHtml(fig.description || '–');
+    const districtSlug = (fig.district_id || '').replace(/_/g, ' ');
+    if (districtEl) {
+      // Show the slug capitalized right away, then swap in the real Thai district
+      // name once it loads — beats a permanent raw "rattanakosin" in the UI.
+      districtEl.textContent = fig.era || (districtSlug ? districtSlug[0].toUpperCase() + districtSlug.slice(1) : '–');
+      if (!fig.era && fig.district_id) {
+        _getDistrictName(fig.district_id).then(name => {
+          if (name) districtEl.textContent = name;
+        });
+      }
+    }
+    if (bioEl) bioEl.textContent = fig.description || '–';
 
     // Clear async sections
     ['modal-figure-relations','modal-figure-lore','modal-figure-locations'].forEach(id => {
@@ -488,12 +511,15 @@ const CollectionModule = (() => {
     if (bioRes.status === 'fulfilled' && bioRes.value) {
       const bio = bioRes.value;
       const bioEl = document.getElementById('modal-figure-bio');
-      const eraEl = document.getElementById('modal-figure-era');
-      if (bioEl && bio.bio_th) bioEl.textContent = escapeHtml(bio.bio_th);
-      if (eraEl && (bio.birth_year || bio.death_year)) {
-        const years = [bio.birth_year ? `พ.ศ. ${bio.birth_year + 543}` : null,
-                       bio.death_year ? `พ.ศ. ${bio.death_year + 543}` : null].filter(Boolean).join(' – ');
-        eraEl.textContent = escapeHtml((bio.era || fig.era || '') + (years ? `  ·  ${years}` : ''));
+      const districtEl = document.getElementById('modal-figure-district');
+      const yearsEl = document.getElementById('modal-figure-years');
+      const yearsRow = document.getElementById('modal-figure-years-row');
+      if (bioEl && bio.bio_th) bioEl.textContent = bio.bio_th;
+      if (districtEl && bio.era) districtEl.textContent = bio.era;
+      if (yearsEl && yearsRow && (bio.birth_year || bio.death_year)) {
+        yearsEl.textContent = [bio.birth_year ? `พ.ศ. ${bio.birth_year + 543}` : null,
+                                bio.death_year ? `พ.ศ. ${bio.death_year + 543}` : null].filter(Boolean).join(' – ');
+        yearsRow.hidden = false;
       }
     }
 
@@ -551,7 +577,10 @@ const CollectionModule = (() => {
     // Related locations — figure's own pin + lore node coords
     const locations = [];
     if (fig.lat && fig.lng) {
-      locations.push({ name: escapeHtml(fig.name_th), sub: escapeHtml((fig.district_id || '').replace(/_/g, ' ')), lat: fig.lat, lng: fig.lng });
+      const districtSlug = (fig.district_id || '').replace(/_/g, ' ');
+      const districtName = (await _getDistrictName(fig.district_id))
+        || (districtSlug ? districtSlug[0].toUpperCase() + districtSlug.slice(1) : '');
+      locations.push({ name: escapeHtml(fig.name_th), sub: escapeHtml(districtName), lat: fig.lat, lng: fig.lng });
     }
     if (loreRes.status === 'fulfilled') {
       (loreRes.value || []).filter(n => n.lat && n.lng).forEach(n => {
@@ -566,7 +595,10 @@ const CollectionModule = (() => {
           `<div class="fig-location-row">
             <span class="fig-loc-name">${loc.name}</span>
             <span class="fig-loc-sub">${loc.sub}</span>
-            <button class="fig-loc-map-btn" onclick="CollectionModule._goToMap(${loc.lat},${loc.lng})">ดูบนแผนที่</button>
+            <button class="fig-loc-map-btn" onclick="CollectionModule._goToMap(${loc.lat},${loc.lng})">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              ดูบนแผนที่
+            </button>
           </div>`
         ).join('');
         locSec.style.display = '';
