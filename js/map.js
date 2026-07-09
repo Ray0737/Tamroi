@@ -303,7 +303,13 @@ const MapModule = (() => {
               ],
               'fill-extrusion-height': ['coalesce', ['get', 'render_height'], 6],
               'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
-              'fill-extrusion-opacity': 0.85,
+              // Fade in over one zoom step instead of popping in at minzoom 15 — the hard
+              // cutoff read as a dark smear snapping onto the map while zooming.
+              'fill-extrusion-opacity': ['interpolate', ['linear'], ['zoom'], 15, 0, 15.5, 0.85],
+              // Default true: MapLibre auto-shades extrusion walls darker toward the base.
+              // Combined with the Dither Ink palette's near-black bucket colors that read
+              // as a solid black shadow smear across buildings at pitch 60 — flatten it off.
+              'fill-extrusion-vertical-gradient': false,
             },
           },
         ],
@@ -958,7 +964,20 @@ const MapModule = (() => {
   function _isRevealedAt(districtId, lat, lng) {
     const state = userDistrictState[districtId];
     if (!state || state.fogged !== false) return false;
-    if (allWatchtowersCache.some(w => w.district_id === districtId)) return true;
+
+    const districtWatchtowers = allWatchtowersCache.filter(w => w.district_id === districtId);
+    if (districtWatchtowers.length) {
+      // Mirror buildFogLayer's own fully-cleared shape exactly (polygon_coords, or a
+      // fallback union of watchtower circles) instead of trusting fogged=false blindly —
+      // polygon_coords is a known-approximate rough rectangle, so a node near a district's
+      // edge can sit outside it even though every watchtower here has been visited.
+      if (lat == null || lng == null) return false;
+      const d = (allDistrictsCache || []).find(dd => dd.id === districtId);
+      const raw = d?.polygon_coords;
+      const coords = (typeof raw === 'string' ? JSON.parse(raw) : raw) || [];
+      if (coords.length) return _pointInPoly(lat, lng, coords);
+      return districtWatchtowers.some(w => haversineDistance(lat, lng, w.lat, w.lng) <= WATCHTOWER_REVEAL_RADIUS_M);
+    }
 
     const d = (allDistrictsCache || []).find(dd => dd.id === districtId);
     const wtLat = d?.watchtower_lat ?? d?.center_lat;
