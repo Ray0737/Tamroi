@@ -137,39 +137,6 @@ const MapModule = (() => {
     return ring;
   }
 
-  // Same destination-point math as _circleRing's inner loop, factored out so the
-  // walk-trail strip below can place points at an arbitrary bearing instead of a full sweep.
-  function _destPoint(lat, lng, bearingRad, distM) {
-    const distRad = distM / 6371000;
-    const latRad = lat * Math.PI / 180;
-    const lngRad = lng * Math.PI / 180;
-    const lat2 = Math.asin(Math.sin(latRad) * Math.cos(distRad) + Math.cos(latRad) * Math.sin(distRad) * Math.cos(bearingRad));
-    const lng2 = lngRad + Math.atan2(
-      Math.sin(bearingRad) * Math.sin(distRad) * Math.cos(latRad),
-      Math.cos(distRad) - Math.sin(latRad) * Math.sin(lat2)
-    );
-    return [lng2 * 180 / Math.PI, lat2 * 180 / Math.PI];
-  }
-
-  function _bearing(lat1, lng1, lat2, lng2) {
-    const phi1 = lat1 * Math.PI / 180, phi2 = lat2 * Math.PI / 180;
-    const dLng = (lng2 - lng1) * Math.PI / 180;
-    return Math.atan2(Math.sin(dLng) * Math.cos(phi2), Math.cos(phi1) * Math.sin(phi2) - Math.sin(phi1) * Math.cos(phi2) * Math.cos(dLng));
-  }
-
-  // Rectangular strip spanning two walked points, radiusM wide on each side — fills the
-  // waist between two overlapping trail circles so a sparse GPS trail still reads as one
-  // continuous ribbon instead of a string of separate bubbles.
-  function _stripRing(lat1, lng1, lat2, lng2, radiusM) {
-    const brng = _bearing(lat1, lng1, lat2, lng2);
-    const perpA = brng + Math.PI / 2, perpB = brng - Math.PI / 2;
-    const p1 = _destPoint(lat1, lng1, perpA, radiusM);
-    const p2 = _destPoint(lat2, lng2, perpA, radiusM);
-    const p3 = _destPoint(lat2, lng2, perpB, radiusM);
-    const p4 = _destPoint(lat1, lng1, perpB, radiusM);
-    return [p1, p2, p3, p4, p1];
-  }
-
   function _circleFeature(lat, lng, radiusM) {
     return { type: 'Feature', properties: {}, geometry: { type: 'Polygon', coordinates: [_circleRing(lat, lng, radiusM)] } };
   }
@@ -303,13 +270,7 @@ const MapModule = (() => {
               ],
               'fill-extrusion-height': ['coalesce', ['get', 'render_height'], 6],
               'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
-              // Fade in over one zoom step instead of popping in at minzoom 15 — the hard
-              // cutoff read as a dark smear snapping onto the map while zooming.
-              'fill-extrusion-opacity': ['interpolate', ['linear'], ['zoom'], 15, 0, 15.5, 0.85],
-              // Default true: MapLibre auto-shades extrusion walls darker toward the base.
-              // Combined with the Dither Ink palette's near-black bucket colors that read
-              // as a solid black shadow smear across buildings at pitch 60 — flatten it off.
-              'fill-extrusion-vertical-gradient': false,
+              'fill-extrusion-opacity': 0.85,
             },
           },
         ],
@@ -770,7 +731,6 @@ const MapModule = (() => {
     // fully-cleared reveals the district polygon (one contiguous hole, no gaps between circles);
     // not-yet-complete reveals only the circles of the watchtowers this user has visited so far.
     const clearedPolys = [];
-    const clearedCircleCenters = []; // watchtower circle centers, for a precise overlap check below
     districts.forEach(d => {
       const districtWatchtowers = allWatchtowersCache.filter(w => w.district_id === d.id);
       const fullyCleared = !(userDistrictState[d.id]?.fogged ?? true);
@@ -780,9 +740,7 @@ const MapModule = (() => {
         const lat = d.watchtower_lat ?? d.center_lat;
         const lng = d.watchtower_lng ?? d.center_lng;
         if (lat != null && lng != null) {
-          const r = _watchtowerRevealRadius(d.id, lat, lng);
-          clearedPolys.push(_circleRing(lat, lng, r));
-          clearedCircleCenters.push({ lat, lng, r });
+          clearedPolys.push(_circleRing(lat, lng, _watchtowerRevealRadius(d.id, lat, lng)));
         }
         return;
       }
@@ -797,66 +755,39 @@ const MapModule = (() => {
           return;
         }
         // No polygon_coords → fall back to all watchtower circles
-        districtWatchtowers.forEach(w => {
-          clearedPolys.push(_circleRing(w.lat, w.lng, WATCHTOWER_REVEAL_RADIUS_M));
-          clearedCircleCenters.push({ lat: w.lat, lng: w.lng, r: WATCHTOWER_REVEAL_RADIUS_M });
-        });
+        districtWatchtowers.forEach(w => clearedPolys.push(_circleRing(w.lat, w.lng, WATCHTOWER_REVEAL_RADIUS_M)));
         return;
       }
       districtWatchtowers.filter(w => visitedWatchtowerIds.has(w.id))
-        .forEach(w => {
-          clearedPolys.push(_circleRing(w.lat, w.lng, WATCHTOWER_REVEAL_RADIUS_M));
-          clearedCircleCenters.push({ lat: w.lat, lng: w.lng, r: WATCHTOWER_REVEAL_RADIUS_M });
-        });
+        .forEach(w => clearedPolys.push(_circleRing(w.lat, w.lng, WATCHTOWER_REVEAL_RADIUS_M)));
     });
 
-    // Bridge any two watchtower/district circles that overlap each other — nearby
-    // watchtowers in a multi-watchtower district, or a grown single-watchtower circle
-    // (from the support-node coverage fix above) reaching a neighboring one. Same reasoning
-    // as the walk-trail bridging below: two separate crossing rings can't be cleanly
-    // tessellated by MapLibre, so join them into one continuous shape with a strip instead.
-    for (let i = 0; i < clearedCircleCenters.length; i++) {
-      for (let j = i + 1; j < clearedCircleCenters.length; j++) {
-        const a = clearedCircleCenters[i], b = clearedCircleCenters[j];
-        if (haversineDistance(a.lat, a.lng, b.lat, b.lng) < a.r + b.r) {
-          clearedPolys.push(_stripRing(a.lat, a.lng, b.lat, b.lng, Math.min(a.r, b.r)));
-        }
-      }
-    }
-
     // Walk-trail holes: a small circle per walked point (smooth trail, not grid squares).
-    // Two exclusion passes so a walk circle never crosses a watchtower/district hole
-    // (crossing holes can't be cleanly tessellated — reads as a jagged wedge of fog
-    // poking through what should be a clean clearing):
-    //  1. bbox check — cheap approximation, catches points inside a revealed polygon
-    //  2. exact radius-sum check against watchtower circles — a bbox alone under-excludes
-    //     here, since a walk point can sit just outside a 180m bbox while its own 30m
-    //     circle still physically overlaps the watchtower's circle a ring further out.
+    // bbox pre-filter just skips points already inside a revealed shape to keep the
+    // union below cheap — it's a performance trim, not a correctness requirement.
     const clearedBboxes = clearedPolys.map(poly => {
       let s = Infinity, n = -Infinity, w = Infinity, e = -Infinity;
       poly.forEach(([lng, lat]) => { s = Math.min(s, lat); n = Math.max(n, lat); w = Math.min(w, lng); e = Math.max(e, lng); });
       return { s, n, w, e };
     });
-    const walkPts = _walkedPoints.filter(({ lat, lng }) => {
-      if (clearedBboxes.some(b => lat > b.s && lat < b.n && lng > b.w && lng < b.e)) return false;
-      if (clearedCircleCenters.some(c =>
-        haversineDistance(lat, lng, c.lat, c.lng) < c.r + WALK_REVEAL_RADIUS_M)) return false;
-      return true;
-    });
-    const bridgedToNext = walkPts.map((pt, i) =>
-      i < walkPts.length - 1 && haversineDistance(pt.lat, pt.lng, walkPts[i + 1].lat, walkPts[i + 1].lng) <= 150);
-    // A point's own circle is redundant (and just adds another overlapping ring for
-    // MapLibre to tessellate) once strips cover both sides of it — only keep circles
-    // at trail endpoints/gaps, where nothing else fills that footprint.
-    const cellHoles = walkPts
-      .filter((_, i) => !(bridgedToNext[i] && bridgedToNext[i - 1]))
-      .map(({ lat, lng }) => _circleRing(lat, lng, WALK_REVEAL_RADIUS_M));
-    walkPts.forEach((a, i) => {
-      if (bridgedToNext[i]) cellHoles.push(_stripRing(a.lat, a.lng, walkPts[i + 1].lat, walkPts[i + 1].lng, WALK_REVEAL_RADIUS_M));
-    });
+    _walkedPoints
+      .filter(({ lat, lng }) => !clearedBboxes.some(b => lat > b.s && lat < b.n && lng > b.w && lng < b.e))
+      .forEach(({ lat, lng }) => clearedPolys.push(_circleRing(lat, lng, WALK_REVEAL_RADIUS_M)));
+
+    // Merge every cleared shape (watchtower/district circles + walk-trail circles) into
+    // one set of simple, non-crossing hole rings. The old approach bridged overlapping
+    // circles with a fixed-width strip sized to the smaller radius, which cut inside the
+    // larger circle and crossed back out through its boundary — self-intersecting hole
+    // rings, which MapLibre's tessellator rendered as a jagged black wedge. A real
+    // polygon union can't produce that: overlapping, touching, or contained shapes always
+    // merge into one clean simple boundary, regardless of how many shapes overlap at once
+    // (the strip approach only ever handled two circles at a time).
+    const merged = clearedPolys.length
+      ? window.polygonClipping.union(...clearedPolys.map(ring => [ring])).map(poly => poly[0])
+      : [];
 
     const outer = _ringWithWinding(FOG_OUTER_LL, true);
-    const holes = [...clearedPolys, ...cellHoles].map(ring => _ringWithWinding(ring, false));
+    const holes = merged.map(ring => _ringWithWinding(ring, false));
 
     map?.getSource('fog-source')?.setData({
       type: 'Feature',
