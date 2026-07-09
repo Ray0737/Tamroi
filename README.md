@@ -72,3 +72,5 @@ Player avatars (from Google OAuth or a custom profile picture) now show througho
 | ปภาวิชญ์ แซ่หลิ่ว | papawit@proton.me |
 
 GitHub: [Ray0737/tam_roi](https://github.com/Ray0737/tam_roi)
+
+> Synced with `Tamroi` main @ `ae3e729` — 2026-07-10.
