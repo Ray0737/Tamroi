@@ -1849,6 +1849,96 @@
 .coop-progress-fill.done { background: var(--color-success); }
 .coop-checkin-btn { margin-top: 12px; }
 
+/* ── Jigsaw v2 (minimal, thin lines — matches the rest of the sheet UI) ── */
+.jigsaw-card {
+  background: var(--color-card-dark);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: var(--space-sm);
+}
+
+.jigsaw-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.jigsaw-card-label {
+  display: block;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  color: #CE93D8;
+}
+
+.jigsaw-card-title { font-family: var(--font-heading); font-size: var(--text-sm); font-weight: 700; margin: 2px 0 0; }
+.jigsaw-card-pts { flex-shrink: 0; font-size: 10px; color: var(--color-muted); margin-top: 2px; }
+.jigsaw-card-body { padding: var(--space-md); }
+
+.jigsaw-chapter-label { font-size: var(--text-xs); font-weight: 700; color: var(--color-white); margin: 0 0 6px; }
+.jigsaw-hint { font-size: 11px; color: var(--color-muted); margin: 0 0 10px; line-height: 1.5; }
+
+.jigsaw-locked {
+  text-align: center;
+  padding: var(--space-md) var(--space-sm);
+}
+.jigsaw-locked i { display: block; font-size: 20px; color: var(--color-muted); margin-bottom: 6px; }
+.jigsaw-locked p { margin: 0 0 10px; font-size: var(--text-xs); color: var(--color-muted); line-height: 1.5; }
+
+/* Recall quiz gate — reuses the figure-capture quiz's tile+letter-chip pattern */
+.jigsaw-quiz-q { margin-bottom: 10px; }
+.jigsaw-quiz-question { font-size: var(--text-xs); font-weight: 600; margin: 0 0 8px; }
+.quiz-option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+/* Structured summary form */
+.jigsaw-field-label { display: block; font-size: 10px; color: var(--color-muted); margin: 8px 0 3px; }
+.jigsaw-field-label:first-child { margin-top: 0; }
+.jigsaw-input {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: 12px;
+  padding: 7px 9px;
+  box-sizing: border-box;
+  resize: none;
+  transition: border-color var(--transition-fast);
+}
+.jigsaw-input:focus { outline: none; border-color: var(--color-primary); }
+
+/* Merge phase — drag-to-reorder cards */
+.jigsaw-merge-list { display: flex; flex-direction: column; gap: 6px; }
+.jigsaw-merge-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: grab;
+  transition: border-color var(--transition-fast), transform var(--transition-fast), opacity var(--transition-fast);
+}
+.jigsaw-merge-card:hover { border-color: var(--color-primary); }
+.jigsaw-merge-card.dragging { opacity: 0.4; }
+.jigsaw-merge-handle { flex-shrink: 0; color: var(--color-muted); margin-top: 1px; }
+.jigsaw-merge-author { font-size: 10px; font-weight: 700; color: var(--color-muted); }
+.jigsaw-merge-line { margin: 0; font-size: 11px; line-height: 1.4; }
+.jigsaw-merge-line.muted { color: var(--color-muted); }
+
+.jigsaw-result { text-align: center; padding: var(--space-md) var(--space-sm); }
+.jigsaw-result i { display: block; font-size: 28px; margin-bottom: 8px; }
+.jigsaw-result p { margin: 0 0 10px; font-size: var(--text-sm); }
+.jigsaw-result-win i, .jigsaw-result-win p { color: var(--color-success); }
+.jigsaw-result-lose i { color: #EF5350; }
+.jigsaw-result-lose p { color: var(--color-muted); }
+
 .coop-no-guild {
   text-align: center;
   padding: var(--space-lg) var(--space-md);

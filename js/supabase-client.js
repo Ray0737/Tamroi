@@ -1010,7 +1010,7 @@ const Coop = {
   async getJigsawAssignments(guildId, missionId) {
     const { data, error } = await _sb
       .from('guild_jigsaw_assignments')
-      .select('*, profiles(username)')
+      .select('*, profiles(username, avatar_url)')
       .eq('guild_id', guildId)
       .eq('mission_id', missionId);
     if (error) throw error;
@@ -1018,22 +1018,73 @@ const Coop = {
   },
 
   async assignJigsawChapters(guildId, missionId, memberIds) {
+    // ponytail: chapter_index → lore_node_id is looked up globally (not scoped by
+    // mission), same simplification the v2 design doc's own backfill SQL makes —
+    // fine while only one jigsaw mission is seeded; a second concurrent jigsaw
+    // mission would need lore_nodes tagged per-mission, not just per-chapter.
+    const { data: nodes } = await _sb.from('lore_nodes').select('id, chapter_index').not('chapter_index', 'is', null);
+    const nodeByChapter = Object.fromEntries((nodes || []).map(n => [n.chapter_index, n.id]));
     const rows = memberIds.map((uid, i) => ({
       guild_id: guildId, mission_id: missionId,
       user_id: uid, chapter_index: i % 3,
+      lore_node_id: nodeByChapter[i % 3] || null,
     }));
     const { error } = await _sb.from('guild_jigsaw_assignments')
       .upsert(rows, { onConflict: 'guild_id,mission_id,user_id', ignoreDuplicates: true });
     if (error) throw error;
   },
 
-  async postJigsawSummary(guildId, missionId, userId, summary) {
+  async postJigsawSummary(guildId, missionId, userId, summaryObj) {
     const { error } = await _sb.from('guild_jigsaw_assignments')
-      .update({ chapter_summary: summary, summary_posted: true })
+      .update({ chapter_summary: JSON.stringify(summaryObj), summary_posted: true })
       .eq('guild_id', guildId)
       .eq('mission_id', missionId)
       .eq('user_id', userId);
     if (error) throw error;
+  },
+
+  async setProposedOrder(assignmentId, orderArray) {
+    const { error } = await _sb.from('guild_jigsaw_assignments')
+      .update({ proposed_order: orderArray })
+      .eq('id', assignmentId);
+    if (error) throw error;
+  },
+
+  async clearProposedOrders(guildId, missionId) {
+    const { error } = await _sb.from('guild_jigsaw_assignments')
+      .update({ proposed_order: null })
+      .eq('guild_id', guildId)
+      .eq('mission_id', missionId);
+    if (error) throw error;
+  },
+
+  async getJigsawEncounterUnlocks(userId) {
+    const { data, error } = await _sb.from('user_jigsaw_encounters').select('figure_id').eq('user_id', userId);
+    if (error) throw error;
+    return (data || []).map(r => r.figure_id);
+  },
+
+  // Reward-granting for a correct unanimous vote happens entirely server-side
+  // in the on_jigsaw_proposed_order trigger (fired by each member's own
+  // proposed_order UPDATE, which RLS allows) — the client can't write
+  // collab_mission_completions or other members' profiles directly. This just
+  // reads whether that trigger already fired, to know when to show the win screen.
+  async isJigsawComplete(missionId, guildId) {
+    const { data, error } = await _sb.from('collab_mission_completions')
+      .select('mission_id').eq('mission_id', missionId).eq('guild_id', guildId).maybeSingle();
+    if (error) throw error;
+    return !!data;
+  },
+
+  subscribeJigsawAssignments(missionId, guildId, callback) {
+    return _sb
+      .channel(`jigsaw-${missionId}-${guildId}`)
+      .on('postgres_changes', {
+        event: '*', schema: 'public',
+        table: 'guild_jigsaw_assignments',
+        filter: `mission_id=eq.${missionId}`
+      }, callback)
+      .subscribe();
   },
 };
 

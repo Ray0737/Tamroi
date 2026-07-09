@@ -57,6 +57,7 @@ const MapModule = (() => {
   // ── Figure nodes — loaded from Supabase figures table ─
   let figureNodes = [];
   const capturedFigureIds = new Set();
+  const jigsawUnlockedFigureIds = new Set(); // figures unlocked via a completed Jigsaw mission, bypasses the support-node gate
   const _figureCircleFeatures = {};  // figure.id -> GeoJSON circle Feature (80m proximity)
   const _loreRingFeatures     = {};  // node.id   -> GeoJSON circle Feature (50m proximity)
 
@@ -402,15 +403,17 @@ const MapModule = (() => {
       const user = window.AppCore?.App?.user;
       const baseLoaders = [loadWatchtowers(), loadSupportNodes(), loadFigureNodes()];
       if (user) {
-        const [stateData, capsData, visitedWtIds] = await Promise.all([
+        const [stateData, capsData, visitedWtIds, jigsawIds] = await Promise.all([
           DB.Districts.getUserState(user.id),
           DB.Figures.getUserCaptures(user.id),
           DB.Watchtowers?.getUserVisitedIds(user.id) ?? Promise.resolve([]),
+          DB.Coop?.getJigsawEncounterUnlocks(user.id) ?? Promise.resolve([]),
           loadVisitedSupportNodes(user.id),
           ...baseLoaders,
         ]);
         (capsData || []).forEach(c => capturedFigureIds.add(c.figure_id));
         (visitedWtIds || []).forEach(id => visitedWatchtowerIds.add(id));
+        (jigsawIds || []).forEach(id => jigsawUnlockedFigureIds.add(id));
         stateData.forEach(s => {
           userDistrictState[s.district_id] = s;
         });
@@ -1335,16 +1338,19 @@ const MapModule = (() => {
 
   function openLegendaryEncounter(districtId, figureId = null) {
     const district = (allDistrictsCache || []).find(item => item.id === districtId);
-    if (district && !canCheckIn(districtId, district)) {
-      window.AppCore?.showToast('ยังไม่ครบเงื่อนไข Support Nodes');
-      return;
-    }
-
     const figure = figureId
       ? figureNodes.find(item => item.id === figureId)
       : figureNodes.find(item => item.districtId === districtId && item.class !== 'C');
     if (!figure) {
       window.AppCore?.showToast('ยังไม่มี Legendary Encounter ในย่านนี้');
+      return;
+    }
+
+    // A completed Jigsaw mission grants this figure directly — same as
+    // finishing the support-node chain, just via the collab route instead.
+    const jigsawUnlocked = jigsawUnlockedFigureIds.has(figure.id);
+    if (!jigsawUnlocked && district && !canCheckIn(districtId, district)) {
+      window.AppCore?.showToast('ยังไม่ครบเงื่อนไข Support Nodes');
       return;
     }
     if (figure.raid_only) { _startRaidEncounter(figure); return; }

@@ -85,6 +85,7 @@
     ├── patch_lore_coord_fix.sql Fix lore-wat-pho-learning lng (100.4930→100.4883)
     ├── patch_multi_watchtower.sql watchtowers + user_watchtower_visits tables + district-completion trigger (multi-tower districts, e.g. Wattana)
     ├── patch_encounter_key.sql has_encounter_key column on user_districts + backfill for existing check-ins
+    ├── patch_jigsaw_v2.sql     GPS-gated jigsaw v2 — lore_node_id/proposed_order on assignments, unlocks_figure_id on collab_missions, user_jigsaw_encounters table, on_jigsaw_proposed_order SECURITY DEFINER trigger
     └── patch_mock_satit.sql    Test-only seed data — REMOVE before production
 └── docs/
     ├── CODING_INSTRUCTIONS.md  Design system and implementation rules
@@ -93,6 +94,7 @@
     ├── FUNCTION_LOG.md         Live log of all gameplay/DB functions; update each session
     ├── GAME_LOGIC.md           Player-facing gameplay mechanics reference
     ├── gps-spoofing.md         GPS anti-cheat threat analysis + mitigation status
+    ├── jigsaw-v2-design.md     GPS checkpoint + timeline-reconstruction jigsaw design (approved 2026-07-09)
     ├── pre-post_test_plan.md   Lore pre/post-test measurement plan
     ├── production-smoke.md     Supabase/Vercel smoke-test checklist
     ├── progress.md             Current implementation progress
@@ -230,9 +232,10 @@ Run patches in this order:
 22. SQL Editor → `supabase/patch_lore_coord_fix.sql`
 23. SQL Editor → `supabase/patch_multi_watchtower.sql`
 24. SQL Editor → `supabase/patch_encounter_key.sql`
-25. Authentication → Email → **disable "Confirm email"** for dev
-26. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
-27. Settings → API → copy URL + anon key into `js/env.js`
+25. SQL Editor → `supabase/patch_jigsaw_v2.sql`
+26. Authentication → Email → **disable "Confirm email"** for dev
+27. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
+28. Settings → API → copy URL + anon key into `js/env.js`
 
 ---
 
@@ -317,7 +320,10 @@ Run patches in this order:
 | `history_debates` | patch_debates | Unsolved History debate prompts per figure (case A/B) |
 | `debate_votes` | patch_debates | Per-user votes + optional reason; own-row RLS |
 | `get_debate_stats(p_debate_id)` RPC | patch_debates | SECURITY DEFINER — returns aggregate vote counts + reasons |
-| `guild_jigsaw_assignments` | patch_jigsaw | Chapter assignments + summaries per member per jigsaw mission |
+| `guild_jigsaw_assignments` | patch_jigsaw, patch_jigsaw_v2 | Chapter assignments per member per jigsaw mission; `chapter_summary` now JSON (`{period,figure,event}`); `lore_node_id` (GPS checkpoint to visit) and `proposed_order` (member's timeline-reorder vote) added in v2 |
+| `collab_missions.unlocks_figure_id` | patch_jigsaw_v2 | Optional legendary figure granted to every participant on a correct jigsaw merge; null by default |
+| `user_jigsaw_encounters` | patch_jigsaw_v2 | Per-user legendary-encounter grants from a completed jigsaw mission; own-row RLS |
+| `on_jigsaw_proposed_order` trigger | patch_jigsaw_v2 | SECURITY DEFINER — fires on each member's own `proposed_order` UPDATE (RLS-safe); once all rows agree AND match the ground-truth chapter order, awards `reward_pts` + `unlocks_figure_id` to every `summary_posted` participant. Unanimous-but-wrong votes are a silent no-op |
 | `figure_relations` | patch_figure_bio | Directed relation edges (figure_id → related_id + relation_th); public SELECT RLS |
 | `watchtowers` | patch_multi_watchtower | Multiple check-in points per district (e.g. Wattana: Satit PSM + Terminal 21); empty for districts still on the legacy single-watchtower flow |
 | `user_watchtower_visits` | patch_multi_watchtower | Per-user, per-watchtower visit rows; unique per `(user_id, watchtower_id)` |
@@ -352,13 +358,13 @@ Run patches in this order:
 - `window.FigureGraphModule.close()`: closes and tears down graph overlay
 
 **Phase 3 — Co-op**
-- `window.DB.Coop`: `getMyGuild(userId)`, `getGuildMembers(guildId)`, `getGuildClearedDistrictIds(guildId)`, `createGuild(name, userId)`, `leaveGuild(guildId, userId)`, `kickMember(guildId, targetUserId)`, `deleteGuild(guildId)`, `updateGuild(guildId, fields)`, `searchGuilds(query)`, `sendJoinRequest(guildId, userId)`, `getMyPendingRequest(userId)`, `getJoinRequests(guildId)`, `approveRequest(requestId, guildId, targetUserId)`, `rejectRequest(requestId)`, `getCollabMissions()`, `checkInToMission(missionId, guildId, userId)`, `getMissionCheckins(missionId, guildId)`, `getAllGuildCheckins(guildId)`, `getGuildLeaderboard()`, `subscribeGuildPresence(guildId, {onSync, onJoin, onLeave})`, `subscribeGuildMembers(guildId, callback)`, `subscribeGuildChanges(callback)`, `subscribeMissionProgress(missionId, guildId, callback)`, `getMyMemberships(userId)`, `getExpeditionLog(memberIds, limit?)`, `openRallyChannel(guildId)`, `getJigsawAssignments(guildId, missionId)`, `assignJigsawChapters(guildId, missionId, memberIds)`, `postJigsawSummary(guildId, missionId, userId, summary)`
+- `window.DB.Coop`: `getMyGuild(userId)`, `getGuildMembers(guildId)`, `getGuildClearedDistrictIds(guildId)`, `createGuild(name, userId)`, `leaveGuild(guildId, userId)`, `kickMember(guildId, targetUserId)`, `deleteGuild(guildId)`, `updateGuild(guildId, fields)`, `searchGuilds(query)`, `sendJoinRequest(guildId, userId)`, `getMyPendingRequest(userId)`, `getJoinRequests(guildId)`, `approveRequest(requestId, guildId, targetUserId)`, `rejectRequest(requestId)`, `getCollabMissions()`, `checkInToMission(missionId, guildId, userId)`, `getMissionCheckins(missionId, guildId)`, `getAllGuildCheckins(guildId)`, `getGuildLeaderboard()`, `subscribeGuildPresence(guildId, {onSync, onJoin, onLeave})`, `subscribeGuildMembers(guildId, callback)`, `subscribeGuildChanges(callback)`, `subscribeMissionProgress(missionId, guildId, callback)`, `getMyMemberships(userId)`, `getExpeditionLog(memberIds, limit?)`, `openRallyChannel(guildId)`, `getJigsawAssignments(guildId, missionId)`, `assignJigsawChapters(guildId, missionId, memberIds)` (also backfills `lore_node_id` per chapter), `postJigsawSummary(guildId, missionId, userId, {period,figure,event})`, `setProposedOrder(assignmentId, orderArray)`, `clearProposedOrders(guildId, missionId)`, `getJigsawEncounterUnlocks(userId)`, `isJigsawComplete(missionId, guildId)`, `subscribeJigsawAssignments(missionId, guildId, callback)`
 - `window.DB.Debates`: `getForFigure(figureId)`, `getStats(debateId)`, `vote(debateId, userId, vote, reason)`
 - `window.DB.Raid`: `createSession(figureId, guildId, hostUserId)`, `joinSession(sessionId, userId)`, `updateSessionStatus(sessionId, status)`, `insertCaptures(sessionId, participantUserIds, figureId)`, `openBroadcast(sessionId)`, `openPresence(sessionId)`
 - `window.DB.Discussion`: `getComments(figureId)`, `postComment(figureId, userId, content, parentId)`, `flagComment(discussionId, userId)`
 - `window.DB.Community`: `getPosts(userId)`, `getReplies(parentId)`, `postMessage(userId, content, parentId)`, `flagPost(postId, userId)`, `likePost(postId, userId)`, `unlikePost(postId, userId)`
 - `window.GuildModule`: `init(userId)`, `getState()`, `getOnlineMemberIds()`, `renderGuildPanel()`
-- `window.CoopModule`: `load()` (feature-flagged off 2026-07-09 — renders a locked "unlocks in N days" placeholder; real logic moved to `_liveLoad()`, unused), `renderMissionCard(mission, checkins, myCheckin)`, `subscribeProgress(missionId, guildId)`, `postJigsawSummary(guildId, missionId)`
+- `window.CoopModule`: `load()` (re-enabled 2026-07-09 alongside Jigsaw v2 — renders real group-mission + jigsaw cards again), `renderMissionCard(mission, checkins, myCheckin)`, `subscribeProgress(missionId, guildId)`. Jigsaw v2 (GPS checkpoint → recall-quiz gate → structured summary → drag-to-reorder merge vote) is internal to `coop.js` (`_renderJigsawCard`, `_wireJigsawCard`, `_jigsawSubscribeMerge`, etc.) — see `docs/jigsaw-v2-design.md` for the full flow spec
 - `window.DebateModule`: `open(figureId)`, `close()`
 - `window.RaidModule`: `init(figureId)`
 - `window.DiscussionModule`: `init(figureId)`, `load(figureId)`

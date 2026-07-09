@@ -41,7 +41,7 @@
 | Guild invite code (6-char auto-gen) | ✅ Done | DB trigger `on_guild_insert_code` |
 | Guild Presence (online members) | ✅ Done | Supabase Presence `presence:guild:{id}` |
 | Guild leaderboard tab | ✅ Done | `guild_leaderboard` VIEW, leaderboard.js toggle |
-| Collaborative missions | ⏸️ Disabled (built, feature-flagged off) | `CoopModule.load()` shows a locked placeholder card; real logic moved to `CoopModule._liveLoad()`, unused for now |
+| Collaborative missions | ✅ Done | js/coop.js, `collab_missions`, `collab_mission_checkins` — re-enabled 2026-07-09 alongside Jigsaw v2 |
 | Real-time mission progress bar | ✅ Done | `subscribeMissionProgress` postgres_changes |
 | Threshold trigger (auto-complete) | ✅ Done | `on_collab_checkin_threshold` trigger |
 | Raid encounters (Broadcast quiz) | ✅ Done | js/raid.js, `raid_sessions`, `raid_session_members` |
@@ -89,7 +89,7 @@
 |---|---|---|
 | Retrieval Practice (spaced recall) | ✅ Done | `patch_retrieval_practice.sql` · recall mission 3 days after lore read |
 | Unsolved History debates | ✅ Done | js/debates.js · `history_debates`, `debate_votes`, stats RPC |
-| Jigsaw Learning (guild chapters) | ✅ Done | `patch_jigsaw.sql` · chapter assignments + summaries |
+| Jigsaw Learning v2 (GPS checkpoint + timeline merge) | ✅ Done | `patch_jigsaw_v2.sql` · GPS-gated visit + recall quiz gate + structured summary + drag-to-reorder merge vote, server-side reward trigger |
 | Lore pre/post-test | ✅ Done | `patch_prepost.sql` · `user_lore_assessments`, per-phase scores |
 | Review-status enforcement | ✅ Done | `patch_review_status.sql` · client filters `review_status = 'approved'` |
 | Forum probation + PDPA consent | ✅ Done | `patch_child_safety.sql` · new-account post hold, age consent at onboarding |

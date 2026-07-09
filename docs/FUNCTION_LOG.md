@@ -152,7 +152,11 @@
 | `DB.Lore.getRecallQuestions(loreNodeId)` | js/supabase-client.js | Fetches recall MCQs for retrieval practice | quiz_questions | ✅ Added 2026-07-03 |
 | `DB.Missions.getRecallMissions(userId)` / `completeRecall(...)` | js/supabase-client.js | Spaced-repetition recall missions due 3 days after lore read | user_lore, user_daily_progress | ✅ Added 2026-07-03 |
 | `DB.Debates.getForFigure / getStats / vote` | js/supabase-client.js | Unsolved History debate prompts, aggregate stats RPC, per-user vote | history_debates, debate_votes | ✅ Added 2026-07-03 |
-| `DB.Coop.getJigsawAssignments / assignJigsawChapters / postJigsawSummary` | js/supabase-client.js | Jigsaw Learning chapter split + member summaries | guild_jigsaw_assignments | ✅ Added 2026-07-03 |
+| `DB.Coop.getJigsawAssignments / assignJigsawChapters / postJigsawSummary` | js/supabase-client.js | Jigsaw chapter split (now also backfills `lore_node_id`) + structured `{period,figure,event}` summaries | guild_jigsaw_assignments | ✅ Updated 2026-07-09 (v2) |
+| `DB.Coop.setProposedOrder / clearProposedOrders / isJigsawComplete / subscribeJigsawAssignments` | js/supabase-client.js | Jigsaw v2 merge-phase voting + realtime + completion read | guild_jigsaw_assignments, collab_mission_completions | ✅ Added 2026-07-09 |
+| `DB.Coop.getJigsawEncounterUnlocks(userId)` | js/supabase-client.js | Reads which figures a user unlocked via a completed jigsaw mission | user_jigsaw_encounters | ✅ Added 2026-07-09 |
+| `CoopModule._renderJigsawCard` (6 states: waiting/locked/quiz/contribute/submitted/merge) | js/coop.js | Jigsaw v2 UI — GPS lock, recall-quiz gate (reuses `.quiz-option` tiles), structured form, drag-to-reorder merge, win/lose result | — | ✅ Added 2026-07-09 |
+| `MapModule.openLegendaryEncounter` — jigsaw bypass | js/map.js | Figures in `jigsawUnlockedFigureIds` skip the support-node chain gate entirely | user_jigsaw_encounters | ✅ Added 2026-07-09 |
 
 ---
 

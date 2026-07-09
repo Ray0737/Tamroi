@@ -2,19 +2,7 @@
 const CoopModule = (() => {
   let _progressChannels = [];
 
-  // ponytail: group missions are disabled for now — show a locked placeholder
-  // instead of the real panel. Bump/remove this to re-enable.
-  const GROUP_MISSIONS_UNLOCK_DAYS = 14;
-
   async function load() {
-    const el = document.getElementById('coop-missions');
-    if (!el) return;
-
-    el.innerHTML = _lockedCard();
-    return;
-  }
-
-  async function _liveLoad() {
     const el = document.getElementById('coop-missions');
     if (!el) return;
 
@@ -36,7 +24,7 @@ const CoopModule = (() => {
 
       _cancelProgressSubs();
 
-      if (!missions.length) { el.innerHTML = ''; return; }
+      if (!missions.length) { el.innerHTML = _noMissionsCard(); return; }
 
       el.innerHTML = `
         <div>
@@ -60,7 +48,8 @@ const CoopModule = (() => {
               assignments.push(...fresh);
             }
           }
-          wrapper.innerHTML = _renderJigsawCard(m, assignments, user.id, guild.guild.id);
+          wrapper.innerHTML = await _renderJigsawCard(m, assignments, user.id, guild.guild.id);
+          _wireJigsawCard(wrapper, m, assignments, user.id, guild.guild.id);
         } else {
           const checkins  = existingCheckins.filter(c => c.mission_id === m.id);
           const myCheckin = checkins.find(c => c.user_id === user.id);
@@ -72,7 +61,7 @@ const CoopModule = (() => {
         cardsEl.appendChild(wrapper);
       }
     } catch {
-      el.innerHTML = '';
+      el.innerHTML = _noMissionsCard();
     }
   }
 
@@ -148,104 +137,313 @@ const CoopModule = (() => {
     _progressChannels = [];
   }
 
-  function _lockedCard() {
-    return `
-      <div class="coop-no-guild" data-empty>
-        <i class="bi bi-lock"></i>
-        <p>ภารกิจกลุ่มจะปลดล็อกใน ${GROUP_MISSIONS_UNLOCK_DAYS} วัน</p>
-        <p class="hint">เร็ว ๆ นี้</p>
-      </div>`;
-  }
-
   function _noGuildCard() {
     return `
-      <div class="coop-no-guild">
+      <div class="coop-no-guild" data-empty>
         <i class="bi bi-people"></i>
         <p>เข้าร่วมกลุ่มเพื่อทำภารกิจร่วมกัน</p>
         <p class="hint">ไปที่แท็บ Rank → กลุ่ม</p>
       </div>`;
   }
 
-  // ── Jigsaw rendering ──────────────────────────────────
+  function _noMissionsCard() {
+    return `
+      <div class="coop-no-guild" data-empty>
+        <i class="bi bi-flag"></i>
+        <p>ยังไม่มีภารกิจกลุ่มในตอนนี้</p>
+      </div>`;
+  }
+
+  // ── Jigsaw v2 — GPS checkpoint + timeline reconstruction ──────────────
   const _CHAPTER_LABELS = ['บทที่ 1: กำแพงเมือง', 'บทที่ 2: แกนพระราชวัง', 'บทที่ 3: วัดโพธิ์'];
+  const _jigsawQuizPassed  = new Set(); // session-only: assignment.id once recall quiz cleared
+  const _jigsawRecallCache = new Map(); // lore_node_id → questions[]
 
-  function _renderJigsawCard(mission, assignments, currentUserId, guildId) {
-    const myAssign  = assignments.find(a => a.user_id === currentUserId);
-    const allPosted = assignments.length >= 3 && assignments.every(a => a.summary_posted);
+  function _chapterLabel(i) { return _CHAPTER_LABELS[i] || `บทที่ ${i + 1}`; }
 
+  async function _renderJigsawCard(mission, assignments, currentUserId, guildId) {
+    const myAssign = assignments.find(a => a.user_id === currentUserId);
     let bodyHtml;
+
     if (!myAssign) {
       bodyHtml = `<p style="font-size:12px;color:var(--color-muted)">
         รอผู้นำกิลด์กดปุ่ม <strong>แจกบทอ่าน</strong> เพื่อเริ่ม Jigsaw
         <br><span style="font-size:10px">(ต้องการสมาชิกอย่างน้อย 2 คน)</span></p>`;
-    } else if (allPosted) {
-      bodyHtml = `<p style="font-size:12px;color:var(--color-success);margin-bottom:8px">
-        ✓ ทุกบทเสร็จสิ้น — ภาพรวมสมบูรณ์ปรากฏแล้ว!</p>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          ${assignments.map(a => `
-            <div style="background:rgba(206,147,216,0.08);border-radius:var(--radius-md);
-                        padding:8px 10px;border-left:2px solid #CE93D8">
-              <p style="font-size:10px;font-weight:700;color:#CE93D8;margin:0 0 3px">
-                ${escapeHtml(a.profiles?.username || '?')} — ${escapeHtml(_CHAPTER_LABELS[a.chapter_index] || `บทที่ ${a.chapter_index + 1}`)}
-              </p>
-              <p style="font-size:11px;color:var(--color-muted);margin:0">${escapeHtml(a.chapter_summary || '')}</p>
-            </div>`).join('')}
-        </div>`;
     } else if (!myAssign.summary_posted) {
-      bodyHtml = `
-        <p style="font-size:11px;color:var(--color-muted);margin-bottom:8px">
-          บทของคุณ: <strong style="color:var(--color-white)">${escapeHtml(_CHAPTER_LABELS[myAssign.chapter_index] || `บทที่ ${myAssign.chapter_index + 1}`)}</strong>
-        </p>
-        <p style="font-size:11px;color:var(--color-muted);margin-bottom:10px">
-          ความคืบหน้า: ${assignments.filter(a => a.summary_posted).length}/${assignments.length} บทเสร็จสิ้น
-        </p>
-        <textarea id="jigsaw-summary-${escapeHtml(mission.id)}" maxlength="600" rows="3"
-          style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--color-border);
-                 border-radius:var(--radius-md);color:var(--color-white);font-size:12px;
-                 padding:8px;resize:none;box-sizing:border-box;margin-bottom:8px"
-          placeholder="สรุปสาระสำคัญจากบทที่คุณได้รับ (สูงสุด 600 ตัวอักษร)"></textarea>
-        <button class="btn btn-primary btn-full" style="font-size:12px"
-                onclick="CoopModule.postJigsawSummary('${escapeHtml(guildId)}','${escapeHtml(mission.id)}')">
-          ส่งสรุปบท
-        </button>`;
+      const unlocked = window.MapModule?.getUnlockedLoreIds?.()?.includes(myAssign.lore_node_id);
+      if (!unlocked) {
+        bodyHtml = _jigsawLockedBody(myAssign);
+      } else {
+        const questions = await _jigsawGetRecallQuestions(myAssign.lore_node_id);
+        bodyHtml = (questions.length && !_jigsawQuizPassed.has(myAssign.id))
+          ? _jigsawQuizBody(myAssign, questions)
+          : _jigsawContributeBody(mission, myAssign, assignments);
+      }
+    } else if (!assignments.every(a => a.summary_posted)) {
+      bodyHtml = _jigsawSubmittedBody(assignments);
     } else {
-      bodyHtml = `<p style="font-size:12px;color:var(--color-success)">
-        ✓ คุณส่งสรุปแล้ว — รอสมาชิกคนอื่น (${assignments.filter(a => a.summary_posted).length}/${assignments.length} บท)</p>`;
+      bodyHtml = await _jigsawMergeBody(mission, assignments, guildId, currentUserId);
     }
 
     return `
-      <div style="background:var(--color-card-dark);border-radius:var(--radius-xl);
-                  border:1px solid rgba(206,147,216,0.25);overflow:hidden;margin-bottom:12px">
-        <div style="background:linear-gradient(135deg,rgba(206,147,216,0.15),rgba(206,147,216,0.04));
-                    padding:var(--space-md);border-bottom:1px solid rgba(206,147,216,0.12)">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-            <span style="font-size:9px;text-transform:uppercase;font-weight:700;
-                         color:#CE93D8;letter-spacing:1px">Jigsaw Mission</span>
-            <span style="font-size:9px;color:var(--color-muted)">+${mission.reward_pts} pts</span>
+      <div class="jigsaw-card" data-mission-id="${escapeHtml(mission.id)}">
+        <div class="jigsaw-card-head">
+          <div>
+            <span class="jigsaw-card-label">Jigsaw Mission</span>
+            <h4 class="jigsaw-card-title">${escapeHtml(mission.title_th)}</h4>
           </div>
-          <h4 style="font-family:var(--font-heading);font-size:14px;font-weight:700;margin:0">
-            ${escapeHtml(mission.title_th)}
-          </h4>
+          <span class="jigsaw-card-pts">+${mission.reward_pts} pts</span>
         </div>
-        <div style="padding:var(--space-md)">${bodyHtml}</div>
+        <div class="jigsaw-card-body">${bodyHtml}</div>
       </div>`;
   }
 
-  async function postJigsawSummary(guildId, missionId) {
-    const user = window.AppCore?.App?.user;
-    if (!user) return;
-    const textarea = document.getElementById(`jigsaw-summary-${missionId}`);
-    const summary  = textarea?.value?.trim();
-    if (!summary) { window.AppCore?.showToast?.('กรุณาเขียนสรุปบทก่อน'); return; }
-    try {
-      await DB.Coop.postJigsawSummary(guildId, missionId, user.id, summary);
-      window.AppCore?.showToast?.('✓ ส่งสรุปบทเรียบร้อยแล้ว');
-      CoopModule.init ? CoopModule.init() : CoopModule.load();
-    } catch { window.AppCore?.showToast?.('ไม่สามารถส่งสรุปได้'); }
+  async function _jigsawGetRecallQuestions(loreNodeId) {
+    if (!loreNodeId) return [];
+    if (_jigsawRecallCache.has(loreNodeId)) return _jigsawRecallCache.get(loreNodeId);
+    let questions = [];
+    try { questions = await DB.Lore.getRecallQuestions(loreNodeId); } catch { /* ponytail: skip gate when the fetch fails, same as no questions seeded */ }
+    _jigsawRecallCache.set(loreNodeId, questions);
+    return questions;
   }
 
+  // ── Phase 2: locked (GPS gate) ────────────────────────
+  function _jigsawLockedBody(assign) {
+    const node = (window.MapModule?.getLoreNodes?.() || []).find(n => n.id === assign.lore_node_id);
+    return `
+      <p class="jigsaw-chapter-label">${escapeHtml(_chapterLabel(assign.chapter_index))}</p>
+      <div class="jigsaw-locked">
+        <i class="bi bi-geo-alt"></i>
+        <p>เดินทางไปที่ <strong>${escapeHtml(node?.name_th || 'จุดที่กำหนด')}</strong> เพื่อปลดล็อกบทนี้</p>
+        ${node ? `<button class="btn btn-outline btn-sm" data-jigsaw-flyto="${node.lat}|${node.lng}">ดูตำแหน่งบนแผนที่</button>` : ''}
+      </div>`;
+  }
 
-  return { load, renderMissionCard, subscribeProgress, postJigsawSummary };
+  // ── Phase 3a: expert quiz gate ────────────────────────
+  function _jigsawQuizBody(assign, questions) {
+    return `
+      <p class="jigsaw-chapter-label">${escapeHtml(_chapterLabel(assign.chapter_index))}</p>
+      <p class="jigsaw-hint">ตอบคำถามให้ถูกก่อนสรุปบท</p>
+      <div class="jigsaw-quiz" data-assignment-id="${escapeHtml(assign.id)}">
+        ${questions.map((q, qi) => `
+          <div class="jigsaw-quiz-q" data-q="${qi}">
+            <p class="jigsaw-quiz-question">${escapeHtml(q.question_th)}</p>
+            <div class="quiz-option-grid">
+              ${['A', 'B', 'C', 'D'].map(opt => `
+                <button class="quiz-option" type="button" data-opt="${opt}">
+                  <span class="quiz-option-letter">${opt}</span>
+                  <span class="quiz-option-text">${escapeHtml(q['option_' + opt.toLowerCase()] || '')}</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>`).join('')}
+        <button class="btn btn-primary btn-sm btn-full" data-jigsaw-submit-quiz disabled style="margin-top:8px">ตรวจคำตอบ</button>
+      </div>`;
+  }
+
+  // ── Phase 3b: structured summary form ─────────────────
+  function _jigsawContributeBody(mission, assign, assignments) {
+    const done = assignments.filter(a => a.summary_posted).length;
+    return `
+      <p class="jigsaw-chapter-label">${escapeHtml(_chapterLabel(assign.chapter_index))}</p>
+      <p class="jigsaw-hint">ความคืบหน้า: ${done}/${assignments.length} บทเสร็จสิ้น</p>
+      <div class="jigsaw-form" data-assignment-id="${escapeHtml(assign.id)}" data-mission-id="${escapeHtml(mission.id)}">
+        <label class="jigsaw-field-label">ช่วงเวลา</label>
+        <input class="jigsaw-input" data-field="period" maxlength="60" placeholder="เช่น รัชกาลที่ 1, พ.ศ. 2325">
+        <label class="jigsaw-field-label">บุคคลสำคัญ</label>
+        <input class="jigsaw-input" data-field="figure" maxlength="60" placeholder="ใครมีบทบาทในเหตุการณ์นี้">
+        <label class="jigsaw-field-label">เหตุการณ์สำคัญ</label>
+        <textarea class="jigsaw-input" data-field="event" maxlength="300" rows="2" placeholder="สรุปสาระสำคัญ (สูงสุด 300 ตัวอักษร)"></textarea>
+        <button class="btn btn-primary btn-sm btn-full" data-jigsaw-submit-summary style="margin-top:8px">ส่งสรุปบท</button>
+      </div>`;
+  }
+
+  // ── Phase 3: waiting for teammates ────────────────────
+  function _jigsawSubmittedBody(assignments) {
+    const done = assignments.filter(a => a.summary_posted).length;
+    return `
+      <div class="jigsaw-locked">
+        <i class="bi bi-check-circle"></i>
+        <p>คุณส่งสรุปแล้ว — รอสมาชิกคนอื่น (${done}/${assignments.length} บท)</p>
+      </div>`;
+  }
+
+  // ── Phase 4: merge — shuffle, drag-reorder, vote ──────
+  async function _jigsawMergeBody(mission, assignments, guildId, currentUserId) {
+    const myAssign = assignments.find(a => a.user_id === currentUserId);
+    const votes = assignments.filter(a => a.proposed_order);
+    const allVoted = votes.length === assignments.length;
+
+    if (allVoted) {
+      const same = votes.every(a => JSON.stringify(a.proposed_order) === JSON.stringify(votes[0].proposed_order));
+      if (same) {
+        let won = false;
+        try { won = await DB.Coop.isJigsawComplete(mission.id, guildId); } catch {}
+        return won ? _jigsawResultBody(assignments, true) : _jigsawResultBody(assignments, false);
+      }
+    }
+
+    const order = _seededShuffle(assignments.map(a => a.chapter_index), `${guildId}:${mission.id}`);
+    return `
+      <p class="jigsaw-hint">${votes.length}/${assignments.length} คนยืนยันลำดับแล้ว — ลากการ์ดให้เรียงตามช่วงเวลาที่ถูกต้อง แล้วกดยืนยัน</p>
+      <div class="jigsaw-merge-list" data-mission-id="${escapeHtml(mission.id)}" data-guild-id="${escapeHtml(guildId)}">
+        ${order.map(chapterIdx => {
+          const a = assignments.find(x => x.chapter_index === chapterIdx);
+          const summary = _jigsawParseSummary(a?.chapter_summary);
+          return `
+            <div class="jigsaw-merge-card" draggable="true" data-chapter="${chapterIdx}">
+              <span class="jigsaw-merge-handle"><i class="bi bi-grip-vertical"></i></span>
+              <div style="min-width:0;flex:1">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+                  ${avatarHTML(a?.profiles?.avatar_url, escapeHtml((a?.profiles?.username || '?').slice(0, 2).toUpperCase()), 20, 'var(--color-border)')}
+                  <span class="jigsaw-merge-author">${escapeHtml(a?.profiles?.username || '?')}</span>
+                </div>
+                <p class="jigsaw-merge-line"><strong>${escapeHtml(summary.period || '—')}</strong> · ${escapeHtml(summary.figure || '—')}</p>
+                <p class="jigsaw-merge-line muted">${escapeHtml(summary.event || '')}</p>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>
+      <button class="btn btn-primary btn-sm btn-full" data-jigsaw-submit-order style="margin-top:10px">ยืนยันลำดับเวลา</button>`;
+  }
+
+  function _jigsawResultBody(assignments, won) {
+    if (won) {
+      return `
+        <div class="jigsaw-result jigsaw-result-win">
+          <i class="bi bi-trophy-fill"></i>
+          <p>เรียงลำดับถูกต้อง! ทุกคนได้รับรางวัลแล้ว</p>
+        </div>`;
+    }
+    return `
+      <div class="jigsaw-result jigsaw-result-lose">
+        <i class="bi bi-x-circle"></i>
+        <p>ลำดับยังไม่ถูกต้อง — คุยกับกิลด์แล้วลองใหม่</p>
+        <button class="btn btn-outline btn-sm" data-jigsaw-retry-order>ลองใหม่</button>
+      </div>`;
+  }
+
+  function _jigsawParseSummary(raw) {
+    try { return JSON.parse(raw || '{}'); } catch { return { event: raw || '' }; }
+  }
+
+  // Tiny seeded PRNG (mulberry32-style) so every guild member sees the same
+  // shuffle order for a given mission — doesn't affect correctness (each
+  // client submits its own dragged order), just keeps group discussion sane.
+  function _seededShuffle(arr, seedStr) {
+    let seed = 0;
+    for (let i = 0; i < seedStr.length; i++) seed = (seed * 31 + seedStr.charCodeAt(i)) >>> 0;
+    const rand = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function _enableJigsawDrag(container) {
+    let dragEl = null;
+    container.querySelectorAll('.jigsaw-merge-card').forEach(card => {
+      card.addEventListener('dragstart', () => { dragEl = card; card.classList.add('dragging'); });
+      card.addEventListener('dragend', () => { card.classList.remove('dragging'); dragEl = null; });
+      card.addEventListener('dragover', e => {
+        e.preventDefault();
+        if (!dragEl || dragEl === card) return;
+        const rect = card.getBoundingClientRect();
+        const before = (e.clientY - rect.top) < rect.height / 2;
+        container.insertBefore(dragEl, before ? card : card.nextSibling);
+      });
+    });
+  }
+
+  // ── Wiring — attaches listeners for whichever state just rendered ────
+  function _wireJigsawCard(wrapper, mission, assignments, currentUserId, guildId) {
+    const myAssign = assignments.find(a => a.user_id === currentUserId);
+
+    wrapper.querySelector('[data-jigsaw-flyto]')?.addEventListener('click', e => {
+      const [lat, lng] = e.currentTarget.dataset.jigsawFlyto.split('|').map(Number);
+      window.AppCore?.switchTab?.('map');
+      window.MapModule?.flyToLocation?.(lat, lng, 17);
+    });
+
+    // Quiz gate — click to select, all-correct unlocks the summary form
+    const quizEl = wrapper.querySelector('.jigsaw-quiz');
+    if (quizEl && myAssign) {
+      const answers = {};
+      quizEl.querySelectorAll('.jigsaw-quiz-q').forEach(qEl => {
+        const qi = qEl.dataset.q;
+        qEl.querySelectorAll('.quiz-option').forEach(btn => {
+          btn.addEventListener('click', () => {
+            qEl.querySelectorAll('.quiz-option').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            answers[qi] = btn.dataset.opt;
+            const submitBtn = quizEl.querySelector('[data-jigsaw-submit-quiz]');
+            if (submitBtn) submitBtn.disabled = Object.keys(answers).length < quizEl.querySelectorAll('.jigsaw-quiz-q').length;
+          });
+        });
+      });
+      quizEl.querySelector('[data-jigsaw-submit-quiz]')?.addEventListener('click', async () => {
+        const questions = await _jigsawGetRecallQuestions(myAssign.lore_node_id);
+        const allCorrect = questions.every((q, qi) => answers[qi] === q.correct_option);
+        if (!allCorrect) {
+          window.AppCore?.showToast?.('มีคำตอบผิด ลองใหม่อีกครั้ง');
+          quizEl.querySelectorAll('.quiz-option.selected').forEach(b => b.classList.remove('selected'));
+          Object.keys(answers).forEach(k => delete answers[k]);
+          quizEl.querySelector('[data-jigsaw-submit-quiz]').disabled = true;
+          return;
+        }
+        _jigsawQuizPassed.add(myAssign.id);
+        CoopModule.load();
+      });
+    }
+
+    // Structured summary form
+    const formEl = wrapper.querySelector('.jigsaw-form');
+    formEl?.querySelector('[data-jigsaw-submit-summary]')?.addEventListener('click', async () => {
+      const period = formEl.querySelector('[data-field="period"]')?.value.trim();
+      const figure = formEl.querySelector('[data-field="figure"]')?.value.trim();
+      const event_ = formEl.querySelector('[data-field="event"]')?.value.trim();
+      if (!period || !figure || !event_) { window.AppCore?.showToast?.('กรอกให้ครบทุกช่อง'); return; }
+      try {
+        await DB.Coop.postJigsawSummary(guildId, mission.id, currentUserId, { period, figure, event: event_ });
+        window.AppCore?.showToast?.('✓ ส่งสรุปบทเรียบร้อยแล้ว');
+        CoopModule.load();
+      } catch { window.AppCore?.showToast?.('ไม่สามารถส่งสรุปได้'); }
+    });
+
+    // Merge phase — drag reorder + vote
+    const mergeList = wrapper.querySelector('.jigsaw-merge-list');
+    if (mergeList) {
+      _enableJigsawDrag(mergeList);
+      wrapper.querySelector('[data-jigsaw-submit-order]')?.addEventListener('click', async () => {
+        const order = [...mergeList.querySelectorAll('.jigsaw-merge-card')].map(c => Number(c.dataset.chapter));
+        try {
+          await DB.Coop.setProposedOrder(myAssign.id, order);
+          window.AppCore?.showToast?.('✓ ยืนยันลำดับแล้ว — รอสมาชิกคนอื่น');
+          CoopModule.load();
+        } catch { window.AppCore?.showToast?.('ไม่สามารถบันทึกลำดับได้'); }
+      });
+      _jigsawSubscribeMerge(mission.id, guildId);
+    }
+
+    wrapper.querySelector('[data-jigsaw-retry-order]')?.addEventListener('click', async () => {
+      try {
+        await DB.Coop.clearProposedOrders(guildId, mission.id);
+        CoopModule.load();
+      } catch { window.AppCore?.showToast?.('ลองใหม่ไม่สำเร็จ'); }
+    });
+  }
+
+  // No dedup guard needed — _cancelProgressSubs() at the top of every _liveLoad()
+  // call already unsubscribes and clears _progressChannels, so this always
+  // starts fresh each render pass.
+  function _jigsawSubscribeMerge(missionId, guildId) {
+    const ch = DB.Coop.subscribeJigsawAssignments(missionId, guildId, () => CoopModule.load());
+    _progressChannels.push(ch);
+  }
+
+  return { load, renderMissionCard, subscribeProgress };
 })();
 
 window.CoopModule = CoopModule;
