@@ -611,6 +611,8 @@
     setLoading('btn-register', true, 'สร้างบัญชี');
     try {
       const result = await DB.Auth.signUp(email, password, username);
+      localStorage.removeItem('tam_roi_onboarded');
+      localStorage.removeItem('tam_roi_home');
       if (result?.user && !result?.session) {
         showToast('สมัครสำเร็จ! กรุณาตรวจสอบอีเมลเพื่อยืนยันบัญชี', 'info');
         setTimeout(() => switchAuthTab('login'), 3000);

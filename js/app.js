@@ -635,6 +635,8 @@ function showConfirm(message, { destructive = false, confirmLabel = 'ยืน�
 document.getElementById('btn-signout')?.addEventListener('click', async () => {
   try { await App.notifChannel?.unsubscribe?.(); } catch { /* ignore */ }
   await DB.Auth.signOut();
+  localStorage.removeItem('tam_roi_onboarded');
+  localStorage.removeItem('tam_roi_home');
   window.location.href = 'index.html';
 });
 
