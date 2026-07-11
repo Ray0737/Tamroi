@@ -210,7 +210,7 @@ const CollectionModule = (() => {
         : isCaptured ? `CollectionModule.showDetail('${f.id}')` : '';
 
       return `
-        <div class="figure-card ${isCaptured ? `captured-${f.class.toLowerCase()}` : ''} ${isLocked ? 'locked' : ''}"
+        <div class="figure-card class-${f.class.toLowerCase()} ${isCaptured ? `captured-${f.class.toLowerCase()}` : ''} ${isLocked ? 'locked' : ''}"
              style="position:relative" onclick="${onclick}">
           ${isNew ? `<span style="position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--color-primary);z-index:2;display:block"></span>` : ''}
           ${isCaptured ? `<div class="captured-ribbon">${checkSVG()}</div>` : ''}

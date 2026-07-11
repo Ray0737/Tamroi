@@ -527,9 +527,9 @@
   color: var(--sq-ink);
   box-shadow: 3px 3px 0 rgba(13, 13, 11, 0.65);
 }
-.street-quest--app #tab-collection .figure-card:nth-child(3n + 1) { background-color: #ef7b3d; }
-.street-quest--app #tab-collection .figure-card:nth-child(3n + 2) { background-color: #8fb8e4; }
-.street-quest--app #tab-collection .figure-card:nth-child(3n) { background-color: #eb8db3; }
+.street-quest--app #tab-collection .figure-card.class-s { background-color: #ef7b3d; }
+.street-quest--app #tab-collection .figure-card.class-a { background-color: #8fb8e4; }
+.street-quest--app #tab-collection .figure-card.class-c { background-color: #eb8db3; }
 .street-quest--app #tab-collection .figure-name-th,
 .street-quest--app #tab-collection .figure-name-en,
 .street-quest--app #tab-collection .figure-pts,
@@ -1031,13 +1031,18 @@
 /* ── Leaderboard: fewer heavy boxes, breathing room, clear size hierarchy ── */
 .street-quest--app #community-rank-section { gap: 14px; }
 .street-quest--app #solo-leaderboard-section { display: flex; flex-direction: column; gap: 14px; }
-.street-quest--app #my-rank-card { box-shadow: 3px 3px 0 var(--sq-lime); }
-.street-quest--app #leaderboard-list { box-shadow: 3px 3px 0 var(--sq-blue); padding: 6px 14px; }
+.street-quest--app #my-rank-card { box-shadow: 3px 3px 0 var(--sq-ink); }
+.street-quest--app #leaderboard-list { box-shadow: none; padding: 6px 14px; }
 .street-quest--app #leaderboard-list .lb-row { min-height: 60px; padding-block: 12px; }
 .street-quest--app #leaderboard-list .lb-rank { font-size: 15px; font-weight: 800; min-width: 30px; }
 .street-quest--app #leaderboard-list .lb-name { font-size: 15px; font-weight: 700; }
 .street-quest--app #leaderboard-list .lb-sub { font-size: 11px; }
 .street-quest--app #leaderboard-list .lb-score { font-size: 17px; font-weight: 800; }
+
+/* ── Guild search result cards: no border, left-aligned name ── */
+.street-quest--app .guild-result-card { border: none; }
+.street-quest--app .guild-result-name { text-align: left; }
+.street-quest--app #guild-leaderboard-list .lb-name { text-align: left; }
 
 /* ── Group create/join form: one sticker card, underlined fields ── */
 .street-quest--app .guild-no-panel {
