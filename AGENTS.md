@@ -80,14 +80,14 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `tests/district-seed-static.test.mjs`: Node static regression check that SQL district seeds match MVP map districts.
 - `tests/env-policy-static.test.mjs`: Node static regression check for tracked `js/env.js` public-anon policy.
 - `tests/grid-fog-static.test.mjs`: Node static regression check for `window.FogGrid`.
-- `tests/ui-visual.spec.mjs`: Playwright screenshot capture plus 430px/375px overflow and top-bar collision checks.
+- `tests/ui-visual.spec.mjs`: Playwright screenshot capture, reproducible populated My Group/Forum states, and 430px/375px overflow and top-bar collision checks.
 - `tests/run-static.mjs`: one-command static regression suite runner.
 
 `js/env.js` is intentionally trackable for this prototype. Keep it limited to public Supabase anon/dev-safe values only.
 
 ## Current Implementation Notes
 
-- `restyling/` remains the concept reference; the full runtime now loads `css/street-quest.css`, generated Bangkok collage/route assets, four generated UI materials, a Collection archive collage, and a Community three-poster podium collage while preserving existing behavior and DOM hooks. Collection uses a dark archive page with a torn toolbox and poster cards; Community separates the current-player rank ticket from a compact dark ledger and omits that player from the repeated list. The eight browser-verified mobile captures are stored in `restyling/05_bangkok_street_quest/screenshots/`.
+- `restyling/` remains the concept reference; the full runtime now loads `css/street-quest.css`, generated Bangkok collage/route assets, four generated UI materials, a Collection archive collage, and a Community three-poster podium collage while preserving existing behavior and DOM hooks. Collection uses a dark archive page with a torn toolbox and poster cards; Community separates the current-player rank ticket from a compact dark leaderboard, uses an ink group ledger and parchment forum, and omits the current player from the repeated rank list. Ten browser-verified mobile captures, including populated My Group and Forum states, are stored in `restyling/05_bangkok_street_quest/screenshots/`.
 - The current CSS tokens in `css/variables.css` are authoritative. They differ from older docs: background is `#1C1B2E`, primary is `#F6C19E`, card surfaces are `#252240` / `#201E38`.
 - `window.APP_CONFIG.appName` is `Tamroi`, version `0.6.0`.
 - `window.FogGrid` exposes reusable Thailand grid cell generation and coordinate lookup for future Fog of War work.

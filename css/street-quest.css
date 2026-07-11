@@ -893,6 +893,23 @@
 .street-quest--app #leaderboard-list .lb-score { color: var(--sq-lime); }
 .street-quest--app #leaderboard-list .lb-rank { color: #d9cfb7; }
 
+.street-quest--app #guild-panel {
+  border-color: var(--sq-paper-light);
+  background-color: var(--sq-ink-soft);
+  background-image:
+    linear-gradient(rgba(9, 9, 8, 0.5), rgba(9, 9, 8, 0.5)),
+    url('../assets/street-quest/ui-paper-ink.webp');
+  background-size: auto, 480px 480px;
+  color: #fff8e8;
+  box-shadow: 5px 5px 0 var(--sq-blue);
+}
+.street-quest--app #guild-panel .guild-section,
+.street-quest--app #guild-panel .guild-subnav,
+.street-quest--app #guild-panel .guild-invite-line,
+.street-quest--app #guild-panel .guild-member-row { border-color: rgba(255, 248, 229, 0.16); }
+.street-quest--app #guild-panel .guild-status-badge { border-color: var(--sq-ink-soft); }
+.street-quest--app #guild-panel .guild-action-btn:hover { background: rgba(255, 248, 229, 0.08); }
+
 /* Keep long and dynamic content roomy, scrollable, and inside the mobile frame. */
 .street-quest--auth .auth-page { overflow-y: auto; }
 .street-quest--auth .auth-card { flex-shrink: 0; }

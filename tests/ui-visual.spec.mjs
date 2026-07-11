@@ -69,7 +69,7 @@ const Coop = {
     const channel = { presenceState() { return window.__visualPresence ?? {}; }, track() {}, unsubscribe() {} };
     return channel;
   },
-  openRallyChannel() { const channel = { on() { return channel; }, unsubscribe() {} }; return channel; }
+  openRallyChannel() { const channel = { on() { return channel; }, subscribe() { return channel; }, unsubscribe() {} }; return channel; }
 };
 const Community = {
   async getPosts() { return window.__visualForumPosts ?? []; }, async getReplies() { return []; },

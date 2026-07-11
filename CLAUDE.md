@@ -116,13 +116,13 @@
     ├── lore-static.test.mjs      Static regression check for Lore integration
     ├── prod-readiness-static.test.mjs Static regression check for deploy readiness
     ├── remaining-static.test.mjs Static regression check for gameplay loop work
-    ├── ui-visual.spec.mjs         Playwright captures + 430px/375px layout collision checks
+    ├── ui-visual.spec.mjs         Playwright captures, populated group/forum states, and 430px/375px collision checks
     └── run-static.mjs             One-command static regression suite runner
 ```
 
 **`js/env.js` is trackable in this prototype.** Keep it limited to public Supabase anon/dev-safe values. Never put service-role keys or private credentials in client code.
 
-The Bangkok Street Quest visual treatment now spans the full runtime: the landing page uses generated Bangkok explorer collage art; onboarding uses generated route-paper art; auth keeps the explorer-pass treatment; and app chrome, missions, cards, and sheets use generated cream/ink/map/kraft materials through `css/street-quest.css`. Collection adds a dedicated generated archive-evidence collage, dark archive page, torn-paper toolbox, and poster-like cards. Community adds a generated three-poster podium, separate MY RANK ticket, and compact dark ranking ledger; the current player is not duplicated in the main list. Text and controls keep comfortable mobile sizing, and the map shows the illustrated route texture until Carto raster tiles are ready. The eight browser-verified 430px captures live in `restyling/05_bangkok_street_quest/screenshots/`; `tests/ui-visual.spec.mjs` also checks 430px and 375px layouts for horizontal leaks and top-bar collisions.
+The Bangkok Street Quest visual treatment now spans the full runtime: the landing page uses generated Bangkok explorer collage art; onboarding uses generated route-paper art; auth keeps the explorer-pass treatment; and app chrome, missions, cards, and sheets use generated cream/ink/map/kraft materials through `css/street-quest.css`. Collection adds a dedicated generated archive-evidence collage, dark archive page, torn-paper toolbox, and poster-like cards. Community adds a generated three-poster podium, separate MY RANK ticket, compact dark ranking/group ledgers, and parchment forum; the current player is not duplicated in the main list. Text and controls keep comfortable mobile sizing, and the map shows the illustrated route texture until Carto raster tiles are ready. The ten browser-verified 430px captures—including populated My Group and Forum states—live in `restyling/05_bangkok_street_quest/screenshots/`; `tests/ui-visual.spec.mjs` also checks 430px and 375px layouts for horizontal leaks and top-bar collisions.
 
 ---
 
