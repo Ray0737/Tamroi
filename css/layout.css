@@ -31,14 +31,15 @@ body { overflow-x: hidden; }
   width: 100%;
   max-width: var(--max-width);
   height: var(--top-bar-height);
-  background: var(--color-bg);
-  border-bottom: 1px solid var(--color-border);
+  background: var(--color-card-dark);
+  border-bottom: none;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  backdrop-filter: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--space-md);
   z-index: 100;
-  backdrop-filter: blur(12px);
 }
 
 .top-bar__left {
@@ -50,14 +51,30 @@ body { overflow-x: hidden; }
 
 .top-bar__center {
   flex: 1;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
 }
 
 .top-bar__center .page-title {
-  font-family: var(--font-heading);
-  font-size: var(--text-md);
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
   color: var(--color-white);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.1;
+}
+
+.page-subtitle {
+  display: block;
+  font-size: 9px;
+  color: var(--color-muted);
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  line-height: 1;
 }
 
 .top-bar__right {
@@ -138,7 +155,7 @@ body { overflow-x: hidden; }
   max-width: var(--max-width);
   height: var(--bottom-nav-height);
   background: var(--color-card-dark);
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid rgba(255,255,255,0.06);
   display: flex;
   align-items: center;
   z-index: 100;
@@ -150,39 +167,53 @@ body { overflow-x: hidden; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  gap: 4px;
   height: 100%;
   border: none;
   background: transparent;
   color: var(--color-muted);
   cursor: pointer;
-  padding: 6px 0;
+  padding: 6px 0 8px;
   position: relative;
   transition: color var(--transition-fast);
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Icon wrapper — inactive: transparent passthrough */
+.nav-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 28px;
+  border-radius: 14px;
+  transition: background var(--transition-fast);
+}
+
+/* Active: lime pill */
+.nav-item.active .nav-icon-wrap {
+  background: var(--color-accent);
+}
+
+/* Active icon: dark on lime */
+.nav-item.active .nav-icon-wrap svg {
+  color: #0D0D0D;
+  stroke: #0D0D0D;
+}
+
 .nav-item svg { width: 22px; height: 22px; transition: var(--transition-fast); }
 
 .nav-item .nav-label {
-  font-size: var(--text-xs);
+  font-size: 11px;
   font-weight: 500;
   line-height: 1;
 }
 
-.nav-item.active { color: var(--color-primary); }
+/* Active label: white (lime is used ONLY on the icon pill) */
+.nav-item.active { color: var(--color-white); }
 
-.nav-item.active::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 24px;
-  height: 3px;
-  background: var(--color-primary);
-  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
-}
+/* Remove old active top-line indicator */
+.nav-item.active::after { display: none; }
 
 /* ── Page Content ─────────────────────────────────────── */
 .page-content {
@@ -207,15 +238,28 @@ body { overflow-x: hidden; }
 
 .section-scroll::-webkit-scrollbar { display: none; }
 
-.section-inner { padding: var(--space-md); }
+.section-inner { padding: 20px; }
 
 /* ── Desktop frame ────────────────────────────────────── */
 @media (min-width: 768px) {
-  body { background: #1a1c22; }
+  body { background: #000000; }
   .app-wrapper {
     box-shadow: 0 0 80px rgba(0,0,0,0.6);
     border-left: 1px solid var(--color-border);
     border-right: 1px solid var(--color-border);
   }
   .top-bar, .bottom-nav { left: 0; transform: none; }
+}
+
+/* Subtle film grain — SVG feTurbulence noise, 3% opacity, non-interactive */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.03;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
 }
