@@ -1072,6 +1072,32 @@
 .street-quest--app #guild-panel .guild-no-title,
 .street-quest--app #guild-panel .guild-no-desc { color: var(--sq-ink); }
 .street-quest--app #guild-panel #btn-create-guild { min-height: 40px; font-size: 13px; }
+
+/* ── Discussion (community-forum) panel: cream card needs ink text, not white ── */
+.street-quest--app #community-forum-panel { color: var(--sq-ink); }
+.street-quest--app #community-forum-panel .forum-compose {
+  border-bottom: 1.5px solid rgba(24, 21, 16, 0.24);
+}
+.street-quest--app #community-forum-panel .forum-compose textarea {
+  color: var(--sq-ink);
+  outline: none;
+  box-shadow: none;
+}
+.street-quest--app #community-forum-panel .forum-compose textarea::placeholder { color: rgba(24, 21, 16, 0.5); }
+.street-quest--app #community-forum-panel .forum-post { border-bottom-color: rgba(24, 21, 16, 0.13); }
+.street-quest--app #community-forum-panel .forum-post-name,
+.street-quest--app #community-forum-panel .forum-post-body { color: var(--sq-ink); }
+.street-quest--app #community-forum-panel .forum-reply-input {
+  background: rgba(255, 253, 244, 0.92);
+  border: 1.5px solid rgba(24, 21, 16, 0.3);
+  color: var(--sq-ink);
+}
+.street-quest--app #community-forum-panel .forum-reply-input:focus,
+.street-quest--app #community-forum-panel .forum-reply-input:focus-visible {
+  outline: none;
+  box-shadow: none;
+  border-color: var(--sq-orange);
+}
 .street-quest--app #guild-panel #btn-join-guild {
   background: var(--sq-ink);
   color: var(--sq-paper);
