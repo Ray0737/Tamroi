@@ -37,12 +37,15 @@
 ├── build.js             Vercel build — injects Supabase env vars at deploy time
 ├── vercel.json          Deployment config + security headers
 ├── restyling/           Seven page-by-page UI concept sets + comparison boards (no runtime dependency)
+├── assets/
+│   └── street-quest/    Generated, web-optimized Bangkok collage + route-paper runtime artwork
 ├── css/
 │   ├── variables.css    Design tokens (DO NOT override these inline)
 │   ├── layout.css       Top bar, bottom nav, tab shell
 │   ├── components.css   Buttons, cards, inputs, bottom sheets, badges
 │   ├── map.css          MapLibre GL overrides, fog layer, markers, GPS dot
 │   ├── animations.css   Keyframes
+│   ├── street-quest.css Bangkok Street Quest scrapbook runtime theme (loaded last)
 │   └── figure-graph.css Bio modal sections + SVG graph overlay styles
 ├── js/
 │   ├── config.js        Reads window.ENV → window.APP_CONFIG
@@ -118,7 +121,7 @@
 
 **`js/env.js` is trackable in this prototype.** Keep it limited to public Supabase anon/dev-safe values. Never put service-role keys or private credentials in client code.
 
-The login page now carries the Bangkok Street Quest explorer-pass visual treatment: dark page background, parchment card, dark stamp logo, and decorative stickers. Auth markup, IDs, and JavaScript behavior remain unchanged.
+The Bangkok Street Quest visual treatment now spans the full runtime: the landing page uses generated Bangkok explorer collage art; onboarding uses generated route-paper art; auth keeps the explorer-pass treatment; and all app tabs share ticket, scrapbook, ink, and pasted-paper styling through `css/street-quest.css`. Existing markup IDs, Supabase flows, and JavaScript behavior remain unchanged. The eight browser-verified 430px captures live in `restyling/05_bangkok_street_quest/screenshots/`.
 
 ---
 

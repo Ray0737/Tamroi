@@ -47,11 +47,13 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `build.js`: Vercel build-time env injection into `js/env.js`.
 - `vercel.json`: deployment config and security headers.
 - `restyling/`: seven page-by-page UI restyling concept sets, comparison boards, and a concept index; these assets are not loaded by the runtime.
+- `assets/street-quest/`: generated, web-optimized Bangkok explorer collage and route-paper artwork used by the runtime theme.
 - `css/variables.css`: authoritative design tokens.
 - `css/layout.css`: app wrapper, fixed top bar, bottom nav, tab shell.
 - `css/components.css`: buttons, cards, inputs, pills, bottom sheets, badges, toast, collection/missions/leaderboard/lore components.
 - `css/map.css`: Leaflet overrides, fog layer, markers, GPS dot, node card.
 - `css/animations.css`: shared keyframes and transitions.
+- `css/street-quest.css`: last-loaded Bangkok Street Quest scrapbook theme shared by landing, auth, onboarding, and app pages.
 - `js/config.js`: reads `window.ENV` and writes `window.APP_CONFIG`.
 - `js/env.js`: tracked public Supabase anon config for local/static runtime.
 - `js/env.example.js`: credential template for resetting `js/env.js`.
@@ -84,7 +86,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 
 ## Current Implementation Notes
 
-- `restyling/` remains an additive design exploration; `login.html` now includes the Bangkok Street Quest Task 6 explorer-pass restyle while auth behavior remains unchanged.
+- `restyling/` remains the concept reference; the full runtime now loads `css/street-quest.css`, generated Bangkok collage/route assets, and page-scoped theme classes while preserving existing behavior and DOM hooks. The eight browser-verified mobile captures are stored in `restyling/05_bangkok_street_quest/screenshots/`.
 - The current CSS tokens in `css/variables.css` are authoritative. They differ from older docs: background is `#1C1B2E`, primary is `#F6C19E`, card surfaces are `#252240` / `#201E38`.
 - `window.APP_CONFIG.appName` is `Tamroi`, version `0.6.0`.
 - `window.FogGrid` exposes reusable Thailand grid cell generation and coordinate lookup for future Fog of War work.

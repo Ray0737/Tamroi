@@ -1,0 +1,612 @@
+/* Bangkok Street Quest visual layer.
+   Loaded last so the scrapbook treatment stays additive and behavior-neutral. */
+
+.street-quest {
+  --sq-ink: #0b0b0a;
+  --sq-ink-soft: #191816;
+  --sq-paper: #eadfbe;
+  --sq-paper-light: #f4ead0;
+  --sq-orange: #f05a19;
+  --sq-lime: #c4e62d;
+  --sq-blue: #2869c8;
+  --sq-pink: #e33f83;
+  --sq-rule: rgba(24, 22, 18, 0.24);
+  --sq-paper-shadow: 0 8px 0 rgba(0, 0, 0, 0.22), 0 18px 38px rgba(0, 0, 0, 0.32);
+  --top-bar-height: 72px;
+  --bottom-nav-height: 70px;
+  --color-primary: var(--sq-orange);
+  --color-primary-hover: #d8440c;
+  --color-primary-dim: rgba(240, 90, 25, 0.18);
+  --color-accent: var(--sq-lime);
+  --color-on-accent: var(--sq-ink);
+  --color-surface: var(--sq-paper);
+  --color-on-surface: #201d16;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  background: var(--sq-ink);
+}
+
+.street-quest .app-wrapper {
+  background-color: var(--sq-ink);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.014) 1px, transparent 1px);
+  background-size: 5px 5px;
+}
+
+.street-quest .btn {
+  min-height: 48px;
+  border-radius: 7px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.street-quest .btn-primary {
+  background: var(--sq-orange);
+  border-color: var(--sq-orange);
+  color: #fff;
+  box-shadow: 3px 3px 0 var(--sq-ink);
+}
+
+.street-quest .btn-primary:hover,
+.street-quest .btn-primary:focus-visible {
+  background: #d94a10;
+  border-color: #d94a10;
+  color: #fff;
+}
+
+.street-quest :focus-visible {
+  outline: 3px solid var(--sq-blue);
+  outline-offset: 3px;
+}
+
+/* Landing: generated Bangkok collage becomes the world, not a decorative thumbnail. */
+.street-quest--landing .app-wrapper {
+  background: var(--sq-ink) url('../assets/street-quest/bangkok-explorer-collage.webp') center / cover no-repeat;
+}
+
+.street-quest--landing .splash-screen {
+  min-height: 100dvh;
+  justify-content: flex-start;
+  padding: max(32px, 5.5vh) 24px 210px;
+  isolation: isolate;
+}
+
+.street-quest--landing .splash-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(4, 4, 3, 0.28) 0%, rgba(4, 4, 3, 0.06) 48%, rgba(4, 4, 3, 0.78) 82%, #080807 100%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.18), transparent 35%, transparent 70%, rgba(0, 0, 0, 0.14));
+}
+
+.street-quest--landing .splash-stickers {
+  margin-bottom: 12px;
+  align-items: flex-start;
+}
+
+.street-quest--landing .sticker {
+  border: 2px solid var(--sq-ink);
+  border-radius: 1px;
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.8);
+  transform: rotate(-5deg);
+  padding: 7px 12px;
+}
+
+.street-quest--landing .sticker-stamp {
+  width: 82px;
+  height: 82px;
+  border: 3px solid var(--sq-ink);
+  border-radius: 50%;
+  background: var(--sq-pink);
+  color: var(--sq-ink);
+  transform: rotate(8deg);
+  font-size: 10px;
+}
+
+.street-quest--landing .app-name {
+  align-self: stretch;
+  align-items: flex-start;
+  color: #f7f0de;
+  font-size: clamp(76px, 22vw, 98px);
+  line-height: 0.78;
+  letter-spacing: -2px;
+  text-align: left;
+  text-shadow: 4px 4px 0 #000;
+  transform: rotate(-1deg);
+}
+
+.street-quest--landing .app-name-th {
+  color: #f7f0de;
+  font-size: clamp(44px, 14vw, 62px);
+  line-height: 1;
+  margin-left: 24px;
+}
+
+.street-quest--landing .app-tagline-wrap {
+  align-self: flex-start;
+  margin: 10px 0 0 22px;
+  padding: 7px 16px;
+  background: var(--sq-orange);
+  border: 2px solid var(--sq-ink);
+  border-radius: 0;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.8);
+  transform: rotate(-1.5deg);
+}
+
+.street-quest--landing .app-tagline {
+  color: var(--sq-ink);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.street-quest--landing .splash-badges,
+.street-quest--landing .dev-footer {
+  display: none;
+}
+
+.street-quest--landing .bottom-cta {
+  background: linear-gradient(to top, #080807 68%, transparent);
+  padding: 62px 24px calc(24px + env(safe-area-inset-bottom));
+}
+
+.street-quest--landing .cta-primary {
+  height: 62px;
+  border: 2px solid #050504;
+  border-radius: 7px;
+  background: var(--sq-orange);
+  color: var(--sq-ink);
+  box-shadow: 5px 5px 0 var(--sq-paper);
+  font-size: 25px;
+}
+
+.street-quest--landing .cta-login,
+.street-quest--landing .cta-login a { color: #f5ecd8; }
+
+/* Explorer-pass authentication. */
+.street-quest--auth .auth-page {
+  min-height: 100dvh;
+  padding: 68px 24px 36px;
+  background:
+    linear-gradient(rgba(6, 6, 5, 0.76), rgba(6, 6, 5, 0.88)),
+    url('../assets/street-quest/bangkok-route-paper.webp') center / cover;
+}
+
+.street-quest--auth .back-btn {
+  border: 2px solid rgba(238, 226, 194, 0.55);
+  border-radius: 4px;
+  background: var(--sq-ink);
+  color: var(--sq-paper-light);
+}
+
+.street-quest--auth .auth-card {
+  max-width: 382px;
+  gap: 15px;
+  padding: 34px 26px 28px;
+  overflow: visible;
+  border: 1px solid rgba(42, 35, 23, 0.34);
+  border-radius: 5px;
+  background-color: var(--sq-paper-light);
+  background-image:
+    radial-gradient(circle at 18% 21%, rgba(74, 55, 28, 0.09) 0 1px, transparent 1.5px),
+    linear-gradient(rgba(255, 255, 255, 0.18), rgba(112, 87, 47, 0.05));
+  background-size: 11px 13px, auto;
+  box-shadow: var(--sq-paper-shadow);
+  transform: rotate(-0.35deg);
+}
+
+.street-quest--auth .auth-card::after {
+  content: 'BKK  •  EXPLORER PASS';
+  position: absolute;
+  top: -16px;
+  left: 86px;
+  padding: 6px 12px;
+  background: var(--sq-lime);
+  border: 2px solid var(--sq-ink);
+  color: var(--sq-ink);
+  font: 800 12px/1 var(--font-display);
+  letter-spacing: 0.08em;
+  transform: rotate(2deg);
+}
+
+.street-quest--auth .auth-logo {
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  transform: rotate(-4deg);
+}
+
+.street-quest--auth .auth-title {
+  font-size: 30px;
+  line-height: 1.15;
+}
+
+.street-quest--auth .auth-subtitle {
+  font-size: 14px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.street-quest--auth .auth-tab {
+  min-height: 46px;
+  font-size: 14px;
+}
+
+.street-quest--auth .auth-card .input-dark {
+  min-height: 50px;
+  border: 1.5px solid rgba(35, 31, 24, 0.55);
+  border-radius: 5px;
+  background: rgba(255, 253, 245, 0.7);
+}
+
+.street-quest--auth .auth-sticker-tl { background: var(--sq-ink); }
+.street-quest--auth .auth-sticker-tr { background: var(--sq-blue); color: #fff; }
+
+/* Onboarding: spacious route card; benefits become readable rows on small phones. */
+.street-quest--onboarding .app-wrapper { overflow-y: auto; }
+
+.street-quest--onboarding .onboard-page {
+  justify-content: flex-start;
+  min-height: 100dvh;
+  padding: max(28px, 4vh) 18px 30px;
+  background:
+    linear-gradient(rgba(234, 223, 190, 0.2), rgba(234, 223, 190, 0.24)),
+    url('../assets/street-quest/bangkok-route-paper.webp') center / cover;
+}
+
+.street-quest--onboarding .onboard-card {
+  max-width: 394px;
+  gap: 18px;
+  padding: 20px 18px 22px;
+  border: 1px solid rgba(31, 28, 21, 0.22);
+  border-radius: 8px;
+  background: rgba(247, 238, 214, 0.91);
+  color: var(--sq-ink);
+  box-shadow: var(--sq-paper-shadow);
+  backdrop-filter: blur(2px);
+}
+
+.street-quest--onboarding .step-indicator {
+  align-self: stretch;
+  justify-content: center;
+  margin-bottom: 0;
+}
+
+.street-quest--onboarding .step-dot {
+  border-color: rgba(20, 18, 14, 0.28);
+  color: rgba(20, 18, 14, 0.58);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.street-quest--onboarding .step-dot.active {
+  background: var(--sq-orange);
+  border-color: var(--sq-ink);
+  color: #fff;
+}
+
+.street-quest--onboarding .step-line { width: 96px; background: rgba(20, 18, 14, 0.22); }
+.street-quest--onboarding .illus-wrap { width: 122px; height: 122px; margin-bottom: -4px; }
+.street-quest--onboarding .ring-1 { width: 122px; height: 122px; }
+.street-quest--onboarding .ring-2 { width: 94px; height: 94px; }
+.street-quest--onboarding .ring-3 { width: 68px; height: 68px; }
+
+.street-quest--onboarding .onboard-title {
+  color: var(--sq-ink);
+  font-size: 30px;
+  text-transform: none;
+  line-height: 1.2;
+}
+
+.street-quest--onboarding .onboard-title::after {
+  content: '';
+  display: block;
+  width: 64px;
+  height: 7px;
+  margin: 8px auto 0;
+  background: var(--sq-orange);
+  transform: rotate(-2deg);
+}
+
+.street-quest--onboarding .onboard-sub {
+  color: rgba(26, 23, 18, 0.72);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.street-quest--onboarding .benefit-list {
+  grid-template-columns: 1fr;
+  gap: 9px;
+}
+
+.street-quest--onboarding .benefit-row {
+  min-height: 68px;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 13px;
+  padding: 11px 13px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 5px;
+  text-align: left;
+  box-shadow: 3px 3px 0 rgba(12, 12, 10, 0.75);
+}
+
+.street-quest--onboarding .benefit-row:nth-child(1) { background: var(--sq-lime); }
+.street-quest--onboarding .benefit-row:nth-child(2) { background: var(--sq-blue); }
+.street-quest--onboarding .benefit-row:nth-child(3) { background: var(--sq-pink); }
+.street-quest--onboarding .benefit-icon { width: 40px; height: 40px; }
+.street-quest--onboarding .benefit-icon svg { width: 20px; height: 20px; }
+.street-quest--onboarding .benefit-text { color: var(--sq-ink); font-size: 13px; line-height: 1.35; }
+.street-quest--onboarding .benefit-row:nth-child(2) .benefit-text { color: #fff; }
+.street-quest--onboarding .benefit-text small { color: currentColor; opacity: 0.72; font-size: 11px; }
+.street-quest--onboarding .skip-link { color: rgba(23, 20, 15, 0.68); min-height: 40px; }
+
+.street-quest--onboarding .district-grid-2col { gap: 11px; }
+.street-quest--onboarding .dc-card {
+  min-height: 112px;
+  justify-content: center;
+  border: 1.5px solid rgba(30, 26, 19, 0.42);
+  border-radius: 5px;
+  background: rgba(255, 253, 243, 0.82);
+  color: var(--sq-ink);
+}
+.street-quest--onboarding .dc-card.selected { background: var(--sq-lime); border-color: var(--sq-ink); box-shadow: 3px 3px 0 var(--sq-ink); }
+.street-quest--onboarding .dc-name-th { color: var(--sq-ink); font-size: 14px; }
+.street-quest--onboarding .dc-name-en { color: rgba(22, 20, 15, 0.64); font-size: 11px; }
+.street-quest--onboarding .dc-icon { background: rgba(24, 22, 17, 0.08); }
+
+/* App chrome: ticket header + pasted navigation strip. */
+.street-quest--app .top-bar {
+  height: var(--top-bar-height);
+  padding: 0 14px;
+  background: var(--sq-paper-light);
+  border-bottom: 3px solid var(--sq-ink);
+  box-shadow: 0 4px 0 var(--sq-orange), 0 8px 20px rgba(0, 0, 0, 0.34);
+}
+
+.street-quest--app .top-bar::after {
+  content: '';
+  position: absolute;
+  right: 84px;
+  top: 8px;
+  bottom: 8px;
+  border-left: 2px dashed rgba(25, 22, 16, 0.24);
+}
+
+.street-quest--app .avatar-sm {
+  border: 2px solid var(--sq-ink);
+  border-radius: 3px;
+  background: var(--sq-orange);
+  color: #fff;
+  box-shadow: 2px 2px 0 var(--sq-ink);
+}
+
+.street-quest--app .username,
+.street-quest--app .top-bar__center .page-title { color: var(--sq-ink); }
+.street-quest--app .username { font-size: 14px; }
+.street-quest--app .page-subtitle { color: rgba(26, 23, 17, 0.64); font-weight: 700; letter-spacing: 1.7px; }
+.street-quest--app .icon-btn { color: var(--sq-ink); border-radius: 3px; }
+.street-quest--app .icon-btn:hover { background: rgba(20, 18, 14, 0.08); color: var(--sq-orange); }
+.street-quest--app .notif-badge { background: var(--sq-pink); border-color: var(--sq-paper-light); }
+
+.street-quest--app .bottom-nav {
+  height: var(--bottom-nav-height);
+  padding: 5px 8px calc(4px + env(safe-area-inset-bottom));
+  background: #11110f;
+  border-top: 3px solid var(--sq-paper);
+  box-shadow: 0 -5px 0 var(--sq-ink), 0 -12px 24px rgba(0, 0, 0, 0.34);
+}
+
+.street-quest--app .nav-item { gap: 3px; color: #a99f89; padding: 5px 0; }
+.street-quest--app .nav-icon-wrap { width: 52px; height: 32px; border-radius: 2px; }
+.street-quest--app .nav-item.active .nav-icon-wrap {
+  background: var(--sq-lime);
+  border: 2px solid var(--sq-ink);
+  box-shadow: 2px 2px 0 var(--sq-paper);
+  transform: rotate(-2deg);
+}
+.street-quest--app .nav-item.active { color: #fff; }
+.street-quest--app .nav-label { font-size: 11px; font-weight: 700; }
+
+/* Map has a useful generated fallback even if remote tiles are unavailable. */
+.street-quest--app #map-view {
+  background: #d9cda9 url('../assets/street-quest/bangkok-route-paper.webp') center / cover no-repeat;
+}
+
+.street-quest--app .map-stats-pill {
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  padding: 12px 8px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 5px;
+  background: var(--sq-paper-light);
+  box-shadow: 4px 4px 0 rgba(8, 8, 7, 0.84);
+  transform: rotate(-0.4deg);
+}
+
+.street-quest--app .map-stats-pill .stat-value { font: 800 18px/1 var(--font-display); }
+.street-quest--app .map-stats-pill .stat-label { margin-top: 3px; color: rgba(24, 21, 16, 0.7); font-size: 10px; font-weight: 700; }
+.street-quest--app .map-stat-divider { background: rgba(22, 20, 15, 0.18); }
+
+.street-quest--app .fab-primary {
+  border: 2px solid var(--sq-paper-light);
+  border-radius: 5px;
+  background: var(--sq-orange);
+  box-shadow: 4px 4px 0 var(--sq-ink);
+}
+.street-quest--app .fab-locate,
+.street-quest--app .fab-tilt { background: var(--sq-ink-soft); }
+
+/* Collection becomes a physical archive page while preserving the existing DOM. */
+.street-quest--app #tab-collection .section-scroll {
+  background:
+    linear-gradient(rgba(235, 224, 192, 0.93), rgba(235, 224, 192, 0.93)),
+    url('../assets/street-quest/bangkok-route-paper.webp') center / cover;
+}
+
+.street-quest--app #tab-collection .section-inner { color: var(--sq-ink); padding: 22px 18px 34px; }
+.street-quest--app #tab-collection .search-bar {
+  min-height: 50px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 5px;
+  background: rgba(255, 253, 244, 0.72);
+  box-shadow: 3px 3px 0 rgba(13, 13, 11, 0.76);
+}
+.street-quest--app #tab-collection .search-bar input { color: var(--sq-ink); font-size: 14px; }
+.street-quest--app #tab-collection .search-bar input::placeholder,
+.street-quest--app #tab-collection .search-bar svg { color: rgba(24, 21, 16, 0.58); }
+
+.street-quest--app #tab-collection .filter-pills { gap: 8px; padding: 4px 0; }
+.street-quest--app #tab-collection .pill,
+.street-quest--app #tab-collection .filter-select {
+  min-height: 40px;
+  border: 1.5px solid var(--sq-ink);
+  border-radius: 3px;
+  background: rgba(255, 253, 244, 0.58);
+  color: var(--sq-ink);
+  font-weight: 700;
+}
+.street-quest--app #tab-collection .pill.active,
+.street-quest--app #tab-collection .filter-select.has-value { background: var(--sq-orange); color: #fff; }
+.street-quest--app #tab-collection .stats-row {
+  margin-top: 14px;
+  padding: 12px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 4px;
+  background: var(--sq-ink);
+}
+.street-quest--app #tab-collection .stats-row .stat-value,
+.street-quest--app #tab-collection .stats-row .stat-label { color: #fff !important; }
+.street-quest--app #tab-collection .stats-row .stat-label { opacity: 0.72; }
+
+.street-quest--app #tab-collection .figure-grid { gap: 11px; }
+.street-quest--app #tab-collection .figure-card,
+.street-quest--app #tab-collection .artifact-card {
+  min-height: 160px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 3px;
+  background: rgba(250, 243, 221, 0.82);
+  color: var(--sq-ink);
+  box-shadow: 3px 3px 0 rgba(13, 13, 11, 0.65);
+}
+.street-quest--app #tab-collection .figure-card:nth-child(3n + 1) { background: #ef7b3d; }
+.street-quest--app #tab-collection .figure-card:nth-child(3n + 2) { background: #7ca7d8; }
+.street-quest--app #tab-collection .figure-card:nth-child(3n) { background: #e875a5; }
+.street-quest--app #tab-collection .figure-name-th,
+.street-quest--app #tab-collection .figure-name-en,
+.street-quest--app #tab-collection .figure-pts,
+.street-quest--app #tab-collection .artifact-name,
+.street-quest--app #tab-collection .section-title { color: var(--sq-ink); }
+.street-quest--app #tab-collection .section-title {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 10px;
+  background: var(--sq-lime);
+  border: 2px solid var(--sq-ink);
+  transform: rotate(-1deg);
+}
+.street-quest--app #tab-collection .artifact-card { min-height: 104px; background: rgba(250, 243, 221, 0.88); }
+.street-quest--app #tab-collection .figure-card.locked { opacity: 1; }
+.street-quest--app #tab-collection .figure-card.locked .figure-portrait { opacity: 0.5; }
+.street-quest--app #tab-collection .figure-card.locked .figure-name-th,
+.street-quest--app #tab-collection .figure-card.locked .figure-name-en,
+.street-quest--app #tab-collection .figure-card.locked .phase-locked-label { color: #231f18; opacity: 1; }
+
+/* Missions and community use generous pasted panels on ink. */
+.street-quest--app #tab-mission .section-scroll,
+.street-quest--app #tab-community .section-scroll {
+  background:
+    radial-gradient(circle at 82% 12%, rgba(40, 105, 200, 0.18), transparent 28%),
+    linear-gradient(160deg, #141412, #080808 72%);
+}
+.street-quest--app #tab-mission .section-inner,
+.street-quest--app #tab-community .section-inner { padding: 22px 18px 36px; gap: 18px !important; }
+
+.street-quest--app .mission-card,
+.street-quest--app .mission-empty,
+.street-quest--app .mission-banner,
+.street-quest--app #my-rank-card,
+.street-quest--app #leaderboard-list,
+.street-quest--app #guild-leaderboard-list,
+.street-quest--app #guild-panel,
+.street-quest--app #community-forum-panel {
+  border: 2px solid var(--sq-ink);
+  border-radius: 5px;
+  background: var(--sq-paper-light);
+  color: var(--sq-ink);
+  box-shadow: 4px 4px 0 var(--sq-orange);
+}
+
+.street-quest--app .mission-card { padding: 20px; }
+.street-quest--app .mission-title { color: var(--sq-ink); font-size: 25px; }
+.street-quest--app .mission-sub,
+.street-quest--app .mission-banner-sub,
+.street-quest--app .mission-empty p.sub,
+.street-quest--app .challenge-loc { color: rgba(24, 21, 16, 0.66); font-size: 12px; }
+.street-quest--app .mission-banner-title,
+.street-quest--app .mission-empty p,
+.street-quest--app .challenge-name { color: var(--sq-ink); }
+.street-quest--app .challenge-row { min-height: 68px; border-color: rgba(24, 21, 16, 0.16); }
+.street-quest--app .challenge-icon-box { width: 42px; height: 42px; border: 1.5px solid var(--sq-ink); }
+.street-quest--app .challenge-pts { color: #c7430d; }
+
+.street-quest--app #community-sub-tabs {
+  padding: 5px;
+  border: 2px solid var(--sq-paper-light);
+  border-radius: 4px;
+  background: #171714;
+}
+.street-quest--app #community-sub-tabs .pill {
+  min-height: 44px;
+  border-radius: 2px;
+  color: #d8ccb0;
+  font-weight: 700;
+}
+.street-quest--app #community-sub-tabs .pill.active { background: var(--sq-orange); color: #fff; }
+.street-quest--app .lb-select {
+  min-height: 46px;
+  border: 2px solid var(--sq-paper-light);
+  border-radius: 3px;
+  background: #171714;
+  color: #fff;
+  padding-inline: 12px;
+}
+.street-quest--app #my-rank-card,
+.street-quest--app #leaderboard-list,
+.street-quest--app #guild-leaderboard-list,
+.street-quest--app #guild-panel,
+.street-quest--app #community-forum-panel { padding: 10px 14px; }
+.street-quest--app .rank-row { min-height: 62px; border-bottom: 1px solid rgba(24, 21, 16, 0.13); border-radius: 0; }
+.street-quest--app .rank-row:nth-child(even) { background: rgba(23, 20, 15, 0.04); }
+.street-quest--app .rank-name,
+.street-quest--app .rank-score { color: var(--sq-ink); }
+.street-quest--app .rank-province,
+.street-quest--app .rank-number { color: rgba(24, 21, 16, 0.6); }
+.street-quest--app #tab-community .lb-name { color: var(--sq-ink); }
+.street-quest--app #tab-community .lb-sub { color: rgba(24, 21, 16, 0.64); }
+.street-quest--app #tab-community .lb-score { color: #5c574c; }
+.street-quest--app #tab-community .lb-score.gold { color: #8a6900; }
+.street-quest--app #tab-community .lb-score.silver { color: #5f6470; }
+.street-quest--app #tab-community .lb-score.bronze { color: #9b521e; }
+.street-quest--app #tab-community .lb-my-row .lb-score,
+.street-quest--app #tab-community .lb-name .lb-you { color: #d7430c; }
+
+@media (max-width: 360px) {
+  .street-quest--landing .app-name { font-size: 70px; }
+  .street-quest--landing .app-name-th { font-size: 43px; }
+  .street-quest--auth .auth-card { padding-inline: 20px; }
+  .street-quest--onboarding .onboard-card { padding-inline: 14px; }
+  .street-quest--app .top-bar__center { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .street-quest *, .street-quest *::before, .street-quest *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
