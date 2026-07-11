@@ -36,7 +36,7 @@
 }
 
 .street-quest .btn {
-  min-height: 48px;
+  min-height: 42px;
   border-radius: 7px;
   font-weight: 800;
   letter-spacing: 0.01em;
@@ -966,6 +966,94 @@
   .street-quest--app #tab-mission .section-inner,
   .street-quest--app #tab-community .section-inner { padding-inline: 14px; }
 }
+
+/* ── Form-control focus: warm accent, not a hard blue box ── */
+.street-quest input:focus-visible,
+.street-quest textarea:focus-visible,
+.street-quest select:focus-visible,
+.street-quest .search-bar:focus-within {
+  outline: none;
+  border-color: var(--sq-orange);
+  box-shadow: 0 0 0 3px rgba(240, 90, 25, 0.28);
+}
+
+/* ── Nav-bar profile: read as one explorer-pass chip ── */
+.street-quest--app .top-bar__left {
+  gap: 9px;
+  padding: 5px 11px 5px 6px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 5px;
+  background: rgba(255, 253, 244, 0.6);
+  box-shadow: 2px 2px 0 var(--sq-ink);
+}
+.street-quest--app .top-bar__left .username {
+  font-weight: 800;
+  max-width: 68px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Map markers: ink-outlined, high-contrast, on-theme ── */
+.street-quest--app .marker-watchtower {
+  background: var(--sq-paper-light);
+  border: 2px solid var(--sq-ink);
+  color: var(--sq-orange);
+  box-shadow: 2px 2px 0 var(--sq-ink);
+}
+.street-quest--app .marker-watchtower.visited {
+  background: var(--sq-orange);
+  border-color: var(--sq-ink);
+  color: #fff;
+}
+.street-quest--app .marker-node { border-color: var(--sq-ink); border-width: 2px; }
+.street-quest--app .marker-figure-c { background: var(--sq-lime); border-color: var(--sq-ink); color: var(--sq-ink); }
+.street-quest--app .marker-figure-s { background: var(--sq-orange); border-color: var(--sq-ink); color: #fff; box-shadow: 2px 2px 0 var(--sq-ink); }
+.street-quest--app .marker-lore { background: var(--sq-pink); border-color: var(--sq-ink); color: #fff; box-shadow: 2px 2px 0 var(--sq-ink); }
+.street-quest--app .marker-otop { background: var(--sq-blue); border-color: var(--sq-ink); color: #fff; }
+.street-quest--app .marker-cafe { background: var(--sq-lime); border-color: var(--sq-ink); }
+.street-quest--app .marker-landmark { background: var(--sq-orange); border-color: var(--sq-ink); color: #fff; }
+.street-quest--app .marker-home { background: var(--sq-orange); border-color: var(--sq-ink); }
+
+/* ── Collection figure card: compact, name legible ── */
+.street-quest--app #tab-collection .figure-card { min-height: 0; }
+.street-quest--app #tab-collection .figure-portrait { aspect-ratio: 1 / 1; font-size: 30px; }
+.street-quest--app #tab-collection .figure-name-th { padding-top: 7px; font-size: 15px; }
+.street-quest--app #tab-collection .figure-name-en { padding-bottom: 2px; }
+.street-quest--app #tab-collection .figure-pts { padding-bottom: 9px; }
+
+/* ── Leaderboard: fewer heavy boxes, breathing room, clear size hierarchy ── */
+.street-quest--app #community-rank-section { gap: 14px; }
+.street-quest--app #solo-leaderboard-section { display: flex; flex-direction: column; gap: 14px; }
+.street-quest--app .lb-select {
+  min-height: 42px;
+  box-shadow: 2px 2px 0 var(--sq-ink);
+}
+.street-quest--app #my-rank-card { box-shadow: 3px 3px 0 var(--sq-lime); }
+.street-quest--app #leaderboard-list { box-shadow: 3px 3px 0 var(--sq-blue); padding: 6px 14px; }
+.street-quest--app #leaderboard-list .lb-row { min-height: 60px; padding-block: 12px; }
+.street-quest--app #leaderboard-list .lb-rank { font-size: 15px; font-weight: 800; min-width: 30px; }
+.street-quest--app #leaderboard-list .lb-name { font-size: 15px; font-weight: 700; }
+.street-quest--app #leaderboard-list .lb-sub { font-size: 11px; }
+.street-quest--app #leaderboard-list .lb-score { font-size: 17px; font-weight: 800; }
+
+/* ── Group create/join form: visible fields, tighter controls ── */
+.street-quest--app #guild-panel .guild-input,
+.street-quest--app #guild-panel .guild-textarea {
+  border: 1.5px solid var(--sq-ink);
+  border-radius: 5px;
+  padding: 9px 11px;
+  background: rgba(255, 253, 244, 0.92);
+  color: var(--sq-ink);
+}
+.street-quest--app #guild-panel .guild-input::placeholder,
+.street-quest--app #guild-panel .guild-textarea::placeholder {
+  color: rgba(24, 21, 16, 0.5);
+  font-size: 12px;
+}
+.street-quest--app #guild-panel .guild-no-title,
+.street-quest--app #guild-panel .guild-no-desc { color: #fff8e8; }
+.street-quest--app #guild-panel #btn-create-guild { min-height: 40px; font-size: 13px; }
 
 @media (prefers-reduced-motion: reduce) {
   .street-quest *, .street-quest *::before, .street-quest *::after {

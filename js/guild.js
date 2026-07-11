@@ -542,7 +542,7 @@ const GuildModule = (() => {
         <textarea id="guild-desc-input" placeholder="คำอธิบายกลุ่ม (ไม่บังคับ)" rows="2" maxlength="200"
                   class="guild-textarea" autocomplete="off"></textarea>
         <button class="btn btn-primary btn-full" id="btn-create-guild"
-                style="font-size:13px;padding:10px;margin-bottom:var(--space-sm)">
+                style="font-size:13px;padding:7px 10px;margin-bottom:var(--space-sm)">
           สร้างกลุ่มใหม่</button>
         <div style="display:flex;align-items:flex-end;gap:8px">
           <input id="guild-code-input" type="text" placeholder="กรอกรหัสเชิญ 6 หลัก"

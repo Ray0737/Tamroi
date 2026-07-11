@@ -247,14 +247,14 @@ const MapModule = (() => {
             type: 'fill',
             source: 'ofm',
             'source-layer': 'water',
-            paint: { 'fill-color': '#4A6B7A', 'fill-opacity': 0.9 },
+            paint: { 'fill-color': '#2869c8', 'fill-opacity': 0.85 },
           },
           {
             id: 'waterway-line',
             type: 'line',
             source: 'ofm',
             'source-layer': 'waterway',
-            paint: { 'line-color': '#4A6B7A', 'line-width': 2.5 },
+            paint: { 'line-color': '#2869c8', 'line-width': 2.5 },
           },
           {
             id: '3d-buildings',
@@ -263,16 +263,16 @@ const MapModule = (() => {
             'source-layer': 'building',
             minzoom: 15,
             paint: {
-              // Dither Ink palette bucketed by feature id — looks random per building, stable
-              // on re-render. Ink-navy family weighted higher (4/6 buckets), cream for pop.
+              // Street Quest palette bucketed by feature id — looks random per building, stable
+              // on re-render. Warm paper/tan family weighted higher, orange for pop.
               'fill-extrusion-color': [
                 'match', ['%', ['id'], 6],
-                0, '#EAE7E1', // paper cream
-                1, '#3A3960', // mid ink-lavender
-                2, '#2E2D4A', // card-dark ink
-                3, '#4A4870', // lighter ink-purple
-                4, '#C9C6BD', // darker paper/tan
-                '#23223A',    // bg ink (fallback bucket)
+                0, '#f4ead0', // paper light
+                1, '#2b2824', // warm ink
+                2, '#d9cda9', // kraft tan
+                3, '#f05a19', // orange pop
+                4, '#c9c1ab', // muted paper
+                '#201d16',    // ink (fallback bucket)
               ],
               'fill-extrusion-height': ['coalesce', ['get', 'render_height'], 6],
               'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
