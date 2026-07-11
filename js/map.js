@@ -211,6 +211,11 @@ const MapModule = (() => {
     const container = document.getElementById('map-view');
     if (!container || map) return;
 
+    // Keep the illustrated paper map visible while remote raster tiles are loading.
+    // MapLibre paints an opaque canvas immediately, so without this state a slow or
+    // offline tile request turns the useful CSS fallback into a blank black panel.
+    container.classList.add('map-texture-fallback');
+
     map = new maplibregl.Map({
       container: 'map-view',
       style: {
@@ -300,6 +305,12 @@ const MapModule = (() => {
       // Start GPS tracking
       startLocationTracking();
       _initWalkGrid();
+    });
+
+    map.on('sourcedata', event => {
+      if (event.sourceId === 'carto' && event.isSourceLoaded) {
+        container.classList.remove('map-texture-fallback');
+      }
     });
 
     document.getElementById('btn-locate-me').addEventListener('click', () => {

@@ -279,7 +279,7 @@ const CollectionModule = (() => {
               ${iconSVG.replace(/^<svg[^>]*>|<\/svg>$/g, '')}
             </svg>
           </div>
-          <p class="artifact-name" style="font-size:9px;line-height:1.3;
+          <p class="artifact-name" style="font-size:11px;line-height:1.4;
              white-space:normal;word-break:break-word;text-align:center">
             ${escapeHtml(a.name)}
           </p>

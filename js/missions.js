@@ -253,7 +253,7 @@ const MissionModule = (() => {
                         display:flex;align-items:center;justify-content:center;
                         flex-shrink:0;color:var(--color-primary)">${_crownSVG}</div>
             <div style="flex:1;min-width:0">
-              <p style="margin:0;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;
+              <p style="margin:0;font-size:10px;text-transform:uppercase;letter-spacing:1.4px;
                         color:var(--color-primary);font-weight:600">Active Quest</p>
               <h3 style="margin:2px 0 0;font-family:var(--font-heading);font-size:15px;
                           font-weight:700;line-height:1.2">${escapeHtml(target.name_th)}</h3>
@@ -349,7 +349,7 @@ const MissionModule = (() => {
         <h3 class="section-title">Daily Challenges</h3>
         <div style="display:flex;align-items:center;gap:6px">
           <span style="font-size:var(--text-xs);color:var(--color-muted)">Resets in ${hLeft}h</span>
-          <span style="font-size:10px;font-weight:700;color:var(--color-success);
+          <span style="font-size:11px;font-weight:700;color:var(--color-success);
                        background:var(--color-success-dim);border-radius:var(--radius-full);
                        padding:2px 8px">${donePct}%</span>
         </div>
@@ -380,11 +380,11 @@ const MissionModule = (() => {
               ${style.icon}
             </div>
             <div style="flex:1;min-width:0">
-              <p style="margin:0;font-size:12px;font-weight:600;
+              <p style="margin:0;font-size:13px;font-weight:600;
                         color:${c.completed ? 'var(--color-muted)' : 'var(--color-white)'};
                         text-decoration:${c.completed ? 'line-through' : 'none'};
                         white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(c.title_th)}</p>
-              ${showProg ? `<p style="margin:2px 0 0;font-size:10px;color:var(--color-muted)">${c.current}/${c.target_count}</p>` : ''}
+              ${showProg ? `<p style="margin:3px 0 0;font-size:11px;color:var(--color-muted)">${c.current}/${c.target_count}</p>` : ''}
             </div>
             ${c.completed
               ? `<div style="width:26px;height:26px;border-radius:50%;background:var(--color-success-dim);
@@ -396,7 +396,7 @@ const MissionModule = (() => {
               : `<span style="
                    flex-shrink:0;background:var(--color-primary-dim);
                    border:1px solid var(--color-primary);border-radius:var(--radius-full);
-                   padding:3px 10px;font-size:10px;font-weight:700;
+                   padding:4px 10px;font-size:11px;font-weight:700;
                    color:var(--color-primary);white-space:nowrap">+${c.pts_reward}</span>`
             }
           </div>`;

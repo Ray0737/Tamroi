@@ -47,7 +47,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `build.js`: Vercel build-time env injection into `js/env.js`.
 - `vercel.json`: deployment config and security headers.
 - `restyling/`: seven page-by-page UI restyling concept sets, comparison boards, and a concept index; these assets are not loaded by the runtime.
-- `assets/street-quest/`: generated, web-optimized Bangkok explorer collage and route-paper artwork used by the runtime theme.
+- `assets/street-quest/`: generated, web-optimized Bangkok explorer collage, route paper, cream/ink/map/kraft UI materials, Collection archive collage, and Community podium collage used by the runtime theme.
 - `css/variables.css`: authoritative design tokens.
 - `css/layout.css`: app wrapper, fixed top bar, bottom nav, tab shell.
 - `css/components.css`: buttons, cards, inputs, pills, bottom sheets, badges, toast, collection/missions/leaderboard/lore components.
@@ -80,13 +80,14 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `tests/district-seed-static.test.mjs`: Node static regression check that SQL district seeds match MVP map districts.
 - `tests/env-policy-static.test.mjs`: Node static regression check for tracked `js/env.js` public-anon policy.
 - `tests/grid-fog-static.test.mjs`: Node static regression check for `window.FogGrid`.
+- `tests/ui-visual.spec.mjs`: Playwright screenshot capture plus 430px/375px overflow and top-bar collision checks.
 - `tests/run-static.mjs`: one-command static regression suite runner.
 
 `js/env.js` is intentionally trackable for this prototype. Keep it limited to public Supabase anon/dev-safe values only.
 
 ## Current Implementation Notes
 
-- `restyling/` remains the concept reference; the full runtime now loads `css/street-quest.css`, generated Bangkok collage/route assets, and page-scoped theme classes while preserving existing behavior and DOM hooks. The eight browser-verified mobile captures are stored in `restyling/05_bangkok_street_quest/screenshots/`.
+- `restyling/` remains the concept reference; the full runtime now loads `css/street-quest.css`, generated Bangkok collage/route assets, four generated UI materials, a Collection archive collage, and a Community three-poster podium collage while preserving existing behavior and DOM hooks. Collection uses a dark archive page with a torn toolbox and poster cards; Community separates the current-player rank ticket from a compact dark ledger and omits that player from the repeated list. The eight browser-verified mobile captures are stored in `restyling/05_bangkok_street_quest/screenshots/`.
 - The current CSS tokens in `css/variables.css` are authoritative. They differ from older docs: background is `#1C1B2E`, primary is `#F6C19E`, card surfaces are `#252240` / `#201E38`.
 - `window.APP_CONFIG.appName` is `Tamroi`, version `0.6.0`.
 - `window.FogGrid` exposes reusable Thailand grid cell generation and coordinate lookup for future Fog of War work.
@@ -101,6 +102,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `js/map.js` has seeded BTS/MRT station radius data for x2 point multiplier checks.
 - Home/base district state uses `tam_roi_home`; `js/map.js` migrates the legacy home key if present.
 - Real-time GPS uses `navigator.geolocation.watchPosition`; failures should degrade silently and keep the app usable.
+- The map keeps the generated route-map texture visible while Carto raster tiles load or fail, then fades the MapLibre canvas to full opacity after the `carto` source reports loaded.
 - Collection, missions, and notifications use mock fallback data when Supabase calls fail; leaderboard uses the DB-backed `leaderboard_legacy` view and shows an empty/error state instead of mock rankings.
 - Collection figure detail uses a reused Bootstrap modal instance and cleans stale backdrop/body state on close.
 - `window.DB` groups `Auth`, `Profiles`, `Districts`, `Figures`, `Artifacts`, `Leaderboard`, `Lore`, `Quiz`, and `Notifications`; `Districts.getVisitedSupportNodes()` loads persisted support-node IDs and `Notifications.subscribe()` wraps Supabase Realtime.

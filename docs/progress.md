@@ -83,6 +83,7 @@
 | Seven full UI restyling concept sets | ✅ Done | `restyling/` contains seven visual directions with seven user-facing states and comparison boards per direction |
 | Bangkok Street Quest login restyle (Task 6) | ✅ Done | `login.html` now uses a parchment explorer-pass card, dark stamp logo treatment, and decorative explorer stickers |
 | Bangkok Street Quest full runtime theme | ✅ Done | Generated Bangkok collage/route artwork plus `css/street-quest.css` theme landing, auth, onboarding, map, collection, missions, and community; all eight 430px reference screenshots were browser-captured and refreshed |
+| Bangkok Street Quest texture + spacing QA | ✅ Done | Generated cream/ink/map/kraft UI materials plus dedicated Collection archive-collage and Community podium-collage artwork replace flat panels; Collection now uses an ink archive, torn toolbox, and poster cards; Community uses a three-poster hero, MY RANK ticket, and dark ledger; MapLibre keeps the illustrated route map visible until Carto tiles load; eight 430px captures refreshed and automated 375px/430px overflow checks added |
 
 ---
 

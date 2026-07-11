@@ -334,6 +334,7 @@ function load() {
     el.innerHTML = players.map((p, idx) => {
       const rank = idx + 1;
       const isMe = p.id === MY_ID;
+      if (isMe) return '';
       const tier = _RANK_TIER[rank];
       const init = (p.username || '?').substring(0, 2).toUpperCase();
       const ringColor = tier ? { gold: '#FFD700', silver: '#C0C0C0', bronze: '#CD7F32' }[tier]

@@ -193,9 +193,9 @@
   border-radius: 5px;
   background-color: var(--sq-paper-light);
   background-image:
-    radial-gradient(circle at 18% 21%, rgba(74, 55, 28, 0.09) 0 1px, transparent 1.5px),
-    linear-gradient(rgba(255, 255, 255, 0.18), rgba(112, 87, 47, 0.05));
-  background-size: 11px 13px, auto;
+    linear-gradient(rgba(255, 250, 235, 0.72), rgba(255, 250, 235, 0.72)),
+    url('../assets/street-quest/ui-paper-cream.webp');
+  background-size: auto, 520px 520px;
   box-shadow: var(--sq-paper-shadow);
   transform: rotate(-0.35deg);
 }
@@ -264,7 +264,11 @@
   padding: 20px 18px 22px;
   border: 1px solid rgba(31, 28, 21, 0.22);
   border-radius: 8px;
-  background: rgba(247, 238, 214, 0.91);
+  background-color: var(--sq-paper-light);
+  background-image:
+    linear-gradient(rgba(255, 250, 235, 0.72), rgba(255, 250, 235, 0.72)),
+    url('../assets/street-quest/ui-paper-cream.webp');
+  background-size: auto, 520px 520px;
   color: var(--sq-ink);
   box-shadow: var(--sq-paper-shadow);
   backdrop-filter: blur(2px);
@@ -341,7 +345,7 @@
 .street-quest--onboarding .benefit-icon svg { width: 20px; height: 20px; }
 .street-quest--onboarding .benefit-text { color: var(--sq-ink); font-size: 13px; line-height: 1.35; }
 .street-quest--onboarding .benefit-row:nth-child(2) .benefit-text { color: #fff; }
-.street-quest--onboarding .benefit-text small { color: currentColor; opacity: 0.72; font-size: 11px; }
+.street-quest--onboarding .benefit-text small { color: currentColor; opacity: 0.78; font-size: 12px; }
 .street-quest--onboarding .skip-link { color: rgba(23, 20, 15, 0.68); min-height: 40px; }
 
 .street-quest--onboarding .district-grid-2col { gap: 11px; }
@@ -362,7 +366,12 @@
 .street-quest--app .top-bar {
   height: var(--top-bar-height);
   padding: 0 14px;
-  background: var(--sq-paper-light);
+  display: flex;
+  background-color: var(--sq-paper-light);
+  background-image:
+    linear-gradient(rgba(255, 250, 235, 0.68), rgba(255, 250, 235, 0.68)),
+    url('../assets/street-quest/ui-paper-cream.webp');
+  background-size: auto, 480px 480px;
   border-bottom: 3px solid var(--sq-ink);
   box-shadow: 0 4px 0 var(--sq-orange), 0 8px 20px rgba(0, 0, 0, 0.34);
 }
@@ -387,7 +396,7 @@
 .street-quest--app .username,
 .street-quest--app .top-bar__center .page-title { color: var(--sq-ink); }
 .street-quest--app .username { font-size: 14px; }
-.street-quest--app .page-subtitle { color: rgba(26, 23, 17, 0.64); font-weight: 700; letter-spacing: 1.7px; }
+.street-quest--app .page-subtitle { color: rgba(26, 23, 17, 0.72); font-size: 10px; font-weight: 800; letter-spacing: 1.25px; }
 .street-quest--app .icon-btn { color: var(--sq-ink); border-radius: 3px; }
 .street-quest--app .icon-btn:hover { background: rgba(20, 18, 14, 0.08); color: var(--sq-orange); }
 .street-quest--app .notif-badge { background: var(--sq-pink); border-color: var(--sq-paper-light); }
@@ -395,7 +404,11 @@
 .street-quest--app .bottom-nav {
   height: var(--bottom-nav-height);
   padding: 5px 8px calc(4px + env(safe-area-inset-bottom));
-  background: #11110f;
+  background-color: #11110f;
+  background-image:
+    linear-gradient(rgba(9, 9, 8, 0.58), rgba(9, 9, 8, 0.58)),
+    url('../assets/street-quest/ui-paper-ink.webp');
+  background-size: auto, 520px 520px;
   border-top: 3px solid var(--sq-paper);
   box-shadow: 0 -5px 0 var(--sq-ink), 0 -12px 24px rgba(0, 0, 0, 0.34);
 }
@@ -409,12 +422,20 @@
   transform: rotate(-2deg);
 }
 .street-quest--app .nav-item.active { color: #fff; }
-.street-quest--app .nav-label { font-size: 11px; font-weight: 700; }
+.street-quest--app .nav-label { font-size: 12px; font-weight: 700; }
 
 /* Map has a useful generated fallback even if remote tiles are unavailable. */
 .street-quest--app #map-view {
-  background: #d9cda9 url('../assets/street-quest/bangkok-route-paper.webp') center / cover no-repeat;
+  background-color: #d9cda9;
+  background-image:
+    linear-gradient(rgba(234, 225, 199, 0.12), rgba(234, 225, 199, 0.12)),
+    url('../assets/street-quest/ui-paper-map.webp');
+  background-position: center;
+  background-size: auto, cover;
+  background-repeat: no-repeat;
 }
+.street-quest--app #map-view .maplibregl-canvas { transition: opacity 240ms ease; }
+.street-quest--app #map-view.map-texture-fallback .maplibregl-canvas { opacity: 0.16; }
 
 .street-quest--app .map-stats-pill {
   top: 14px;
@@ -429,7 +450,7 @@
 }
 
 .street-quest--app .map-stats-pill .stat-value { font: 800 18px/1 var(--font-display); }
-.street-quest--app .map-stats-pill .stat-label { margin-top: 3px; color: rgba(24, 21, 16, 0.7); font-size: 10px; font-weight: 700; }
+.street-quest--app .map-stats-pill .stat-label { margin-top: 4px; color: rgba(24, 21, 16, 0.74); font-size: 11px; font-weight: 700; }
 .street-quest--app .map-stat-divider { background: rgba(22, 20, 15, 0.18); }
 
 .street-quest--app .fab-primary {
@@ -443,9 +464,12 @@
 
 /* Collection becomes a physical archive page while preserving the existing DOM. */
 .street-quest--app #tab-collection .section-scroll {
-  background:
-    linear-gradient(rgba(235, 224, 192, 0.93), rgba(235, 224, 192, 0.93)),
-    url('../assets/street-quest/bangkok-route-paper.webp') center / cover;
+  background-color: var(--sq-paper);
+  background-image:
+    linear-gradient(rgba(242, 233, 208, 0.78), rgba(242, 233, 208, 0.78)),
+    url('../assets/street-quest/ui-paper-map.webp');
+  background-position: center;
+  background-size: auto, cover;
 }
 
 .street-quest--app #tab-collection .section-inner { color: var(--sq-ink); padding: 22px 18px 34px; }
@@ -460,7 +484,15 @@
 .street-quest--app #tab-collection .search-bar input::placeholder,
 .street-quest--app #tab-collection .search-bar svg { color: rgba(24, 21, 16, 0.58); }
 
-.street-quest--app #tab-collection .filter-pills { gap: 8px; padding: 4px 0; }
+.street-quest--app #tab-collection .filter-pills {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 6px 0;
+}
+.street-quest--app #tab-collection .filter-pills > *,
+.street-quest--app #tab-collection .filter-pills .filter-select,
+.street-quest--app #tab-collection .filter-pills .pill { width: 100%; }
 .street-quest--app #tab-collection .pill,
 .street-quest--app #tab-collection .filter-select {
   min-height: 40px;
@@ -489,13 +521,16 @@
   min-height: 160px;
   border: 2px solid var(--sq-ink);
   border-radius: 3px;
-  background: rgba(250, 243, 221, 0.82);
+  background-color: rgba(250, 243, 221, 0.94);
+  background-image: url('../assets/street-quest/ui-paper-kraft.webp');
+  background-size: 460px 460px;
+  background-blend-mode: soft-light;
   color: var(--sq-ink);
   box-shadow: 3px 3px 0 rgba(13, 13, 11, 0.65);
 }
-.street-quest--app #tab-collection .figure-card:nth-child(3n + 1) { background: #ef7b3d; }
-.street-quest--app #tab-collection .figure-card:nth-child(3n + 2) { background: #7ca7d8; }
-.street-quest--app #tab-collection .figure-card:nth-child(3n) { background: #e875a5; }
+.street-quest--app #tab-collection .figure-card:nth-child(3n + 1) { background-color: #ef7b3d; }
+.street-quest--app #tab-collection .figure-card:nth-child(3n + 2) { background-color: #8fb8e4; }
+.street-quest--app #tab-collection .figure-card:nth-child(3n) { background-color: #eb8db3; }
 .street-quest--app #tab-collection .figure-name-th,
 .street-quest--app #tab-collection .figure-name-en,
 .street-quest--app #tab-collection .figure-pts,
@@ -509,7 +544,8 @@
   border: 2px solid var(--sq-ink);
   transform: rotate(-1deg);
 }
-.street-quest--app #tab-collection .artifact-card { min-height: 104px; background: rgba(250, 243, 221, 0.88); }
+.street-quest--app #tab-collection .artifact-card { min-height: 118px; background-color: rgba(250, 243, 221, 0.94); }
+.street-quest--app #tab-collection .artifact-name { font-size: 12px; line-height: 1.35; }
 .street-quest--app #tab-collection .figure-card.locked { opacity: 1; }
 .street-quest--app #tab-collection .figure-card.locked .figure-portrait { opacity: 0.5; }
 .street-quest--app #tab-collection .figure-card.locked .figure-name-th,
@@ -519,9 +555,11 @@
 /* Missions and community use generous pasted panels on ink. */
 .street-quest--app #tab-mission .section-scroll,
 .street-quest--app #tab-community .section-scroll {
-  background:
-    radial-gradient(circle at 82% 12%, rgba(40, 105, 200, 0.18), transparent 28%),
-    linear-gradient(160deg, #141412, #080808 72%);
+  background-color: #0d0d0c;
+  background-image:
+    linear-gradient(rgba(5, 5, 4, 0.56), rgba(5, 5, 4, 0.68)),
+    url('../assets/street-quest/ui-paper-ink.webp');
+  background-size: auto, 620px 620px;
 }
 .street-quest--app #tab-mission .section-inner,
 .street-quest--app #tab-community .section-inner { padding: 22px 18px 36px; gap: 18px !important; }
@@ -536,7 +574,11 @@
 .street-quest--app #community-forum-panel {
   border: 2px solid var(--sq-ink);
   border-radius: 5px;
-  background: var(--sq-paper-light);
+  background-color: var(--sq-paper-light);
+  background-image:
+    linear-gradient(rgba(255, 247, 224, 0.72), rgba(255, 247, 224, 0.72)),
+    url('../assets/street-quest/ui-paper-kraft.webp');
+  background-size: auto, 500px 500px;
   color: var(--sq-ink);
   box-shadow: 4px 4px 0 var(--sq-orange);
 }
@@ -546,15 +588,18 @@
 .street-quest--app .mission-sub,
 .street-quest--app .mission-banner-sub,
 .street-quest--app .mission-empty p.sub,
-.street-quest--app .challenge-loc { color: rgba(24, 21, 16, 0.66); font-size: 12px; }
+.street-quest--app .challenge-loc { color: rgba(24, 21, 16, 0.72); font-size: 13px; line-height: 1.5; }
 .street-quest--app .mission-banner-title,
 .street-quest--app .mission-empty p,
 .street-quest--app .challenge-name { color: var(--sq-ink); }
-.street-quest--app .challenge-row { min-height: 68px; border-color: rgba(24, 21, 16, 0.16); }
+.street-quest--app .challenge-row { min-height: 76px; gap: 12px; border-color: rgba(24, 21, 16, 0.16); }
 .street-quest--app .challenge-icon-box { width: 42px; height: 42px; border: 1.5px solid var(--sq-ink); }
 .street-quest--app .challenge-pts { color: #c7430d; }
 
 .street-quest--app #community-sub-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
   padding: 5px;
   border: 2px solid var(--sq-paper-light);
   border-radius: 4px;
@@ -562,8 +607,11 @@
 }
 .street-quest--app #community-sub-tabs .pill {
   min-height: 44px;
+  width: 100%;
+  padding-inline: 6px;
   border-radius: 2px;
   color: #d8ccb0;
+  font-size: 12px;
   font-weight: 700;
 }
 .street-quest--app #community-sub-tabs .pill.active { background: var(--sq-orange); color: #fff; }
@@ -579,8 +627,9 @@
 .street-quest--app #leaderboard-list,
 .street-quest--app #guild-leaderboard-list,
 .street-quest--app #guild-panel,
-.street-quest--app #community-forum-panel { padding: 10px 14px; }
-.street-quest--app .rank-row { min-height: 62px; border-bottom: 1px solid rgba(24, 21, 16, 0.13); border-radius: 0; }
+.street-quest--app #community-forum-panel { padding: 14px 16px; }
+.street-quest--app .rank-row,
+.street-quest--app .lb-row { min-height: 68px; gap: 12px; padding-block: 14px; border-bottom: 1px solid rgba(24, 21, 16, 0.13); border-radius: 0; }
 .street-quest--app .rank-row:nth-child(even) { background: rgba(23, 20, 15, 0.04); }
 .street-quest--app .rank-name,
 .street-quest--app .rank-score { color: var(--sq-ink); }
@@ -595,12 +644,310 @@
 .street-quest--app #tab-community .lb-my-row .lb-score,
 .street-quest--app #tab-community .lb-name .lb-you { color: #d7430c; }
 
+/* Collection: archive collage + torn evidence-board controls. */
+.street-quest--app #tab-collection .section-scroll {
+  background-color: #0d0d0c;
+  background-image:
+    linear-gradient(rgba(5, 5, 4, 0.46), rgba(5, 5, 4, 0.62)),
+    url('../assets/street-quest/ui-paper-ink.webp');
+  background-size: auto, 620px 620px;
+}
+
+.street-quest--app #tab-collection .section-inner {
+  padding: 16px 14px 38px;
+}
+
+.collection-archive-hero {
+  position: relative;
+  min-height: 178px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 3px solid var(--sq-paper-light);
+  background: var(--sq-ink) url('../assets/street-quest/collection-archive-collage.webp') center / cover no-repeat;
+  box-shadow: 5px 5px 0 var(--sq-blue);
+  transform: rotate(-0.35deg);
+}
+
+.collection-archive-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, rgba(5, 5, 4, 0.2), rgba(5, 5, 4, 0.68) 34%, rgba(5, 5, 4, 0.18) 72%);
+}
+
+.collection-archive-copy {
+  position: absolute;
+  top: 28px;
+  left: 30%;
+  width: 52%;
+  color: #fff8e8;
+}
+
+.sq-kicker {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  color: var(--sq-lime);
+}
+
+.collection-archive-copy h2,
+.community-hero-copy h2 {
+  margin: 5px 0 2px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.collection-archive-copy h2 { font-size: 37px; }
+.collection-archive-copy p {
+  margin: 8px 0 0;
+  display: inline-block;
+  padding: 4px 9px;
+  background: var(--sq-orange);
+  color: var(--sq-ink);
+  font-size: 12px;
+  font-weight: 800;
+  transform: rotate(-1deg);
+}
+
+.collection-archive-stamp {
+  position: absolute;
+  right: 11px;
+  top: 12px;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--sq-ink);
+  border-radius: 50%;
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+  font: 800 8px/1.15 var(--font-display);
+  letter-spacing: 0.5px;
+  text-align: center;
+  transform: rotate(10deg);
+  box-shadow: 2px 2px 0 var(--sq-ink);
+}
+
+.street-quest--app #tab-collection .collection-toolbox {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 12px;
+  margin: -12px 7px 20px;
+  padding: 18px 13px 14px;
+  border: 2px solid var(--sq-ink);
+  background-color: var(--sq-paper-light);
+  background-image:
+    linear-gradient(rgba(255, 250, 235, 0.66), rgba(255, 250, 235, 0.66)),
+    url('../assets/street-quest/ui-paper-cream.webp');
+  background-size: auto, 460px 460px;
+  box-shadow: 4px 5px 0 var(--sq-orange);
+  clip-path: polygon(0 2%, 4% 0, 12% 2%, 24% 0, 39% 2%, 55% 0, 72% 2%, 88% 0, 100% 2%, 100% 98%, 91% 100%, 76% 98%, 61% 100%, 45% 98%, 28% 100%, 13% 98%, 0 100%);
+}
+
+.street-quest--app #tab-collection .collection-toolbox .search-bar { margin: 0; }
+.street-quest--app #tab-collection .collection-toolbox .stats-row {
+  margin: 0;
+  min-height: 88px;
+  background-color: var(--sq-ink);
+  background-image:
+    linear-gradient(rgba(7, 7, 6, 0.52), rgba(7, 7, 6, 0.52)),
+    url('../assets/street-quest/ui-paper-ink.webp');
+  background-size: auto, 420px 420px;
+}
+
+.street-quest--app #tab-collection .collection-toolbox .stat-item + .stat-item {
+  border-left: 1px dashed rgba(255, 248, 229, 0.35);
+}
+
+.street-quest--app #tab-collection .figure-grid { gap: 9px; }
+.street-quest--app #tab-collection .figure-card {
+  border-color: var(--sq-paper-light);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.82);
+}
+.street-quest--app #tab-collection .figure-card:nth-child(4n + 1) { transform: rotate(-0.45deg); }
+.street-quest--app #tab-collection .figure-card:nth-child(4n + 2) { transform: rotate(0.35deg); }
+.street-quest--app #tab-collection .figure-name-th { font-size: 16px; }
+.street-quest--app #tab-collection .figure-name-en,
+.street-quest--app #tab-collection .figure-pts { font-size: 12px; }
+
+.street-quest--app #tab-collection .section-title {
+  color: var(--sq-ink);
+  box-shadow: 3px 3px 0 var(--sq-blue);
+}
+
+/* Community: poster podium + rank ticket + compact ink ledger. */
+.community-podium-hero {
+  position: relative;
+  min-height: 214px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 3px solid var(--sq-paper-light);
+  background: var(--sq-ink) url('../assets/street-quest/community-podium-collage.webp') center / cover no-repeat;
+  box-shadow: 5px 5px 0 var(--sq-pink);
+  transform: rotate(0.25deg);
+}
+
+.community-podium-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(5, 5, 4, 0.72), transparent 46%, rgba(5, 5, 4, 0.18));
+}
+
+.community-hero-copy {
+  position: absolute;
+  z-index: 2;
+  top: 13px;
+  left: 15px;
+  color: #fff8e8;
+  text-shadow: 2px 2px 0 #000;
+}
+.community-hero-copy .sq-kicker { color: var(--sq-orange); }
+.community-hero-copy h2 { font-size: 29px; letter-spacing: -0.5px; }
+.community-hero-copy p {
+  display: inline-block;
+  margin: 5px 0 0;
+  padding: 3px 9px;
+  background: var(--sq-pink);
+  color: var(--sq-ink);
+  font-size: 12px;
+  font-weight: 800;
+  text-shadow: none;
+}
+
+.podium-rank {
+  position: absolute;
+  z-index: 3;
+  width: 29px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--sq-paper-light);
+  color: #fff;
+  font: 800 15px/1 var(--font-display);
+  box-shadow: 2px 2px 0 var(--sq-ink);
+}
+.podium-rank--two { left: 18%; top: 72px; background: var(--sq-blue); transform: rotate(-5deg); }
+.podium-rank--one { left: calc(50% - 15px); top: 49px; background: var(--sq-orange); transform: rotate(3deg); }
+.podium-rank--three { right: 17%; top: 76px; background: var(--sq-pink); transform: rotate(5deg); }
+
+.street-quest--app #community-sub-tabs {
+  margin: -8px 8px 0;
+  position: relative;
+  z-index: 4;
+  box-shadow: 4px 4px 0 var(--sq-orange);
+}
+
+.street-quest--app #tab-community .lb-custom-trigger {
+  min-height: 48px;
+  border: 2px solid var(--sq-paper-light);
+  border-radius: 2px;
+  background: var(--sq-ink);
+  color: #fff;
+}
+
+.street-quest--app #my-rank-card {
+  padding: 10px 13px 10px 66px;
+  position: relative;
+  overflow: hidden;
+  border-color: var(--sq-paper-light);
+  box-shadow: 5px 5px 0 var(--sq-lime);
+}
+.street-quest--app #my-rank-card::before {
+  content: 'MY\A RANK';
+  white-space: pre;
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 54px;
+  display: grid;
+  place-items: center;
+  background: var(--sq-orange);
+  color: var(--sq-ink);
+  font: 800 11px/1.05 var(--font-display);
+  letter-spacing: 0.8px;
+  text-align: center;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+.street-quest--app #my-rank-card .lb-my-row { margin: 0; padding: 10px 0; border: 0; }
+
+.street-quest--app #leaderboard-list {
+  padding: 7px 13px;
+  border-color: var(--sq-paper-light);
+  background-color: var(--sq-ink-soft);
+  background-image:
+    linear-gradient(rgba(9, 9, 8, 0.55), rgba(9, 9, 8, 0.55)),
+    url('../assets/street-quest/ui-paper-ink.webp');
+  background-size: auto, 480px 480px;
+  box-shadow: 5px 5px 0 var(--sq-blue);
+}
+.street-quest--app #leaderboard-list .lb-row { border-color: rgba(255, 248, 229, 0.18); }
+.street-quest--app #leaderboard-list .lb-name { color: #fff8e8; }
+.street-quest--app #leaderboard-list .lb-sub { color: #b9af99; }
+.street-quest--app #leaderboard-list .lb-score { color: var(--sq-lime); }
+.street-quest--app #leaderboard-list .lb-rank { color: #d9cfb7; }
+
+/* Keep long and dynamic content roomy, scrollable, and inside the mobile frame. */
+.street-quest--auth .auth-page { overflow-y: auto; }
+.street-quest--auth .auth-card { flex-shrink: 0; }
+.street-quest--app .top-bar__left,
+.street-quest--app .top-bar__center,
+.street-quest--app .top-bar__right { min-width: 0; }
+.street-quest--app .top-bar__left { flex: none; }
+.street-quest--app .top-bar__left { width: 102px; position: relative; z-index: 2; }
+.street-quest--app .top-bar__left .username { max-width: 60px; }
+.street-quest--app .top-bar__right { flex: none; margin-left: auto; position: relative; z-index: 2; }
+.street-quest--app .top-bar__center {
+  position: absolute;
+  left: 50%;
+  width: 120px;
+  padding-inline: 8px;
+  text-align: center;
+  transform: translateX(-50%);
+}
+.street-quest--app .top-bar__center .page-subtitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.street-quest--app .bottom-sheet {
+  width: calc(100% - 16px);
+  max-height: calc(100dvh - 24px);
+  padding: 20px;
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  border: 2px solid var(--sq-paper);
+  background-color: var(--sq-ink-soft);
+  background-image:
+    linear-gradient(rgba(15, 15, 13, 0.7), rgba(15, 15, 13, 0.7)),
+    url('../assets/street-quest/ui-paper-ink.webp');
+  background-size: auto, 520px 520px;
+}
+.street-quest--app .bottom-sheet .btn + .btn { margin-top: 10px; }
+.street-quest--app .proximity-banner { margin-inline: 6px; box-shadow: 3px 3px 0 var(--sq-ink); }
+
+@media (max-height: 760px) {
+  .street-quest--auth .auth-page { justify-content: flex-start; }
+  .street-quest--auth .auth-card { margin-top: 14px; }
+  .street-quest--landing .splash-screen { padding-top: 28px; }
+}
+
 @media (max-width: 360px) {
   .street-quest--landing .app-name { font-size: 70px; }
   .street-quest--landing .app-name-th { font-size: 43px; }
   .street-quest--auth .auth-card { padding-inline: 20px; }
   .street-quest--onboarding .onboard-card { padding-inline: 14px; }
   .street-quest--app .top-bar__center { display: none; }
+  .street-quest--app .top-bar__left { width: auto; }
+  .street-quest--app .top-bar__left .username { max-width: 100px; }
+  .street-quest--app #tab-collection .section-inner,
+  .street-quest--app #tab-mission .section-inner,
+  .street-quest--app #tab-community .section-inner { padding-inline: 14px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
