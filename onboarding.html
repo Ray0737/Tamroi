@@ -23,7 +23,7 @@
 
     .onboard-card {
       width: 100%;
-      max-width: 360px;
+      max-width: 380px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -39,11 +39,11 @@
     }
 
     .step-dot {
-      width: 30px; height: 30px;
+      width: 32px; height: 32px;
       border-radius: 50%;
-      border: 2px solid var(--color-border);
+      border: 2px solid rgba(255,255,255,0.15);
       display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 700;
+      font-size: 12px; font-weight: 700;
       color: var(--color-muted);
       transition: background var(--transition-base), border-color var(--transition-base), color var(--transition-base);
       flex-shrink: 0;
@@ -52,13 +52,13 @@
     .step-dot.active {
       background: var(--color-primary);
       border-color: var(--color-primary);
-      color: var(--color-on-primary);
+      color: #FFFFFF;
     }
 
     .step-dot.done {
       background: var(--color-success);
       border-color: var(--color-success);
-      color: #1C1B2E;
+      color: var(--color-bg);
     }
 
     .step-line {
@@ -117,12 +117,15 @@
 
     /* ── Title + text ────────────────────────────────────── */
     .onboard-title {
-      font-family: var(--font-heading);
-      font-size: var(--text-xl);
+      font-family: var(--font-display);
+      font-size: 28px;
       font-weight: 700;
       text-align: center;
       margin: 0;
-      line-height: 1.2;
+      line-height: 1.15;
+      color: var(--color-white);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
     }
 
     .onboard-sub {
@@ -136,43 +139,53 @@
     /* ── Feature benefit list ────────────────────────────── */
     .benefit-list {
       width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-sm);
     }
 
     .benefit-row {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 12px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--color-border);
+      justify-content: flex-end;
+      gap: 8px;
       border-radius: var(--radius-md);
-      padding: 10px 14px;
+      padding: 14px 8px 12px;
+      text-align: center;
+      border: none;
+      min-height: 90px;
     }
 
+    /* Assign colors to benefit rows by order */
+    .benefit-row:nth-child(1) { background: var(--color-success); }
+    .benefit-row:nth-child(2) { background: var(--color-class-a); }
+    .benefit-row:nth-child(3) { background: var(--color-class-c); }
+
     .benefit-icon {
-      width: 34px; height: 34px;
+      width: 32px; height: 32px;
       border-radius: 50%;
-      background: var(--color-primary-dim);
+      background: rgba(0,0,0,0.2);
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
 
-    .benefit-icon svg { width: 16px; height: 16px; stroke: var(--color-primary); }
+    .benefit-icon svg { width: 16px; height: 16px; stroke: #FFFFFF; }
 
     .benefit-text {
-      font-size: var(--text-sm);
-      color: var(--color-white);
+      font-size: 11px;
+      font-weight: 700;
+      color: #FFFFFF;
       line-height: 1.3;
       flex: 1;
     }
 
     .benefit-text small {
       display: block;
-      font-size: var(--text-xs);
-      color: var(--color-muted);
+      font-size: 10px;
+      color: rgba(255,255,255,0.75);
       margin-top: 2px;
+      font-weight: 400;
     }
 
     /* ── District grid (step 2) ──────────────────────────── */
@@ -199,12 +212,12 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    .dc-card:hover  { border-color: rgba(246,193,158,0.35); background: rgba(246,193,158,0.04); }
+    .dc-card:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.04); }
     .dc-card:active { transform: scale(0.96); }
 
     .dc-card.selected {
       border-color: var(--color-primary);
-      background: var(--color-primary-dim);
+      background: rgba(255,105,41,0.08);
     }
 
     .dc-icon {
@@ -215,7 +228,7 @@
       transition: background var(--transition-fast);
     }
 
-    .dc-card.selected .dc-icon { background: var(--color-primary-dim); }
+    .dc-card.selected .dc-icon { background: rgba(255,105,41,0.15); }
     .dc-icon svg { width: 16px; height: 16px; stroke: var(--color-muted); }
     .dc-card.selected .dc-icon svg { stroke: var(--color-primary); }
 
