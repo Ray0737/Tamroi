@@ -1833,11 +1833,22 @@
 .guild-find-hint { font-size: var(--text-sm); color: var(--color-muted); margin: 0 0 8px; }
 
 .guild-result-card { background: var(--color-card-dark); border-radius: var(--radius-md); border: 1px solid var(--color-border); overflow: hidden; }
-.guild-result-head { display: flex; align-items: center; gap: var(--space-sm); padding: 10px var(--space-sm); }
-.guild-result-rank { font-size: var(--text-sm); font-weight: 700; color: var(--color-muted); width: 20px; text-align: center; flex-shrink: 0; }
+.guild-result-head { display: flex; align-items: flex-start; gap: var(--space-sm); padding: 12px var(--space-sm); }
+.guild-result-rank { font-size: var(--text-sm); font-weight: 700; color: var(--color-muted); width: 20px; text-align: center; flex-shrink: 0; margin-top: 2px; }
 .guild-result-body { flex: 1; min-width: 0; }
-.guild-result-name { margin: 0; font-size: var(--text-base); font-weight: 600; color: var(--color-white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.guild-result-meta { margin: 2px 0 0; font-size: var(--text-xs); color: var(--color-muted); }
+.guild-result-name { margin: 0; font-size: var(--text-md); font-weight: 700; color: var(--color-white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.guild-result-meta { margin: 4px 0 0; font-size: var(--text-xs); color: var(--color-muted); }
+.guild-result-status {
+  flex-shrink: 0;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: var(--radius-full);
+  color: var(--color-muted);
+  background: rgba(255,255,255,0.06);
+  white-space: nowrap;
+}
+.guild-result-status.pending { color: var(--color-primary); background: var(--color-primary-dim); }
 .guild-result-desc { padding: 6px var(--space-sm) 10px 42px; border-top: 1px solid rgba(255,255,255,0.04); }
 .guild-result-desc p { margin: 0; font-size: var(--text-sm); color: var(--color-muted); line-height: 1.5; }
 

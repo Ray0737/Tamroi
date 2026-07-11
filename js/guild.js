@@ -556,16 +556,16 @@ const GuildModule = (() => {
           </button>
         </div>
         <p id="guild-error" style="font-size:11px;color:var(--color-danger);margin:6px 0 0;min-height:16px"></p>
-      </div>
-      <div style="margin-top:var(--space-md)">
-        <p class="guild-find-hint">หรือค้นหากลุ่ม</p>
-        <div class="guild-find-row" style="align-items:flex-end">
-          <input id="findgroup-search-input" type="text" placeholder="ค้นหากลุ่ม..."
-                 class="guild-input" autocomplete="off" style="flex:1;margin-bottom:0">
-          <button class="btn btn-primary" id="btn-findgroup-search"
-                  style="white-space:nowrap;font-size:12px;padding:8px 16px;flex-shrink:0">ค้นหา</button>
+        <div style="margin-top:var(--space-md)">
+          <p class="guild-find-hint">หรือค้นหากลุ่ม</p>
+          <div class="guild-find-row" style="align-items:flex-end">
+            <input id="findgroup-search-input" type="text" placeholder="ค้นหากลุ่ม..."
+                   class="guild-input" autocomplete="off" style="flex:1;margin-bottom:0">
+            <button class="btn btn-primary" id="btn-findgroup-search"
+                    style="white-space:nowrap;font-size:12px;padding:8px 16px;flex-shrink:0">ค้นหา</button>
+          </div>
+          <div id="findgroup-results" style="margin-top:var(--space-md)"></div>
         </div>
-        <div id="findgroup-results" style="margin-top:var(--space-md)"></div>
       </div>`;
   }
 
@@ -716,12 +716,13 @@ const GuildModule = (() => {
                   <p class="guild-result-meta">
                     ${g.member_count} สมาชิก · ${(g.guild_legacy_score || 0).toLocaleString()} pts</p>
                 </div>
-                <button class="btn btn-primary"
-                        style="font-size:11px;padding:6px 12px;white-space:nowrap;flex-shrink:0;${disabled ? 'opacity:.5;cursor:default' : ''}"
-                        data-guild-id="${escapeHtml(g.id)}"
-                        ${disabled ? 'disabled' : ''}>
+                ${disabled
+                  ? `<span class="guild-result-status${isPending ? ' pending' : ''}">${btnLabel}</span>`
+                  : `<button class="btn btn-primary"
+                        style="font-size:11px;padding:6px 12px;white-space:nowrap;flex-shrink:0"
+                        data-guild-id="${escapeHtml(g.id)}">
                   ${btnLabel}
-                </button>
+                </button>`}
               </div>
               ${(g.description || g.announcement) ? `
                 <div class="guild-result-desc">

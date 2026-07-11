@@ -57,8 +57,8 @@
 }
 
 .street-quest :focus-visible {
-  outline: 3px solid var(--sq-blue);
-  outline-offset: 3px;
+  outline: 2px solid var(--sq-orange);
+  outline-offset: 1px;
 }
 
 /* Landing: generated Bangkok collage becomes the world, not a decorative thumbnail. */
@@ -387,15 +387,14 @@
 
 .street-quest--app .avatar-sm {
   border: 2px solid var(--sq-ink);
-  border-radius: 3px;
+  border-radius: 50%;
   background: var(--sq-orange);
   color: #fff;
   box-shadow: 2px 2px 0 var(--sq-ink);
+  overflow: hidden;
 }
 
-.street-quest--app .username,
 .street-quest--app .top-bar__center .page-title { color: var(--sq-ink); }
-.street-quest--app .username { font-size: 14px; }
 .street-quest--app .page-subtitle { color: rgba(26, 23, 17, 0.72); font-size: 10px; font-weight: 800; letter-spacing: 1.25px; }
 .street-quest--app .icon-btn { color: var(--sq-ink); border-radius: 3px; }
 .street-quest--app .icon-btn:hover { background: rgba(20, 18, 14, 0.08); color: var(--sq-orange); }
@@ -616,13 +615,20 @@
 }
 .street-quest--app #community-sub-tabs .pill.active { background: var(--sq-orange); color: #fff; }
 .street-quest--app .lb-select {
-  min-height: 46px;
-  border: 2px solid var(--sq-paper-light);
-  border-radius: 3px;
-  background: #171714;
+  min-height: 42px;
+  border: none;
+  border-bottom: 1.5px solid rgba(255, 248, 229, 0.28);
+  border-radius: 0;
+  background: none;
   color: #fff;
-  padding-inline: 12px;
+  padding: 0 26px 0 2px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23f4ead0' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 2px center;
+  transition: border-color 0.15s ease;
 }
+.street-quest--app .lb-select:hover,
+.street-quest--app .lb-select:focus { border-bottom-color: var(--sq-orange); }
 .street-quest--app #my-rank-card,
 .street-quest--app #leaderboard-list,
 .street-quest--app #guild-leaderboard-list,
@@ -1025,10 +1031,6 @@
 /* ── Leaderboard: fewer heavy boxes, breathing room, clear size hierarchy ── */
 .street-quest--app #community-rank-section { gap: 14px; }
 .street-quest--app #solo-leaderboard-section { display: flex; flex-direction: column; gap: 14px; }
-.street-quest--app .lb-select {
-  min-height: 42px;
-  box-shadow: 2px 2px 0 var(--sq-ink);
-}
 .street-quest--app #my-rank-card { box-shadow: 3px 3px 0 var(--sq-lime); }
 .street-quest--app #leaderboard-list { box-shadow: 3px 3px 0 var(--sq-blue); padding: 6px 14px; }
 .street-quest--app #leaderboard-list .lb-row { min-height: 60px; padding-block: 12px; }
@@ -1037,14 +1039,30 @@
 .street-quest--app #leaderboard-list .lb-sub { font-size: 11px; }
 .street-quest--app #leaderboard-list .lb-score { font-size: 17px; font-weight: 800; }
 
-/* ── Group create/join form: visible fields, tighter controls ── */
+/* ── Group create/join form: one sticker card, underlined fields ── */
+.street-quest--app .guild-no-panel {
+  background: var(--sq-paper);
+  border: 2px solid var(--sq-ink);
+  border-radius: 8px;
+  box-shadow: 3px 3px 0 var(--sq-ink);
+  padding: var(--space-lg) var(--space-md);
+}
 .street-quest--app #guild-panel .guild-input,
 .street-quest--app #guild-panel .guild-textarea {
-  border: 1.5px solid var(--sq-ink);
-  border-radius: 5px;
-  padding: 9px 11px;
-  background: rgba(255, 253, 244, 0.92);
+  border: none;
+  border-bottom: 1.5px solid var(--sq-ink);
+  border-radius: 0;
+  padding: 9px 2px;
+  background: none;
   color: var(--sq-ink);
+}
+.street-quest--app #guild-panel .guild-input:focus,
+.street-quest--app #guild-panel .guild-input:focus-visible,
+.street-quest--app #guild-panel .guild-textarea:focus,
+.street-quest--app #guild-panel .guild-textarea:focus-visible {
+  border-bottom-color: var(--sq-orange);
+  outline: none;
+  box-shadow: none;
 }
 .street-quest--app #guild-panel .guild-input::placeholder,
 .street-quest--app #guild-panel .guild-textarea::placeholder {
@@ -1052,8 +1070,18 @@
   font-size: 12px;
 }
 .street-quest--app #guild-panel .guild-no-title,
-.street-quest--app #guild-panel .guild-no-desc { color: #fff8e8; }
+.street-quest--app #guild-panel .guild-no-desc { color: var(--sq-ink); }
 .street-quest--app #guild-panel #btn-create-guild { min-height: 40px; font-size: 13px; }
+.street-quest--app #guild-panel #btn-join-guild {
+  background: var(--sq-ink);
+  color: var(--sq-paper);
+  border: 1.5px solid var(--sq-ink);
+}
+.street-quest--app #guild-panel #btn-join-guild:hover {
+  background: var(--sq-orange);
+  border-color: var(--sq-orange);
+  color: #fff;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .street-quest *, .street-quest *::before, .street-quest *::after {

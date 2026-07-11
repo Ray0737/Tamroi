@@ -93,7 +93,6 @@ function updateTopBar() {
           const img = document.createElement('img');
           img.src    = parsed.href;            // safe — no innerHTML
           img.alt    = escapeHtml(p.username || '');
-          img.style.borderRadius = '0';        // remove circle border
           avatarEl.innerHTML = '';
           avatarEl.appendChild(img);
         } else {
