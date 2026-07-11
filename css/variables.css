@@ -10,6 +10,8 @@
   /* ── Colors — "Dither Ink" (deep indigo-ink dark mode + paper accent) ── */
   --color-bg:           #0C0C0C;   /* deep indigo ink — page bg */
   --color-primary:      #FF6929;   /* paper cream — light, so on-primary text must be dark */
+  --color-primary-hover: #E05520;
+  --color-ghost-hover:  #2A2A2A;
   --color-primary-dim:  rgba(255,105,41,0.15);
   --color-success:      #7BC67E;
   --color-success-dim:  rgba(123,198,126,0.15);

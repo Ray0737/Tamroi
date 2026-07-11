@@ -27,27 +27,27 @@
 .btn-primary {
   --bs-btn-bg:                   var(--color-primary);
   --bs-btn-border-color:         var(--color-primary);
-  --bs-btn-hover-bg:             #E05520;
-  --bs-btn-hover-border-color:   #E05520;
-  --bs-btn-hover-color:          #FFFFFF;
-  --bs-btn-active-bg:            #E05520;
-  --bs-btn-active-border-color:  #E05520;
-  --bs-btn-active-color:         #FFFFFF;
-  --bs-btn-color:                #FFFFFF;
+  --bs-btn-hover-bg:             var(--color-primary-hover);
+  --bs-btn-hover-border-color:   var(--color-primary-hover);
+  --bs-btn-hover-color:          var(--color-white);
+  --bs-btn-active-bg:            var(--color-primary-hover);
+  --bs-btn-active-border-color:  var(--color-primary-hover);
+  --bs-btn-active-color:         var(--color-white);
+  --bs-btn-color:                var(--color-white);
   --bs-btn-focus-shadow-rgb:     255, 105, 41;
   --bs-btn-disabled-bg:          var(--color-primary);
   --bs-btn-disabled-border-color: var(--color-primary);
-  --bs-btn-disabled-color:       #FFFFFF;
+  --bs-btn-disabled-color:       var(--color-white);
   --bs-btn-disabled-opacity:     0.7;
   background: var(--color-primary);
-  color: var(--color-on-primary);
+  color: var(--color-white);
   box-shadow: 0 6px 24px rgba(255,105,41,0.35);
 }
 
 .btn-primary:hover {
-  background: #E05520;
+  background: var(--color-primary-hover);
   box-shadow: 0 8px 28px rgba(255,105,41,0.45);
-  color: #FFFFFF;
+  color: var(--color-white);
 }
 
 .btn-success {
@@ -98,7 +98,7 @@
 }
 
 .btn-ghost:hover {
-  background: #2A2A2A;
+  background: var(--color-ghost-hover);
   color: var(--color-white);
 }
 
@@ -253,9 +253,9 @@
   flex-shrink: 0;
 }
 
-.badge-s { background: var(--color-class-s); color: #FFFFFF; }
-.badge-a { background: var(--color-class-a); color: #FFFFFF; }
-.badge-c { background: var(--color-class-c); color: #FFFFFF; }
+.badge-s { background: var(--color-class-s); color: var(--color-white); }
+.badge-a { background: var(--color-class-a); color: var(--color-white); }
+.badge-c { background: var(--color-class-c); color: var(--color-white); }
 
 /* ── Stats Row ────────────────────────────────────────── */
 .stats-row {
@@ -322,13 +322,13 @@
 .pill.active {
   background: var(--color-primary);
   border-color: var(--color-primary);
-  color: #FFFFFF;
+  color: var(--color-white);
 }
 
 .pill.active:hover {
-  background: #E05520;
-  border-color: #E05520;
-  color: #FFFFFF;
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: var(--color-white);
 }
 
 .filter-select {
@@ -1626,8 +1626,12 @@
 .guild-input:-webkit-autofill,
 .guild-input:-webkit-autofill:hover,
 .guild-input:-webkit-autofill:focus,
+.guild-input:-webkit-autofill:active,
 .guild-textarea:-webkit-autofill,
 .forum-compose textarea:-webkit-autofill,
+.forum-compose textarea:-webkit-autofill:hover,
+.forum-compose textarea:-webkit-autofill:focus,
+.forum-compose textarea:-webkit-autofill:active,
 .guild-compose-row textarea:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 9999px #111111 inset !important;
   -webkit-text-fill-color: #ffffff !important;
