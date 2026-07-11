@@ -46,6 +46,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `app.html`: main app shell with Map, Collection, Missions, Leaderboard tabs, Bootstrap offcanvas panels, lore/check-in/home bottom sheets, and figure modal.
 - `build.js`: Vercel build-time env injection into `js/env.js`.
 - `vercel.json`: deployment config and security headers.
+- `restyling/`: seven page-by-page UI restyling concept sets, comparison boards, and a concept index; these assets are not loaded by the runtime.
 - `css/variables.css`: authoritative design tokens.
 - `css/layout.css`: app wrapper, fixed top bar, bottom nav, tab shell.
 - `css/components.css`: buttons, cards, inputs, pills, bottom sheets, badges, toast, collection/missions/leaderboard/lore components.
@@ -83,6 +84,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 
 ## Current Implementation Notes
 
+- `restyling/` is an additive design exploration only; the live HTML/CSS/JS UI has not been restyled.
 - The current CSS tokens in `css/variables.css` are authoritative. They differ from older docs: background is `#1C1B2E`, primary is `#F6C19E`, card surfaces are `#252240` / `#201E38`.
 - `window.APP_CONFIG.appName` is `Tamroi`, version `0.6.0`.
 - `window.FogGrid` exposes reusable Thailand grid cell generation and coordinate lookup for future Fog of War work.

@@ -36,6 +36,7 @@
 ├── app.html             Main app shell — Map · Collection · Mission · Leaderboard
 ├── build.js             Vercel build — injects Supabase env vars at deploy time
 ├── vercel.json          Deployment config + security headers
+├── restyling/           Seven page-by-page UI concept sets + comparison boards (no runtime dependency)
 ├── css/
 │   ├── variables.css    Design tokens (DO NOT override these inline)
 │   ├── layout.css       Top bar, bottom nav, tab shell

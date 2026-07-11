@@ -1,6 +1,6 @@
 # Tamroi — Implementation Progress
 
-> Last updated: 2026-07-05
+> Last updated: 2026-07-11
 
 ---
 
@@ -80,6 +80,7 @@
 | Leaderboard filter dropdowns | ✅ Done | Replaced filter pills with `<select>` dropdowns |
 | Actionable join-request notification | ✅ Done | Notification tab shows Accept/Ignore buttons on `join_request` notifs (via `ref_id`); stays unread until acted on |
 | Guild leaderboard realtime | ✅ Done | `subscribeGuildChanges()` on guilds + guild_members tables |
+| Seven full UI restyling concept sets | ✅ Done | `restyling/` contains seven visual directions with seven user-facing states and comparison boards per direction |
 
 ---
 

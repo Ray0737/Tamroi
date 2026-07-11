@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="852" height="1847" viewBox="0 0 852 1847">
+  <defs>
+    <linearGradient id="paper" x2="0" y2="1"><stop stop-color="#fff9ea"/><stop offset="1" stop-color="#ead7b5"/></linearGradient>
+    <linearGradient id="teal" x2="0" y2="1"><stop stop-color="#117c78"/><stop offset="1" stop-color="#075452"/></linearGradient>
+    <linearGradient id="coral" x2="0" y2="1"><stop stop-color="#ec765b"/><stop offset="1" stop-color="#c84d3c"/></linearGradient>
+    <pattern id="weave" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#123f4a"/><path d="M0 4h18M0 13h18M4 0v18M13 0v18" stroke="#d4a83d" stroke-opacity=".16" stroke-width="3"/></pattern>
+    <filter id="shadow"><feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#42281c" flood-opacity=".22"/></filter>
+    <style>
+      text{font-family:'Noto Sans Thai','Tahoma',sans-serif;fill:#3c291d}.h{font-weight:800}.muted{fill:#806c59}.white{fill:#fff8e8}.gold{fill:#b77c16}.small{font-size:24px}.label{font-size:28px;font-weight:700}
+    </style>
+  </defs>
+  <rect width="852" height="1847" fill="url(#paper)"/>
+  <path d="M0 0h852v72L0 112z" fill="url(#weave)"/>
+  <path d="M0 1775h852v72H0z" fill="url(#weave)"/>
+
+  <g filter="url(#shadow)">
+    <rect x="28" y="42" width="796" height="156" rx="38" fill="#fff7e6" stroke="#c99c52" stroke-width="4"/>
+    <circle cx="108" cy="119" r="55" fill="#e8b74d" stroke="#0a6562" stroke-width="9"/>
+    <circle cx="108" cy="119" r="40" fill="#f2d2ad"/><text x="108" y="131" text-anchor="middle" font-size="46">🧭</text>
+    <text x="180" y="105" class="h" font-size="34">นักเดินทาง</text><text x="180" y="145" fill="#0b706c" font-size="27">Lv. 28  •  3,860 / 5,600 XP</text>
+    <rect x="180" y="160" width="315" height="13" rx="7" fill="#ddccb0"/><rect x="180" y="160" width="214" height="13" rx="7" fill="#168b83"/>
+    <circle cx="685" cy="119" r="46" fill="#fff3d9" stroke="#c99c52" stroke-width="3"/><text x="685" y="134" text-anchor="middle" font-size="45">🔔</text><circle cx="721" cy="80" r="18" fill="#d94f3c"/><text x="721" y="88" text-anchor="middle" class="white h" font-size="20">3</text>
+    <circle cx="775" cy="119" r="46" fill="#fff3d9" stroke="#c99c52" stroke-width="3"/><text x="775" y="134" text-anchor="middle" font-size="44">⚙</text>
+  </g>
+
+  <text x="426" y="270" text-anchor="middle" class="h" font-size="58" fill="#075c59">ชุมนุมนักเดินทาง</text>
+  <path d="M170 289h512" stroke="#d5a746" stroke-width="5" stroke-dasharray="5 13"/>
+
+  <g filter="url(#shadow)">
+    <rect x="30" y="324" width="792" height="82" rx="27" fill="#f3e4c7" stroke="#b88d4a" stroke-width="3"/>
+    <rect x="38" y="332" width="248" height="66" rx="23" fill="url(#teal)"/>
+    <text x="162" y="376" text-anchor="middle" class="white h label">อันดับ</text>
+    <text x="420" y="376" text-anchor="middle" class="label">กลุ่มของฉัน</text><text x="676" y="376" text-anchor="middle" class="label">ถกเถียง</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="178" y="438" width="496" height="68" rx="34" fill="#e3cfaa"/>
+    <rect x="182" y="442" width="244" height="60" rx="30" fill="url(#coral)"/>
+    <text x="304" y="482" text-anchor="middle" class="white h" font-size="28">เดี่ยว (SOLO)</text><text x="548" y="482" text-anchor="middle" class="h" font-size="28">กลุ่ม (GUILD)</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="30" y="536" width="792" height="166" rx="29" fill="#fff8e8" stroke="#d0a14f" stroke-width="4"/>
+    <rect x="30" y="536" width="130" height="166" rx="29" fill="url(#teal)"/><text x="95" y="585" text-anchor="middle" class="white small">อันดับ</text><text x="95" y="653" text-anchor="middle" class="white h" font-size="56">125</text>
+    <circle cx="224" cy="619" r="48" fill="#e8b74d"/><text x="224" y="635" text-anchor="middle" font-size="46">🧑🏻</text>
+    <text x="292" y="605" class="h" font-size="32">นักเดินทาง (คุณ)</text><text x="292" y="647" class="muted" font-size="24">กลุ่ม ปลาหมึกยักษ์</text>
+    <text x="746" y="596" text-anchor="end" class="muted small">LEGACY</text><text x="746" y="646" text-anchor="end" class="h gold" font-size="42">1,250</text>
+  </g>
+
+  <text x="426" y="765" text-anchor="middle" class="h" font-size="31" fill="#075c59">นักพงศาวดารสูงสุดประจำสัปดาห์</text>
+  <g filter="url(#shadow)">
+    <rect x="80" y="920" width="205" height="235" rx="28" fill="#d9dde0" stroke="#9ba3a7" stroke-width="5"/><rect x="324" y="824" width="205" height="331" rx="28" fill="#e1ad38" stroke="#b7780c" stroke-width="6"/><rect x="568" y="963" width="205" height="192" rx="28" fill="#c87943" stroke="#91512d" stroke-width="5"/>
+    <circle cx="182" cy="884" r="71" fill="#f0dfbf" stroke="#9ba3a7" stroke-width="8"/><circle cx="426" cy="786" r="78" fill="#f0dfbf" stroke="#e1ad38" stroke-width="10"/><circle cx="670" cy="926" r="66" fill="#f0dfbf" stroke="#c87943" stroke-width="8"/>
+    <text x="182" y="906" text-anchor="middle" font-size="64">👩🏻</text><text x="426" y="810" text-anchor="middle" font-size="72">🧑🏽</text><text x="670" y="948" text-anchor="middle" font-size="60">👨🏻</text>
+    <text x="426" y="734" text-anchor="middle" font-size="52">👑</text><text x="182" y="985" text-anchor="middle" class="h" font-size="44">2</text><text x="426" y="920" text-anchor="middle" class="h" font-size="55">1</text><text x="670" y="1025" text-anchor="middle" class="h" font-size="44">3</text>
+    <text x="182" y="1040" text-anchor="middle" class="h small">Mekhala</text><text x="426" y="1000" text-anchor="middle" class="h small">ExplorerX</text><text x="670" y="1076" text-anchor="middle" class="h small">SiamSeeker</text>
+    <text x="182" y="1090" text-anchor="middle" class="small">3,210</text><text x="426" y="1060" text-anchor="middle" class="h" font-size="34">3,860</text><text x="670" y="1115" text-anchor="middle" class="small">2,950</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="30" y="1192" width="792" height="410" rx="28" fill="#fff8e8" stroke="#caa15f" stroke-width="4"/>
+    <text x="62" y="1242" class="h" font-size="28">อันดับนักเดินทาง</text>
+    <g font-size="26">
+      <path d="M48 1270h756M48 1350h756M48 1430h756M48 1510h756" stroke="#dfcba8" stroke-width="2"/>
+      <text x="68" y="1320" class="h">4</text><circle cx="125" cy="1308" r="29" fill="#f1cc9c"/><text x="125" y="1318" text-anchor="middle">🧑🏻</text><text x="175" y="1318" class="h">สายลมสยาม</text><text x="764" y="1318" text-anchor="end" class="h gold">2,480</text>
+      <text x="68" y="1400" class="h">5</text><circle cx="125" cy="1388" r="29" fill="#f1cc9c"/><text x="125" y="1398" text-anchor="middle">👩🏽</text><text x="175" y="1398" class="h">นักประวัติศาสตร์</text><text x="764" y="1398" text-anchor="end" class="h gold">2,210</text>
+      <rect x="48" y="1440" width="756" height="68" rx="22" fill="#d5eee7" stroke="#168b83" stroke-width="3"/><text x="68" y="1486" class="h">6</text><circle cx="125" cy="1474" r="29" fill="#f1cc9c"/><text x="125" y="1484" text-anchor="middle">🧑🏻</text><text x="175" y="1484" class="h">นักเดินทาง (คุณ)</text><text x="764" y="1484" text-anchor="end" class="h" fill="#08706c">1,250</text>
+      <text x="68" y="1570" class="h">7</text><circle cx="125" cy="1558" r="29" fill="#f1cc9c"/><text x="125" y="1568" text-anchor="middle">👨🏽</text><text x="175" y="1568" class="h">ตามหาบางกอก</text><text x="764" y="1568" text-anchor="end" class="h gold">1,120</text>
+    </g>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="30" y="1628" width="792" height="92" rx="28" fill="url(#teal)"/>
+    <circle cx="79" cy="1674" r="12" fill="#72d777"/><text x="108" y="1665" class="white h" font-size="28">กลุ่มปลาหมึกยักษ์</text><text x="108" y="1698" class="white small">ออนไลน์ 8 คน • ภารกิจกลุ่ม 68%</text>
+    <text x="760" y="1688" text-anchor="end" font-size="55">🧑🏻‍🤝‍🧑🏽</text>
+  </g>
+
+  <g transform="translate(0 1742)">
+    <rect width="852" height="105" fill="#fff4df" stroke="#caa15f" stroke-width="3"/>
+    <g text-anchor="middle" font-size="24"><text x="105" y="42" font-size="34">🗺️</text><text x="105" y="79">แผนที่</text><text x="315" y="42" font-size="34">📒</text><text x="315" y="79">คอลเลกชัน</text><text x="535" y="42" font-size="34">🧭</text><text x="535" y="79">ภารกิจ</text><rect x="641" y="7" width="194" height="91" rx="28" fill="url(#coral)"/><text x="738" y="42" font-size="34">👥</text><text x="738" y="79" class="white h">ชุมชน</text></g>
+  </g>
+</svg>
