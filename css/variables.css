@@ -36,9 +36,11 @@
   --color-class-s: #FF6929;   /* paper cream — legendary readout */
   --color-class-a: #2B5EBC;
   --color-class-c: #D61E7E;
+  --color-class-b: var(--color-pastel-blue);  /* B-class alias */
 
   /* Accent — lime, used ONLY for nav active state */
   --color-accent:     #BFDE3B;
+  --color-on-accent: #0D0D0D;
   --color-on-surface: #231F18;   /* warm dark — text on parchment cards */
 
   /* Display font */

@@ -194,7 +194,7 @@
       transition: background-color 9999s ease-in-out 0s;
     }
 
-    .auth-card .input-dark.is-error { border-color: #cc2200; }
+    .auth-card .input-dark.is-error { border-color: var(--color-danger); }
 
     /* ── Smaller buttons ──────────────────────────────────── */
     .auth-card .btn {
@@ -202,33 +202,6 @@
       font-size: 13px;
     }
 
-    /* ── Autofill: look identical to a normal typed input ────
-       Problem: Chrome forces a bg color on autofilled inputs and
-       rgba/semi-transparent box-shadows composite ON TOP of it,
-       leaving the tint visible. var() also doesn't always resolve
-       inside :-webkit-autofill.
-       Fix: solid hex = rgba(255,255,255,0.06) over #2B2D35 (page bg)
-            = rgb(56,58,65) = #383A41  → completely replaces Chrome's
-            tint with the exact same color the input normally shows.
-    ────────────────────────────────────────────────────────── */
-    .input-dark:-webkit-autofill,
-    .input-dark:-webkit-autofill:hover,
-    .input-dark:-webkit-autofill:focus,
-    .input-dark:-webkit-autofill:active {
-      /* Solid opaque color = rendered input bg — fully hides Chrome tint */
-      -webkit-box-shadow: 0 0 0 9999px #2A283B inset !important;
-      /* Literal hex — var() is unreliable inside :-webkit-autofill */
-      -webkit-text-fill-color: #ffffff !important;
-      caret-color: #ffffff;
-      /* Hold bg frozen so Chrome can't animate it back to its color */
-      transition: background-color 9999s ease-in-out 0s;
-    }
-
-    /* Error state: solid red-tinted bg to match is-error appearance */
-    .input-dark.is-error:-webkit-autofill {
-      -webkit-box-shadow: 0 0 0 9999px #3a3035 inset !important;
-      border-color: #ff6b6b !important;
-    }
 
     /* ── Input error state ────────────────────────────────── */
     .input-dark.is-error {
@@ -395,17 +368,16 @@
       </svg>
     </a>
 
-    <!-- Decorative sticker elements -->
-    <div class="auth-sticker auth-sticker-tl" aria-hidden="true">
-      <span class="auth-sticker-icon">🏛</span>
-      <span class="auth-sticker-name">TAMROI<br>ตามรอย</span>
-    </div>
-    <div class="auth-sticker auth-sticker-tr" aria-hidden="true">
-      BKK<br>Explorer<br>Pass<br><span style="font-size:9px;letter-spacing:1px">021024</span>
-    </div>
-
     <!-- Centered card -->
     <div class="auth-card">
+      <!-- Decorative sticker elements -->
+      <div class="auth-sticker auth-sticker-tl" aria-hidden="true">
+        <span class="auth-sticker-icon">🏛</span>
+        <span class="auth-sticker-name">TAMROI<br>ตามรอย</span>
+      </div>
+      <div class="auth-sticker auth-sticker-tr" aria-hidden="true">
+        BKK<br>Explorer<br>Pass<br><span style="font-size:9px;letter-spacing:1px">021024</span>
+      </div>
 
       <!-- Logo + name -->
       <div class="auth-logo anim-fade-down">

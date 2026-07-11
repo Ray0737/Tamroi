@@ -181,7 +181,7 @@
 .input-dark::placeholder { color: var(--color-muted); }
 .input-dark:focus { border-color: var(--color-primary); background: rgba(234,231,225,0.05); }
 
-/* Autofill: solid hex = rgba(255,255,255,0.06) over #2B2D35 = #383A41
+/* Autofill: solid hex = rgba(255,255,255,0.06) over #111111 / #0C0C0C
    Opaque inset shadow fully replaces Chrome's blue/yellow tint.
    var() is unreliable inside :-webkit-autofill so literals only. */
 .input-dark:-webkit-autofill,
@@ -462,7 +462,7 @@
 
 .figure-card.captured-s { border-color: var(--color-class-s); }
 .figure-card.captured-a { border-color: var(--color-class-a); }
-.figure-card.captured-b { border-color: var(--color-pastel-blue); }
+.figure-card.captured-b { border-color: var(--color-class-b); }
 .figure-card.captured-c { border-color: var(--color-class-c); }
 
 .figure-portrait {
@@ -481,9 +481,7 @@
 
 .figure-portrait img { width: 100%; height: 100%; object-fit: cover; }
 
-.figure-class-label { position: absolute;
-  top: 8px;
-  left: 8px;
+.figure-class-label {
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.5px;
@@ -493,6 +491,12 @@
   padding: 2px 6px;
   border-radius: 4px;
   line-height: 1.4;
+}
+
+.figure-card .figure-class-label {
+  position: absolute;
+  top: 8px;
+  left: 8px;
 }
 .figure-class-label.a { background: var(--color-class-a); color: var(--color-white); }
 .figure-class-label.b { background: var(--color-pastel-blue); color: var(--color-white); }
