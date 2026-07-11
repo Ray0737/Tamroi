@@ -193,14 +193,14 @@
 .input-dark:-webkit-autofill:hover,
 .input-dark:-webkit-autofill:focus,
 .input-dark:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 9999px #2A283B inset !important;
+  -webkit-box-shadow: 0 0 0 9999px #111111 inset !important;
   -webkit-text-fill-color: #ffffff !important;
   caret-color: #ffffff;
   transition: background-color 9999s ease-in-out 0s;
 }
 
 .input-dark.is-error:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0 9999px #3a3035 inset !important;
+  -webkit-box-shadow: 0 0 0 9999px #1A1A1A inset !important;
   border-color: #ff6b6b !important;
 }
 
@@ -1633,7 +1633,7 @@
 .guild-textarea:-webkit-autofill,
 .forum-compose textarea:-webkit-autofill,
 .guild-compose-row textarea:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0 9999px #23223A inset !important;
+  -webkit-box-shadow: 0 0 0 9999px #111111 inset !important;
   -webkit-text-fill-color: #ffffff !important;
   caret-color: #ffffff;
   transition: background-color 9999s ease-in-out 0s;

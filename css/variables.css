@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kanit:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&family=Kanit:wght@400;600;700&display=swap');
 
 :root {
   /* Tells the browser this page is intentionally dark — without it, some browsers apply
@@ -8,17 +8,17 @@
   color-scheme: dark;
 
   /* ── Colors — "Dither Ink" (deep indigo-ink dark mode + paper accent) ── */
-  --color-bg:           #23223A;   /* deep indigo ink — page bg */
-  --color-primary:      #EAE7E1;   /* paper cream — light, so on-primary text must be dark */
-  --color-primary-dim:  rgba(234,231,225,0.15);
+  --color-bg:           #0C0C0C;   /* deep indigo ink — page bg */
+  --color-primary:      #FF6929;   /* paper cream — light, so on-primary text must be dark */
+  --color-primary-dim:  rgba(255,105,41,0.15);
   --color-success:      #7BC67E;
   --color-success-dim:  rgba(123,198,126,0.15);
-  --color-surface:      #EAE7E1;   /* paper cream — light cards/sheets */
+  --color-surface:      #D5C8A3;   /* paper cream — light cards/sheets */
   --color-white:        #FFFFFF;
-  --color-card-dark:    #2E2D4A;   /* lighter ink panel, sits on --color-bg */
-  --color-card-darker:  #1A1930;
-  --color-muted:        #8A89A6;   /* soft lavender-grey */
-  --color-border:       rgba(234,231,225,0.12);
+  --color-card-dark:    #1A1A1A;   /* lighter ink panel, sits on --color-bg */
+  --color-card-darker:  #111111;
+  --color-muted:        #6B6B6B;   /* soft lavender-grey */
+  --color-border:       rgba(255,255,255,0.10);
   --color-overlay:      rgba(0,0,0,0.65);
   --color-danger:       #ef5350;   /* error / destructive actions */
   --color-map-pin:      #FF4D6D;   /* vivid coral-red — map markers only; --color-primary
@@ -28,19 +28,26 @@
                                        landmark (gold), and important pins (map-pin red) */
 
   /* Text ON a primary-coloured background (light bg needs dark ink) */
-  --color-on-primary:   #23223A;
+  --color-on-primary:   #FFFFFF;
 
   /* Class badge colors */
-  --color-class-s: #EAE7E1;   /* paper cream — legendary readout */
-  --color-class-a: #C0A060;
-  --color-class-c: #7BC67E;
+  --color-class-s: #FF6929;   /* paper cream — legendary readout */
+  --color-class-a: #2B5EBC;
+  --color-class-c: #D61E7E;
+
+  /* Accent — lime, used ONLY for nav active state */
+  --color-accent:     #BFDE3B;
+  --color-on-surface: #231F18;   /* warm dark — text on parchment cards */
+
+  /* Display font */
+  --font-display: 'Barlow Condensed', 'Kanit', sans-serif;
 
   /* Typography */
   --font-body:    'Inter', sans-serif;
   --font-heading: 'Kanit', sans-serif;
   --text-xs:   10px;
-  --text-sm:   12px;
-  --text-base: 14px;
+  --text-sm:   13px;
+  --text-base: 15px;
   --text-md:   16px;
   --text-lg:   18px;
   --text-xl:   22px;
@@ -53,6 +60,7 @@
   --space-md: 16px;
   --space-lg: 24px;
   --space-xl: 32px;
+  --space-xl2: 40px;
 
   /* Border radius */
   --radius-sm:   8px;
@@ -64,7 +72,7 @@
 
   /* Shadows */
   --shadow-card:    0 4px 20px rgba(0,0,0,0.35);
-  --shadow-primary: 0 6px 24px rgba(234,231,225,0.30);
+  --shadow-primary: 0 6px 24px rgba(255,105,41,0.35);
   --shadow-success: 0 6px 24px rgba(123,198,126,0.28);
   --shadow-up:      0 -4px 24px rgba(0,0,0,0.4);
 
