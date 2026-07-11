@@ -81,6 +81,7 @@
 | Actionable join-request notification | ✅ Done | Notification tab shows Accept/Ignore buttons on `join_request` notifs (via `ref_id`); stays unread until acted on |
 | Guild leaderboard realtime | ✅ Done | `subscribeGuildChanges()` on guilds + guild_members tables |
 | Seven full UI restyling concept sets | ✅ Done | `restyling/` contains seven visual directions with seven user-facing states and comparison boards per direction |
+| Bangkok Street Quest login restyle (Task 6) | ✅ Done | `login.html` now uses a parchment explorer-pass card, dark stamp logo treatment, and decorative explorer stickers |
 
 ---
 

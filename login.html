@@ -20,6 +20,7 @@
       justify-content: center;
       padding: 60px var(--space-md) calc(var(--space-xl) + env(safe-area-inset-bottom));
       position: relative;
+      background: var(--color-bg);
     }
 
     /* Back button — absolute top-left, doesn't shift content */
@@ -29,8 +30,8 @@
       left: var(--space-md);
       width: 38px; height: 38px;
       border-radius: 50%;
-      border: 1.5px solid var(--color-border);
-      background: none;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06);
       color: var(--color-white);
       display: flex; align-items: center; justify-content: center;
       cursor: pointer;
@@ -38,42 +39,62 @@
       text-decoration: none;
     }
 
-    .back-btn:hover { background: rgba(255,255,255,0.06); }
+    .back-btn:hover { background: rgba(255,255,255,0.12); }
     .back-btn svg   { width: 18px; height: 18px; }
 
     /* ── Centered card ────────────────────────────────────── */
     .auth-card {
       width: 100%;
       max-width: 360px;
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 12px 48px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.3);
+      padding: 28px 24px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: var(--space-md);
+      gap: 14px;
+      position: relative;
+      background-image: radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.18) 0%, transparent 60%),
+                        radial-gradient(ellipse at 70% 80%, rgba(180,160,110,0.15) 0%, transparent 50%);
+    }
+
+    .auth-card::before {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 100px;
+      background: repeating-radial-gradient(circle at 8px 0, #0C0C0C 0 6px, transparent 6px 20px);
+      background-size: 16px 20px;
+      pointer-events: none;
     }
 
     /* ── Logo + title ─────────────────────────────────────── */
     .auth-logo {
       width: 52px; height: 52px;
-      background: var(--color-primary);
-      border-radius: var(--radius-lg);
+      background: var(--color-on-surface);
+      border-radius: var(--radius-md);
       display: flex; align-items: center; justify-content: center;
-      box-shadow: var(--shadow-primary);
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
       margin-bottom: 2px;
     }
 
-    .auth-logo svg { width: 26px; height: 26px; color: #1C1B2E; stroke: #1C1B2E; }
+    .auth-logo svg { width: 26px; height: 26px; color: var(--color-surface); stroke: var(--color-surface); }
 
     .auth-title {
       font-family: var(--font-heading);
-      font-size: var(--text-xl);
+      font-size: 26px;
       font-weight: 700;
-      color: var(--color-white);
+      color: var(--color-on-surface);
       margin: 0;
     }
 
     .auth-subtitle {
-      font-size: var(--text-xs);
-      color: var(--color-muted);
+      font-size: 13px;
+      color: rgba(35,31,24,0.55);
       margin: 0;
     }
 
@@ -82,7 +103,7 @@
       width: 100%;
       display: flex;
       position: relative;
-      border-bottom: 1px solid var(--color-border);
+      border-bottom: 1.5px solid rgba(35,31,24,0.15);
     }
 
     .auth-tab {
@@ -90,7 +111,7 @@
       padding: 10px;
       background: none;
       border: none;
-      color: var(--color-muted);
+      color: rgba(35,31,24,0.45);
       font-family: var(--font-body);
       font-size: var(--text-sm);
       font-weight: 600;
@@ -99,7 +120,7 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    .auth-tab.active { color: var(--color-white); }
+    .auth-tab.active { color: var(--color-on-surface); }
 
     /* Sliding orange line indicator */
     .auth-tab-line {
@@ -133,18 +154,47 @@
 
     /* ── Smaller inputs (local override) ──────────────────── */
     .auth-card .input-dark {
-      padding: 10px 14px;
-      font-size: 13px;
+      background: rgba(255,255,255,0.55);
+      border: 1.5px solid rgba(35,31,24,0.2);
+      border-radius: var(--radius-md);
+      color: var(--color-on-surface);
+      padding: 12px 14px;
+      font-size: 14px;
     }
+
+    .form-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(35,31,24,0.65);
+      padding-left: 2px;
+    }
+
+    .auth-card .input-dark::placeholder { color: rgba(35,31,24,0.35); }
+    .auth-card .input-dark:focus { border-color: var(--color-primary); background: rgba(255,255,255,0.7); }
 
     .auth-card .input-wrap .input-icon {
       width: 16px; height: 16px;
+      color: rgba(35,31,24,0.4);
     }
+
+    .auth-card .input-action { color: rgba(35,31,24,0.4); }
 
     /* Keep left icon padding aligned with smaller input */
     .auth-card .input-wrap .input-icon ~ .input-dark {
       padding-left: 38px;
     }
+
+    .auth-card .input-dark:-webkit-autofill,
+    .auth-card .input-dark:-webkit-autofill:hover,
+    .auth-card .input-dark:-webkit-autofill:focus,
+    .auth-card .input-dark:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 9999px #EEE5CC inset !important;
+      -webkit-text-fill-color: #231F18 !important;
+      caret-color: #231F18;
+      transition: background-color 9999s ease-in-out 0s;
+    }
+
+    .auth-card .input-dark.is-error { border-color: #cc2200; }
 
     /* ── Smaller buttons ──────────────────────────────────── */
     .auth-card .btn {
@@ -220,16 +270,20 @@
 
     /* ── Divider ──────────────────────────────────────────── */
     .auth-card .divider-text {
-      margin: 4px 0;
+      color: rgba(35,31,24,0.4);
+      margin: 2px 0;
       font-size: 12px;
     }
+
+    .auth-card .divider-text::before,
+    .auth-card .divider-text::after { background: rgba(35,31,24,0.15); }
 
     /* ── Bottom switch text ───────────────────────────────── */
     .auth-switch {
       font-size: 12px;
-      color: var(--color-muted);
+      color: rgba(35,31,24,0.55);
       text-align: center;
-      margin: 4px 0 0;
+      margin: 2px 0 0;
     }
 
     .auth-switch button {
@@ -246,6 +300,47 @@
     }
 
     .auth-switch button:hover { opacity: 0.8; }
+
+    .auth-sticker {
+      position: absolute;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-align: center;
+      border-radius: 6px;
+      padding: 6px 10px;
+      line-height: 1.35;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .auth-sticker-tl {
+      background: var(--color-on-surface);
+      color: var(--color-surface);
+      top: -18px;
+      left: -10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      border-radius: var(--radius-sm);
+    }
+
+    .auth-sticker-tl .auth-sticker-icon { font-size: 16px; }
+    .auth-sticker-tl .auth-sticker-name { font-size: 9px; line-height: 1.2; }
+
+    .auth-sticker-tr {
+      background: var(--color-accent);
+      color: var(--color-on-surface);
+      top: -18px;
+      right: -10px;
+      border-radius: var(--radius-sm);
+      font-size: 9px;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      padding: 8px 6px;
+    }
 
     /* ── Success toast ────────────────────────────────────── */
     .auth-toast {
@@ -299,6 +394,15 @@
         <polyline points="15,18 9,12 15,6"/>
       </svg>
     </a>
+
+    <!-- Decorative sticker elements -->
+    <div class="auth-sticker auth-sticker-tl" aria-hidden="true">
+      <span class="auth-sticker-icon">🏛</span>
+      <span class="auth-sticker-name">TAMROI<br>ตามรอย</span>
+    </div>
+    <div class="auth-sticker auth-sticker-tr" aria-hidden="true">
+      BKK<br>Explorer<br>Pass<br><span style="font-size:9px;letter-spacing:1px">021024</span>
+    </div>
 
     <!-- Centered card -->
     <div class="auth-card">

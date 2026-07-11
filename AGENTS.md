@@ -41,7 +41,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 ## Repository Map
 
 - `index.html`: splash / landing page with Supabase session redirect handling.
-- `login.html`: centered email/password login, register, Google OAuth, and client-side form validation.
+- `login.html`: parchment explorer-pass email/password login, register, Google OAuth, and client-side form validation.
 - `onboarding.html`: first-run location permission and home district picker.
 - `app.html`: main app shell with Map, Collection, Missions, Leaderboard tabs, Bootstrap offcanvas panels, lore/check-in/home bottom sheets, and figure modal.
 - `build.js`: Vercel build-time env injection into `js/env.js`.
@@ -84,7 +84,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 
 ## Current Implementation Notes
 
-- `restyling/` is an additive design exploration only; the live HTML/CSS/JS UI has not been restyled.
+- `restyling/` remains an additive design exploration; `login.html` now includes the Bangkok Street Quest Task 6 explorer-pass restyle while auth behavior remains unchanged.
 - The current CSS tokens in `css/variables.css` are authoritative. They differ from older docs: background is `#1C1B2E`, primary is `#F6C19E`, card surfaces are `#252240` / `#201E38`.
 - `window.APP_CONFIG.appName` is `Tamroi`, version `0.6.0`.
 - `window.FogGrid` exposes reusable Thailand grid cell generation and coordinate lookup for future Fog of War work.

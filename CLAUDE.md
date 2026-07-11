@@ -31,7 +31,7 @@
 
 ```
 ├── index.html           Splash / landing
-├── login.html           Email + Google OAuth login & register
+├── login.html           Email + Google OAuth login & register · parchment explorer-pass restyle
 ├── onboarding.html      First-run: location permission + home district picker
 ├── app.html             Main app shell — Map · Collection · Mission · Leaderboard
 ├── build.js             Vercel build — injects Supabase env vars at deploy time
@@ -117,6 +117,8 @@
 ```
 
 **`js/env.js` is trackable in this prototype.** Keep it limited to public Supabase anon/dev-safe values. Never put service-role keys or private credentials in client code.
+
+The login page now carries the Bangkok Street Quest explorer-pass visual treatment: dark page background, parchment card, dark stamp logo, and decorative stickers. Auth markup, IDs, and JavaScript behavior remain unchanged.
 
 ---
 
