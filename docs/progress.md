@@ -127,6 +127,7 @@
 | Branding: "Bangkok Street Quest" → "Thailand Street Quest" throughout | `app.html`, `css/street-quest.css`, `CLAUDE.md` |
 | Top bar: removed avatar element; removed dashed separator line | `app.html`, `css/street-quest.css` |
 | Class badges (S/A/B/C): regenerated via Codex — vintage worn letterpress stamp tiles, no chroma-key green | `assets/street-quest/badge-class-*.png` |
+| Removed stale empty top-bar profile chip after avatar removal | `css/street-quest.css` |
 
 ### Known Gaps (Deferred)
 

@@ -951,14 +951,12 @@
   box-shadow: 0 0 0 3px rgba(240, 90, 25, 0.28);
 }
 
-/* ── Nav-bar profile: read as one explorer-pass chip ── */
+/* The profile avatar was removed from the top bar; keep the empty flex spacer invisible. */
 .street-quest--app .top-bar__left {
-  gap: 9px;
-  padding: 5px 11px 5px 6px;
-  border: 2px solid var(--sq-ink);
-  border-radius: 5px;
-  background: rgba(255, 253, 244, 0.6);
-  box-shadow: 2px 2px 0 var(--sq-ink);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 .street-quest--app .top-bar__left .username {
   font-weight: 800;

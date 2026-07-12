@@ -298,6 +298,10 @@ Run patches in this order:
 - Real-time leaderboard: Supabase Realtime subscription on `profiles` table
 - Real-time notifications: Supabase Realtime subscription on `notifications` inserts updates the badge/offcanvas
 
+### UI Polish
+
+- The app top bar keeps an invisible left flex spacer after the profile avatar was removed; no empty bordered chip is rendered.
+
 ### DB Tables
 
 | Table / Object | Patch | Purpose |

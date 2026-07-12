@@ -107,6 +107,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - Collection figure detail uses a reused Bootstrap modal instance and cleans stale backdrop/body state on close.
 - `window.DB` groups `Auth`, `Profiles`, `Districts`, `Figures`, `Artifacts`, `Leaderboard`, `Lore`, `Quiz`, and `Notifications`; `Districts.getVisitedSupportNodes()` loads persisted support-node IDs and `Notifications.subscribe()` wraps Supabase Realtime.
 - `window.AppCore` groups `App`, `switchTab`, `openSheet`, `closeAllSheets`, `openLoreSheet`, `openLoreChainSheet`, `showFloatPts`, and `showToast`.
+- The Street Quest top bar's removed profile avatar no longer leaves a visible bordered empty chip; the left spacer is intentionally transparent.
 
 ## Development Setup
 
