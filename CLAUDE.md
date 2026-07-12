@@ -309,6 +309,8 @@ Run patches in this order:
 - The Collection class filter uses an accessible custom menu instead of a native `<select>` popup, allowing the open S/A/B/C options to retain the scrapbook theme.
 - The Collection toolbox relaxes its torn-edge clip only while the class menu is open, preventing the lower C option from being clipped.
 - Collection figure class badges pair generated letterpress stamp tiles with a ruled paper label, dark print border, and slight per-class skew to match the scrapbook reference.
+- Community leaderboard controls use numbered route tabs plus labeled paper selector cards; selected tab state stays synchronized with `aria-selected` while the existing leaderboard behavior remains unchanged.
+- Community leaderboard selector menus raise the active control above following rank cards; leaderboard panels are width-contained and desktop fixed chrome centers with the 430px app frame.
 
 ### DB Tables
 

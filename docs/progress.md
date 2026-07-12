@@ -130,6 +130,8 @@
 | Collection stat labels aligned with Map (Captured/Artifacts/Legacy) and summary height tightened | `app.html`, `js/collection.js`, `css/street-quest.css` |
 | Collection archive hero updated to Thailand-wide labels (`TH`, `แฟ้มสะสม`, `EXPLORE THAILAND`) | `app.html` |
 | Community hero: removed ชุมชนนักล่ารอย subtitle; rank "2" moved below title | `app.html`, `css/street-quest.css` |
+| Community leaderboard control deck restyle: numbered route tabs plus labeled paper selector cards with accessible active states | `app.html`, `js/app.js`, `css/street-quest.css` |
+| Community leaderboard menu layering and frame containment fix: open selector menus stay above rank cards; desktop chrome and dynamic lists stay within the 430px frame | `app.html`, `js/leaderboard.js`, `css/street-quest.css`, `css/layout.css` |
 | Branding: "Bangkok Street Quest" → "Thailand Street Quest" throughout | `app.html`, `css/street-quest.css`, `CLAUDE.md` |
 | Top bar: removed avatar element; removed dashed separator line | `app.html`, `css/street-quest.css` |
 | Class badges (S/A/B/C): refreshed letterpress treatment with generated paper label texture, ink shadow, and slight handmade skew | `css/components.css`, `assets/street-quest/badge-class-*.png`, `assets/street-quest/class-label-paper.png` |

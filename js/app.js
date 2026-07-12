@@ -195,8 +195,12 @@ function _switchCommunityTab(view) {
 function bindCommunitySubTabs() {
   document.querySelectorAll('[data-community-tab]').forEach(pill => {
     pill.addEventListener('click', () => {
-      document.querySelectorAll('[data-community-tab]').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('[data-community-tab]').forEach(p => {
+        p.classList.remove('active');
+        p.setAttribute('aria-selected', 'false');
+      });
       pill.classList.add('active');
+      pill.setAttribute('aria-selected', 'true');
       _switchCommunityTab(pill.dataset.communityTab);
     });
   });

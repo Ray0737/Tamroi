@@ -1177,6 +1177,201 @@
   color: #fff;
 }
 
+/* ── Community control deck: route tabs + labeled field selectors ── */
+.street-quest--app #community-sub-tabs {
+  gap: 7px;
+  padding: 6px;
+  border: 2px solid var(--sq-paper-light);
+  background:
+    linear-gradient(rgba(10, 10, 9, 0.88), rgba(10, 10, 9, 0.88)),
+    url('../assets/street-quest/ui-paper-ink.webp') center / 430px 430px;
+  box-shadow: 4px 4px 0 var(--sq-orange), 0 10px 22px rgba(0, 0, 0, 0.22);
+}
+
+.street-quest--app #community-sub-tabs .pill {
+  position: relative;
+  display: flex;
+  min-height: 62px;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  padding: 7px 8px 6px;
+  overflow: hidden;
+  border: 1px solid rgba(244, 234, 208, 0.23);
+  border-radius: 3px;
+  background: rgba(244, 234, 208, 0.045);
+  color: #c8bda6;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease,
+              transform 140ms ease, box-shadow 140ms ease;
+}
+
+.street-quest--app #community-sub-tabs .pill::after {
+  content: '';
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+  width: 7px;
+  height: 7px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  opacity: 0.45;
+  transform: rotate(-45deg);
+}
+
+.street-quest--app #community-sub-tabs .pill:hover,
+.street-quest--app #community-sub-tabs .pill:focus-visible {
+  border-color: var(--sq-paper-light);
+  background: rgba(244, 234, 208, 0.11);
+  color: #fff8e8;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--sq-blue);
+}
+
+.street-quest--app #community-sub-tabs .pill:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+.street-quest--app #community-sub-tabs .pill.active {
+  border-color: var(--sq-orange);
+  background: var(--sq-orange);
+  color: #fff;
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.15), 2px 2px 0 var(--sq-ink);
+}
+
+.community-tab-topline {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--sq-lime);
+  font: 700 10px/1 var(--font-display);
+  letter-spacing: 0.12em;
+}
+.community-tab-topline i { font-size: 14px; }
+.community-tab-index { opacity: 0.78; }
+.community-tab-label { line-height: 1.15; }
+.community-tab-meta {
+  color: currentColor;
+  font: 700 8px/1 var(--font-display);
+  letter-spacing: 0.12em;
+  opacity: 0.62;
+}
+.street-quest--app #community-sub-tabs .pill.active .community-tab-topline { color: var(--sq-ink); }
+
+.street-quest--app #community-rank-section {
+  gap: 12px !important;
+}
+
+.street-quest--app .leaderboard-control {
+  position: relative;
+  z-index: 0;
+  padding: 9px 10px 10px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 3px;
+  background-color: var(--sq-paper-light);
+  background-image:
+    linear-gradient(rgba(255, 247, 224, 0.68), rgba(255, 247, 224, 0.68)),
+    url('../assets/street-quest/ui-paper-kraft.webp');
+  background-size: auto, 380px 380px;
+  box-shadow: 4px 4px 0 var(--sq-blue);
+  color: var(--sq-ink);
+}
+
+/* The open menu must paint above the following rank cards. The metric card
+   has a handmade transform, which otherwise creates an earlier stacking
+   context than the cards that follow it in the document. */
+.street-quest--app .leaderboard-control.is-open { z-index: 20; }
+
+.street-quest--app .leaderboard-control[data-control="metric"] {
+  transform: rotate(-0.25deg);
+  box-shadow: 4px 4px 0 var(--sq-lime);
+}
+
+.leaderboard-control__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.leaderboard-control__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: rgba(24, 21, 16, 0.68);
+  font: 800 10px/1 var(--font-display);
+  letter-spacing: 0.14em;
+}
+.leaderboard-control__label i { color: var(--sq-orange); font-size: 11px; }
+.leaderboard-control__index {
+  color: rgba(24, 21, 16, 0.44);
+  font: 700 9px/1 var(--font-display);
+  letter-spacing: 0.1em;
+}
+
+.street-quest--app .leaderboard-control .lb-custom-wrap { width: 100%; }
+.street-quest--app .leaderboard-control .lb-custom-trigger {
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1.5px solid rgba(24, 21, 16, 0.44);
+  border-radius: 2px;
+  background: rgba(11, 11, 10, 0.94);
+  color: #fff8e8;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 2px 2px 0 rgba(24, 21, 16, 0.22);
+}
+.street-quest--app .leaderboard-control .lb-custom-trigger:hover,
+.street-quest--app .leaderboard-control .lb-custom-trigger.open {
+  border-color: var(--sq-orange);
+  background: var(--sq-ink-soft);
+}
+.street-quest--app .leaderboard-control .lb-custom-trigger svg { color: var(--sq-lime); }
+.street-quest--app .leaderboard-control .lb-custom-panel {
+  top: calc(100% + 5px);
+  z-index: 30;
+  padding: 4px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background: var(--sq-paper-light) url('../assets/street-quest/ui-paper-kraft.webp') center / 380px 380px;
+  box-shadow: 4px 4px 0 var(--sq-orange);
+}
+
+/* Keep dynamic leaderboard content inside the mobile frame at every width. */
+.street-quest--app #tab-community .section-inner,
+.street-quest--app #community-rank-section,
+.street-quest--app #solo-leaderboard-section,
+.street-quest--app #my-rank-card,
+.street-quest--app #leaderboard-list,
+.street-quest--app #guild-leaderboard-list {
+  min-width: 0;
+  max-width: 100%;
+}
+.street-quest--app #my-rank-card,
+.street-quest--app #leaderboard-list,
+.street-quest--app #guild-leaderboard-list { width: 100%; }
+.street-quest--app .leaderboard-control .lb-custom-option {
+  padding: 10px 9px;
+  border-bottom: 1px dashed rgba(24, 21, 16, 0.22);
+  color: rgba(24, 21, 16, 0.72);
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+}
+.street-quest--app .leaderboard-control .lb-custom-option:hover,
+.street-quest--app .leaderboard-control .lb-custom-option.selected {
+  background: var(--sq-orange);
+  color: #fff;
+}
+.street-quest--app .leaderboard-control .lb-custom-option.selected::before { color: var(--sq-ink); }
+
 @media (prefers-reduced-motion: reduce) {
   .street-quest *, .street-quest *::before, .street-quest *::after {
     animation-duration: 0.01ms !important;

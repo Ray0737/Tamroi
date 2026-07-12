@@ -246,7 +246,12 @@ body { overflow-x: hidden; }
   .app-wrapper {
     box-shadow: 0 0 80px rgba(0,0,0,0.6);
   }
-  .top-bar, .bottom-nav { left: 0; transform: none; }
+  /* Center fixed chrome even when the browser does not honor the transformed
+     app wrapper as its fixed-position containing block. */
+  .top-bar, .bottom-nav {
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
 
 /* Subtle film grain — SVG feTurbulence noise, 3% opacity, non-interactive */
