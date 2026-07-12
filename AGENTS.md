@@ -47,7 +47,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `build.js`: Vercel build-time env injection into `js/env.js`.
 - `vercel.json`: deployment config and security headers.
 - `restyling/`: seven page-by-page UI restyling concept sets, comparison boards, and a concept index; these assets are not loaded by the runtime.
-- `assets/street-quest/`: generated, web-optimized Bangkok explorer collage, route paper, cream/ink/map/kraft UI materials, Collection archive collage, and Community podium collage used by the runtime theme.
+- `assets/street-quest/`: generated, web-optimized Bangkok explorer collage, route paper, cream/ink/map/kraft UI materials, class badge stamps/paper label, Collection archive collage, and Community podium collage used by the runtime theme.
 - `css/variables.css`: authoritative design tokens.
 - `css/layout.css`: app wrapper, fixed top bar, bottom nav, tab shell.
 - `css/components.css`: buttons, cards, inputs, pills, bottom sheets, badges, toast, collection/missions/leaderboard/lore components.
@@ -86,7 +86,10 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 
 ## Current Implementation Notes
 
-- `restyling/` remains the concept reference; the full runtime now loads `css/street-quest.css`, generated Bangkok collage/route assets, four generated UI materials, a Collection archive collage, and a Community three-poster podium collage while preserving existing behavior and DOM hooks. Collection uses a dark archive page with a torn toolbox and poster cards; Community separates the current-player rank ticket from a compact dark leaderboard, uses an ink group ledger and parchment forum, and omits the current player from the repeated rank list. Ten browser-verified mobile captures, including populated My Group and Forum states, are stored in `restyling/05_bangkok_street_quest/screenshots/`.
+- `restyling/` remains the concept reference; the full runtime now loads `css/street-quest.css`, generated Bangkok collage/route assets, four generated UI materials, a Collection archive collage, and a Community three-poster podium collage while preserving existing behavior and DOM hooks. Collection uses a dark archive page with a torn toolbox and poster cards; Community separates the current-player rank ticket from a compact dark leaderboard, uses an ink group ledger and parchment forum, and repeats the current player in the ranked list at their actual position with a highlighted row. Ten browser-verified mobile captures, including populated My Group and Forum states, are stored in `restyling/05_bangkok_street_quest/screenshots/`.
+- Community leaderboard controls now use numbered route tabs and labeled paper selector cards with synchronized `aria-selected` state, while preserving the existing tab and leaderboard DOM hooks.
+- Community leaderboard selector menus now raise their active control above the rank ticket/list, while dynamic leaderboard cards are width-contained and desktop fixed chrome centers with the 430px app frame.
+- The solo leaderboard keeps the current player visible in both the MY RANK ticket and the correctly sorted ranked list, with the in-list row marked and highlighted.
 - The current CSS tokens in `css/variables.css` are authoritative. They differ from older docs: background is `#1C1B2E`, primary is `#F6C19E`, card surfaces are `#252240` / `#201E38`.
 - `window.APP_CONFIG.appName` is `Tamroi`, version `0.6.0`.
 - `window.FogGrid` exposes reusable Thailand grid cell generation and coordinate lookup for future Fog of War work.
@@ -106,6 +109,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - Collection figure detail uses a reused Bootstrap modal instance and cleans stale backdrop/body state on close.
 - `window.DB` groups `Auth`, `Profiles`, `Districts`, `Figures`, `Artifacts`, `Leaderboard`, `Lore`, `Quiz`, and `Notifications`; `Districts.getVisitedSupportNodes()` loads persisted support-node IDs and `Notifications.subscribe()` wraps Supabase Realtime.
 - `window.AppCore` groups `App`, `switchTab`, `openSheet`, `closeAllSheets`, `openLoreSheet`, `openLoreChainSheet`, `showFloatPts`, and `showToast`.
+- Settings and Notifications are Bootstrap offcanvas panels opened by the top-bar gear and bell; on desktop Bootstrap's fixed `offcanvas-end` placement aligns them to the viewport's right edge rather than the centered 430px app frame.
 - The Street Quest top bar's removed profile avatar no longer leaves a visible bordered empty chip; the left spacer is intentionally transparent.
 - Collection summary stats use the Map page's English labels (Captured, Artifacts, Legacy) and a compact themed height.
 - Collection filters include a บุคคล view and class dropdown for S/A/B/C; class filtering is enabled for figure/owned views and disabled/reset for artifacts and the Lore Journal.
@@ -114,6 +118,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - The Collection toolbox disables its torn-edge clip only while the class menu is open, keeping the lower C option visible.
 - Collection archive hero uses Thailand-wide copy: `TH • TRAVELER ARCHIVE`, `แฟ้มสะสม`, and `EXPLORE THAILAND`.
 - Collection phase-locked figure cards use a larger high-contrast lock badge with a dark backing and light border for portrait legibility.
+- Collection figure class badges combine generated worn letterpress tiles with a ruled paper label, ink offset shadow, and small class-specific rotations.
 
 ## Development Setup
 

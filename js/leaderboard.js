@@ -27,6 +27,7 @@ function load() {
 
     const wrap = document.createElement('div');
     wrap.className = 'lb-custom-wrap';
+    const control = sel.closest('.leaderboard-control');
     // carry over flex style from the original select
     if (sel.style.flex) wrap.style.flex = sel.style.flex;
 
@@ -63,6 +64,8 @@ function load() {
     function closePanel() {
       panel.classList.remove('open');
       trigger.classList.remove('open');
+      wrap.classList.remove('open');
+      control?.classList.remove('is-open');
     }
 
     trigger.addEventListener('click', e => {
@@ -71,8 +74,15 @@ function load() {
       document.querySelectorAll('.lb-custom-panel.open').forEach(p => {
         p.classList.remove('open');
         p.previousElementSibling?.classList.remove('open');
+        p.closest('.lb-custom-wrap')?.classList.remove('open');
+        p.closest('.leaderboard-control')?.classList.remove('is-open');
       });
-      if (!isOpen) { panel.classList.add('open'); trigger.classList.add('open'); }
+      if (!isOpen) {
+        panel.classList.add('open');
+        trigger.classList.add('open');
+        wrap.classList.add('open');
+        control?.classList.add('is-open');
+      }
     });
 
     updateTrigger();
@@ -117,6 +127,8 @@ function load() {
       document.querySelectorAll('.lb-custom-panel.open').forEach(p => {
         p.classList.remove('open');
         p.previousElementSibling?.classList.remove('open');
+        p.closest('.lb-custom-wrap')?.classList.remove('open');
+        p.closest('.leaderboard-control')?.classList.remove('is-open');
       });
     });
   }
@@ -334,14 +346,13 @@ function load() {
     el.innerHTML = players.map((p, idx) => {
       const rank = idx + 1;
       const isMe = p.id === MY_ID;
-      if (isMe) return '';
       const tier = _RANK_TIER[rank];
       const init = (p.username || '?').substring(0, 2).toUpperCase();
       const ringColor = tier ? { gold: '#FFD700', silver: '#C0C0C0', bronze: '#CD7F32' }[tier]
                        : (isMe ? 'var(--color-primary)' : 'rgba(255,255,255,0.12)');
 
       return `
-        <div class="lb-row" data-user-id="${escapeHtml(p.id)}">
+        <div class="lb-row ${isMe ? 'lb-my-row' : ''}" data-user-id="${escapeHtml(p.id)}">
           <span class="lb-rank ${tier || ''}">${tier ? _rankIcon(rank) : `#${rank}`}</span>
           ${avatarHTML(p.avatar_url, init, 32, ringColor)}
           <div class="lb-name-block">

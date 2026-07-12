@@ -38,7 +38,7 @@
 ├── vercel.json          Deployment config + security headers
 ├── restyling/           Seven page-by-page UI concept sets + comparison boards (no runtime dependency)
 ├── assets/
-│   └── street-quest/    Generated Bangkok collage, route paper, UI textures, Collection archive hero, and Community podium hero
+│   └── street-quest/    Generated Bangkok collage, route paper, UI textures, class badge stamps/paper label, Collection archive hero, and Community podium hero
 ├── css/
 │   ├── variables.css    Design tokens (DO NOT override these inline)
 │   ├── layout.css       Top bar, bottom nav, tab shell
@@ -120,9 +120,9 @@
 
 **`js/env.js` is trackable in this prototype.** Keep it limited to public Supabase anon/dev-safe values. Never put service-role keys or private credentials in client code.
 
-The Thailand Street Quest visual treatment now spans the full runtime: the landing page uses generated Bangkok explorer collage art; onboarding uses generated route-paper art; auth keeps the explorer-pass treatment; and app chrome, missions, cards, and sheets use generated cream/ink/map/kraft materials through `css/street-quest.css`. Collection adds a dedicated generated archive-evidence collage, dark archive page, Thailand-wide archive hero labels, torn-paper toolbox, and poster-like cards. Community adds a generated three-poster podium, separate MY RANK ticket, compact dark ranking/group ledgers, and parchment forum; the current player is not duplicated in the main list. Text and controls keep comfortable mobile sizing, and the map shows the illustrated route texture until Carto raster tiles are ready. The ten browser-verified 430px captures—including populated My Group and Forum states—live in `restyling/05_bangkok_street_quest/screenshots/`; `tests/ui-visual.spec.mjs` also checks 430px and 375px layouts for horizontal leaks and top-bar collisions.
+The Thailand Street Quest visual treatment now spans the full runtime: the landing page uses generated Bangkok explorer collage art; onboarding uses generated route-paper art; auth keeps the explorer-pass treatment; and app chrome, missions, cards, and sheets use generated cream/ink/map/kraft materials through `css/street-quest.css`. Collection adds a dedicated generated archive-evidence collage, dark archive page, Thailand-wide archive hero labels, torn-paper toolbox, and poster-like cards. Community adds a generated three-poster podium, separate MY RANK ticket, compact dark ranking/group ledgers, and parchment forum; the current player is also shown in the main list at their actual rank with a highlighted row. Text and controls keep comfortable mobile sizing, and the map shows the illustrated route texture until Carto raster tiles are ready. The ten browser-verified 430px captures—including populated My Group and Forum states—live in `restyling/05_bangkok_street_quest/screenshots/`; `tests/ui-visual.spec.mjs` also checks 430px and 375px layouts for horizontal leaks and top-bar collisions.
 
-Locked Collection figure cards use a larger, high-contrast lock badge with a dark backing and light border so phase-locked figures remain visible over portrait imagery.
+Locked Collection figure cards use a larger, high-contrast lock badge with a dark backing and light border so phase-locked figures remain visible over portrait imagery. Collection class badges use generated worn letterpress tiles plus a distressed paper label texture, ink offset shadow, and class-specific micro-rotation.
 
 ---
 
@@ -297,6 +297,7 @@ Run patches in this order:
 - Leaderboard metrics: Map Discovery % · Archive count · Legacy Score
 - Real-time leaderboard: Supabase Realtime subscription on `profiles` table
 - Real-time notifications: Supabase Realtime subscription on `notifications` inserts updates the badge/offcanvas
+- Settings and Notifications are Bootstrap offcanvas panels triggered from the top bar; their current desktop placement is viewport-right aligned while the app content and fixed chrome use the centered 430px frame.
 
 ### UI Polish
 
@@ -306,6 +307,10 @@ Run patches in this order:
 - Collection filter controls use scrapbook paper texture, ink offset shadows, pressed active states, and dashed styling when the class filter is disabled.
 - The Collection class filter uses an accessible custom menu instead of a native `<select>` popup, allowing the open S/A/B/C options to retain the scrapbook theme.
 - The Collection toolbox relaxes its torn-edge clip only while the class menu is open, preventing the lower C option from being clipped.
+- Collection figure class badges pair generated letterpress stamp tiles with a ruled paper label, dark print border, and slight per-class skew to match the scrapbook reference.
+- Community leaderboard controls use numbered route tabs plus labeled paper selector cards; selected tab state stays synchronized with `aria-selected` while the existing leaderboard behavior remains unchanged.
+- Community leaderboard selector menus raise the active control above following rank cards; leaderboard panels are width-contained and desktop fixed chrome centers with the 430px app frame.
+- Solo Community leaderboard rendering keeps the current player in the sorted rank list as well as the MY RANK ticket, using the existing `lb-my-row` marker and a themed highlight.
 
 ### DB Tables
 

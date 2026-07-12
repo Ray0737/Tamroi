@@ -130,9 +130,13 @@
 | Collection stat labels aligned with Map (Captured/Artifacts/Legacy) and summary height tightened | `app.html`, `js/collection.js`, `css/street-quest.css` |
 | Collection archive hero updated to Thailand-wide labels (`TH`, `แฟ้มสะสม`, `EXPLORE THAILAND`) | `app.html` |
 | Community hero: removed ชุมชนนักล่ารอย subtitle; rank "2" moved below title | `app.html`, `css/street-quest.css` |
+| Community leaderboard control deck restyle: numbered route tabs plus labeled paper selector cards with accessible active states | `app.html`, `js/app.js`, `css/street-quest.css` |
+| Community leaderboard menu layering and frame containment fix: open selector menus stay above rank cards; desktop chrome and dynamic lists stay within the 430px frame | `app.html`, `js/leaderboard.js`, `css/street-quest.css`, `css/layout.css` |
+| Community leaderboard current-player placement | ✅ Done | `js/leaderboard.js`, `css/street-quest.css`; current player now appears in the ranked list at the same sorted position as the MY RANK ticket |
 | Branding: "Bangkok Street Quest" → "Thailand Street Quest" throughout | `app.html`, `css/street-quest.css`, `CLAUDE.md` |
 | Top bar: removed dashed separator line; profile avatar circle (`#topbar-avatar`) added back to `.top-bar__left`, filled by `updateTopBar()` (https avatar_url or initials) | `app.html`, `css/street-quest.css`, `js/app.js` |
-| Class badges (S/A/B/C): regenerated via Codex — vintage worn letterpress stamp tiles, no chroma-key green | `assets/street-quest/badge-class-*.png` |
+| Class badges (S/A/B/C): regenerated via Codex — vintage worn letterpress stamp tiles, no chroma-key green; also refreshed with generated paper label texture, ink shadow, and slight handmade skew | `css/components.css`, `assets/street-quest/badge-class-*.png`, `assets/street-quest/class-label-paper.png` |
+| Settings and Notifications offcanvas behavior documented | ✅ Done | Top-bar triggers open Bootstrap panels; on desktop they remain viewport-right aligned outside the centered 430px frame |
 
 ### Known Gaps (Deferred)
 

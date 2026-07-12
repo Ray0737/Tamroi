@@ -36,6 +36,8 @@ assert(leaderboardJs.includes('patchPlayerRow'), 'leaderboard.js must patch chan
 assert(!leaderboardJs.includes('MOCK_PLAYERS'), 'leaderboard.js must not render mock leaderboard data');
 assert(!leaderboardJs.includes('use mock'), 'leaderboard.js must not fall back to mock leaderboard data');
 assert(leaderboardJs.includes('renderEmptyState'), 'leaderboard.js must render an empty/error state when DB data is unavailable');
+assert(!/if\s*\(isMe\)\s*return\s*''/.test(leaderboardJs), 'leaderboard list must keep the current player in their ranked position');
+assert(leaderboardJs.includes("class=\"lb-row ${isMe ? 'lb-my-row' : ''}\" data-user-id"), 'current player row must be marked in the ranked list');
 assert(dbJs.includes("from('leaderboard_legacy')"), 'DB.Leaderboard must read the leaderboard view');
 assert(collectionJs.includes('bootstrap.Modal.getOrCreateInstance(modal)'), 'collection figure modal must reuse its Bootstrap instance');
 assert(collectionJs.includes('cleanupModalState'), 'collection figure modal must clean stale backdrop/body state after hiding');

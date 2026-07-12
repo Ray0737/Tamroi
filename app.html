@@ -165,7 +165,7 @@
       margin: 0 auto var(--space-sm);
     }
   </style>
-  <link rel="stylesheet" href="css/street-quest.css?v=2">
+  <link rel="stylesheet" href="css/street-quest.css?v=4">
 </head>
 <body class="street-quest street-quest--app">
 <div class="app-wrapper">
@@ -375,22 +375,44 @@
             <span class="podium-rank podium-rank--three" aria-label="อันดับ 3">3</span>
           </section>
 
-          <!-- Community sub-tab pills -->
-          <div class="filter-pills" id="community-sub-tabs">
-            <button class="pill active" data-community-tab="rank"><i class="bi bi-trophy"></i> อันดับ</button>
-            <button class="pill" data-community-tab="mygroup"><i class="bi bi-people"></i> กลุ่มของฉัน</button>
-            <button class="pill" data-community-tab="discuss"><i class="bi bi-chat-square-text"></i> ถกเถียง</button>
+          <!-- Community sub-tab route deck -->
+          <nav class="filter-pills" id="community-sub-tabs" aria-label="Community sections">
+            <button class="pill active" data-community-tab="rank" aria-controls="community-rank-section" aria-selected="true">
+              <span class="community-tab-topline"><span class="community-tab-index">01</span><i class="bi bi-trophy"></i></span>
+              <span class="community-tab-label">อันดับ</span>
+              <span class="community-tab-meta">RANKING</span>
+            </button>
+            <button class="pill" data-community-tab="mygroup" aria-controls="community-guild-section" aria-selected="false">
+              <span class="community-tab-topline"><span class="community-tab-index">02</span><i class="bi bi-people"></i></span>
+              <span class="community-tab-label">กลุ่มของฉัน</span>
+              <span class="community-tab-meta">MY CREW</span>
+            </button>
+            <button class="pill" data-community-tab="discuss" aria-controls="community-forum-section" aria-selected="false">
+              <span class="community-tab-topline"><span class="community-tab-index">03</span><i class="bi bi-chat-square-text"></i></span>
+              <span class="community-tab-label">ถกเถียง</span>
+              <span class="community-tab-meta">THE FORUM</span>
+            </button>
           </div>
 
           <!-- ── อันดับ ── -->
           <div id="community-rank-section" style="display:flex;flex-direction:column;gap:var(--space-md)">
-            <select id="leaderboard-view" class="lb-select">
-              <option value="solo">เดี่ยว</option>
-              <option value="guild">กลุ่ม</option>
-            </select>
+            <div class="leaderboard-control" data-control="view">
+              <div class="leaderboard-control__head">
+                <span class="leaderboard-control__label"><i class="bi bi-compass"></i> VIEW MODE</span>
+                <span class="leaderboard-control__index">01 / 02</span>
+              </div>
+              <select id="leaderboard-view" class="lb-select" aria-label="รูปแบบการจัดอันดับ">
+                <option value="solo">เดี่ยว</option>
+                <option value="guild">กลุ่ม</option>
+              </select>
+            </div>
             <div id="solo-leaderboard-section">
-              <div style="display:flex;gap:var(--space-sm);margin-bottom:var(--space-sm)">
-                <select id="leaderboard-metric" class="lb-select" style="flex:1">
+              <div class="leaderboard-control" data-control="metric">
+                <div class="leaderboard-control__head">
+                  <span class="leaderboard-control__label"><i class="bi bi-bar-chart-line"></i> SCORE BY</span>
+                  <span class="leaderboard-control__index">02 / 02</span>
+                </div>
+                <select id="leaderboard-metric" class="lb-select" aria-label="เลือกตัวชี้วัดอันดับ">
                   <option value="legacy">Legacy Score</option>
                   <option value="discovery">Map Discovery</option>
                   <option value="archive">Archive</option>
