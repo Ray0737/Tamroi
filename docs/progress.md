@@ -126,6 +126,7 @@
 | Collection filter visual polish | ✅ Done | Added scrapbook paper texture, ink offset shadows, pressed active states, focus/hover motion, and dashed disabled styling |
 | Collection class menu restyle | ✅ Done | Replaced the native class `<select>` popup with an accessible custom S/A/B/C menu so the open list inherits the scrapbook theme |
 | Collection class menu clipping fix | ✅ Done | Temporarily disables the toolbox torn-edge clip while the class menu is open so every class option, including C, remains visible |
+| Collection locked-figure icon visibility | ✅ Done | Enlarged the lock and added a high-contrast circular backing so phase-locked figures remain legible over portraits |
 | Collection stat labels aligned with Map (Captured/Artifacts/Legacy) and summary height tightened | `app.html`, `js/collection.js`, `css/street-quest.css` |
 | Collection archive hero updated to Thailand-wide labels (`TH`, `แฟ้มสะสม`, `EXPLORE THAILAND`) | `app.html` |
 | Community hero: removed ชุมชนนักล่ารอย subtitle; rank "2" moved below title | `app.html`, `css/street-quest.css` |

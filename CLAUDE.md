@@ -124,6 +124,8 @@
 
 The Thailand Street Quest visual treatment now spans the full runtime: the landing page uses generated Bangkok explorer collage art; onboarding uses generated route-paper art; auth keeps the explorer-pass treatment; and app chrome, missions, cards, and sheets use generated cream/ink/map/kraft materials through `css/street-quest.css`. Collection adds a dedicated generated archive-evidence collage, dark archive page, Thailand-wide archive hero labels, torn-paper toolbox, and poster-like cards. Community adds a generated three-poster podium, separate MY RANK ticket, compact dark ranking/group ledgers, and parchment forum; the current player is not duplicated in the main list. Text and controls keep comfortable mobile sizing, and the map shows the illustrated route texture until Carto raster tiles are ready. The ten browser-verified 430px captures—including populated My Group and Forum states—live in `restyling/05_bangkok_street_quest/screenshots/`; `tests/ui-visual.spec.mjs` also checks 430px and 375px layouts for horizontal leaks and top-bar collisions.
 
+Locked Collection figure cards use a larger, high-contrast lock badge with a dark backing and light border so phase-locked figures remain visible over portrait imagery.
+
 ---
 
 ## Design System

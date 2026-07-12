@@ -114,6 +114,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - The Collection class filter uses an accessible custom menu rather than a native `<select>` popup so its open options retain the Street Quest scrapbook styling.
 - The Collection toolbox disables its torn-edge clip only while the class menu is open, keeping the lower C option visible.
 - Collection archive hero uses Thailand-wide copy: `TH • TRAVELER ARCHIVE`, `แฟ้มสะสม`, and `EXPLORE THAILAND`.
+- Collection phase-locked figure cards use a larger high-contrast lock badge with a dark backing and light border for portrait legibility.
 
 ## Development Setup
 
