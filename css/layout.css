@@ -252,6 +252,13 @@ body { overflow-x: hidden; }
     left: 50%;
     transform: translateX(-50%);
   }
+  /* Bootstrap's offcanvas is position:fixed to the real viewport, so on a wide
+     desktop window it slides in from the actual browser edge instead of the
+     430px phone frame. Same fix as top-bar/bottom-nav above: pull its right
+     edge in to match the frame's right edge. */
+  .offcanvas.offcanvas-end {
+    right: calc(50vw - (var(--max-width) / 2));
+  }
 }
 
 /* Subtle film grain — SVG feTurbulence noise, 3% opacity, non-interactive */
