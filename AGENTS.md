@@ -47,7 +47,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `build.js`: Vercel build-time env injection into `js/env.js`.
 - `vercel.json`: deployment config and security headers.
 - `restyling/`: seven page-by-page UI restyling concept sets, comparison boards, and a concept index; these assets are not loaded by the runtime.
-- `assets/street-quest/`: generated, web-optimized Bangkok explorer collage, route paper, cream/ink/map/kraft UI materials, Collection archive collage, and Community podium collage used by the runtime theme.
+- `assets/street-quest/`: generated, web-optimized Bangkok explorer collage, route paper, cream/ink/map/kraft UI materials, class badge stamps/paper label, Collection archive collage, and Community podium collage used by the runtime theme.
 - `css/variables.css`: authoritative design tokens.
 - `css/layout.css`: app wrapper, fixed top bar, bottom nav, tab shell.
 - `css/components.css`: buttons, cards, inputs, pills, bottom sheets, badges, toast, collection/missions/leaderboard/lore components.
@@ -115,6 +115,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - The Collection toolbox disables its torn-edge clip only while the class menu is open, keeping the lower C option visible.
 - Collection archive hero uses Thailand-wide copy: `TH • TRAVELER ARCHIVE`, `แฟ้มสะสม`, and `EXPLORE THAILAND`.
 - Collection phase-locked figure cards use a larger high-contrast lock badge with a dark backing and light border for portrait legibility.
+- Collection figure class badges combine generated worn letterpress tiles with a ruled paper label, ink offset shadow, and small class-specific rotations.
 
 ## Development Setup
 
