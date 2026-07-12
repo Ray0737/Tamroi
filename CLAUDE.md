@@ -299,6 +299,7 @@ Run patches in this order:
 - Leaderboard metrics: Map Discovery % · Archive count · Legacy Score
 - Real-time leaderboard: Supabase Realtime subscription on `profiles` table
 - Real-time notifications: Supabase Realtime subscription on `notifications` inserts updates the badge/offcanvas
+- Settings and Notifications are Bootstrap offcanvas panels triggered from the top bar; their current desktop placement is viewport-right aligned while the app content and fixed chrome use the centered 430px frame.
 
 ### UI Polish
 

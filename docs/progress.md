@@ -137,6 +137,7 @@
 | Top bar: removed avatar element; removed dashed separator line | `app.html`, `css/street-quest.css` |
 | Class badges (S/A/B/C): refreshed letterpress treatment with generated paper label texture, ink shadow, and slight handmade skew | `css/components.css`, `assets/street-quest/badge-class-*.png`, `assets/street-quest/class-label-paper.png` |
 | Removed stale empty top-bar profile chip after avatar removal | `css/street-quest.css` |
+| Settings and Notifications offcanvas behavior documented | ✅ Done | Top-bar triggers open Bootstrap panels; on desktop they remain viewport-right aligned outside the centered 430px frame |
 
 ### Known Gaps (Deferred)
 
