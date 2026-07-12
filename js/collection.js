@@ -6,9 +6,8 @@ const CollectionModule = (() => {
   let ownedArtifacts = new Set();
   let newCaptures  = new Set();
   let loreEntries = [];
-  let activeView        = 'figures'; // 'figures' | 'artifacts' | 'journal'
-  let activeClassFilter = 'all';     // 'all' | 'S' | 'A' | 'B' | 'C'
-  let ownedOnly         = false;
+  let activeView = 'figures'; // 'figures' | 'artifacts' | 'journal'
+  let ownedOnly  = false;
   let loaded = false;
   let figureModalBound = false;
   let districtNameMap = null; // district_id → name_th, lazy-loaded once for the figure modal
@@ -91,51 +90,38 @@ const CollectionModule = (() => {
     }
   }
 
-  function bindFilters() {
-    const classToggle = document.getElementById('collection-class-filter');
-    if (classToggle) {
-      classToggle.parentElement.querySelectorAll('.dropdown-item').forEach(item => {
-        item.addEventListener('click', () => {
-          activeClassFilter = item.dataset.value;
-          classToggle.textContent = item.textContent;
-          classToggle.dataset.value = activeClassFilter;
-          classToggle.classList.toggle('has-value', activeClassFilter !== 'all');
-          render();
-        });
-      });
-    }
+  function _setActivePill(id) {
+    document.querySelectorAll('#collection-filters .pill').forEach(p => p.classList.remove('active'));
+    document.getElementById(id)?.classList.add('active');
+  }
 
-    const ownedBtn = document.getElementById('collection-owned-toggle');
-    if (ownedBtn) {
-      ownedBtn.addEventListener('click', () => {
-        ownedOnly = !ownedOnly;
-        ownedBtn.classList.toggle('active', ownedOnly);
-        render();
-      });
-    }
+  function bindFilters() {
+    document.getElementById('collection-all-pill')?.addEventListener('click', () => {
+      activeView = 'figures';
+      ownedOnly  = false;
+      _setActivePill('collection-all-pill');
+      render();
+    });
+
+    document.getElementById('collection-owned-toggle')?.addEventListener('click', () => {
+      activeView = 'figures';
+      ownedOnly  = true;
+      _setActivePill('collection-owned-toggle');
+      render();
+    });
 
     ['collection-artifacts-pill', 'collection-journal-pill'].forEach(id => {
       const btn = document.getElementById(id);
       if (!btn) return;
       btn.addEventListener('click', () => {
-        const view = btn.dataset.view;
-        if (activeView === view) {
-          activeView = 'figures';
-          btn.classList.remove('active');
-        } else {
-          document.querySelectorAll('#collection-filters .pill').forEach(p => p.classList.remove('active'));
-          btn.classList.add('active');
-          if (ownedOnly) document.getElementById('collection-owned-toggle')?.classList.add('active');
-          activeView = view;
-        }
+        activeView = btn.dataset.view;
+        ownedOnly  = false;
+        _setActivePill(id);
         render();
       });
     });
 
-    const searchInput = document.getElementById('collection-search');
-    if (searchInput) {
-      searchInput.addEventListener('input', () => render());
-    }
+    document.getElementById('collection-search')?.addEventListener('input', () => render());
   }
 
   function render() {
@@ -167,9 +153,9 @@ const CollectionModule = (() => {
       .reduce((sum, f) => sum + (f.legacy_pts || 0), 0);
 
     el.innerHTML = `
-      <div class="stat-item"><span class="stat-value text-orange">${captured}</span><span class="stat-label">Figures</span></div>
-      <div class="stat-item"><span class="stat-value text-green">${ownedArtifacts.size}</span><span class="stat-label">Artifacts</span></div>
-      <div class="stat-item"><span class="stat-value text-white">${legacy.toLocaleString()}</span><span class="stat-label">Legacy Pts</span></div>
+      <div class="stat-item"><span class="stat-value text-orange">${captured}</span><span class="stat-label">บุคคล</span></div>
+      <div class="stat-item"><span class="stat-value text-green">${ownedArtifacts.size}</span><span class="stat-label">ของสะสม</span></div>
+      <div class="stat-item"><span class="stat-value text-white">${legacy.toLocaleString()}</span><span class="stat-label">คะแนนมรดก</span></div>
     `;
     // Keep map stats pill in sync
     const capturedEl = document.getElementById('map-stat-captured');
@@ -195,7 +181,7 @@ const CollectionModule = (() => {
   };
 
   function renderFigures() {
-    const personSVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:36px;height:36px"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+    const silhouetteSVG = `<svg viewBox="0 0 60 80" fill="rgba(255,255,255,0.12)" xmlns="http://www.w3.org/2000/svg" style="width:60%;height:auto;display:block;margin:auto"><ellipse cx="30" cy="18" rx="13" ry="15"/><path d="M30 38C12 38 4 52 4 64L4 80L56 80L56 64C56 52 48 38 30 38Z"/></svg>`;
     const grid    = document.getElementById('figure-grid');
     const query   = document.getElementById('collection-search')?.value?.toLowerCase() || '';
     const journal = document.getElementById('lore-journal');
@@ -203,7 +189,6 @@ const CollectionModule = (() => {
     let filtered = allFigures.filter(f => {
       if (activeView === 'journal' || activeView === 'artifacts') return false;
       if (ownedOnly && !captures.has(f.id)) return false;
-      if (activeClassFilter !== 'all' && f.class !== activeClassFilter.toUpperCase()) return false;
       if (query && !f.name_en.toLowerCase().includes(query) && !f.name_th.includes(query)) return false;
       return true;
     });
@@ -218,6 +203,8 @@ const CollectionModule = (() => {
     const newOnes = filtered.filter(f => newCaptures.has(f.id));
     const rest    = filtered.filter(f => !newCaptures.has(f.id));
 
+    const CLASS_TIERS = { S: 'LEGENDARY', A: 'EPIC', B: 'RARE', C: 'COMMON' };
+
     const renderCard = (f, isNew) => {
       const isCaptured = captures.has(f.id);
       const isLocked   = (f.class === 'S' || f.class === 'A') && !isCaptured;
@@ -228,23 +215,29 @@ const CollectionModule = (() => {
       const portrait = photoUrl
         ? `<img src="${photoUrl}" alt="${f.name_en}" loading="lazy" referrerpolicy="no-referrer"
              onerror="this.style.display='none';this.nextElementSibling.style.display=''">
-           <span style="display:none">${personSVG}</span>`
-        : personSVG;
+           <span style="display:none">${silhouetteSVG}</span>`
+        : silhouetteSVG;
+      const tier = CLASS_TIERS[f.class] || 'COMMON';
 
       return `
         <div class="figure-card class-${f.class.toLowerCase()} ${isCaptured ? `captured-${f.class.toLowerCase()}` : ''} ${isLocked ? 'locked' : ''}"
-             style="position:relative" onclick="${onclick}">
-          ${isNew ? `<span style="position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--color-primary);z-index:2;display:block"></span>` : ''}
-          ${isCaptured ? `<div class="captured-ribbon">${checkSVG()}</div>` : ''}
-          ${isLocked   ? `<div class="lock-overlay">${lockSVG()}</div>` : ''}
-          <div class="figure-portrait" style="color:var(--color-muted)">${portrait}</div>
-          <span class="figure-class-label ${f.class.toLowerCase()}">${f.class}-Class</span>
-          <p class="figure-name-th">${f.name_th}</p>
-          <p class="figure-name-en">${f.name_en}</p>
-          ${isLocked
-            ? `<span class="phase-locked-label">PHASE LOCKED</span>`
-            : `<span class="figure-pts">+${f.legacy_pts} pts</span>`
-          }
+             onclick="${onclick}">
+          ${isNew ? `<span class="fc-new-dot"></span>` : ''}
+          ${isCaptured ? `<img src="assets/street-quest/badge-owned.png" class="fc-owned" alt="OWNED">` : ''}
+          <div class="fc-header cls-${f.class.toLowerCase()}">
+            <span class="fc-name">${f.name_th}</span>
+          </div>
+          <div class="figure-portrait">
+            ${portrait}
+            ${!isCaptured ? `<div class="fc-lock-icon">${lockSVG()}</div>` : ''}
+            <div class="fc-class-badge cls-${f.class.toLowerCase()}">
+              <img src="assets/street-quest/badge-class-${f.class.toLowerCase()}.png" class="fc-cls-img" alt="${f.class}">
+              <div class="fc-cls-meta">
+                <span class="fc-cls-label">CLASS</span>
+                <span class="fc-cls-tier">${f.class} ${tier}</span>
+              </div>
+            </div>
+          </div>
         </div>
       `;
     };
@@ -273,7 +266,7 @@ const CollectionModule = (() => {
     if (!container) return;
     if (section) section.hidden = activeView === 'journal';
 
-    const showArtifacts = activeView !== 'journal' && (activeView === 'artifacts' || activeClassFilter === 'all');
+    const showArtifacts = activeView !== 'journal';
     let list = showArtifacts ? allArtifacts : [];
     if (ownedOnly && list.length) list = list.filter(a => ownedArtifacts.has(a.id));
 

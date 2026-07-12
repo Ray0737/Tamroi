@@ -1,4 +1,4 @@
-/* Bangkok Street Quest visual layer.
+/* Thailand Street Quest visual layer.
    Loaded last so the scrapbook treatment stays additive and behavior-neutral. */
 
 .street-quest {
@@ -376,15 +376,6 @@
   box-shadow: 0 4px 0 var(--sq-orange), 0 8px 20px rgba(0, 0, 0, 0.34);
 }
 
-.street-quest--app .top-bar::after {
-  content: '';
-  position: absolute;
-  right: 84px;
-  top: 8px;
-  bottom: 8px;
-  border-left: 2px dashed rgba(25, 22, 16, 0.24);
-}
-
 .street-quest--app .avatar-sm {
   border: 2px solid var(--sq-ink);
   border-radius: 50%;
@@ -514,10 +505,9 @@
 .street-quest--app #tab-collection .stats-row .stat-label { color: #fff !important; }
 .street-quest--app #tab-collection .stats-row .stat-label { opacity: 0.72; }
 
-.street-quest--app #tab-collection .figure-grid { gap: 11px; }
-.street-quest--app #tab-collection .figure-card,
+/* artifact cards keep the kraft-paper treatment; figure cards use the new stamp style from components.css */
 .street-quest--app #tab-collection .artifact-card {
-  min-height: 160px;
+  min-height: 118px;
   border: 2px solid var(--sq-ink);
   border-radius: 3px;
   background-color: rgba(250, 243, 221, 0.94);
@@ -527,13 +517,7 @@
   color: var(--sq-ink);
   box-shadow: 3px 3px 0 rgba(13, 13, 11, 0.65);
 }
-.street-quest--app #tab-collection .figure-card.class-s { background-color: #ef7b3d; }
-.street-quest--app #tab-collection .figure-card.class-a { background-color: #8fb8e4; }
-.street-quest--app #tab-collection .figure-card.class-c { background-color: #eb8db3; }
-.street-quest--app #tab-collection .figure-name-th,
-.street-quest--app #tab-collection .figure-name-en,
-.street-quest--app #tab-collection .figure-pts,
-.street-quest--app #tab-collection .artifact-name,
+.street-quest--app #tab-collection .artifact-name { font-size: 12px; line-height: 1.35; color: var(--sq-ink); }
 .street-quest--app #tab-collection .section-title { color: var(--sq-ink); }
 .street-quest--app #tab-collection .section-title {
   display: inline-block;
@@ -543,13 +527,6 @@
   border: 2px solid var(--sq-ink);
   transform: rotate(-1deg);
 }
-.street-quest--app #tab-collection .artifact-card { min-height: 118px; background-color: rgba(250, 243, 221, 0.94); }
-.street-quest--app #tab-collection .artifact-name { font-size: 12px; line-height: 1.35; }
-.street-quest--app #tab-collection .figure-card.locked { opacity: 1; }
-.street-quest--app #tab-collection .figure-card.locked .figure-portrait { opacity: 0.5; }
-.street-quest--app #tab-collection .figure-card.locked .figure-name-th,
-.street-quest--app #tab-collection .figure-card.locked .figure-name-en,
-.street-quest--app #tab-collection .figure-card.locked .phase-locked-label { color: #231f18; opacity: 1; }
 
 /* Missions and community use generous pasted panels on ink. */
 .street-quest--app #tab-mission .section-scroll,
@@ -770,16 +747,7 @@
   border-left: 1px dashed rgba(255, 248, 229, 0.35);
 }
 
-.street-quest--app #tab-collection .figure-grid { gap: 9px; }
-.street-quest--app #tab-collection .figure-card {
-  border-color: var(--sq-paper-light);
-  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.82);
-}
-.street-quest--app #tab-collection .figure-card:nth-child(4n + 1) { transform: rotate(-0.45deg); }
-.street-quest--app #tab-collection .figure-card:nth-child(4n + 2) { transform: rotate(0.35deg); }
-.street-quest--app #tab-collection .figure-name-th { font-size: 16px; }
-.street-quest--app #tab-collection .figure-name-en,
-.street-quest--app #tab-collection .figure-pts { font-size: 12px; }
+/* figure-card layout handled by components.css stamp style */
 
 .street-quest--app #tab-collection .section-title {
   color: var(--sq-ink);
@@ -839,7 +807,7 @@
   font: 800 15px/1 var(--font-display);
   box-shadow: 2px 2px 0 var(--sq-ink);
 }
-.podium-rank--two { left: 18%; top: 72px; background: var(--sq-blue); transform: rotate(-5deg); }
+.podium-rank--two { left: 18%; top: 115px; background: var(--sq-blue); transform: rotate(-5deg); }
 .podium-rank--one { left: calc(50% - 15px); top: 49px; background: var(--sq-orange); transform: rotate(3deg); }
 .podium-rank--three { right: 17%; top: 76px; background: var(--sq-pink); transform: rotate(5deg); }
 
@@ -1021,12 +989,7 @@
 .street-quest--app .marker-landmark { background: var(--sq-orange); border-color: var(--sq-ink); color: #fff; }
 .street-quest--app .marker-home { background: var(--sq-orange); border-color: var(--sq-ink); }
 
-/* ── Collection figure card: compact, name legible ── */
-.street-quest--app #tab-collection .figure-card { min-height: 0; }
-.street-quest--app #tab-collection .figure-portrait { aspect-ratio: 1 / 1; font-size: 30px; }
-.street-quest--app #tab-collection .figure-name-th { padding-top: 7px; font-size: 15px; }
-.street-quest--app #tab-collection .figure-name-en { padding-bottom: 2px; }
-.street-quest--app #tab-collection .figure-pts { padding-bottom: 9px; }
+/* figure-card stamp style: see components.css */
 
 /* ── Leaderboard: fewer heavy boxes, breathing room, clear size hierarchy ── */
 .street-quest--app #community-rank-section { gap: 14px; }

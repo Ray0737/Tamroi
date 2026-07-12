@@ -1,6 +1,6 @@
 # Tamroi — Implementation Progress
 
-> Last updated: 2026-07-11
+> Last updated: 2026-07-12
 
 ---
 
@@ -116,6 +116,17 @@
 | Settings overhaul | ✅ Done | Edit username, notifications toggle, GPS permission status, home district picker, profile picture |
 
 | Figure Biography + Relation Graph | ✅ Done | `patch_figure_bio.sql` · `figure_relations` table · extended figure modal (bio_th, birth/death year, relation chips, related lore, related locations) · `FigureGraphModule` SVG canvas with pan/zoom/drag/focus animations · `MapModule.flyToLocation` |
+
+### UI Polish — 2026-07-12
+
+| Change | Files |
+|---|---|
+| Collection filter: 4 exclusive Thai pills (ทั้งหมด/ที่มี/ของสะสม/บันทึก), proper single-select active state; removed class dropdown | `app.html`, `js/collection.js` |
+| Collection stat labels translated to Thai (บุคคล/ของสะสม/คะแนนมรดก) | `app.html`, `js/collection.js` |
+| Community hero: removed ชุมชนนักล่ารอย subtitle; rank "2" moved below title | `app.html`, `css/street-quest.css` |
+| Branding: "Bangkok Street Quest" → "Thailand Street Quest" throughout | `app.html`, `css/street-quest.css`, `CLAUDE.md` |
+| Top bar: removed avatar element; removed dashed separator line | `app.html`, `css/street-quest.css` |
+| Class badges (S/A/B/C): regenerated via Codex — vintage worn letterpress stamp tiles, no chroma-key green | `assets/street-quest/badge-class-*.png` |
 
 ### Known Gaps (Deferred)
 

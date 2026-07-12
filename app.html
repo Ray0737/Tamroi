@@ -172,13 +172,11 @@
 
   <!-- ════ TOP BAR ════ -->
   <header class="top-bar">
-    <div class="top-bar__left">
-      <div class="avatar-sm" id="topbar-avatar">T</div>
-    </div>
+    <div class="top-bar__left"></div>
 
     <div class="top-bar__center">
       <span class="page-title"></span>
-      <span class="page-subtitle">BANGKOK STREET QUEST</span>
+      <span class="page-subtitle">THAILAND STREET QUEST</span>
     </div>
 
     <div class="top-bar__right">
@@ -293,27 +291,17 @@
 
           <!-- Filters -->
           <div class="filter-pills" id="collection-filters">
-            <div class="dropdown">
-              <button class="filter-select dropdown-toggle" type="button" id="collection-class-filter"
-                      data-value="all" data-bs-toggle="dropdown" aria-expanded="false">ทั้งหมด</button>
-              <ul class="dropdown-menu filter-select-menu" aria-labelledby="collection-class-filter">
-                <li><button class="dropdown-item" type="button" data-value="all">ทั้งหมด</button></li>
-                <li><button class="dropdown-item" type="button" data-value="S">S-Class</button></li>
-                <li><button class="dropdown-item" type="button" data-value="A">A-Class</button></li>
-                <li><button class="dropdown-item" type="button" data-value="B">B-Class</button></li>
-                <li><button class="dropdown-item" type="button" data-value="C">C-Class</button></li>
-              </ul>
-            </div>
-            <button class="pill" id="collection-owned-toggle">Owned</button>
-            <button class="pill" id="collection-artifacts-pill" data-view="artifacts">Artifacts</button>
-            <button class="pill" id="collection-journal-pill" data-view="journal">Journal</button>
+            <button class="pill active" id="collection-all-pill">ทั้งหมด</button>
+            <button class="pill" id="collection-owned-toggle">ที่มี</button>
+            <button class="pill" id="collection-artifacts-pill" data-view="artifacts">ของสะสม</button>
+            <button class="pill" id="collection-journal-pill" data-view="journal">บันทึก</button>
           </div>
 
           <!-- Stats -->
           <div class="stats-row mb-3" id="collection-stats">
-            <div class="stat-item"><span class="stat-value text-orange skeleton" style="width:40px;height:24px;display:block"></span><span class="stat-label">Figures</span></div>
-            <div class="stat-item"><span class="stat-value text-green skeleton" style="width:40px;height:24px;display:block"></span><span class="stat-label">Artifacts</span></div>
-            <div class="stat-item"><span class="stat-value text-white skeleton" style="width:60px;height:24px;display:block"></span><span class="stat-label">Legacy Pts</span></div>
+            <div class="stat-item"><span class="stat-value text-orange skeleton" style="width:40px;height:24px;display:block"></span><span class="stat-label">บุคคล</span></div>
+            <div class="stat-item"><span class="stat-value text-green skeleton" style="width:40px;height:24px;display:block"></span><span class="stat-label">ของสะสม</span></div>
+            <div class="stat-item"><span class="stat-value text-white skeleton" style="width:60px;height:24px;display:block"></span><span class="stat-label">คะแนนมรดก</span></div>
           </div>
           </div>
 
@@ -331,7 +319,7 @@
           <!-- Artifacts section -->
           <div id="collection-artifacts-section" class="mt-4">
             <div class="section-header">
-              <h3 class="section-title">Artifacts & Relics</h3>
+              <h3 class="section-title">ของสะสม</h3>
             </div>
             <div class="artifact-scroll" id="artifact-scroll"></div>
           </div>
@@ -365,9 +353,8 @@
 
           <section class="community-podium-hero" aria-labelledby="community-hero-title">
             <div class="community-hero-copy">
-              <span class="sq-kicker">BANGKOK STREET QUEST</span>
+              <span class="sq-kicker">THAILAND STREET QUEST</span>
               <h2 id="community-hero-title">TAMROI<br>COMMUNITY</h2>
-              <p>ชุมชนนักล่ารอย</p>
             </div>
             <span class="podium-rank podium-rank--two" aria-label="อันดับ 2">2</span>
             <span class="podium-rank podium-rank--one" aria-label="อันดับ 1">1</span>
