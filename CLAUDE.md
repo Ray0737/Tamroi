@@ -122,7 +122,7 @@
 
 **`js/env.js` is trackable in this prototype.** Keep it limited to public Supabase anon/dev-safe values. Never put service-role keys or private credentials in client code.
 
-The Thailand Street Quest visual treatment now spans the full runtime: the landing page uses generated Bangkok explorer collage art; onboarding uses generated route-paper art; auth keeps the explorer-pass treatment; and app chrome, missions, cards, and sheets use generated cream/ink/map/kraft materials through `css/street-quest.css`. Collection adds a dedicated generated archive-evidence collage, dark archive page, torn-paper toolbox, and poster-like cards. Community adds a generated three-poster podium, separate MY RANK ticket, compact dark ranking/group ledgers, and parchment forum; the current player is not duplicated in the main list. Text and controls keep comfortable mobile sizing, and the map shows the illustrated route texture until Carto raster tiles are ready. The ten browser-verified 430px captures—including populated My Group and Forum states—live in `restyling/05_bangkok_street_quest/screenshots/`; `tests/ui-visual.spec.mjs` also checks 430px and 375px layouts for horizontal leaks and top-bar collisions.
+The Thailand Street Quest visual treatment now spans the full runtime: the landing page uses generated Bangkok explorer collage art; onboarding uses generated route-paper art; auth keeps the explorer-pass treatment; and app chrome, missions, cards, and sheets use generated cream/ink/map/kraft materials through `css/street-quest.css`. Collection adds a dedicated generated archive-evidence collage, dark archive page, Thailand-wide archive hero labels, torn-paper toolbox, and poster-like cards. Community adds a generated three-poster podium, separate MY RANK ticket, compact dark ranking/group ledgers, and parchment forum; the current player is not duplicated in the main list. Text and controls keep comfortable mobile sizing, and the map shows the illustrated route texture until Carto raster tiles are ready. The ten browser-verified 430px captures—including populated My Group and Forum states—live in `restyling/05_bangkok_street_quest/screenshots/`; `tests/ui-visual.spec.mjs` also checks 430px and 375px layouts for horizontal leaks and top-bar collisions.
 
 ---
 
@@ -301,6 +301,11 @@ Run patches in this order:
 ### UI Polish
 
 - The app top bar keeps an invisible left flex spacer after the profile avatar was removed; no empty bordered chip is rendered.
+- Collection summary stats use the Map page's English labels (Captured, Artifacts, Legacy) and a compact themed height.
+- Collection filters include an explicit บุคคล view plus an S/A/B/C class dropdown; the class dropdown is enabled only while viewing figures (including ที่มี) and resets when switching to artifacts or the Lore Journal.
+- Collection filter controls use scrapbook paper texture, ink offset shadows, pressed active states, and dashed styling when the class filter is disabled.
+- The Collection class filter uses an accessible custom menu instead of a native `<select>` popup, allowing the open S/A/B/C options to retain the scrapbook theme.
+- The Collection toolbox relaxes its torn-edge clip only while the class menu is open, preventing the lower C option from being clipped.
 
 ### DB Tables
 

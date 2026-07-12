@@ -272,11 +272,11 @@
 
           <section class="collection-archive-hero" aria-labelledby="collection-archive-title">
             <div class="collection-archive-copy">
-              <span class="sq-kicker">BKK • TRAVELER ARCHIVE</span>
-              <h2 id="collection-archive-title">แฟ้มเล่ารอย</h2>
+              <span class="sq-kicker">TH • TRAVELER ARCHIVE</span>
+              <h2 id="collection-archive-title">แฟ้มสะสม</h2>
               <p>ตามรอยอดีต สู่ปัจจุบัน</p>
             </div>
-            <span class="collection-archive-stamp" aria-hidden="true">EXPLORE<br>BANGKOK</span>
+            <span class="collection-archive-stamp" aria-hidden="true">EXPLORE<br>THAILAND</span>
           </section>
 
           <div class="collection-toolbox">
@@ -293,15 +293,27 @@
           <div class="filter-pills" id="collection-filters">
             <button class="pill active" id="collection-all-pill">ทั้งหมด</button>
             <button class="pill" id="collection-owned-toggle">ที่มี</button>
+            <button class="pill" id="collection-figures-pill" data-view="figures">บุคคล</button>
             <button class="pill" id="collection-artifacts-pill" data-view="artifacts">ของสะสม</button>
             <button class="pill" id="collection-journal-pill" data-view="journal">บันทึก</button>
+            <div class="filter-select-wrap dropdown">
+              <span class="visually-hidden">กรองตามคลาสบุคคล</span>
+              <button class="filter-select dropdown-toggle" id="collection-class-filter" type="button" aria-label="กรองตามคลาสบุคคล" aria-haspopup="listbox" aria-expanded="false" aria-controls="collection-class-menu">ทุกคลาส</button>
+              <div class="filter-select-menu" id="collection-class-menu" role="listbox" aria-label="คลาสบุคคล" hidden>
+                <button class="dropdown-item" type="button" role="option" data-value="" aria-selected="true">ทุกคลาส</button>
+                <button class="dropdown-item" type="button" role="option" data-value="S" aria-selected="false">S — Legendary</button>
+                <button class="dropdown-item" type="button" role="option" data-value="A" aria-selected="false">A — Epic</button>
+                <button class="dropdown-item" type="button" role="option" data-value="B" aria-selected="false">B — Rare</button>
+                <button class="dropdown-item" type="button" role="option" data-value="C" aria-selected="false">C — Common</button>
+              </div>
+            </div>
           </div>
 
           <!-- Stats -->
           <div class="stats-row mb-3" id="collection-stats">
-            <div class="stat-item"><span class="stat-value text-orange skeleton" style="width:40px;height:24px;display:block"></span><span class="stat-label">บุคคล</span></div>
-            <div class="stat-item"><span class="stat-value text-green skeleton" style="width:40px;height:24px;display:block"></span><span class="stat-label">ของสะสม</span></div>
-            <div class="stat-item"><span class="stat-value text-white skeleton" style="width:60px;height:24px;display:block"></span><span class="stat-label">คะแนนมรดก</span></div>
+            <div class="stat-item"><span class="stat-value text-orange skeleton" style="width:40px;height:24px;display:block"></span><span class="stat-label">Captured</span></div>
+            <div class="stat-item"><span class="stat-value text-green skeleton" style="width:40px;height:24px;display:block"></span><span class="stat-label">Artifacts</span></div>
+            <div class="stat-item"><span class="stat-value text-white skeleton" style="width:60px;height:24px;display:block"></span><span class="stat-label">Legacy</span></div>
           </div>
           </div>
 

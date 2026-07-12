@@ -108,6 +108,12 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `window.DB` groups `Auth`, `Profiles`, `Districts`, `Figures`, `Artifacts`, `Leaderboard`, `Lore`, `Quiz`, and `Notifications`; `Districts.getVisitedSupportNodes()` loads persisted support-node IDs and `Notifications.subscribe()` wraps Supabase Realtime.
 - `window.AppCore` groups `App`, `switchTab`, `openSheet`, `closeAllSheets`, `openLoreSheet`, `openLoreChainSheet`, `showFloatPts`, and `showToast`.
 - The Street Quest top bar's removed profile avatar no longer leaves a visible bordered empty chip; the left spacer is intentionally transparent.
+- Collection summary stats use the Map page's English labels (Captured, Artifacts, Legacy) and a compact themed height.
+- Collection filters include a บุคคล view and class dropdown for S/A/B/C; class filtering is enabled for figure/owned views and disabled/reset for artifacts and the Lore Journal.
+- Collection filter controls use the Street Quest paper texture, ink offset shadows, pressed active states, and dashed disabled styling.
+- The Collection class filter uses an accessible custom menu rather than a native `<select>` popup so its open options retain the Street Quest scrapbook styling.
+- The Collection toolbox disables its torn-edge clip only while the class menu is open, keeping the lower C option visible.
+- Collection archive hero uses Thailand-wide copy: `TH • TRAVELER ARCHIVE`, `แฟ้มสะสม`, and `EXPLORE THAILAND`.
 
 ## Development Setup
 

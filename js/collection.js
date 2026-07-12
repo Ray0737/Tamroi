@@ -8,6 +8,7 @@ const CollectionModule = (() => {
   let loreEntries = [];
   let activeView = 'figures'; // 'figures' | 'artifacts' | 'journal'
   let ownedOnly  = false;
+  let classFilter = '';
   let loaded = false;
   let figureModalBound = false;
   let districtNameMap = null; // district_id → name_th, lazy-loaded once for the figure modal
@@ -100,6 +101,7 @@ const CollectionModule = (() => {
       activeView = 'figures';
       ownedOnly  = false;
       _setActivePill('collection-all-pill');
+      _syncClassFilterState();
       render();
     });
 
@@ -107,21 +109,80 @@ const CollectionModule = (() => {
       activeView = 'figures';
       ownedOnly  = true;
       _setActivePill('collection-owned-toggle');
+      _syncClassFilterState();
       render();
     });
 
-    ['collection-artifacts-pill', 'collection-journal-pill'].forEach(id => {
+    ['collection-figures-pill', 'collection-artifacts-pill', 'collection-journal-pill'].forEach(id => {
       const btn = document.getElementById(id);
       if (!btn) return;
       btn.addEventListener('click', () => {
         activeView = btn.dataset.view;
         ownedOnly  = false;
         _setActivePill(id);
+        _syncClassFilterState();
         render();
       });
     });
 
+    const classButton = document.getElementById('collection-class-filter');
+    const classMenu = document.getElementById('collection-class-menu');
+    const classWrap = classButton?.closest('.filter-select-wrap');
+    const collectionToolbox = classWrap?.closest('.collection-toolbox');
+    const setClassMenuOpen = open => {
+      if (!classButton || !classMenu || (classButton.disabled && open)) return;
+      classMenu.hidden = !open;
+      classButton.setAttribute('aria-expanded', String(open));
+      classWrap?.classList.toggle('is-open', open);
+      collectionToolbox?.classList.toggle('has-open-class-menu', open);
+    };
+
+    classButton?.addEventListener('click', () => {
+      setClassMenuOpen(classMenu?.hidden !== false);
+    });
+    classMenu?.querySelectorAll('[data-value]').forEach(option => {
+      option.addEventListener('click', () => {
+        classFilter = option.dataset.value || '';
+        classMenu.querySelectorAll('[data-value]').forEach(item => {
+          item.setAttribute('aria-selected', String(item === option));
+        });
+        classButton.textContent = option.textContent;
+        classButton.classList.toggle('has-value', Boolean(classFilter));
+        setClassMenuOpen(false);
+        render();
+      });
+    });
+    document.addEventListener('click', event => {
+      if (classWrap && !classWrap.contains(event.target)) setClassMenuOpen(false);
+    });
+    classButton?.addEventListener('keydown', event => {
+      if (event.key === 'Escape') setClassMenuOpen(false);
+    });
+
     document.getElementById('collection-search')?.addEventListener('input', () => render());
+    _syncClassFilterState();
+  }
+
+  function _syncClassFilterState() {
+    const button = document.getElementById('collection-class-filter');
+    const menu = document.getElementById('collection-class-menu');
+    if (!button) return;
+    const enabled = activeView === 'figures';
+    button.disabled = !enabled;
+    button.setAttribute('aria-disabled', String(!enabled));
+    if (!enabled) {
+      button.textContent = 'ทุกคลาส';
+      button.classList.remove('has-value');
+      button.setAttribute('aria-expanded', 'false');
+      if (menu) {
+        menu.hidden = true;
+        menu.querySelectorAll('[data-value]').forEach(item => {
+          item.setAttribute('aria-selected', String(item.dataset.value === ''));
+        });
+      }
+      document.querySelector('.collection-toolbox')?.classList.remove('has-open-class-menu');
+      classFilter = '';
+    }
   }
 
   function render() {
@@ -153,9 +214,9 @@ const CollectionModule = (() => {
       .reduce((sum, f) => sum + (f.legacy_pts || 0), 0);
 
     el.innerHTML = `
-      <div class="stat-item"><span class="stat-value text-orange">${captured}</span><span class="stat-label">บุคคล</span></div>
-      <div class="stat-item"><span class="stat-value text-green">${ownedArtifacts.size}</span><span class="stat-label">ของสะสม</span></div>
-      <div class="stat-item"><span class="stat-value text-white">${legacy.toLocaleString()}</span><span class="stat-label">คะแนนมรดก</span></div>
+      <div class="stat-item"><span class="stat-value text-orange">${captured}</span><span class="stat-label">Captured</span></div>
+      <div class="stat-item"><span class="stat-value text-green">${ownedArtifacts.size}</span><span class="stat-label">Artifacts</span></div>
+      <div class="stat-item"><span class="stat-value text-white">${legacy.toLocaleString()}</span><span class="stat-label">Legacy</span></div>
     `;
     // Keep map stats pill in sync
     const capturedEl = document.getElementById('map-stat-captured');
@@ -189,6 +250,7 @@ const CollectionModule = (() => {
     let filtered = allFigures.filter(f => {
       if (activeView === 'journal' || activeView === 'artifacts') return false;
       if (ownedOnly && !captures.has(f.id)) return false;
+      if (classFilter && f.class !== classFilter) return false;
       if (query && !f.name_en.toLowerCase().includes(query) && !f.name_th.includes(query)) return false;
       return true;
     });

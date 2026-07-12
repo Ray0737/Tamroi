@@ -477,23 +477,118 @@
 .street-quest--app #tab-collection .filter-pills {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  padding: 6px 0;
+  gap: 12px 10px;
+  padding: 8px 3px 12px 0;
 }
 .street-quest--app #tab-collection .filter-pills > *,
 .street-quest--app #tab-collection .filter-pills .filter-select,
 .street-quest--app #tab-collection .filter-pills .pill { width: 100%; }
 .street-quest--app #tab-collection .pill,
 .street-quest--app #tab-collection .filter-select {
+  position: relative;
   min-height: 40px;
-  border: 1.5px solid var(--sq-ink);
-  border-radius: 3px;
-  background: rgba(255, 253, 244, 0.58);
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background-color: rgba(255, 253, 244, 0.72);
+  background-image: linear-gradient(135deg, rgba(255,255,255,0.26), transparent 42%), url('../assets/street-quest/ui-paper-kraft.webp');
+  background-size: auto, 280px 280px;
   color: var(--sq-ink);
+  box-shadow: 3px 3px 0 var(--sq-ink);
+  font-family: var(--font-heading);
   font-weight: 700;
+  letter-spacing: 0.01em;
+  transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+}
+.street-quest--app #tab-collection .pill::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  width: 7px;
+  height: 7px;
+  border-top: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+  opacity: 0.42;
+  pointer-events: none;
+}
+.street-quest--app #tab-collection .pill:hover,
+.street-quest--app #tab-collection .pill:focus-visible {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--sq-ink);
+}
+.street-quest--app #tab-collection .pill:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--sq-ink);
+}
+.street-quest--app #tab-collection .filter-select {
+  background-image: linear-gradient(135deg, rgba(255,255,255,0.26), transparent 42%), url('../assets/street-quest/ui-paper-kraft.webp'), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23181510' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-size: auto, 280px 280px, 12px 12px;
+  background-repeat: no-repeat;
+  background-position: 0 0, center, right 10px center;
 }
 .street-quest--app #tab-collection .pill.active,
-.street-quest--app #tab-collection .filter-select.has-value { background: var(--sq-orange); color: #fff; }
+.street-quest--app #tab-collection .filter-select.has-value {
+  background-color: var(--sq-orange);
+  color: #fff;
+  box-shadow: 3px 3px 0 var(--sq-ink), inset 0 -3px 0 rgba(0,0,0,0.16);
+}
+.street-quest--app #tab-collection .pill.active::after { opacity: 0.72; }
+.street-quest--app #tab-collection .filter-select:disabled {
+  opacity: 0.72;
+  border-style: dashed;
+  background-color: rgba(24, 21, 16, 0.08);
+  box-shadow: 2px 2px 0 rgba(11, 11, 10, 0.48);
+}
+.street-quest--app #tab-collection .filter-select-wrap {
+  position: relative;
+  z-index: 5;
+}
+.street-quest--app #tab-collection .filter-select-wrap.is-open { z-index: 30; }
+.street-quest--app #tab-collection .filter-select-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  min-width: 0;
+  padding: 6px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background-color: var(--sq-paper-light);
+  background-image: linear-gradient(rgba(255,255,255,0.16), rgba(255,255,255,0.16)), url('../assets/street-quest/ui-paper-kraft.webp');
+  background-size: auto, 280px 280px;
+  box-shadow: 4px 4px 0 var(--sq-ink);
+}
+.street-quest--app #tab-collection .filter-select-menu .dropdown-item {
+  display: block;
+  width: 100%;
+  min-height: 34px;
+  padding: 7px 10px;
+  border: 0;
+  border-bottom: 1px dashed rgba(11, 11, 10, 0.28);
+  border-radius: 1px;
+  background: transparent;
+  color: var(--sq-ink);
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  transition: background-color 120ms ease, color 120ms ease, transform 120ms ease;
+}
+.street-quest--app #tab-collection .filter-select-menu .dropdown-item:last-child { border-bottom: 0; }
+.street-quest--app #tab-collection .filter-select-menu .dropdown-item[aria-selected="true"] {
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+}
+.street-quest--app #tab-collection .filter-select-menu .dropdown-item:hover,
+.street-quest--app #tab-collection .filter-select-menu .dropdown-item:focus-visible {
+  background: var(--sq-orange);
+  color: #fff;
+  transform: translateX(2px);
+}
+.street-quest--app #tab-collection .filter-select:focus-visible {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--sq-ink);
+}
 .street-quest--app #tab-collection .stats-row {
   margin-top: 14px;
   padding: 12px;
@@ -731,16 +826,23 @@
   box-shadow: 4px 5px 0 var(--sq-orange);
   clip-path: polygon(0 2%, 4% 0, 12% 2%, 24% 0, 39% 2%, 55% 0, 72% 2%, 88% 0, 100% 2%, 100% 98%, 91% 100%, 76% 98%, 61% 100%, 45% 98%, 28% 100%, 13% 98%, 0 100%);
 }
+.street-quest--app #tab-collection .collection-toolbox.has-open-class-menu {
+  z-index: 30;
+  clip-path: none;
+}
 
 .street-quest--app #tab-collection .collection-toolbox .search-bar { margin: 0; }
 .street-quest--app #tab-collection .collection-toolbox .stats-row {
   margin: 0;
-  min-height: 88px;
+  min-height: 0;
   background-color: var(--sq-ink);
   background-image:
     linear-gradient(rgba(7, 7, 6, 0.52), rgba(7, 7, 6, 0.52)),
     url('../assets/street-quest/ui-paper-ink.webp');
   background-size: auto, 420px 420px;
+}
+.street-quest--app #tab-collection .collection-toolbox .stats-row .stat-item {
+  padding: 10px 8px;
 }
 
 .street-quest--app #tab-collection .collection-toolbox .stat-item + .stat-item {
