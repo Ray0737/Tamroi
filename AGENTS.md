@@ -47,7 +47,7 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `build.js`: Vercel build-time env injection into `js/env.js`.
 - `vercel.json`: deployment config and security headers.
 - `restyling/`: seven page-by-page UI restyling concept sets, comparison boards, and a concept index; these assets are not loaded by the runtime.
-- `assets/street-quest/`: generated, web-optimized Bangkok explorer collage, route paper, cream/ink/map/kraft UI materials, class badge stamps/paper label, Collection archive collage, and Community podium collage used by the runtime theme and transient field UI.
+- `assets/street-quest/`: generated, web-optimized Bangkok explorer collage, route paper, cream/ink/map/kraft UI materials, class badge stamps/paper label, generated Mission/Watchtower ink stamps, Collection archive collage, and Community podium collage used by the runtime theme and transient field UI.
 - `css/variables.css`: authoritative design tokens.
 - `css/layout.css`: app wrapper, fixed top bar, bottom nav, tab shell.
 - `css/components.css`: buttons, cards, inputs, pills, bottom sheets, badges, toast, collection/missions/leaderboard/lore components.
@@ -79,21 +79,21 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `tests/district-seed-static.test.mjs`: Node static regression check that SQL district seeds match MVP map districts.
 - `tests/env-policy-static.test.mjs`: Node static regression check for tracked `js/env.js` public-anon policy.
 - `tests/grid-fog-static.test.mjs`: Node static regression check for `window.FogGrid`.
-- `tests/ui-visual.spec.mjs`: Playwright screenshot capture, reproducible populated My Group/Forum states, and 430px/375px overflow and top-bar collision checks.
+- `tests/ui-visual.spec.mjs`: Playwright screenshot capture, reproducible populated My Group/Forum/Watchtower Check-In states, and 430px/375px overflow and top-bar collision checks.
 - `tests/run-static.mjs`: one-command static regression suite runner.
 
 `js/env.js` is intentionally trackable for this prototype. Keep it limited to public Supabase anon/dev-safe values only.
 
 ## Current Implementation Notes
 
-- `restyling/` remains the concept reference; the full runtime now loads `css/street-quest.css`, generated Bangkok collage/route assets, four generated UI materials, a Collection archive collage, and a Community three-poster podium collage while preserving existing behavior and DOM hooks. Collection uses a dark archive page with a torn toolbox and poster cards; Community separates the current-player rank ticket from a compact dark leaderboard, uses an ink group ledger and parchment forum, and repeats the current player in the ranked list at their actual position with a highlighted row. Ten browser-verified mobile captures, including populated My Group and Forum states, are stored in `restyling/05_bangkok_street_quest/screenshots/`.
+- `restyling/` remains the concept reference; the full runtime now loads `css/street-quest.css`, generated Bangkok collage/route assets, four generated UI materials, generated blue/red ink stamp elements, a Collection archive collage, and a Community three-poster podium collage while preserving existing behavior and DOM hooks. Collection uses a dark archive page with a torn toolbox and poster cards; Community separates the current-player rank ticket from a compact dark leaderboard, uses an ink group ledger and parchment forum, and repeats the current player in the ranked list at their actual position with a highlighted row. Eleven browser-verified mobile captures, including populated My Group, Forum, and Watchtower Check-In states, are stored in `restyling/05_bangkok_street_quest/screenshots/`; the complete set was regenerated on 2026-07-12 with the Playwright visual suite.
 - Lore and Support Node sheets now extend the same field-note language with textured ink surfaces, paper narrative cards, route metadata, and clearer visit/save actions; the existing DB and `window.AppCore` flows are unchanged.
 - Watchtower Check-In now renders as a paper pass with a dark district ticket, stamped Support requirements, and a paper-backed Encounter action; the check-in state flow is unchanged.
 - Support Node sheets now use the generated paper frame with an ink location block, visited stamp, key-ready stamp, and receipt-like progress rows; `MapModule.visitSupportNode()` behavior is unchanged.
 - Completed Watchtower support requirements now use rotated `สำเร็จ` ink stamps and incomplete requirements use open stamp slots; no check-in state or API behavior changed.
 - Settings now uses an identity-page passport layout with passport metadata, an issued stamp, a field-permit strip, and a departure action.
 - Notifications now uses an inbox passport card, route-log stamp, paper note slips, unread ticket rails, and a ticket-style empty state.
-- Mission rendering now uses paper route tickets, checkpoint progress, and stamped daily challenge rows from `js/missions.js`; website copy uses direct punctuation without em dashes.
+- Mission rendering now uses paper route tickets, generated blue/red ink stamps for completed route checkpoints and daily challenge rows, open stamp slots for pending steps, and no vertical `QUEST FILE 01` strip from `js/missions.js`; the generated `YOUR FIELD ROUTE` label keeps positive spacing above the ticket frame so it remains readable; Watchtower support requirements reuse the generated stamp assets; website copy uses direct punctuation without em dashes.
 - Community leaderboard controls now use numbered route tabs and labeled paper selector cards with synchronized `aria-selected` state, while preserving the existing tab and leaderboard DOM hooks.
 - Community leaderboard selector menus now raise their active control above the rank ticket/list, while dynamic leaderboard cards are width-contained and desktop fixed chrome centers with the 430px app frame.
 - The solo leaderboard keeps the current player visible in both the MY RANK ticket and the correctly sorted ranked list, with the in-list row marked and highlighted.

@@ -1263,19 +1263,19 @@ const MapModule = (() => {
 
     document.getElementById('checkin-checklist').innerHTML = `
       <div class="checklist-item ${vc >= rc ? 'done' : ''}">
-        <div class="sq-stamp-mark ${vc >= rc ? 'is-stamped' : ''}" aria-label="${vc >= rc ? 'สำเร็จ' : 'รอสะสม'}">
+        <div class="sq-stamp-mark sq-generated-stamp sq-stamp-round ${vc >= rc ? 'is-stamped' : ''}" aria-label="${vc >= rc ? 'สำเร็จ' : 'รอสะสม'}">
           <span>${vc >= rc ? 'สำเร็จ' : 'รอสะสม'}</span>
         </div>
         <span class="checklist-text">${vc}/${rc} Local Cafes visited</span>
       </div>
       <div class="checklist-item ${vo >= ro ? 'done' : ''}">
-        <div class="sq-stamp-mark ${vo >= ro ? 'is-stamped' : ''}" aria-label="${vo >= ro ? 'สำเร็จ' : 'รอสะสม'}">
+        <div class="sq-stamp-mark sq-generated-stamp sq-stamp-frame ${vo >= ro ? 'is-stamped' : ''}" aria-label="${vo >= ro ? 'สำเร็จ' : 'รอสะสม'}">
           <span>${vo >= ro ? 'สำเร็จ' : 'รอสะสม'}</span>
         </div>
         <span class="checklist-text">${vo}/${ro} OTOP / Workshop visited</span>
       </div>
       <div class="checklist-item ${vl >= rl ? 'done' : ''}">
-        <div class="sq-stamp-mark ${vl >= rl ? 'is-stamped' : ''}" aria-label="${vl >= rl ? 'สำเร็จ' : 'รอสะสม'}">
+        <div class="sq-stamp-mark sq-generated-stamp sq-stamp-round ${vl >= rl ? 'is-stamped' : ''}" aria-label="${vl >= rl ? 'สำเร็จ' : 'รอสะสม'}">
           <span>${vl >= rl ? 'สำเร็จ' : 'รอสะสม'}</span>
         </div>
         <span class="checklist-text">${vl}/${rl} Landmarks checked</span>

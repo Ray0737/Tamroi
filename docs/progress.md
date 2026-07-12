@@ -82,7 +82,7 @@
 | Guild leaderboard realtime | ✅ Done | `subscribeGuildChanges()` on guilds + guild_members tables |
 | Seven full UI restyling concept sets | ✅ Done | `restyling/` contains seven visual directions with seven user-facing states and comparison boards per direction |
 | Bangkok Street Quest login restyle (Task 6) | ✅ Done | `login.html` now uses a parchment explorer-pass card, dark stamp logo treatment, and decorative explorer stickers |
-| Bangkok Street Quest full runtime theme | ✅ Done | Generated Bangkok collage/route artwork plus `css/street-quest.css` theme landing, auth, onboarding, map, collection, missions, and community; all ten 430px reference screenshots were browser-captured and refreshed |
+| Bangkok Street Quest full runtime theme | ✅ Done | Generated Bangkok collage/route artwork plus `css/street-quest.css` theme landing, auth, onboarding, map, collection, missions, and community; all eleven 430px reference screenshots were browser-captured and refreshed |
 | Bangkok Street Quest texture + spacing QA | ✅ Done | Generated cream/ink/map/kraft UI materials plus dedicated Collection archive-collage and Community podium-collage artwork replace flat panels; Collection now uses an ink archive, torn toolbox, and poster cards; Community uses a three-poster hero, MY RANK ticket, dark leaderboard/group ledgers, and parchment forum; MapLibre keeps the illustrated route map visible until Carto tiles load; ten 430px captures include populated My Group and Forum states, with automated 375px/430px overflow checks |
 
 ---
@@ -145,6 +145,10 @@
 | Support Node ticket restyle | ✅ Done | Support Node sheets now use a generated paper frame, ink location block, visited stamp, key-ready stamp, and receipt-like progress rows | `js/map.js`, `css/street-quest.css` |
 | Support requirement stamp treatment | ✅ Done | Completed Watchtower requirements now render as rotated `สำเร็จ` ink stamps instead of generic circular checkmarks; incomplete rows keep an open stamp slot | `js/map.js`, `css/street-quest.css` |
 | Passport Settings + Notifications | ✅ Done | Settings now reads as an identity page with an issued stamp and field permit; Notifications uses an inbox passport card, route-log stamp, paper note slips, and ticket-style empty state | `app.html`, `css/street-quest.css` |
+| Mission route label spacing | ✅ Done | Added positive separation between the generated `YOUR FIELD ROUTE` label and the paper mission ticket so the frame no longer overlaps the lettering | `css/street-quest.css` |
+| Full page screenshot refresh | ✅ Done | Regenerated all eleven 430px reference captures, including populated My Group, Forum, and Watchtower Check-In states, with `tests/ui-visual.spec.mjs`; 430px/375px layout checks passed | `restyling/05_bangkok_street_quest/screenshots/` |
+| Mission ticket stamp treatment | ✅ Done | Replaced Mission route and completion checkmarks with generated blue/red ink stamps, paper stamp slots, and removed the vertical `QUEST FILE 01` label | `js/missions.js`, `css/street-quest.css`, `assets/street-quest/generated-stamps/` |
+| Watchtower generated stamp treatment | ✅ Done | Applied generated blue circular and red frame stamps to Watchtower support requirements and added a browser-captured Check-In sheet state | `js/map.js`, `css/street-quest.css`, `tests/ui-visual.spec.mjs` |
 
 ### Known Gaps (Deferred)
 

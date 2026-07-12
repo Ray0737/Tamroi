@@ -248,8 +248,9 @@ const MissionModule = (() => {
         <div class="sq-route-progress" aria-label="${progress} of ${steps.length} mission steps complete">
           ${steps.map((s, i) => `
             <div class="sq-route-node-wrap">
-              <div class="sq-route-node ${s.done ? 'is-done' : i === progress ? 'is-current' : ''}">
-                ${s.done ? checkSVGSmall() : i + 1}
+              <div class="sq-route-node ${s.done ? 'is-done' : i === progress ? 'is-current' : ''}"
+                   aria-label="${s.done ? 'สำเร็จ' : `จุดตรวจ ${i + 1}`}" role="img">
+                <span>${s.done ? 'สำเร็จ' : String(i + 1).padStart(2, '0')}</span>
               </div>
               ${i < steps.length - 1 ? `<div class="sq-route-line ${s.done ? 'is-done' : ''}"></div>` : ''}
             </div>
@@ -257,9 +258,11 @@ const MissionModule = (() => {
         </div>
 
         <div class="sq-mission-steps">
-          ${steps.map(s => `
+          ${steps.map((s, i) => `
             <div class="sq-mission-step ${s.done ? 'is-done' : ''}">
-              <div class="sq-step-check">${s.done ? checkSVGSmall() : ''}</div>
+              <div class="sq-step-stamp ${s.done ? `is-stamped ${i === 1 ? 'is-red' : 'is-blue'}` : ''}" aria-label="${s.done ? 'สำเร็จ' : 'รอสะสม'}">
+                <span>${s.done ? 'สำเร็จ' : 'รอ'}</span>
+              </div>
               <div class="sq-step-copy">
                 <p>${escapeHtml(s.text)}</p>
                 <span>${escapeHtml(s.sub)}</span>
@@ -337,23 +340,13 @@ const MissionModule = (() => {
               ${showProg ? `<span class="challenge-loc">${c.current}/${c.target_count} complete</span>` : ''}
             </div>
             ${c.completed
-              ? `<div class="sq-complete-mark">
-                   <svg viewBox="0 0 16 16" fill="none" stroke="var(--color-success)" stroke-width="2.5" style="width:12px;height:12px">
-                     <polyline points="2,8 6,12 14,4"/>
-                   </svg>
-                 </div>`
+              ? `<div class="sq-complete-mark" aria-label="สำเร็จ">สำเร็จ</div>`
               : `<span class="challenge-pts">+${c.pts_reward}</span>`
             }
           </div>`;
         }).join('')}
       </div>
     `;
-  }
-
-  function checkSVGSmall() {
-    return `<svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-      <polyline points="1.5,5 3.5,7.5 8.5,2.5"/>
-    </svg>`;
   }
 
   // ── Recall Quiz ───────────────────────────────────────

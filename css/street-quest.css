@@ -1855,7 +1855,7 @@
 .street-quest--app #tab-mission .section-inner::before {
   content: 'YOUR FIELD ROUTE';
   display: block;
-  margin: 0 0 -5px;
+  margin: 0 0 3px;
   color: var(--sq-paper-light);
   font: 800 12px/1 var(--font-display);
   letter-spacing: 0.18em;
@@ -1874,18 +1874,6 @@
   color: var(--sq-ink);
   box-shadow: 5px 5px 0 var(--sq-orange);
 }
-.street-quest--app .sq-mission-ticket::after {
-  content: 'QUEST FILE 01';
-  position: absolute;
-  right: -23px;
-  bottom: 50px;
-  padding: 5px 27px;
-  border: 2px solid rgba(24, 21, 16, 0.5);
-  color: rgba(24, 21, 16, 0.58);
-  font: 800 9px/1 var(--font-display);
-  letter-spacing: 0.13em;
-  transform: rotate(-90deg);
-}
 .street-quest--app .sq-ticket-header { padding: 16px 15px 13px; background: rgba(11, 11, 10, 0.95); color: #fff8e8; }
 .street-quest--app .sq-ticket-kicker { display: flex; justify-content: space-between; gap: 8px; color: var(--sq-lime); font: 800 9px/1 var(--font-display); letter-spacing: 0.16em; }
 .street-quest--app .sq-ticket-title-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
@@ -1899,18 +1887,18 @@
 .street-quest--app .sq-ticket-title-row .badge { flex: 0 0 auto; }
 .street-quest--app .sq-route-progress { display: flex; align-items: center; padding: 18px 14px 7px; }
 .street-quest--app .sq-route-node-wrap { display: flex; align-items: center; min-width: 0; flex: 1; }
-.street-quest--app .sq-route-node { display: grid; width: 27px; height: 27px; flex: 0 0 27px; place-items: center; border: 2px solid rgba(24, 21, 16, 0.33); border-radius: 50%; background: rgba(24, 21, 16, 0.08); color: rgba(24, 21, 16, 0.5); font: 800 10px/1 var(--font-display); }
-.street-quest--app .sq-route-node svg { width: 13px; height: 13px; }
-.street-quest--app .sq-route-node.is-done { border-color: var(--sq-ink); background: var(--sq-lime); color: var(--sq-ink); }
-.street-quest--app .sq-route-node.is-current { border-color: var(--sq-orange); background: rgba(240, 90, 25, 0.12); color: var(--sq-orange); box-shadow: 0 0 0 4px rgba(240, 90, 25, 0.12); }
+.street-quest--app .sq-route-node { display: grid; width: 38px; height: 31px; flex: 0 0 38px; place-items: center; border: 2px dashed rgba(24, 21, 16, 0.38); border-radius: 3px; background: rgba(24, 21, 16, 0.04); color: rgba(24, 21, 16, 0.52); font: 800 8px/1 var(--font-display); letter-spacing: 0.04em; transform: rotate(2deg); }
+.street-quest--app .sq-route-node.is-done { width: 39px; height: 39px; border: 0; border-radius: 50%; background: url('../assets/street-quest/generated-stamps/stamp-blue-ring.png') center / 100% 100% no-repeat; color: #245b9f; font-size: 8px; transform: rotate(-4deg); }
+.street-quest--app .sq-route-node.is-current { border: 2px solid var(--sq-orange); background: rgba(240, 90, 25, 0.08); color: var(--sq-orange); box-shadow: 0 0 0 4px rgba(240, 90, 25, 0.12); transform: rotate(2deg); }
 .street-quest--app .sq-route-line { height: 2px; margin: 0 3px; flex: 1; background: rgba(24, 21, 16, 0.2); }
 .street-quest--app .sq-route-line.is-done { background: var(--sq-lime); }
 .street-quest--app .sq-mission-steps { padding: 7px 14px 11px; }
 .street-quest--app .sq-mission-step { display: flex; align-items: flex-start; gap: 9px; padding: 9px 0; border-bottom: 1px dashed rgba(24, 21, 16, 0.22); }
 .street-quest--app .sq-mission-step:last-child { border-bottom: 0; }
-.street-quest--app .sq-step-check { display: grid; width: 17px; height: 17px; flex: 0 0 17px; margin-top: 1px; place-items: center; border: 1.5px solid rgba(24, 21, 16, 0.42); border-radius: 50%; color: var(--sq-ink); }
-.street-quest--app .sq-step-check svg { width: 11px; height: 11px; }
-.street-quest--app .sq-mission-step.is-done .sq-step-check { border-color: var(--sq-ink); background: var(--sq-lime); }
+.street-quest--app .sq-step-stamp { display: grid; width: 48px; height: 28px; flex: 0 0 48px; margin-top: 1px; place-items: center; border: 2px dashed rgba(24, 21, 16, 0.4); color: rgba(24, 21, 16, 0.52); font: 800 8px/1 var(--font-display); letter-spacing: 0.05em; transform: rotate(2deg); }
+.street-quest--app .sq-step-stamp.is-stamped { width: 50px; height: 50px; border: 0; background: url('../assets/street-quest/generated-stamps/stamp-blue-ring.png') center / 100% 100% no-repeat; color: #245b9f; transform: rotate(-4deg); }
+.street-quest--app .sq-step-stamp.is-stamped.is-red { width: 62px; height: 42px; flex-basis: 62px; background-image: url('../assets/street-quest/generated-stamps/stamp-red-frame.png'); color: #a93535; transform: rotate(2deg); }
+.street-quest--app .sq-step-stamp.is-stamped span { position: relative; z-index: 1; }
 .street-quest--app .sq-step-copy { min-width: 0; }
 .street-quest--app .sq-step-copy p { margin: 0; color: var(--sq-ink); font: 700 13px/1.25 var(--font-heading); }
 .street-quest--app .sq-step-copy span { display: block; margin-top: 2px; color: rgba(24, 21, 16, 0.6); font-size: 10px; line-height: 1.35; }
@@ -1951,7 +1939,7 @@
 .street-quest--app .sq-daily-copy .challenge-name { overflow: hidden; margin: 0; color: var(--sq-ink); font: 700 13px/1.25 var(--font-heading); text-overflow: ellipsis; white-space: nowrap; }
 .street-quest--app .sq-daily-copy .challenge-loc { display: block; margin-top: 3px; color: rgba(24, 21, 16, 0.56); font-size: 10px; }
 .street-quest--app .sq-daily-row.is-complete .challenge-name { color: rgba(24, 21, 16, 0.48); text-decoration: line-through; }
-.street-quest--app .sq-complete-mark { display: grid; width: 26px; height: 26px; flex: 0 0 26px; place-items: center; border: 2px solid var(--sq-ink); border-radius: 50%; background: var(--sq-lime); }
+.street-quest--app .sq-complete-mark { display: grid; width: 50px; height: 50px; flex: 0 0 50px; place-items: center; border: 0; background: url('../assets/street-quest/generated-stamps/stamp-blue-ring.png') center / 100% 100% no-repeat; color: #245b9f; font: 800 8px/1 var(--font-display); letter-spacing: 0.05em; transform: rotate(3deg); }
 .street-quest--app .challenge-pts { flex: 0 0 auto; padding: 5px 8px; border: 2px solid var(--sq-ink); background: var(--sq-orange); color: #fff; font: 800 11px/1 var(--font-display); box-shadow: 2px 2px 0 var(--sq-ink); }
 
 .street-quest--app .mission-empty { border: 2px solid var(--sq-ink); border-radius: 2px; background: var(--sq-paper-light) url('../assets/street-quest/ui-paper-kraft.webp') center / 500px 500px; color: var(--sq-ink); box-shadow: 4px 4px 0 var(--sq-orange); }
@@ -2159,6 +2147,51 @@
   margin-left: 3px;
   font-size: 8px;
 }
+.street-quest--app .sq-generated-stamp {
+  border: 0;
+  background-color: transparent;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  color: #245b9f;
+  text-transform: none;
+  box-shadow: none;
+}
+.street-quest--app .sq-generated-stamp.sq-stamp-round {
+  width: 50px;
+  height: 50px;
+  flex-basis: 50px;
+  background-image: url('../assets/street-quest/generated-stamps/stamp-blue-ring.png');
+  transform: rotate(-4deg);
+}
+.street-quest--app .sq-generated-stamp.sq-stamp-round.is-stamped {
+  border: 0;
+  background: transparent url('../assets/street-quest/generated-stamps/stamp-blue-ring.png') center / 100% 100% no-repeat;
+  color: #245b9f;
+}
+.street-quest--app .sq-generated-stamp.sq-stamp-frame {
+  width: 68px;
+  height: 37px;
+  flex-basis: 68px;
+  background-image: url('../assets/street-quest/generated-stamps/stamp-red-frame.png');
+  color: #a93535;
+  transform: rotate(2deg);
+}
+.street-quest--app .sq-generated-stamp.sq-stamp-frame.is-stamped {
+  border: 0;
+  background: transparent url('../assets/street-quest/generated-stamps/stamp-red-frame.png') center / 100% 100% no-repeat;
+  color: #a93535;
+}
+.street-quest--app .sq-generated-stamp:not(.is-stamped) {
+  width: 60px;
+  height: 28px;
+  flex-basis: 60px;
+  border: 2px dashed rgba(24, 21, 16, 0.42);
+  background: transparent;
+  color: rgba(24, 21, 16, 0.54);
+  transform: rotate(1deg);
+}
+.street-quest--app .sq-generated-stamp.is-stamped::after { content: none; }
 .street-quest--app .sq-checkin-requirements .checklist-text { color: var(--sq-ink); font: 700 12px/1.2 var(--font-heading); }
 .street-quest--app .sq-checkin-requirements .checklist-item.done .checklist-text { color: rgba(24, 21, 16, 0.58); text-decoration: none; }
 

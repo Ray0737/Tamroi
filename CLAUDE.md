@@ -38,7 +38,7 @@
 ├── vercel.json          Deployment config + security headers
 ├── restyling/           Seven page-by-page UI concept sets + comparison boards (no runtime dependency)
 ├── assets/
-│   └── street-quest/    Generated Bangkok collage, route paper, UI textures, class badge stamps/paper label, Collection archive hero, and Community podium hero
+│   └── street-quest/    Generated Bangkok collage, route paper, UI textures, class badge stamps/paper label, generated mission/watchtower ink stamps, Collection archive hero, and Community podium hero
 ├── css/
 │   ├── variables.css    Design tokens (DO NOT override these inline)
 │   ├── layout.css       Top bar, bottom nav, tab shell
@@ -114,13 +114,13 @@
     ├── lore-static.test.mjs      Static regression check for Lore integration
     ├── prod-readiness-static.test.mjs Static regression check for deploy readiness
     ├── remaining-static.test.mjs Static regression check for gameplay loop work
-    ├── ui-visual.spec.mjs         Playwright captures, populated group/forum states, and 430px/375px collision checks
+    ├── ui-visual.spec.mjs         Playwright captures, populated group/forum/Watchtower Check-In states, and 430px/375px collision checks
     └── run-static.mjs             One-command static regression suite runner
 ```
 
 **`js/env.js` is trackable in this prototype.** Keep it limited to public Supabase anon/dev-safe values. Never put service-role keys or private credentials in client code.
 
-The Thailand Street Quest visual treatment now spans the full runtime: the landing page uses generated Bangkok explorer collage art; onboarding uses generated route-paper art; auth keeps the explorer-pass treatment; and app chrome, missions, cards, and sheets use generated cream/ink/map/kraft materials through `css/street-quest.css`. Collection adds a dedicated generated archive-evidence collage, dark archive page, Thailand-wide archive hero labels, torn-paper toolbox, and poster-like cards. Community adds a generated three-poster podium, separate MY RANK ticket, compact dark ranking/group ledgers, and parchment forum; the current player is also shown in the main list at their actual rank with a highlighted row. The latest UI pass extends the same treatment into Lore and Support Node evidence sheets, Explorer Pass settings, Field Notes notifications, and paper mission tickets with route checkpoints. Text and controls keep comfortable mobile sizing, and the map shows the illustrated route texture until Carto raster tiles are ready. The ten browser-verified 430px captures, including populated My Group and Forum states, live in `restyling/05_bangkok_street_quest/screenshots/`; `tests/ui-visual.spec.mjs` also checks 430px and 375px layouts for horizontal leaks and top-bar collisions.
+The Thailand Street Quest visual treatment now spans the full runtime: the landing page uses generated Bangkok explorer collage art; onboarding uses generated route-paper art; auth keeps the explorer-pass treatment; and app chrome, missions, cards, and sheets use generated cream/ink/map/kraft materials through `css/street-quest.css`. Collection adds a dedicated generated archive-evidence collage, dark archive page, Thailand-wide archive hero labels, torn-paper toolbox, and poster-like cards. Community adds a generated three-poster podium, separate MY RANK ticket, compact dark ranking/group ledgers, and parchment forum; the current player is also shown in the main list at their actual rank with a highlighted row. The latest UI pass extends the same treatment into Lore and Support Node evidence sheets, Explorer Pass settings, Field Notes notifications, generated blue/red Mission and Watchtower ink stamps, and paper mission tickets with stamped route checkpoints. Text and controls keep comfortable mobile sizing, and the map shows the illustrated route texture until Carto raster tiles are ready. The eleven browser-verified 430px captures, including populated My Group, Forum, and Watchtower Check-In states, live in `restyling/05_bangkok_street_quest/screenshots/`; `tests/ui-visual.spec.mjs` also checks 430px and 375px layouts for horizontal leaks and top-bar collisions. The full set was regenerated on 2026-07-12 after the generated stamp pass.
 
 Locked Collection figure cards use a larger, high-contrast lock badge with a dark backing and light border so phase-locked figures remain visible over portrait imagery. Collection class badges use generated worn letterpress tiles plus a distressed paper label texture, ink offset shadow, and class-specific micro-rotation.
 
@@ -320,7 +320,7 @@ Run patches in this order:
 - Completed Watchtower support requirements render as rotated `สำเร็จ` ink stamps; incomplete requirements render as open stamp slots rather than circular checkmarks.
 - Settings uses an identity-page passport layout with passport metadata, an issued stamp, a field-permit strip, and a departure action.
 - Notifications uses an inbox passport card, route-log stamp, paper note slips, unread ticket rails, and a ticket-style empty state.
-- Missions use a paper route ticket for the active quest and stamped daily task rows; runtime copy uses direct punctuation instead of em dashes.
+- Missions use a paper route ticket for the active quest and stamped daily task rows; the generated `YOUR FIELD ROUTE` label keeps positive spacing above the ticket so its frame does not cover the lettering; runtime copy uses direct punctuation instead of em dashes.
 
 ### DB Tables
 

@@ -231,6 +231,47 @@ test('capture populated My Group and forum states', async ({ page }) => {
   await page.screenshot({ path: `${SCREENSHOT_DIR}/10-app-forum.png`, animations: 'disabled' });
 });
 
+test('capture Watchtower check-in sheet', async ({ page }) => {
+  await prepare(page, { authenticated: true });
+  await page.goto('/app.html', { waitUntil: 'commit' });
+  await settle(page);
+  await page.waitForFunction(() => window.AppCore?.App?.user, undefined, { timeout: 15000 });
+
+  await page.evaluate(() => {
+    document.getElementById('checkin-district-name').textContent = 'พระนคร';
+    document.getElementById('checkin-district-province').textContent = 'กรุงเทพมหานคร';
+    document.getElementById('checkin-reveals').innerHTML = `
+      <span class="reveal-chip">2 Cafes</span>
+      <span class="reveal-chip">1 OTOP</span>
+      <span class="reveal-chip">3 Landmarks</span>`;
+    document.getElementById('checkin-checklist').innerHTML = `
+      <div class="checklist-item done">
+        <div class="sq-stamp-mark sq-generated-stamp sq-stamp-round is-stamped" aria-label="สำเร็จ"><span>สำเร็จ</span></div>
+        <span class="checklist-text">2/2 Local Cafes visited</span>
+      </div>
+      <div class="checklist-item done">
+        <div class="sq-stamp-mark sq-generated-stamp sq-stamp-frame is-stamped" aria-label="สำเร็จ"><span>สำเร็จ</span></div>
+        <span class="checklist-text">1/1 OTOP / Workshop visited</span>
+      </div>
+      <div class="checklist-item">
+        <div class="sq-stamp-mark sq-generated-stamp sq-stamp-round" aria-label="รอสะสม"><span>รอสะสม</span></div>
+        <span class="checklist-text">2/3 Landmarks checked</span>
+      </div>`;
+    document.getElementById('checkin-encounter').innerHTML = `
+      <div class="sq-encounter-locked mb-3">
+        <span class="sq-encounter-key">⌗</span>
+        <div><strong>Encounter key locked</strong><p>เช็กอิน Watchtower เพื่อรับกุญแจ Encounter</p></div>
+      </div>`;
+    document.getElementById('btn-checkin').hidden = false;
+    document.getElementById('btn-checkin').textContent = 'Check In & Clear Fog';
+    window.AppCore?.openSheet('checkin-sheet');
+  });
+
+  await page.waitForTimeout(250);
+  await expectNoLayoutLeaks(page, 'watchtower-checkin');
+  await page.screenshot({ path: `${SCREENSHOT_DIR}/11-app-watchtower-checkin.png`, animations: 'disabled' });
+});
+
 test('375px compact-phone layout has no horizontal leaks', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await prepare(page, { authenticated: true });
