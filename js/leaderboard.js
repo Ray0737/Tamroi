@@ -346,14 +346,13 @@ function load() {
     el.innerHTML = players.map((p, idx) => {
       const rank = idx + 1;
       const isMe = p.id === MY_ID;
-      if (isMe) return '';
       const tier = _RANK_TIER[rank];
       const init = (p.username || '?').substring(0, 2).toUpperCase();
       const ringColor = tier ? { gold: '#FFD700', silver: '#C0C0C0', bronze: '#CD7F32' }[tier]
                        : (isMe ? 'var(--color-primary)' : 'rgba(255,255,255,0.12)');
 
       return `
-        <div class="lb-row" data-user-id="${escapeHtml(p.id)}">
+        <div class="lb-row ${isMe ? 'lb-my-row' : ''}" data-user-id="${escapeHtml(p.id)}">
           <span class="lb-rank ${tier || ''}">${tier ? _rankIcon(rank) : `#${rank}`}</span>
           ${avatarHTML(p.avatar_url, init, 32, ringColor)}
           <div class="lb-name-block">

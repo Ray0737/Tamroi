@@ -968,6 +968,11 @@
 .street-quest--app #leaderboard-list .lb-sub { color: #b9af99; }
 .street-quest--app #leaderboard-list .lb-score { color: var(--sq-lime); }
 .street-quest--app #leaderboard-list .lb-rank { color: #d9cfb7; }
+.street-quest--app #leaderboard-list .lb-my-row {
+  margin: 0;
+  background: var(--color-primary-dim);
+  border-bottom-color: var(--sq-orange);
+}
 
 .street-quest--app #guild-panel {
   border-color: var(--sq-paper-light);
