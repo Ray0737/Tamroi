@@ -178,6 +178,22 @@ const CollectionModule = (() => {
     if (legacyEl)   legacyEl.textContent   = legacy.toLocaleString();
   }
 
+  // ponytail: Special:FilePath?width=250 because 200px thumbnails return 400 from Wikimedia CDN
+  const WP = 'https://commons.wikimedia.org/wiki/Special:FilePath/';
+  const WIKI_PHOTOS = {
+    'King Taksin the Great':       WP + 'King_Taksin_of_Thonburi_Old_Temple_Portrait.png?width=250',
+    'King Naresuan the Great':     WP + 'KingNU.jpg?width=250',
+    'Queen Sri Suriyothai':        WP + 'Queen_Suriyothai_Portrait.png?width=250',
+    'King Ramkhamhaeng the Great': WP + 'Ram_Khamhaeng_the_Great_%28I%29.jpg?width=250',
+    'King Lithai of Sukhothai':    WP + 'Mahathammaracha_I.JPG?width=250',
+    'Somdet Sri Suriyawong':       WP + 'Sri_Suriyawongse.JPG?width=250',
+    'Prince Chumphon':             WP + 'Prince_Abhakara_Kiartiwongse.jpg?width=250',
+    'Chao Phraya Yomarat':         WP + '%E0%B9%80%E0%B8%88%E0%B9%89%E0%B8%B2%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A2%E0%B8%B2%E0%B8%A2%E0%B8%A1%E0%B8%A3%E0%B8%B2%E0%B8%8A.jpeg?width=250',
+    'Prince Damrong Rajanubhab':   WP + 'Tisavarakumara_Damrong_Rajanubhab.jpg?width=250',
+    'Prince Naris':                WP + 'Naritsaranuwattiwong_-_001.jpg?width=250',
+    'Princess Sirindhorn':         WP + 'Princess_Sirindhorn_2009-12-7_Royal_Thai_Government_House_2_%28Cropped%29.jpg?width=250',
+  };
+
   function renderFigures() {
     const personSVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:36px;height:36px"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
     const grid    = document.getElementById('figure-grid');
@@ -208,6 +224,12 @@ const CollectionModule = (() => {
       const onclick = isNew
         ? `CollectionModule.dismissNew('${f.id}')`
         : isCaptured ? `CollectionModule.showDetail('${f.id}')` : '';
+      const photoUrl = WIKI_PHOTOS[f.name_en];
+      const portrait = photoUrl
+        ? `<img src="${photoUrl}" alt="${f.name_en}" loading="lazy" referrerpolicy="no-referrer"
+             onerror="this.style.display='none';this.nextElementSibling.style.display=''">
+           <span style="display:none">${personSVG}</span>`
+        : personSVG;
 
       return `
         <div class="figure-card class-${f.class.toLowerCase()} ${isCaptured ? `captured-${f.class.toLowerCase()}` : ''} ${isLocked ? 'locked' : ''}"
@@ -215,7 +237,7 @@ const CollectionModule = (() => {
           ${isNew ? `<span style="position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--color-primary);z-index:2;display:block"></span>` : ''}
           ${isCaptured ? `<div class="captured-ribbon">${checkSVG()}</div>` : ''}
           ${isLocked   ? `<div class="lock-overlay">${lockSVG()}</div>` : ''}
-          <div class="figure-portrait" style="color:var(--color-muted)">${personSVG}</div>
+          <div class="figure-portrait" style="color:var(--color-muted)">${portrait}</div>
           <span class="figure-class-label ${f.class.toLowerCase()}">${f.class}-Class</span>
           <p class="figure-name-th">${f.name_th}</p>
           <p class="figure-name-en">${f.name_en}</p>
