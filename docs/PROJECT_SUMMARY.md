@@ -156,13 +156,17 @@ PWA offline support · precise GeoJSON district polygons · server-side GPS vali
 | Function inventory (per-function status) | `docs/FUNCTION_LOG.md` |
 | Figure roster snapshot | `docs/Db.md` |
 | Phase tracking | `docs/progress.md` |
-| Game logic verification + task board | `docs/VERIFYLOGIC.md` |
-| Co-op feature design | `docs/COOP.md` |
+| Co-op feature design (archived — shipped 2026-06-28) | `docs/superpowers/specs/2026-06-28-coop-design.md` |
+| Figure bio + relation graph design (archived — shipped 2026-07-05) | `docs/superpowers/specs/2026-07-05-figure-bio-graph-plan.md` |
+| Jigsaw v2 design (shipped 2026-07-09) | `docs/superpowers/specs/2026-07-09-jigsaw-v2-design.md` |
 | GPS anti-cheat notes | `docs/gps-spoofing.md` |
 | Pre/post-test evaluation plan | `docs/pre-post_test_plan.md` |
 | Smoke-test checklist | `docs/production-smoke.md` |
 | Architecture overview | `docs/system_architect.md` |
-| Design system | `docs/CODING_INSTRUCTIONS.md` |
+| Design system | `CLAUDE.md` → "Design System" |
+| SQL run order | `CLAUDE.md` → "Supabase Setup" |
 | All DB/Auth calls | `js/supabase-client.js` (`window.DB`) |
 | Static tests | `node tests/run-static.mjs` |
 | Game rules (authoritative) | `docs/proposal/ตามรอย_NSC_2026_v20.md` (+ v29 docx) |
+
+> `docs/CODING_INSTRUCTIONS.md` and `docs/VERIFYLOGIC.md` were deleted 2026-07-12 — both described a Leaflet-era/26-figure prototype fully superseded by this file, `FUNCTION_LOG.md`, `progress.md`, and `Db.md`. `docs/jigsaw-v2-design.md` was deleted as a duplicate of the fuller `docs/superpowers/specs/` version.

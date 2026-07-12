@@ -1053,7 +1053,6 @@
   box-shadow: 0 0 0 3px rgba(240, 90, 25, 0.28);
 }
 
-/* The profile avatar was removed from the top bar; keep the empty flex spacer invisible. */
 .street-quest--app .top-bar__left {
   padding: 0;
   border: 0;

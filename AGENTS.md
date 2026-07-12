@@ -1,6 +1,6 @@
 # AGENTS.md - Tamroi · NSC Prototype 06
 
-> Project guide for Codex and other coding agents. Keep this file aligned with `CLAUDE.md`, `README.md`, `docs/CODING_INSTRUCTIONS.md`, and the current codebase.
+> Project guide for Codex and other coding agents. Keep this file aligned with `CLAUDE.md`, `README.md`, and the current codebase.
 
 ## Project Context
 
@@ -69,7 +69,6 @@ Do not add npm dependencies, package managers, bundlers, frameworks, or a build 
 - `supabase/patch_auth_fix.sql`: robust auth trigger and profile insert policy.
 - `supabase/patch_lore.sql`: lore nodes, user lore, persistent support-node visits, quiz questions, score functions/triggers, and seed content.
 - `supabase/patch_district_seed.sql`: MVP district seed parity with `js/map.js`.
-- `docs/CODING_INSTRUCTIONS.md`: design system and implementation rules.
 - `docs/progress.md`: current implementation status.
 - `docs/production-smoke.md`: production Supabase/Vercel smoke-test checklist.
 - `docs/proposal/tam_roi_nsc_proposal.md`: detailed NSC/game proposal.
@@ -251,7 +250,7 @@ Follow a Karpathy-style engineering discipline for this repo:
 - When uncertain, instrument lightly, inspect the DOM/runtime state, and remove temporary debugging before finishing.
 - Do not rewrite working UI or documents just to make them cleaner.
 - Respect the educational/travel-game product intent when naming, copywriting, and arranging UI.
-- Constantly keep Markdown project documents updated as work changes the repo or agent guidance. Documentation files include `README.md`, `CLAUDE.md`, `docs/CODING_INSTRUCTIONS.md`, `docs/progress.md`, `AGENTS.md`, and proposal files. If the agent realizes it is approaching the context or execution limit, update the relevant Markdown files with current status, decisions, and next steps, then stop instead of continuing.
+- Constantly keep Markdown project documents updated as work changes the repo or agent guidance. Documentation files include `README.md`, `CLAUDE.md`, `docs/progress.md`, `AGENTS.md`, and proposal files. If the agent realizes it is approaching the context or execution limit, update the relevant Markdown files with current status, decisions, and next steps, then stop instead of continuing.
 
 ## Do Not Do
 

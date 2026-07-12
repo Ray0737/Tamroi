@@ -131,9 +131,8 @@
 | Collection archive hero updated to Thailand-wide labels (`TH`, `แฟ้มสะสม`, `EXPLORE THAILAND`) | `app.html` |
 | Community hero: removed ชุมชนนักล่ารอย subtitle; rank "2" moved below title | `app.html`, `css/street-quest.css` |
 | Branding: "Bangkok Street Quest" → "Thailand Street Quest" throughout | `app.html`, `css/street-quest.css`, `CLAUDE.md` |
-| Top bar: removed avatar element; removed dashed separator line | `app.html`, `css/street-quest.css` |
+| Top bar: removed dashed separator line; profile avatar circle (`#topbar-avatar`) added back to `.top-bar__left`, filled by `updateTopBar()` (https avatar_url or initials) | `app.html`, `css/street-quest.css`, `js/app.js` |
 | Class badges (S/A/B/C): regenerated via Codex — vintage worn letterpress stamp tiles, no chroma-key green | `assets/street-quest/badge-class-*.png` |
-| Removed stale empty top-bar profile chip after avatar removal | `css/street-quest.css` |
 
 ### Known Gaps (Deferred)
 

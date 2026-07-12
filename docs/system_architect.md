@@ -1,6 +1,7 @@
 # Tamroi System Architecture
 
 > Phase 1 Web MVP architecture for Tamroi (ตามรอย), NSC 2026.
+> Extended 2026-07-12 to cover Phase 3 Co-op + educational-feature modules (originally Phase-1-only). For full module/function status see `docs/FUNCTION_LOG.md`; for a snapshot with completion/security notes see `docs/PROJECT_SUMMARY.md`.
 
 ## Architecture Summary
 
@@ -58,9 +59,17 @@ MapLibre GL JS CDN         app.html only
 Bootstrap bundle CDN
 js/app.js
 js/map.js
+js/fog-grid.js
 js/collection.js
 js/missions.js
 js/leaderboard.js
+js/guild.js                Phase 3
+js/coop.js                 Phase 3
+js/raid.js                 Phase 3
+js/discussion.js           Phase 3
+js/community-forum.js      Phase 3
+js/debates.js              Educational features
+js/figure-graph.js         Educational features
 ```
 
 Do not replace this with ES module imports during Phase 1. Feature modules communicate through globals such as `window.DB`, `window.AppCore`, `window.MapModule`, and `window.FogGrid`.
@@ -75,9 +84,16 @@ Do not replace this with ES module imports during Phase 1. Feature modules commu
 | `js/app.js` | Auth guard, boot state, profile state, navigation, sheets, toast, notifications, shared app API |
 | `js/map.js` | MapLibre GL map (45° tilt), districts, Watchtowers, Fog of War, GPS, support nodes, Lore proximity, quiz/capture entry points |
 | `js/fog-grid.js` | Reusable Thailand grid cell helper exposed as `window.FogGrid` |
-| `js/collection.js` | Captured figures, artifacts, figure detail modal, Lore Journal |
+| `js/collection.js` | Captured figures, artifacts, figure detail modal, Lore Journal, figure bio + relation graph launch |
 | `js/missions.js` | Active mission and daily challenge rendering |
 | `js/leaderboard.js` | DB-backed leaderboard, podium, metric tabs, Realtime refresh |
+| `js/guild.js` | Guild CRUD, Presence, guild fog overlay, guild leaderboard |
+| `js/coop.js` | Collaborative missions, Jigsaw v2 (GPS checkpoint + timeline merge) |
+| `js/raid.js` | Raid lobby, Presence, Broadcast quiz sync, host failover |
+| `js/discussion.js` | Per-figure comment threads, auto-flag-hide |
+| `js/community-forum.js` | General forum feed, likes, replies, new-account posting probation |
+| `js/debates.js` | Unsolved History debate voting + aggregate stats |
+| `js/figure-graph.js` | `FigureGraphModule` — SVG pan/zoom/drag relationship graph overlay |
 
 Feature modules should not call Supabase directly. They call `window.DB` and let `js/supabase-client.js` handle table names, RPC calls, and error behavior.
 
@@ -93,9 +109,15 @@ Feature modules should not call Supabase directly. They call `window.DB` and let
 | `DB.Figures` | Figure catalog and user captures |
 | `DB.Artifacts` | Artifact catalog and user artifact ownership |
 | `DB.Leaderboard` | `leaderboard_legacy` view reads and profile Realtime subscription |
-| `DB.Lore` | Lore catalog, unlocked Lore reads, Lore unlock writes |
+| `DB.Lore` | Lore catalog, unlocked Lore reads, Lore unlock writes, pre/post-test assessments, recall questions |
 | `DB.Quiz` | Figure quiz question reads |
 | `DB.Notifications` | Notification reads and Realtime insert subscription |
+| `DB.Missions` | Daily challenges, active mission, recall missions |
+| `DB.Coop` | Guilds, join requests, Presence, collab missions, Jigsaw v2 |
+| `DB.Raid` | Raid sessions, Broadcast, Presence, capture insertion |
+| `DB.Discussion` | Per-figure comment threads + flags |
+| `DB.Community` | Forum posts, likes, flags |
+| `DB.Debates` | Unsolved History debate prompts, votes, aggregate stats RPC |
 
 All browser writes use the public anon client and must remain compatible with RLS. Service-role keys do not belong in this application.
 
@@ -263,6 +285,14 @@ There is no local install step for normal development.
 - Prefer CSS variables from `css/variables.css` over hardcoded colors.
 - Keep GPS and Supabase failures non-fatal for demo usability.
 - Use DB-backed leaderboard data only.
+
+## Feature Entry Points (Raid, Debate, Jigsaw)
+
+These three are easy to miss because each is conditionally rendered — nothing shows unless its prerequisites are met.
+
+- **Raid** — Tap a `raid_only` figure's ⚔️ marker on the Map tab. `_startRaidEncounter(figure)` (`js/map.js`) checks `RaidModule.canStartRaid(figure)` (needs ≥ `figure.raid_min_players` online guild members, else toasts an error), then calls `RaidModule.openRaidModal(figure)` directly — raid-only figures skip the normal quiz/legendary-encounter branches entirely.
+- **Historical Debate** — Only appears in the figure bio modal's footer (`#figure-modal`, opened from a Collection card) if the figure is already captured **and** `DB.Debates.getForFigure(figureId)` resolves a seeded debate row. No seeded debate = no button. Tapping it calls `DebateModule.open(figureId)` (`js/collection.js`).
+- **Jigsaw** — Lives in the Mission tab's co-op missions container, rendered by `CoopModule.load()`/`_liveLoad()`. Requires guild membership and an active `collab_missions` row with `type === 'jigsaw'`. The first member/leader to view it with ≥2 guild members triggers `DB.Coop.assignJigsawChapters`; others see a "waiting for leader" state until then. Each member submits via `CoopModule.postJigsawSummary`; the merge/reorder phase unlocks once all chapters are in.
 
 ## Future Architecture Notes
 

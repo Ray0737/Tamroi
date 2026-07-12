@@ -76,9 +76,9 @@ Both checks are bypassed on `localhost` / `127.0.0.1` via the existing `isDev()`
 
 `saveLoreUnlock()` re-checks `haversineDistance > node.radius_m` at save time, blocking direct console calls like `MapModule.saveLoreUnlock('any-id')`.
 
-### Collab mission GPS gate (added 2026-07-01)
+### Collab mission GPS gate — NOT present (contradicts an earlier draft of this doc)
 
-`_doCheckin()` in `coop.js` now checks `haversineDistance > 500 m` against the mission's district `watchtower_lat/lng` (joined via `getCollabMissions()` query). Blocked in dev mode.
+`docs/PROJECT_SUMMARY.md`'s 2026-07-05 live-code audit found `js/coop.js` mission check-in is **DB-only, no distance check** — any guild member can "check in" from home. An earlier version of this file claimed this was fixed 2026-07-01; that was wrong, or was reverted. Treat as an open gap until re-verified against `js/coop.js` directly.
 
 ---
 
@@ -123,7 +123,7 @@ No cap on check-ins per user per day. With coordinates validated server-side thi
 | Android mock location (basic) | **Yes** | 50 m/s teleport detection |
 | Console call to `saveLoreUnlock` | **Yes** | GPS re-check at save time (2026-07-01) |
 | Console call to `visitSupportNode` | **Yes** | Distance guard added (2026-07-01) |
-| Co-op mission checkin without travel | **Yes** | GPS gate in `_doCheckin` (2026-07-01) |
+| Co-op mission checkin without travel | **No** | DB-only checkin, no distance check (per `docs/PROJECT_SUMMARY.md` 2026-07-05 audit) |
 | JS prototype override | Partial | Mitigated if override happens after our script loads |
 | Root/OS-level GPS spoof | **No** | Requires server-side coordinate validation |
 | Replay / proxy attack | **No** | Requires server-side coordinate validation |

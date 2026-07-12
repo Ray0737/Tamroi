@@ -92,19 +92,17 @@
     ├── patch_jigsaw_v2.sql     GPS-gated jigsaw v2 — lore_node_id/proposed_order on assignments, unlocks_figure_id on collab_missions, user_jigsaw_encounters table, on_jigsaw_proposed_order SECURITY DEFINER trigger
     └── patch_mock_satit.sql    Test-only seed data — REMOVE before production
 └── docs/
-    ├── CODING_INSTRUCTIONS.md  Design system and implementation rules
-    ├── COOP.md                 Phase 3 Co-op design spec (guilds, raids, discussions)
     ├── Db.md                   Figure roster snapshot from the live Supabase DB
     ├── FUNCTION_LOG.md         Live log of all gameplay/DB functions; update each session
     ├── GAME_LOGIC.md           Player-facing gameplay mechanics reference
     ├── gps-spoofing.md         GPS anti-cheat threat analysis + mitigation status
-    ├── jigsaw-v2-design.md     GPS checkpoint + timeline-reconstruction jigsaw design (approved 2026-07-09)
     ├── pre-post_test_plan.md   Lore pre/post-test measurement plan
     ├── production-smoke.md     Supabase/Vercel smoke-test checklist
     ├── progress.md             Current implementation progress
     ├── PROJECT_SUMMARY.md      Project overview + function completion / errors / security audit
     ├── system_architect.md     System architecture notes
-    ├── VERIFYLOGIC.md          Game logic, rules, and verification status
+    ├── superpowers/specs/      Archived design docs for shipped features (coop, figure-bio-graph, jigsaw-v2)
+    ├── superpowers/plans/      Archived implementation plans
     └── proposal/
         └── ตามรอย_NSC_2026_v20.md NSC proposal (+ v29 docx, flowchart)
 └── tests/
@@ -169,7 +167,7 @@ Locked Collection figure cards use a larger, high-contrast lock badge with a dar
 - **Ponytail**: Default working mode is ponytail full. Shortest diff that solves the problem. No speculative features, no unrequested abstractions. Stop at the first rung of the ladder that holds.
 - **Caveman**: Default communication mode. Terse prose — one sentence max per update. No essays, no summaries, no narration. Code first, explanation only if non-obvious.
 - **Commits**: Never commit when a task is done. Output the suggested commit message and let the user run it.
-- **Docs sync**: After any change that alters gameplay mechanics, DB schema, file structure, or runtime APIs, update the affected markdown docs in the same task — `docs/progress.md` (implementation status), `docs/FUNCTION_LOG.md` (function/DB object log), `docs/VERIFYLOGIC.md` (game logic/rules), `docs/COOP.md` (Co-op spec), and this `CLAUDE.md` (File Structure / DB Tables / Runtime APIs tables) — so they match current project state, not the state as of the last doc pass. Skip docs a change doesn't touch.
+- **Docs sync**: After any change that alters gameplay mechanics, DB schema, file structure, or runtime APIs, update the affected markdown docs in the same task — `docs/progress.md` (implementation status), `docs/FUNCTION_LOG.md` (function/DB object log), `docs/GAME_LOGIC.md` (game logic/rules), `docs/PROJECT_SUMMARY.md` (feature/security status), `docs/system_architect.md` (architecture), and this `CLAUDE.md` (File Structure / DB Tables / Runtime APIs tables) — so they match current project state, not the state as of the last doc pass. Skip docs a change doesn't touch. Design docs for a feature once it ships belong in `docs/superpowers/specs/`, not a top-level `docs/*.md` file — see the archived Co-op/figure-bio/jigsaw examples there.
 - **Karpathy rules** (applied in order before touching code):
   1. **Think first** — state assumptions explicitly; if multiple interpretations exist, surface them before picking one.
   2. **Simplicity** — minimum code that solves the problem; if it could be 50 lines, don't write 200.
@@ -382,7 +380,7 @@ Run patches in this order:
 - `window.DB.Discussion`: `getComments(figureId)`, `postComment(figureId, userId, content, parentId)`, `flagComment(discussionId, userId)`
 - `window.DB.Community`: `getPosts(userId)`, `getReplies(parentId)`, `postMessage(userId, content, parentId)`, `flagPost(postId, userId)`, `likePost(postId, userId)`, `unlikePost(postId, userId)`
 - `window.GuildModule`: `init(userId)`, `getState()`, `getOnlineMemberIds()`, `renderGuildPanel()`
-- `window.CoopModule`: `load()` (re-enabled 2026-07-09 alongside Jigsaw v2 — renders real group-mission + jigsaw cards again), `renderMissionCard(mission, checkins, myCheckin)`, `subscribeProgress(missionId, guildId)`. Jigsaw v2 (GPS checkpoint → recall-quiz gate → structured summary → drag-to-reorder merge vote) is internal to `coop.js` (`_renderJigsawCard`, `_wireJigsawCard`, `_jigsawSubscribeMerge`, etc.) — see `docs/jigsaw-v2-design.md` for the full flow spec
+- `window.CoopModule`: `load()` (re-enabled 2026-07-09 alongside Jigsaw v2 — renders real group-mission + jigsaw cards again), `renderMissionCard(mission, checkins, myCheckin)`, `subscribeProgress(missionId, guildId)`. Jigsaw v2 (GPS checkpoint → recall-quiz gate → structured summary → drag-to-reorder merge vote) is internal to `coop.js` (`_renderJigsawCard`, `_wireJigsawCard`, `_jigsawSubscribeMerge`, etc.) — see `docs/superpowers/specs/2026-07-09-jigsaw-v2-design.md` for the full flow spec
 - `window.DebateModule`: `open(figureId)`, `close()`
 - `window.RaidModule`: `init(figureId)`
 - `window.DiscussionModule`: `init(figureId)`, `load(figureId)`

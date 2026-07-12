@@ -1,6 +1,6 @@
 # Plan — Figure Biography Detail + Relationship Graph UI
 
-> Status: PLAN ONLY — nothing implemented yet.
+> **Status: Implemented (2026-07-05, `patch_figure_bio.sql`).** Archived design doc — for current status see `docs/FUNCTION_LOG.md` ("Figure Biography + Graph Functions") and `docs/progress.md`.
 > Scope: Collection tab → tap captured figure → full biography view (bio, relatives, related locations, related lore) + an interactive relationship graph overlay.
 
 ---
