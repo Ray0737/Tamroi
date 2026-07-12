@@ -165,7 +165,7 @@ function load() {
             <div class="guild-detail" hidden style="padding:4px 4px 12px 34px">
               ${isMine ? `
                 <p style="margin:0 0 4px;font-size:9px;color:var(--color-muted);text-transform:uppercase;letter-spacing:1.5px">รหัสเชิญ</p>
-                <span style="font-size:15px;font-weight:800;color:var(--color-primary);letter-spacing:4px;font-family:monospace">${escapeHtml(g.invite_code || '—')}</span>
+                <span style="font-size:15px;font-weight:800;color:var(--color-primary);letter-spacing:4px;font-family:monospace">${escapeHtml(g.invite_code || '·')}</span>
               ` : `<p style="margin:0;font-size:11px;color:var(--color-muted)">เข้าร่วมกลุ่มนี้เพื่อดูรหัสเชิญ</p>`}
             </div>`;
           }).join('');
@@ -338,7 +338,7 @@ function load() {
     `;
   }
 
-  // ── Full rank list — flat, divider-separated ──────
+  // ── Full rank list · flat, divider-separated ──────
   function renderList(players) {
     const el = document.getElementById('leaderboard-list');
     if (!el) return;
@@ -357,7 +357,7 @@ function load() {
           ${avatarHTML(p.avatar_url, init, 32, ringColor)}
           <div class="lb-name-block">
             <p class="lb-name">${escapeHtml(p.username)}${isMe ? ` <span class="lb-you">(You)</span>` : ''}</p>
-            <p class="lb-sub">${escapeHtml(p.province || '—')}</p>
+            <p class="lb-sub">${escapeHtml(p.province || '·')}</p>
           </div>
           <span data-rank-score class="lb-score ${tier || ''}">${getMetricValue(p)}</span>
         </div>

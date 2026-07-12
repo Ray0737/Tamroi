@@ -238,7 +238,7 @@ const Watchtowers = {
     return (data || []).map(row => row.watchtower_id);
   },
 
-  // Insert-only — the DB trigger (check_district_watchtowers_complete) decides
+  // Insert-only · the DB trigger (check_district_watchtowers_complete) decides
   // whether this completes the district and flips user_districts.fogged itself.
   async checkIn(userId, watchtowerId) {
     const { error } = await _sb
@@ -1019,7 +1019,7 @@ const Coop = {
 
   async assignJigsawChapters(guildId, missionId, memberIds) {
     // ponytail: chapter_index → lore_node_id is looked up globally (not scoped by
-    // mission), same simplification the v2 design doc's own backfill SQL makes —
+    // mission), same simplification the v2 design doc's own backfill SQL makes ·
     // fine while only one jigsaw mission is seeded; a second concurrent jigsaw
     // mission would need lore_nodes tagged per-mission, not just per-chapter.
     const { data: nodes } = await _sb.from('lore_nodes').select('id, chapter_index').not('chapter_index', 'is', null);
@@ -1066,7 +1066,7 @@ const Coop = {
 
   // Reward-granting for a correct unanimous vote happens entirely server-side
   // in the on_jigsaw_proposed_order trigger (fired by each member's own
-  // proposed_order UPDATE, which RLS allows) — the client can't write
+  // proposed_order UPDATE, which RLS allows) · the client can't write
   // collab_mission_completions or other members' profiles directly. This just
   // reads whether that trigger already fired, to know when to show the win screen.
   async isJigsawComplete(missionId, guildId) {

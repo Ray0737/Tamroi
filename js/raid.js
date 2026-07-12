@@ -112,7 +112,7 @@ const RaidModule = (() => {
         await DB.Notifications.push(
           m.user_id, 'raid',
           `⚔️ Raid เริ่มแล้ว!`,
-          `กลุ่มของคุณเริ่ม Raid ${figure.name_th || figure.id} — เข้าร่วมได้เลย`,
+          `กลุ่มของคุณเริ่ม Raid ${figure.name_th || figure.id} · เข้าร่วมได้เลย`,
           session.id
         );
       } catch {}
@@ -410,7 +410,7 @@ const RaidModule = (() => {
         <h3 style="font-family:var(--font-heading);font-size:20px;font-weight:700;margin:var(--space-sm) 0 8px">
           Raid ล้มเหลว</h3>
         <p style="font-size:13px;color:var(--color-muted);margin-bottom:var(--space-md)">
-          ${reason === 'disconnected' ? 'สมาชิกไม่ครบ' : 'ตอบผิดทั้งสองรอบ'} — ลองใหม่ได้หลัง 10 นาที</p>
+          ${reason === 'disconnected' ? 'สมาชิกไม่ครบ' : 'ตอบผิดทั้งสองรอบ'} · ลองใหม่ได้หลัง 10 นาที</p>
         <button class="btn btn-outline btn-full" onclick="RaidModule._close()">ปิด</button>
       </div>`;
   }
@@ -436,7 +436,7 @@ const RaidModule = (() => {
     }
   }
 
-  // Entry point for tapping a raid-start notification — joins the session that's
+  // Entry point for tapping a raid-start notification · joins the session that's
   // already running instead of creating a new one.
   async function joinFromNotification(sessionId) {
     try {

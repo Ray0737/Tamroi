@@ -309,7 +309,7 @@ const CollectionModule = (() => {
     ].join('');
   }
 
-  // SVG icons for each artifact type — fixed-size container prevents overflow
+  // SVG icons for each artifact type · fixed-size container prevents overflow
   const ARTIFACT_SVG = {
     'bronze-sword':  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4L4 20"/><path d="M20 4l-5 1-1 5L20 4z" fill="rgba(234,231,225,0.3)"/><path d="M8 16l-2 2"/><path d="M6.5 14.5l-3 3 1 1 3-3"/></svg>`,
     'old-map':       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>`,
@@ -512,7 +512,7 @@ const CollectionModule = (() => {
     const emojiEl = document.getElementById('modal-figure-emoji');
     if (emojiEl) emojiEl.textContent = fig.image_emoji || '🏛️';
 
-    // .textContent never parses HTML, so it needs no escaping — running these through
+    // .textContent never parses HTML, so it needs no escaping · running these through
     // escapeHtml() first was actively wrong: it turned a literal apostrophe into the
     // string "&#x27;" and .textContent then displayed that string as-is (raw entity
     // syntax on screen) instead of an apostrophe, since nothing ever decoded it back.
@@ -527,7 +527,7 @@ const CollectionModule = (() => {
     const districtSlug = (fig.district_id || '').replace(/_/g, ' ');
     if (districtEl) {
       // Show the slug capitalized right away, then swap in the real Thai district
-      // name once it loads — beats a permanent raw "rattanakosin" in the UI.
+      // name once it loads · beats a permanent raw "rattanakosin" in the UI.
       districtEl.textContent = fig.era || (districtSlug ? districtSlug[0].toUpperCase() + districtSlug.slice(1) : '–');
       if (!fig.era && fig.district_id) {
         _getDistrictName(fig.district_id).then(name => {
@@ -572,7 +572,7 @@ const CollectionModule = (() => {
       }).catch(() => {});
     }
 
-    // Async bio sections — fire-and-forget, fills in as data arrives
+    // Async bio sections · fire-and-forget, fills in as data arrives
     _fillBioSections(fig, figureId, bsModal);
   }
 
@@ -643,14 +643,14 @@ const CollectionModule = (() => {
           }
           return `<div class="fig-lore-row fig-lore-locked">
             <span class="fig-lore-icon">🔒</span>
-            <span class="fig-lore-name fig-lore-teaser">??? — ไปสำรวจเพื่อปลดล็อก</span>
+            <span class="fig-lore-name fig-lore-teaser">??? · ไปสำรวจเพื่อปลดล็อก</span>
           </div>`;
         }).join('');
         loreSec.style.display = '';
       }
     }
 
-    // Related locations — figure's own pin + lore node coords
+    // Related locations · figure's own pin + lore node coords
     const locations = [];
     if (fig.lat && fig.lng) {
       const districtSlug = (fig.district_id || '').replace(/_/g, ' ');

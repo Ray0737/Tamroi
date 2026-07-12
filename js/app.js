@@ -9,20 +9,20 @@ const App = {
 
 // ── Boot ──────────────────────────────────────────────
 // Strategy: getSession() first (reads localStorage cache, instant).
-// Falls back to onAuthStateChange only when session is absent —
+// Falls back to onAuthStateChange only when session is absent ·
 // that covers the OAuth callback path where tokens arrive in the URL.
 document.addEventListener('DOMContentLoaded', async () => {
-  // 1. Try the stored session directly — this is instant for return visits
+  // 1. Try the stored session directly · this is instant for return visits
   let cachedSession = null;
   try { cachedSession = await DB.Auth.getSession(); } catch { /* not configured */ }
 
   if (cachedSession) {
-    // Returning user: session already in localStorage — boot immediately
+    // Returning user: session already in localStorage · boot immediately
     await _bootApp(cachedSession.user);
     return;
   }
 
-  // 2. No stored session — wait for auth state change
+  // 2. No stored session · wait for auth state change
   //    (handles OAuth redirect where the token arrives in the URL hash/query)
   let _booted = false;
 
@@ -91,7 +91,7 @@ function updateTopBar() {
         const parsed = new URL(p.avatar_url);
         if (parsed.protocol === 'https:') {
           const img = document.createElement('img');
-          img.src    = parsed.href;            // safe — no innerHTML
+          img.src    = parsed.href;            // safe · no innerHTML
           img.alt    = escapeHtml(p.username || '');
           avatarEl.innerHTML = '';
           avatarEl.appendChild(img);
@@ -99,7 +99,7 @@ function updateTopBar() {
           avatarEl.textContent = initials;     // reject non-https avatars
         }
       } catch {
-        avatarEl.textContent = initials;       // invalid URL — fallback to initials
+        avatarEl.textContent = initials;       // invalid URL · fallback to initials
       }
     } else {
       avatarEl.textContent = initials;
@@ -390,7 +390,7 @@ async function openLoreSheet(node) {
             ? '<span>เก่งมาก! คุณรู้เรื่องนี้อยู่แล้ว 🏆</span>'
             : learned
               ? `<span>คุณเรียนรู้เพิ่มขึ้น! ตอบถูก ${post}/${total} (${pct}%)</span>`
-              : `<span>ตอบถูก ${post}/${total} (${pct}%) — ลองอ่านอีกครั้ง!</span>`}
+              : `<span>ตอบถูก ${post}/${total} (${pct}%) · ลองอ่านอีกครั้ง!</span>`}
         </div>`;
     }
     saveBtn.textContent = 'ปิด';
@@ -495,17 +495,17 @@ function renderNotifications(notifs) {
   const list = document.getElementById('notif-list');
   if (!list) return;
   if (!notifs.length) {
-    list.innerHTML = `<p style="color:var(--color-muted);text-align:center;padding:var(--space-lg)">No notifications yet</p>`;
+    list.innerHTML = `<div class="sq-notif-empty"><span class="sq-notif-empty-mark">✦</span><strong>No new notes yet</strong><span>Visit a Watchtower to start your trail.</span></div>`;
     return;
   }
   const icons = {
-    figure_unlock: `<i class="bi bi-flag" style="font-size:19px;color:var(--color-primary)"></i>`,
-    fog_cleared:   `<i class="bi bi-map" style="font-size:19px;color:var(--color-success)"></i>`,
-    rank_change:   `<i class="bi bi-trophy" style="font-size:19px;color:#FFD700"></i>`,
-    artifact:      `<i class="bi bi-box-seam" style="font-size:19px;color:var(--color-muted)"></i>`,
-    raid:          `<i class="bi bi-lightning" style="font-size:19px;color:#EF5350"></i>`,
-    rally:         `<i class="bi bi-geo-alt" style="font-size:19px;color:var(--color-primary)"></i>`,
-    join_request:  `<i class="bi bi-person-plus" style="font-size:19px;color:var(--color-primary)"></i>`,
+    figure_unlock: `<i class="bi bi-flag"></i>`,
+    fog_cleared:   `<i class="bi bi-map"></i>`,
+    rank_change:   `<i class="bi bi-trophy"></i>`,
+    artifact:      `<i class="bi bi-box-seam"></i>`,
+    raid:          `<i class="bi bi-lightning"></i>`,
+    rally:         `<i class="bi bi-geo-alt"></i>`,
+    join_request:  `<i class="bi bi-person-plus"></i>`,
   };
   // escapeHtml prevents XSS from DB-sourced notification title/message
   const isPendingJoinRequest = n => n.type === 'join_request' && !n.is_read && n.ref_id;
@@ -674,7 +674,7 @@ document.getElementById('btn-username-save')?.addEventListener('click', async ()
     showToast('เปลี่ยนชื่อสำเร็จ');
   } catch(e) {
     console.error('[username update]', e?.code, e?.message, e);
-    showToast(e?.code === '23505' ? 'เปลี่ยนชื่อไม่สำเร็จ — ชื่อนี้ถูกใช้แล้ว' : 'เปลี่ยนชื่อไม่สำเร็จ');
+    showToast(e?.code === '23505' ? 'เปลี่ยนชื่อไม่สำเร็จ · ชื่อนี้ถูกใช้แล้ว' : 'เปลี่ยนชื่อไม่สำเร็จ');
   }
   document.getElementById('settings-username-view').style.display = 'flex';
   document.getElementById('settings-username-edit').style.display = 'none';
@@ -710,7 +710,7 @@ document.getElementById('btn-username-save')?.addEventListener('click', async ()
       label.style.color = 'var(--color-success)';
       btn.hidden = true;
     } else if (state === 'denied') {
-      label.textContent = 'ถูกปฏิเสธ — เปิดในเบราว์เซอร์';
+      label.textContent = 'ถูกปฏิเสธ · เปิดในเบราว์เซอร์';
       label.style.color = '#e57373';
       btn.hidden = true;
     } else {
@@ -777,7 +777,7 @@ document.getElementById('btn-username-save')?.addEventListener('click', async ()
 function getMockNotifications() {
   return [
     { id: '1', type: 'figure_unlock', title: 'New Figure Nearby!', message: 'King Taksin is unlocked in Rattanakosin', is_read: false, created_at: new Date() },
-    { id: '2', type: 'fog_cleared',   title: 'District Explored',  message: 'Silom fog cleared — +3 spots revealed',  is_read: false, created_at: new Date() },
+    { id: '2', type: 'fog_cleared',   title: 'District Explored',  message: 'Silom fog cleared · +3 spots revealed',  is_read: false, created_at: new Date() },
     { id: '3', type: 'rank_change',   title: 'You ranked up!',     message: 'You moved to #24 on the Leaderboard',    is_read: true,  created_at: new Date() },
   ];
 }

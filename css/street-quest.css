@@ -1383,3 +1383,1111 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ─────────────────────────────────────────────────────
+   Field UI: sheets, inbox, settings and mission tickets
+   These surfaces extend the same ink / paper / stamp language
+   into the app's transient panels.
+   ───────────────────────────────────────────────────── */
+
+.street-quest--app .sq-sheet,
+.street-quest--app .sq-offcanvas {
+  color: #fff8e8;
+  background-color: var(--sq-ink);
+  background-image:
+    linear-gradient(rgba(10, 10, 9, 0.72), rgba(10, 10, 9, 0.78)),
+    url('../assets/street-quest/ui-paper-ink.webp');
+  background-size: auto, 620px 620px;
+}
+
+.street-quest--app .sq-sheet {
+  border: 3px solid var(--sq-paper-light);
+  border-bottom: 0;
+  border-radius: 26px 26px 0 0;
+  padding: 14px 20px calc(20px + env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 0 rgba(0, 0, 0, 0.65), 0 -20px 42px rgba(0, 0, 0, 0.5);
+}
+
+.street-quest--app .sq-sheet::before {
+  content: 'TAMROI  /  FIELD NOTE';
+  display: block;
+  width: max-content;
+  margin: -4px auto 10px;
+  padding: 4px 9px;
+  border: 1px solid var(--sq-ink);
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+  font: 800 9px/1 var(--font-display);
+  letter-spacing: 0.12em;
+  transform: rotate(-1.5deg);
+  box-shadow: 2px 2px 0 var(--sq-paper);
+}
+
+.street-quest--app .sq-sheet .sheet-handle {
+  width: 48px;
+  height: 5px;
+  margin: 0 auto 14px;
+  background: var(--sq-paper);
+  border-radius: 1px;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+.street-quest--app .sq-sheet .sheet-title,
+.street-quest--app .sq-sheet .lore-title {
+  color: #fff8e8;
+  font-size: clamp(23px, 6vw, 30px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+
+.street-quest--app .sq-sheet .btn-primary,
+.street-quest--app .sq-sheet-primary {
+  min-height: 46px;
+  border: 2px solid var(--sq-ink);
+  background: var(--sq-orange);
+  color: #fff;
+  box-shadow: 4px 4px 0 var(--sq-paper);
+}
+
+.street-quest--app .sq-sheet .btn-primary:hover,
+.street-quest--app .sq-sheet .btn-primary:focus-visible,
+.street-quest--app .sq-sheet-primary:hover,
+.street-quest--app .sq-sheet-primary:focus-visible {
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-sheet-secondary {
+  min-height: 42px;
+  border: 1px solid rgba(244, 234, 208, 0.45);
+  color: #f4ead0;
+  background: rgba(244, 234, 208, 0.04);
+}
+
+.street-quest--app .sq-sheet-secondary:hover,
+.street-quest--app .sq-sheet-secondary:focus-visible {
+  background: rgba(244, 234, 208, 0.12);
+  color: #fff8e8;
+  border-color: var(--sq-paper-light);
+}
+
+/* Lore reads like an evidence card, with a calm paper panel for the actual copy. */
+.street-quest--app #lore-sheet::before,
+.street-quest--app #chain-sheet::before {
+  content: 'ARCHIVE / READ & REMEMBER';
+}
+
+.street-quest--app .lore-sheet-head {
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.street-quest--app .lore-type-badge,
+.street-quest--app .lore-pts-badge {
+  border: 1px solid var(--sq-ink);
+  border-radius: 2px;
+  padding: 5px 9px;
+  font: 800 10px/1 var(--font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 2px 2px 0 var(--sq-ink);
+}
+
+.street-quest--app .lore-type-badge {
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+}
+
+.street-quest--app .lore-pts-badge {
+  background: var(--sq-orange);
+  color: #fff;
+}
+
+.street-quest--app .lore-explored-badge {
+  border: 1px solid var(--sq-ink);
+  border-radius: 2px;
+  background: var(--sq-paper-light);
+  color: var(--sq-ink);
+  box-shadow: 2px 2px 0 var(--sq-ink);
+}
+
+.street-quest--app .lore-narrator-row {
+  gap: 9px;
+  margin: 0 0 10px;
+  color: #d9ceb3;
+}
+
+.street-quest--app .lore-narrator-avatar {
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--sq-paper-light);
+  border-radius: 2px;
+  background: var(--sq-orange);
+  color: var(--sq-ink);
+  transform: rotate(-4deg);
+  box-shadow: 2px 2px 0 var(--sq-paper);
+}
+
+.street-quest--app .lore-narrator-label {
+  color: #d9ceb3;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.street-quest--app .lore-narrative {
+  max-height: 38vh;
+  margin-bottom: 16px;
+  padding: 18px 18px 18px 42px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background-color: var(--sq-paper-light);
+  background-image:
+    linear-gradient(rgba(255, 250, 236, 0.76), rgba(255, 250, 236, 0.76)),
+    url('../assets/street-quest/ui-paper-cream.webp');
+  background-size: auto, 460px 460px;
+  color: var(--sq-ink);
+  font-size: 15px;
+  line-height: 1.78;
+  box-shadow: 4px 4px 0 var(--sq-orange);
+}
+
+.street-quest--app .lore-narrative.lore-quote {
+  border-left: 5px solid var(--sq-orange);
+  border-radius: 2px;
+  font-style: normal;
+}
+
+.street-quest--app .lore-narrative.lore-quote::before {
+  top: 10px;
+  left: 14px;
+  color: var(--sq-orange);
+  font-size: 36px;
+  opacity: 1;
+}
+
+.street-quest--app .lore-media {
+  border: 3px solid var(--sq-ink);
+  border-radius: 2px;
+  box-shadow: 4px 4px 0 var(--sq-blue);
+}
+
+.street-quest--app #lore-phase-panel .lore-narrative {
+  margin-bottom: 8px;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.55;
+  box-shadow: 3px 3px 0 var(--sq-blue);
+}
+
+.street-quest--app .lore-quiz-opt {
+  border: 1px solid rgba(244, 234, 208, 0.48);
+  border-radius: 2px;
+  background: rgba(244, 234, 208, 0.05);
+  color: #fff8e8;
+}
+
+.street-quest--app .lore-quiz-opt.active,
+.street-quest--app .lore-quiz-opt:hover,
+.street-quest--app .lore-quiz-opt:focus-visible {
+  border-color: var(--sq-orange);
+  background: var(--sq-orange);
+  color: #fff;
+}
+
+/* Support node card: the map tap becomes a field stop ticket. */
+.street-quest--app #node-info-sheet::before { content: 'FIELD STOP / SUPPORT NODE'; }
+
+.street-quest--app .sq-node-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 12px 0 14px;
+  border-bottom: 1px dashed rgba(244, 234, 208, 0.32);
+}
+
+.street-quest--app .sq-node-icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background: var(--node-tint);
+  color: var(--node-color);
+  box-shadow: 3px 3px 0 var(--sq-paper);
+  transform: rotate(-3deg);
+}
+
+.street-quest--app .sq-node-icon svg { width: 22px; height: 22px; }
+.street-quest--app .sq-node-copy { min-width: 0; flex: 1; }
+.street-quest--app .sq-node-title-row { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.street-quest--app .sq-node-title {
+  overflow: hidden;
+  margin: 0;
+  color: #fff8e8;
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.street-quest--app .sq-node-meta { margin: 4px 0 0; color: #bdb29a; font-size: 11px; }
+
+.street-quest--app .sq-node-route-note {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 14px;
+  color: #c9bea5;
+  font: 700 10px/1 var(--font-display);
+  letter-spacing: 0.12em;
+}
+.street-quest--app .sq-node-route-note b { color: var(--sq-lime); font-weight: 700; }
+.street-quest--app .sq-node-action { box-shadow: 4px 4px 0 var(--sq-paper); }
+
+/* Offcanvas panels use paper cards instead of unstyled Bootstrap rectangles. */
+.street-quest--app .sq-offcanvas {
+  width: min(100%, 380px);
+  max-width: none;
+  border-left: 3px solid var(--sq-paper-light);
+  --bs-offcanvas-color: #fff8e8;
+}
+
+.street-quest--app .sq-panel-header {
+  align-items: flex-start;
+  padding: 17px 16px 14px;
+  border-bottom: 1px dashed rgba(244, 234, 208, 0.32);
+  background: rgba(10, 10, 9, 0.7);
+}
+
+.street-quest--app .sq-panel-kicker,
+.street-quest--app .sq-card-kicker,
+.street-quest--app .sq-section-kicker {
+  display: block;
+  color: var(--sq-lime);
+  font: 800 10px/1 var(--font-display);
+  letter-spacing: 0.16em;
+}
+
+.street-quest--app .sq-panel-title {
+  margin-top: 5px;
+  color: #fff8e8;
+  font-family: var(--font-display);
+  font-size: 29px;
+  font-weight: 800;
+  line-height: 0.95;
+}
+
+.street-quest--app .sq-panel-close {
+  flex: 0 0 auto;
+  margin-top: 3px;
+  filter: invert(1) sepia(0.18) saturate(0.35);
+  opacity: 0.75;
+}
+.street-quest--app .sq-panel-close:hover { opacity: 1; }
+
+.street-quest--app .sq-panel-body { color: #fff8e8; }
+.street-quest--app .sq-notif-body { padding-bottom: 28px; }
+
+.street-quest--app .sq-notif-body::before {
+  content: 'Keep your route moving. New discoveries will land here.';
+  display: block;
+  margin: 14px 14px 8px;
+  padding: 14px 15px;
+  border: 2px solid var(--sq-ink);
+  background: var(--sq-paper-light) url('../assets/street-quest/ui-paper-kraft.webp') center / 460px 460px;
+  color: var(--sq-ink);
+  font: 700 13px/1.4 var(--font-heading);
+  box-shadow: 4px 4px 0 var(--sq-orange);
+  transform: rotate(-0.7deg);
+}
+
+.street-quest--app #notif-list:empty::after {
+  content: 'No new notes yet.\A Visit a Watchtower to start your trail.';
+  display: block;
+  margin: 32px 22px;
+  color: #bdb29a;
+  font: 700 14px/1.6 var(--font-heading);
+  text-align: center;
+  white-space: pre;
+}
+
+.street-quest--app .sq-notif-empty {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 5px;
+  margin: 22px 14px;
+  padding: 24px 16px;
+  border: 2px dashed rgba(244, 234, 208, 0.34);
+  color: #bdb29a;
+  text-align: center;
+}
+.street-quest--app .sq-notif-empty-mark {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 3px;
+  place-items: center;
+  border: 2px solid var(--sq-lime);
+  border-radius: 50%;
+  color: var(--sq-lime);
+  font-size: 18px;
+}
+.street-quest--app .sq-notif-empty strong { color: #fff8e8; font: 700 15px/1.2 var(--font-heading); }
+.street-quest--app .sq-notif-empty span:last-child { font-size: 11px; line-height: 1.5; }
+
+.street-quest--app .notif-row {
+  position: relative;
+  gap: 10px;
+  min-height: 76px;
+  margin: 0 14px;
+  padding: 14px 8px;
+  border-bottom: 1px dashed rgba(244, 234, 208, 0.2);
+  color: #fff8e8;
+}
+
+.street-quest--app .notif-row:hover { background: rgba(244, 234, 208, 0.06); }
+.street-quest--app .notif-row.unread { padding-left: 12px; border-left: 4px solid var(--sq-orange); background: rgba(240, 90, 25, 0.09); }
+.street-quest--app .notif-icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid rgba(244, 234, 208, 0.34);
+  border-radius: 2px;
+  background: var(--sq-ink-soft);
+  color: var(--sq-lime);
+  transform: rotate(-3deg);
+}
+.street-quest--app .notif-icon i { color: currentColor; font-size: 18px; }
+.street-quest--app .notif-body { min-width: 0; }
+.street-quest--app .notif-title { color: #fff8e8; font: 700 14px/1.3 var(--font-heading); }
+.street-quest--app .notif-msg { margin-top: 3px; color: #aa9f88; font-size: 11px; line-height: 1.45; }
+.street-quest--app .notif-dot { background: var(--sq-orange); box-shadow: 0 0 0 3px rgba(240, 90, 25, 0.16); }
+
+/* Settings: a passport profile, a practical controls card, and a tiny edition tag. */
+.street-quest--app .sq-settings-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 12px 28px;
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-settings-card {
+  margin: 0;
+  border: 2px solid var(--sq-ink);
+  border-radius: 3px;
+  background-color: var(--sq-paper-light);
+  background-image:
+    linear-gradient(rgba(255, 250, 236, 0.7), rgba(255, 250, 236, 0.7)),
+    url('../assets/street-quest/ui-paper-cream.webp');
+  background-size: auto, 520px 520px;
+  color: var(--sq-ink);
+  box-shadow: 4px 4px 0 var(--sq-orange);
+}
+
+.street-quest--app .sq-profile-card {
+  position: relative;
+  padding: 22px 14px 18px;
+  text-align: center;
+  transform: rotate(-0.4deg);
+}
+.street-quest--app .sq-profile-card::before {
+  content: 'EXPLORER PASS';
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  color: rgba(24, 21, 16, 0.55);
+  font: 800 9px/1 var(--font-display);
+  letter-spacing: 0.12em;
+  transform: rotate(4deg);
+}
+.street-quest--app .sq-profile-avatar {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 10px;
+  border: 3px solid var(--sq-ink);
+  background: var(--sq-orange);
+  color: #fff;
+  font-size: 25px;
+  box-shadow: 3px 3px 0 var(--sq-blue);
+}
+.street-quest--app .sq-username-view { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 4px; }
+.street-quest--app .sq-username-view p { margin: 0; color: var(--sq-ink); font: 800 20px/1 var(--font-heading); }
+.street-quest--app .sq-edit-name { padding: 3px; border: 0; background: none; color: rgba(24, 21, 16, 0.58); cursor: pointer; }
+.street-quest--app .sq-edit-name:hover { color: var(--sq-orange); }
+.street-quest--app .sq-settings-email { margin: 0; color: rgba(24, 21, 16, 0.58); font-size: 11px; }
+.street-quest--app .sq-name-input { width: 100%; margin-bottom: 7px; padding: 8px 10px; border: 1px solid rgba(24, 21, 16, 0.48); border-radius: 2px; background: rgba(255, 253, 245, 0.7); color: var(--sq-ink); text-align: center; }
+.street-quest--app .sq-name-actions { display: flex; gap: 6px; }
+.street-quest--app .sq-name-cancel,
+.street-quest--app .sq-name-save { flex: 1; min-height: 34px; padding: 5px; font-size: 11px; }
+.street-quest--app .sq-name-cancel { border: 1px solid rgba(24, 21, 16, 0.35); color: var(--sq-ink); }
+.street-quest--app .sq-name-save { box-shadow: 2px 2px 0 var(--sq-ink); }
+
+.street-quest--app .sq-preferences-card { padding: 17px 14px 13px; }
+.street-quest--app .sq-card-kicker { margin-bottom: 9px; color: rgba(24, 21, 16, 0.55); }
+.street-quest--app .sq-setting-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 46px; border-bottom: 1px dashed rgba(24, 21, 16, 0.2); color: var(--sq-ink); font-size: 13px; }
+.street-quest--app .sq-setting-row:last-child { border-bottom: 0; }
+.street-quest--app .sq-setting-row-toggle { cursor: pointer; }
+.street-quest--app .sq-toggle-track { position: relative; width: 42px; height: 23px; border-radius: 0; background: var(--sq-ink); cursor: pointer; transition: background 0.2s ease; }
+.street-quest--app .sq-toggle-thumb { position: absolute; top: 3px; left: 21px; width: 17px; height: 17px; border-radius: 50%; background: var(--sq-lime); transition: left 0.2s ease; }
+.street-quest--app .sq-gps-status { display: flex; align-items: center; gap: 7px; }
+.street-quest--app #gps-status-label { color: #3f883f; font-size: 11px; }
+.street-quest--app .sq-gps-request { padding: 4px 8px; border: 1px solid var(--sq-orange); background: none; color: var(--sq-orange); font-size: 10px; }
+.street-quest--app .sq-home-setting { padding-top: 11px; }
+.street-quest--app .sq-home-label { margin-bottom: 7px; color: var(--sq-ink); font-size: 13px; }
+.street-quest--app .sq-home-select { width: 100%; min-height: 38px; padding: 6px 10px; border: 1px solid rgba(24, 21, 16, 0.42); border-radius: 2px; background: rgba(255, 253, 245, 0.76); color: var(--sq-ink); font-size: 13px; }
+.street-quest--app .sq-version-card { padding: 15px 14px; background-color: var(--sq-ink-soft); background-image: url('../assets/street-quest/ui-paper-ink.webp'); color: #fff8e8; box-shadow: 4px 4px 0 var(--sq-blue); }
+.street-quest--app .sq-version-card .sq-card-kicker { color: var(--sq-lime); }
+.street-quest--app .sq-version-line { margin: 5px 0 0; color: #fff8e8; font: 700 14px/1.2 var(--font-heading); }
+.street-quest--app .sq-version-line span { color: #bdb29a; font: 400 11px/1 var(--font-body); }
+.street-quest--app .sq-signout-btn { min-height: 48px; border: 1px solid rgba(244, 234, 208, 0.4); border-radius: 2px; color: #fff8e8; }
+.street-quest--app .sq-signout-btn:hover { border-color: var(--sq-orange); background: rgba(240, 90, 25, 0.12); }
+
+/* Mission tab: ticket board with route checkpoints and stamp-like daily tasks. */
+.street-quest--app #tab-mission .section-inner { position: relative; }
+.street-quest--app #tab-mission .section-inner::before {
+  content: 'YOUR FIELD ROUTE';
+  display: block;
+  margin: 0 0 -5px;
+  color: var(--sq-paper-light);
+  font: 800 12px/1 var(--font-display);
+  letter-spacing: 0.18em;
+}
+
+.street-quest--app .sq-mission-ticket {
+  position: relative;
+  overflow: hidden;
+  border: 3px solid var(--sq-ink);
+  border-radius: 2px;
+  background-color: var(--sq-paper-light);
+  background-image:
+    linear-gradient(rgba(255, 249, 229, 0.76), rgba(255, 249, 229, 0.76)),
+    url('../assets/street-quest/ui-paper-kraft.webp');
+  background-size: auto, 520px 520px;
+  color: var(--sq-ink);
+  box-shadow: 5px 5px 0 var(--sq-orange);
+}
+.street-quest--app .sq-mission-ticket::after {
+  content: 'QUEST FILE 01';
+  position: absolute;
+  right: -23px;
+  bottom: 50px;
+  padding: 5px 27px;
+  border: 2px solid rgba(24, 21, 16, 0.5);
+  color: rgba(24, 21, 16, 0.58);
+  font: 800 9px/1 var(--font-display);
+  letter-spacing: 0.13em;
+  transform: rotate(-90deg);
+}
+.street-quest--app .sq-ticket-header { padding: 16px 15px 13px; background: rgba(11, 11, 10, 0.95); color: #fff8e8; }
+.street-quest--app .sq-ticket-kicker { display: flex; justify-content: space-between; gap: 8px; color: var(--sq-lime); font: 800 9px/1 var(--font-display); letter-spacing: 0.16em; }
+.street-quest--app .sq-ticket-title-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.street-quest--app .sq-ticket-emblem { display: grid; width: 40px; height: 40px; flex: 0 0 40px; place-items: center; border: 2px solid var(--sq-ink); background: var(--sq-orange); color: #fff; transform: rotate(-4deg); }
+.street-quest--app .sq-ticket-emblem svg { width: 20px; height: 20px; }
+.street-quest--app .sq-ticket-heading { min-width: 0; flex: 1; }
+.street-quest--app .sq-ticket-heading h3 { overflow: hidden; margin: 0; color: #fff8e8; font: 800 19px/1.05 var(--font-heading); text-overflow: ellipsis; white-space: nowrap; }
+.street-quest--app .sq-ticket-heading p { margin: 5px 0 0; color: #bdb29a; font-size: 10px; }
+.street-quest--app .sq-ticket-heading b { color: var(--sq-orange); }
+.street-quest--app .sq-ticket-divider { padding: 0 4px; color: #706754; }
+.street-quest--app .sq-ticket-title-row .badge { flex: 0 0 auto; }
+.street-quest--app .sq-route-progress { display: flex; align-items: center; padding: 18px 14px 7px; }
+.street-quest--app .sq-route-node-wrap { display: flex; align-items: center; min-width: 0; flex: 1; }
+.street-quest--app .sq-route-node { display: grid; width: 27px; height: 27px; flex: 0 0 27px; place-items: center; border: 2px solid rgba(24, 21, 16, 0.33); border-radius: 50%; background: rgba(24, 21, 16, 0.08); color: rgba(24, 21, 16, 0.5); font: 800 10px/1 var(--font-display); }
+.street-quest--app .sq-route-node svg { width: 13px; height: 13px; }
+.street-quest--app .sq-route-node.is-done { border-color: var(--sq-ink); background: var(--sq-lime); color: var(--sq-ink); }
+.street-quest--app .sq-route-node.is-current { border-color: var(--sq-orange); background: rgba(240, 90, 25, 0.12); color: var(--sq-orange); box-shadow: 0 0 0 4px rgba(240, 90, 25, 0.12); }
+.street-quest--app .sq-route-line { height: 2px; margin: 0 3px; flex: 1; background: rgba(24, 21, 16, 0.2); }
+.street-quest--app .sq-route-line.is-done { background: var(--sq-lime); }
+.street-quest--app .sq-mission-steps { padding: 7px 14px 11px; }
+.street-quest--app .sq-mission-step { display: flex; align-items: flex-start; gap: 9px; padding: 9px 0; border-bottom: 1px dashed rgba(24, 21, 16, 0.22); }
+.street-quest--app .sq-mission-step:last-child { border-bottom: 0; }
+.street-quest--app .sq-step-check { display: grid; width: 17px; height: 17px; flex: 0 0 17px; margin-top: 1px; place-items: center; border: 1.5px solid rgba(24, 21, 16, 0.42); border-radius: 50%; color: var(--sq-ink); }
+.street-quest--app .sq-step-check svg { width: 11px; height: 11px; }
+.street-quest--app .sq-mission-step.is-done .sq-step-check { border-color: var(--sq-ink); background: var(--sq-lime); }
+.street-quest--app .sq-step-copy { min-width: 0; }
+.street-quest--app .sq-step-copy p { margin: 0; color: var(--sq-ink); font: 700 13px/1.25 var(--font-heading); }
+.street-quest--app .sq-step-copy span { display: block; margin-top: 2px; color: rgba(24, 21, 16, 0.6); font-size: 10px; line-height: 1.35; }
+.street-quest--app .sq-mission-step.is-done .sq-step-copy p { color: rgba(24, 21, 16, 0.45); text-decoration: line-through; }
+.street-quest--app .sq-ticket-foot { display: flex; justify-content: space-between; gap: 10px; padding: 9px 14px; border-top: 2px solid var(--sq-ink); background: var(--sq-orange); color: #fff; font: 800 9px/1 var(--font-display); letter-spacing: 0.1em; }
+
+.street-quest--app .sq-seasonal-card {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 12px;
+  border: 2px solid var(--sq-ink);
+  border-left: 6px solid var(--event-color);
+  border-radius: 2px;
+  background: rgba(244, 234, 208, 0.09);
+  color: #fff8e8;
+  box-shadow: 3px 3px 0 var(--sq-blue);
+}
+.street-quest--app .sq-seasonal-icon { display: grid; width: 34px; height: 34px; flex: 0 0 34px; place-items: center; border: 1px solid var(--event-color); border-radius: 50%; color: var(--event-color); }
+.street-quest--app .sq-seasonal-icon svg { width: 17px; height: 17px; }
+.street-quest--app .sq-seasonal-copy { min-width: 0; flex: 1; }
+.street-quest--app .sq-seasonal-title { margin: 0; color: var(--event-color); font: 700 13px/1.2 var(--font-heading); }
+.street-quest--app .sq-seasonal-desc { margin: 3px 0 0; color: #bdb29a; font-size: 10px; line-height: 1.35; }
+.street-quest--app .sq-seasonal-multiplier { flex: 0 0 auto; color: var(--event-color); font: 800 19px/1 var(--font-display); }
+
+.street-quest--app .sq-daily-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; }
+.street-quest--app .sq-daily-heading .section-title { margin: 5px 0 0; padding: 0; background: none; color: #fff8e8; font-size: 25px; }
+.street-quest--app .sq-daily-status { display: flex; align-items: flex-end; gap: 6px; padding-bottom: 2px; color: #bdb29a; font: 800 9px/1 var(--font-display); letter-spacing: 0.08em; }
+.street-quest--app .sq-daily-status b { padding: 5px 7px; border: 2px solid var(--sq-ink); background: var(--sq-lime); color: var(--sq-ink); font-size: 12px; box-shadow: 2px 2px 0 var(--sq-orange); }
+.street-quest--app .sq-daily-list { display: flex; flex-direction: column; gap: 8px; }
+.street-quest--app .sq-daily-row { display: flex; align-items: center; gap: 10px; min-height: 64px; padding: 10px 11px; border: 2px solid var(--sq-ink); border-radius: 2px; background-color: var(--sq-paper-light); background-image: url('../assets/street-quest/ui-paper-kraft.webp'); background-size: 460px 460px; color: var(--sq-ink); box-shadow: 3px 3px 0 var(--sq-blue); }
+.street-quest--app .sq-daily-row.is-clickable { cursor: pointer; }
+.street-quest--app .sq-daily-row.is-clickable:hover, .street-quest--app .sq-daily-row.is-clickable:focus-within { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--sq-orange); }
+.street-quest--app .sq-daily-row.is-complete { box-shadow: 3px 3px 0 var(--sq-lime); }
+.street-quest--app .sq-daily-row .challenge-icon-box { display: grid; width: 38px; height: 38px; flex: 0 0 38px; place-items: center; border: 2px solid var(--sq-ink); border-radius: 50%; background: rgba(24, 21, 16, 0.08); color: var(--challenge-color); }
+.street-quest--app .sq-daily-row .challenge-icon-box svg { width: 18px; height: 18px; }
+.street-quest--app .sq-daily-copy { min-width: 0; flex: 1; }
+.street-quest--app .sq-daily-copy .challenge-name { overflow: hidden; margin: 0; color: var(--sq-ink); font: 700 13px/1.25 var(--font-heading); text-overflow: ellipsis; white-space: nowrap; }
+.street-quest--app .sq-daily-copy .challenge-loc { display: block; margin-top: 3px; color: rgba(24, 21, 16, 0.56); font-size: 10px; }
+.street-quest--app .sq-daily-row.is-complete .challenge-name { color: rgba(24, 21, 16, 0.48); text-decoration: line-through; }
+.street-quest--app .sq-complete-mark { display: grid; width: 26px; height: 26px; flex: 0 0 26px; place-items: center; border: 2px solid var(--sq-ink); border-radius: 50%; background: var(--sq-lime); }
+.street-quest--app .challenge-pts { flex: 0 0 auto; padding: 5px 8px; border: 2px solid var(--sq-ink); background: var(--sq-orange); color: #fff; font: 800 11px/1 var(--font-display); box-shadow: 2px 2px 0 var(--sq-ink); }
+
+.street-quest--app .mission-empty { border: 2px solid var(--sq-ink); border-radius: 2px; background: var(--sq-paper-light) url('../assets/street-quest/ui-paper-kraft.webp') center / 500px 500px; color: var(--sq-ink); box-shadow: 4px 4px 0 var(--sq-orange); }
+.street-quest--app .mission-empty i { color: var(--sq-orange); }
+.street-quest--app .mission-empty p { color: var(--sq-ink); }
+.street-quest--app .mission-empty p.sub { color: rgba(24, 21, 16, 0.64); }
+
+@media (max-width: 360px) {
+  .street-quest--app .sq-sheet { padding-inline: 15px; }
+  .street-quest--app .sq-ticket-heading h3 { font-size: 17px; }
+  .street-quest--app .sq-daily-status > span { display: none; }
+  .street-quest--app .sq-node-title { font-size: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .street-quest--app .sq-daily-row.is-clickable:hover,
+  .street-quest--app .sq-daily-row.is-clickable:focus-within { transform: none; }
+}
+
+/* Ticket surfaces for the two map actions. The generated paper label is used as
+   the physical frame, while HTML remains responsible for all live text. */
+.street-quest--app .sq-checkin-sheet,
+.street-quest--app .sq-node-sheet {
+  color: var(--sq-ink);
+  background-color: var(--sq-paper-light);
+  background-image:
+    linear-gradient(rgba(246, 235, 204, 0.58), rgba(246, 235, 204, 0.58)),
+    url('../assets/street-quest/class-label-paper.png');
+  background-size: auto, 100% 100%;
+  border-color: var(--sq-ink);
+  box-shadow: 0 -8px 0 rgba(0, 0, 0, 0.56), 0 -20px 42px rgba(0, 0, 0, 0.42), 6px 0 0 var(--sq-orange);
+}
+
+.street-quest--app .sq-checkin-sheet::before,
+.street-quest--app .sq-node-sheet::before {
+  margin-bottom: 9px;
+  border: 2px solid var(--sq-ink);
+  background: var(--sq-orange);
+  color: #fff;
+  box-shadow: 3px 3px 0 var(--sq-ink);
+  transform: rotate(-1deg);
+}
+
+.street-quest--app .sq-checkin-sheet::before { content: 'WATCHTOWER PASS / DISTRICT CHECK-IN'; }
+.street-quest--app .sq-node-sheet::before { content: 'FIELD STOP / SUPPORT NODE'; background: var(--sq-lime); color: var(--sq-ink); }
+
+.street-quest--app .sq-checkin-sheet .sheet-handle,
+.street-quest--app .sq-node-sheet .sheet-handle {
+  background: var(--sq-ink);
+  box-shadow: none;
+}
+
+.street-quest--app .sq-checkin-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  color: var(--sq-ink);
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.street-quest--app .sq-checkin-icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  place-items: center;
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background: var(--sq-orange);
+  color: #fff;
+  box-shadow: 3px 3px 0 var(--sq-ink);
+  transform: rotate(-4deg);
+}
+
+.street-quest--app .sq-checkin-icon svg { width: 21px; height: 21px; }
+
+.street-quest--app .sq-district-ticket {
+  position: relative;
+  margin-bottom: 16px;
+  padding: 17px 15px 14px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background-color: var(--sq-ink-soft);
+  background-image:
+    linear-gradient(rgba(11, 11, 10, 0.82), rgba(11, 11, 10, 0.82)),
+    url('../assets/street-quest/card-texture.png');
+  background-size: auto, 460px 460px;
+  color: #fff8e8;
+  box-shadow: 4px 4px 0 var(--sq-orange);
+}
+
+.street-quest--app .sq-district-ticket::before {
+  content: 'DISTRICT PASS';
+  position: absolute;
+  top: 7px;
+  right: 10px;
+  color: var(--sq-lime);
+  font: 800 9px/1 var(--font-display);
+  letter-spacing: 0.13em;
+  transform: rotate(2deg);
+}
+
+.street-quest--app .sq-district-ticket-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding-right: 84px;
+}
+
+.street-quest--app .sq-district-ticket .district-preview-name {
+  min-width: 0;
+  margin: 0;
+  color: #fff8e8;
+  font-family: var(--font-heading);
+  font-size: 23px;
+  line-height: 1.05;
+}
+
+.street-quest--app .sq-district-ticket .district-preview-province {
+  margin: 7px 0 14px;
+  color: #bdb29a;
+  font-size: 12px;
+}
+
+.street-quest--app .sq-district-ticket .explored-badge {
+  position: absolute;
+  top: 39px;
+  right: 12px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+  box-shadow: 2px 2px 0 rgba(255, 248, 232, 0.7);
+  transform: rotate(3deg);
+}
+
+.street-quest--app .sq-district-ticket .district-reveals { gap: 6px; }
+.street-quest--app .sq-district-ticket .reveal-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border: 1px solid rgba(244, 234, 208, 0.34);
+  border-radius: 2px;
+  padding: 5px 8px;
+  background: rgba(244, 234, 208, 0.08);
+  color: #d9ceb3;
+  font: 700 10px/1 var(--font-display);
+  letter-spacing: 0.03em;
+}
+.street-quest--app .sq-district-ticket .reveal-chip svg { width: 11px; height: 11px; margin-right: 1px; }
+
+.street-quest--app .sq-checkin-requirements {
+  margin-bottom: 13px;
+  padding: 13px 13px 8px;
+  border: 2px dashed rgba(24, 21, 16, 0.55);
+  background: rgba(244, 234, 208, 0.28);
+}
+
+.street-quest--app .sq-checkin-section-label {
+  display: inline-block;
+  margin: 0 0 9px;
+  padding: 4px 7px;
+  background: var(--sq-ink);
+  color: var(--sq-lime);
+  font: 800 10px/1 var(--font-display);
+  letter-spacing: 0.1em;
+  transform: rotate(-1deg);
+}
+
+.street-quest--app .sq-checkin-requirements .checklist { gap: 4px; }
+.street-quest--app .sq-checkin-requirements .checklist-item {
+  min-height: 34px;
+  gap: 9px;
+  padding: 5px 0;
+  border-bottom: 1px dashed rgba(24, 21, 16, 0.2);
+  color: var(--sq-ink);
+}
+.street-quest--app .sq-checkin-requirements .checklist-item:last-child { border-bottom: 0; }
+.street-quest--app .sq-stamp-mark {
+  display: grid;
+  width: 60px;
+  height: 27px;
+  flex: 0 0 60px;
+  place-items: center;
+  border: 2px dashed rgba(24, 21, 16, 0.42);
+  color: rgba(24, 21, 16, 0.54);
+  font: 800 9px/1 var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transform: rotate(1deg);
+}
+.street-quest--app .sq-stamp-mark.is-stamped {
+  border: 3px double #b64a1a;
+  background: rgba(240, 90, 25, 0.08);
+  color: #b64a1a;
+  transform: rotate(-4deg);
+  box-shadow: 0 0 0 2px rgba(182, 74, 26, 0.14);
+}
+.street-quest--app .sq-stamp-mark.is-stamped::after {
+  content: '✦';
+  margin-left: 3px;
+  font-size: 8px;
+}
+.street-quest--app .sq-checkin-requirements .checklist-text { color: var(--sq-ink); font: 700 12px/1.2 var(--font-heading); }
+.street-quest--app .sq-checkin-requirements .checklist-item.done .checklist-text { color: rgba(24, 21, 16, 0.58); text-decoration: none; }
+
+.street-quest--app .sq-checkin-primary,
+.street-quest--app .sq-encounter-button {
+  min-height: 46px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background: var(--sq-orange);
+  color: #fff;
+  box-shadow: 4px 4px 0 var(--sq-ink);
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+.street-quest--app .sq-checkin-primary:hover,
+.street-quest--app .sq-checkin-primary:focus-visible,
+.street-quest--app .sq-encounter-button:hover,
+.street-quest--app .sq-encounter-button:focus-visible { background: var(--sq-lime); color: var(--sq-ink); }
+.street-quest--app .sq-checkin-secondary { border-color: rgba(24, 21, 16, 0.48); color: var(--sq-ink); background: rgba(255, 253, 245, 0.22); }
+.street-quest--app .sq-checkin-secondary:hover, .street-quest--app .sq-checkin-secondary:focus-visible { border-color: var(--sq-ink); background: rgba(24, 21, 16, 0.08); color: var(--sq-ink); }
+
+/* Encounter gate becomes a stamped receipt instead of a second generic card. */
+.street-quest--app .sq-encounter-locked,
+.street-quest--app .sq-encounter-ready,
+.street-quest--app .sq-support-progress {
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background: rgba(255, 253, 245, 0.24);
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-encounter-locked {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  border-style: dashed;
+}
+.street-quest--app .sq-encounter-key { display: grid; width: 30px; height: 30px; place-items: center; border: 2px solid var(--sq-ink); border-radius: 50%; background: rgba(24, 21, 16, 0.1); }
+.street-quest--app .sq-encounter-key svg { width: 17px; height: 17px; }
+.street-quest--app .sq-encounter-locked strong,
+.street-quest--app .sq-ready-copy strong { display: block; font: 800 13px/1.15 var(--font-heading); }
+.street-quest--app .sq-encounter-locked p,
+.street-quest--app .sq-ready-copy span { display: block; margin: 3px 0 0; color: rgba(24, 21, 16, 0.62); font-size: 10px; line-height: 1.35; }
+
+.street-quest--app .sq-encounter-ready { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 10px; align-items: center; padding: 12px; box-shadow: 3px 3px 0 var(--sq-lime); }
+.street-quest--app .sq-ready-stamp { display: grid; width: 54px; height: 54px; place-items: center; border: 3px solid var(--sq-orange); border-radius: 50%; color: var(--sq-orange); font: 800 10px/0.95 var(--font-display); text-align: center; transform: rotate(-8deg); }
+.street-quest--app .sq-ready-stamp span, .street-quest--app .sq-ready-stamp b { display: block; }
+.street-quest--app .sq-ready-stamp b { font-size: 12px; }
+.street-quest--app .sq-encounter-button { grid-column: 1 / -1; }
+
+.street-quest--app .sq-support-progress { padding: 11px 12px 10px; box-shadow: 3px 3px 0 var(--sq-blue); }
+.street-quest--app .sq-support-progress-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 9px; padding-bottom: 8px; border-bottom: 1px dashed rgba(24, 21, 16, 0.35); }
+.street-quest--app .sq-support-progress-head p { margin: 0; font: 800 11px/1.2 var(--font-heading); }
+.street-quest--app .sq-support-progress-head span { padding: 4px 6px; background: var(--sq-ink); color: var(--sq-lime); font: 800 10px/1 var(--font-display); }
+.street-quest--app .sq-support-progress-row { margin-bottom: 9px; }
+.street-quest--app .sq-support-progress-row:last-child { margin-bottom: 0; }
+.street-quest--app .sq-support-progress-label { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; color: rgba(24, 21, 16, 0.72); font: 700 10px/1 var(--font-display); }
+.street-quest--app .sq-support-progress-label b { color: var(--sq-ink); }
+.street-quest--app .sq-support-progress-track { height: 7px; overflow: hidden; border: 1px solid var(--sq-ink); background: rgba(24, 21, 16, 0.1); }
+.street-quest--app .sq-support-progress-fill { height: 100%; background: var(--sq-orange); }
+
+/* Support node: the head is a stamped location ticket with an ink status mark. */
+.street-quest--app .sq-node-sheet .sq-node-head {
+  margin-bottom: 12px;
+  padding: 9px 10px 12px;
+  border: 2px solid var(--sq-ink);
+  border-bottom: 2px dashed var(--sq-ink);
+  background: rgba(255, 253, 245, 0.28);
+  box-shadow: 3px 3px 0 var(--sq-blue);
+}
+.street-quest--app .sq-node-sheet .sq-node-icon { border-color: var(--sq-ink); background: var(--sq-ink); color: var(--sq-paper-light); box-shadow: 2px 2px 0 var(--sq-orange); }
+.street-quest--app .sq-node-sheet .sq-node-title { color: var(--sq-ink); }
+.street-quest--app .sq-node-sheet .sq-node-meta { color: rgba(24, 21, 16, 0.62); }
+.street-quest--app .sq-node-sheet .sq-node-route-note { color: rgba(24, 21, 16, 0.72); }
+.street-quest--app .sq-node-sheet .sq-node-route-note b { color: #5d7f18; }
+.street-quest--app .sq-node-sheet .explored-badge { border: 2px solid var(--sq-ink); border-radius: 2px; background: var(--sq-lime); color: var(--sq-ink); box-shadow: 2px 2px 0 var(--sq-ink); transform: rotate(3deg); }
+.street-quest--app .sq-node-sheet .sq-sheet-secondary { border-color: rgba(24, 21, 16, 0.48); color: var(--sq-ink); background: rgba(255, 253, 245, 0.22); }
+
+@media (max-width: 360px) {
+  .street-quest--app .sq-checkin-title { font-size: 24px; }
+  .street-quest--app .sq-district-ticket-head { padding-right: 0; }
+  .street-quest--app .sq-district-ticket::before { display: none; }
+}
+
+/* Passport pass: settings and notifications now read as document pages, not
+   generic preference cards. */
+.street-quest--app .sq-panel-number {
+  display: block;
+  margin-top: 8px;
+  color: rgba(244, 234, 208, 0.56);
+  font: 700 9px/1 var(--font-display);
+  letter-spacing: 0.12em;
+}
+
+.street-quest--app .sq-profile-card {
+  min-height: 194px;
+  overflow: hidden;
+  padding-top: 18px;
+  background-image:
+    linear-gradient(rgba(255, 250, 236, 0.76), rgba(255, 250, 236, 0.76)),
+    url('../assets/street-quest/class-label-paper.png');
+  background-size: auto, 100% 100%;
+}
+
+.street-quest--app .sq-profile-card::before {
+  top: 13px;
+  right: 12px;
+  color: rgba(24, 21, 16, 0.58);
+}
+
+.street-quest--app .sq-profile-card::after {
+  content: 'THAILAND / TAMROI  •  ISSUED 2026';
+  position: absolute;
+  bottom: 10px;
+  left: 14px;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(24, 21, 16, 0.34);
+  color: rgba(24, 21, 16, 0.52);
+  font: 800 8px/1 var(--font-display);
+  letter-spacing: 0.11em;
+}
+
+.street-quest--app .sq-passport-meta {
+  position: absolute;
+  top: 12px;
+  left: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: rgba(24, 21, 16, 0.58);
+  font: 800 8px/1 var(--font-display);
+  letter-spacing: 0.12em;
+  text-align: left;
+}
+.street-quest--app .sq-passport-meta b { color: var(--sq-orange); font-size: 7px; }
+
+.street-quest--app .sq-passport-stamp {
+  position: absolute;
+  right: 13px;
+  bottom: 12px;
+  display: grid;
+  width: 55px;
+  height: 55px;
+  place-items: center;
+  border: 3px double var(--sq-blue);
+  border-radius: 50%;
+  color: var(--sq-blue);
+  font: 800 8px/0.95 var(--font-display);
+  letter-spacing: 0.08em;
+  text-align: center;
+  transform: rotate(8deg);
+  opacity: 0.82;
+}
+.street-quest--app .sq-passport-stamp span { display: block; font-size: 15px; }
+.street-quest--app .sq-passport-stamp b { display: block; }
+
+.street-quest--app .sq-profile-avatar {
+  position: relative;
+  z-index: 1;
+  margin-top: 19px;
+  border-radius: 50%;
+  box-shadow: 3px 3px 0 var(--sq-blue), 0 0 0 4px rgba(24, 21, 16, 0.08);
+}
+
+.street-quest--app .sq-preferences-card {
+  position: relative;
+  padding-top: 15px;
+  background-image:
+    linear-gradient(rgba(255, 250, 236, 0.78), rgba(255, 250, 236, 0.78)),
+    url('../assets/street-quest/class-label-paper.png');
+  background-size: auto, 100% 100%;
+}
+
+.street-quest--app .sq-visa-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: -2px 0 5px;
+  padding: 5px 7px;
+  border: 2px solid var(--sq-ink);
+  background: var(--sq-ink);
+  color: var(--sq-lime);
+  font: 800 9px/1 var(--font-display);
+  letter-spacing: 0.13em;
+  transform: rotate(-0.5deg);
+}
+.street-quest--app .sq-visa-strip b { color: #fff8e8; }
+.street-quest--app .sq-setting-label { display: inline-flex; align-items: center; gap: 8px; }
+.street-quest--app .sq-setting-symbol {
+  display: inline-grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 1.5px solid var(--sq-ink);
+  background: rgba(24, 21, 16, 0.08);
+  color: var(--sq-orange);
+  font: 800 13px/1 var(--font-display);
+  font-style: normal;
+  transform: rotate(-4deg);
+}
+.street-quest--app .sq-setting-row { min-height: 48px; }
+.street-quest--app .sq-version-card { position: relative; min-height: 76px; overflow: hidden; }
+.street-quest--app .sq-version-card::after {
+  content: 'ISSUED / FIELD EDITION';
+  position: absolute;
+  right: 11px;
+  bottom: 10px;
+  color: rgba(244, 234, 208, 0.44);
+  font: 800 8px/1 var(--font-display);
+  letter-spacing: 0.12em;
+  transform: rotate(-4deg);
+}
+.street-quest--app .sq-signout-btn { position: relative; min-height: 50px; }
+.street-quest--app .sq-signout-btn::after {
+  content: 'DEPART';
+  position: absolute;
+  right: 12px;
+  color: rgba(244, 234, 208, 0.4);
+  font: 800 8px/1 var(--font-display);
+  letter-spacing: 0.13em;
+  transform: rotate(-4deg);
+}
+
+.street-quest--app .sq-notif-body::before { display: none; }
+.street-quest--app .sq-notif-passport-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 108px;
+  margin: 14px 14px 13px;
+  padding: 15px 13px;
+  border: 2px solid var(--sq-ink);
+  background-color: var(--sq-paper-light);
+  background-image:
+    linear-gradient(rgba(255, 250, 236, 0.7), rgba(255, 250, 236, 0.7)),
+    url('../assets/street-quest/class-label-paper.png');
+  background-size: auto, 100% 100%;
+  color: var(--sq-ink);
+  box-shadow: 4px 4px 0 var(--sq-orange);
+  transform: rotate(-0.7deg);
+}
+.street-quest--app .sq-notif-passport-card::after {
+  content: 'NOTIFICATION PASS / 026';
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  color: rgba(24, 21, 16, 0.5);
+  font: 800 8px/1 var(--font-display);
+  letter-spacing: 0.12em;
+}
+.street-quest--app .sq-notif-passport-stamp {
+  display: grid;
+  width: 50px;
+  height: 50px;
+  flex: 0 0 50px;
+  place-items: center;
+  border: 3px double var(--sq-orange);
+  border-radius: 50%;
+  color: var(--sq-orange);
+  font: 800 8px/0.95 var(--font-display);
+  text-align: center;
+  transform: rotate(-8deg);
+}
+.street-quest--app .sq-notif-passport-stamp span { display: block; font-size: 15px; }
+.street-quest--app .sq-notif-passport-stamp b { display: block; }
+.street-quest--app .sq-notif-passport-kicker { display: block; color: var(--sq-orange); font: 800 9px/1 var(--font-display); letter-spacing: 0.13em; }
+.street-quest--app .sq-notif-passport-card strong { display: block; margin-top: 4px; color: var(--sq-ink); font: 800 21px/1 var(--font-display); }
+.street-quest--app .sq-notif-passport-card p { max-width: 225px; margin: 5px 0 0; color: rgba(24, 21, 16, 0.62); font-size: 10px; line-height: 1.35; }
+
+.street-quest--app .sq-notif-empty {
+  position: relative;
+  min-height: 166px;
+  justify-content: center;
+  margin: 18px 14px;
+  padding: 28px 16px 20px;
+  border: 2px solid var(--sq-ink);
+  background-color: var(--sq-paper-light);
+  background-image:
+    linear-gradient(rgba(255, 250, 236, 0.72), rgba(255, 250, 236, 0.72)),
+    url('../assets/street-quest/class-label-paper.png');
+  background-size: auto, 100% 100%;
+  color: var(--sq-ink);
+  box-shadow: 4px 4px 0 var(--sq-blue);
+  transform: rotate(0.5deg);
+}
+.street-quest--app .sq-notif-empty::after {
+  content: 'CLEAR / 0 NOTES';
+  position: absolute;
+  right: 10px;
+  bottom: 9px;
+  color: rgba(24, 21, 16, 0.48);
+  font: 800 8px/1 var(--font-display);
+  letter-spacing: 0.12em;
+}
+.street-quest--app .sq-notif-empty-mark {
+  width: 82px;
+  height: 34px;
+  margin-bottom: 7px;
+  border: 3px double var(--sq-orange);
+  border-radius: 2px;
+  color: var(--sq-orange);
+  font: 800 11px/1 var(--font-display);
+  letter-spacing: 0.13em;
+  transform: rotate(-5deg);
+}
+.street-quest--app .sq-notif-empty strong { color: var(--sq-ink); font-size: 17px; }
+.street-quest--app .sq-notif-empty span:last-child { color: rgba(24, 21, 16, 0.62); }
+
+.street-quest--app .notif-row {
+  min-height: 82px;
+  margin: 9px 14px;
+  padding: 12px 9px;
+  border: 2px solid var(--sq-ink);
+  border-bottom: 2px solid var(--sq-ink);
+  background-color: var(--sq-paper-light);
+  background-image:
+    linear-gradient(rgba(255, 250, 236, 0.74), rgba(255, 250, 236, 0.74)),
+    url('../assets/street-quest/class-label-paper.png');
+  background-size: auto, 100% 100%;
+  color: var(--sq-ink);
+  box-shadow: 3px 3px 0 var(--sq-blue);
+}
+.street-quest--app .notif-row:hover { background-color: var(--sq-paper-light); background-image: url('../assets/street-quest/class-label-paper.png'); color: var(--sq-ink); transform: translate(-1px, -1px); }
+.street-quest--app .notif-row.unread { padding-left: 9px; border-left: 7px solid var(--sq-orange); background-color: #f1dec0; box-shadow: 3px 3px 0 var(--sq-orange); }
+.street-quest--app .notif-icon { width: 39px; height: 39px; border: 2px solid var(--sq-ink); border-radius: 50%; background: var(--sq-ink); color: var(--sq-lime); box-shadow: 2px 2px 0 var(--sq-orange); }
+.street-quest--app .notif-body { color: var(--sq-ink); }
+.street-quest--app .notif-title { color: var(--sq-ink); font-size: 14px; }
+.street-quest--app .notif-msg { color: rgba(24, 21, 16, 0.62); }
+.street-quest--app .notif-dot { background: var(--sq-orange); }

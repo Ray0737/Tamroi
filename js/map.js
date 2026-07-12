@@ -18,15 +18,15 @@ const MapModule = (() => {
   const completedLoreChains = new Set();
   const visitedSupportNodeIds = new Set();
   // v3: replaced the rectangular grid-cell walk reveal with circle-per-point holes
-  // (same ring-hole technique already used for districts) — smooth trail, not squares.
+  // (same ring-hole technique already used for districts) · smooth trail, not squares.
   const _WALK_KEY = 'tam_roi_walk_trail_v4'; // bumped: v3 data was recorded under a spacing rule looser than the reveal radius, producing overlapping/jagged holes
   const WALK_REVEAL_RADIUS_M = 30;
-  // Must be >= WALK_REVEAL_RADIUS_M — spacing smaller than the reveal circle guarantees
+  // Must be >= WALK_REVEAL_RADIUS_M · spacing smaller than the reveal circle guarantees
   // heavy overlap between adjacent circles even walking in a straight line.
   const WALK_MIN_SPACING_M = 30;
   let _walkedPoints = []; // [{lat, lng}, ...]
 
-  // Watchtower check-in reveal radius — sized to roughly one school/campus premises
+  // Watchtower check-in reveal radius · sized to roughly one school/campus premises
   // (e.g. Satit PSM/SWU), not a multi-block area. Used both for the permanent fog hole
   // (buildFogLayer) and the growing-reveal animation (playFogClearSweep), so the sweep's
   // final frame and the persisted state are the exact same shape.
@@ -42,19 +42,19 @@ const MapModule = (() => {
   ];
   const FOG_OUTER_LL = FOG_OUTER.map(([lat, lng]) => [lng, lat]);
 
-  // ── Districts — loaded from Supabase districts table ──
+  // ── Districts · loaded from Supabase districts table ──
   // (allDistrictsCache holds the live data after loadDistrictData runs)
 
-  // ── Nodes — loaded from Supabase support_nodes table ──
+  // ── Nodes · loaded from Supabase support_nodes table ──
   let supportNodes = [];
 
-  // ── Watchtowers — loaded from Supabase watchtowers table ──
+  // ── Watchtowers · loaded from Supabase watchtowers table ──
   // Districts with zero rows here fall back to their own watchtower_lat/watchtower_lng
   // (legacy single-watchtower behavior).
   let allWatchtowersCache = [];
   const visitedWatchtowerIds = new Set();
 
-  // ── Figure nodes — loaded from Supabase figures table ─
+  // ── Figure nodes · loaded from Supabase figures table ─
   let figureNodes = [];
   const capturedFigureIds = new Set();
   const jigsawUnlockedFigureIds = new Set(); // figures unlocked via a completed Jigsaw mission, bypasses the support-node gate
@@ -62,10 +62,10 @@ const MapModule = (() => {
   const _loreRingFeatures     = {};  // node.id   -> GeoJSON circle Feature (50m proximity)
 
 
-  // ── Lore nodes — loaded from Supabase lore_nodes table ─
+  // ── Lore nodes · loaded from Supabase lore_nodes table ─
 
   // ── User state ─────────────────────────────────────
-  // Default all districts to fogged+zero — DB state loaded at boot overrides these
+  // Default all districts to fogged+zero · DB state loaded at boot overrides these
   const _blank = () => ({ fogged: true, cafes_visited: 0, otops_visited: 0, landmarks_visited: 0 });
   let userDistrictState = {
     rattanakosin: _blank(),
@@ -112,14 +112,14 @@ const MapModule = (() => {
       anchor: 'top-left',
       offset: [-(opts.anchorX || 0), -(opts.anchorY || 0)],
       // MapLibre default is pitchAlignment:'map', which skews/foreshortens the icon with
-      // the tilted ground plane — reads as the pin "moving" as camera pitch/pan changes.
+      // the tilted ground plane · reads as the pin "moving" as camera pitch/pan changes.
       // 'viewport' billboards it: always upright, facing camera, fixed to its lng/lat only.
       pitchAlignment: 'viewport',
       rotationAlignment: 'viewport',
     }).setLngLat([lng, lat]).addTo(map);
   }
 
-  // Great-circle destination-point formula, sampled around a full bearing sweep —
+  // Great-circle destination-point formula, sampled around a full bearing sweep ·
   // gives a geodesic circle polygon since MapLibre has no native circle primitive.
   function _circleRing(lat, lng, radiusM, steps = 48) {
     const distRad = radiusM / 6371000;
@@ -150,7 +150,7 @@ const MapModule = (() => {
     map?.getSource('lore-ring-source')?.setData({ type: 'FeatureCollection', features: Object.values(_loreRingFeatures) });
   }
 
-  // Fog polygons use ring winding (not evenodd) to mark holes — normalize direction
+  // Fog polygons use ring winding (not evenodd) to mark holes · normalize direction
   // so exterior/holes are unambiguous regardless of how the source data was wound.
   function _signedArea(ring) {
     let sum = 0;
@@ -232,7 +232,7 @@ const MapModule = (() => {
             tileSize: 256,
             maxzoom: 19,
           },
-          // Vector building footprints + water (OpenFreeMap, no API key) — used only for
+          // Vector building footprints + water (OpenFreeMap, no API key) · used only for
           // fill-extrusion depth and river color; ground/roads/labels still come from the carto raster above.
           ofm: {
             type: 'vector',
@@ -263,7 +263,7 @@ const MapModule = (() => {
             'source-layer': 'building',
             minzoom: 15,
             paint: {
-              // Street Quest palette bucketed by feature id — looks random per building, stable
+              // Street Quest palette bucketed by feature id · looks random per building, stable
               // on re-render. Warm paper/tan family weighted higher, orange for pop.
               'fill-extrusion-color': [
                 'match', ['%', ['id'], 6],
@@ -290,7 +290,7 @@ const MapModule = (() => {
       attributionControl: false,
     });
 
-    // Full 360 camera rotation enabled (right-drag / two-finger twist), plus the tilt —
+    // Full 360 camera rotation enabled (right-drag / two-finger twist), plus the tilt ·
     // no NavigationControl (zoom +/-, compass) added here; the app has its own
     // fab-locate/fab-tilt buttons for the equivalent actions instead.
 
@@ -360,7 +360,7 @@ const MapModule = (() => {
         lastKnownPosition = { lat: latitude, lng: longitude, accuracy };
         updateLocationDot(latitude, longitude, accuracy);
         checkLoreProximity(latitude, longitude);
-        // ponytail: 100m cap — walk cells are ~1.1km wide, so ≥100m accuracy still lands in the right cell most of the time; tighter than this kills indoor dev GPS
+        // ponytail: 100m cap · walk cells are ~1.1km wide, so ≥100m accuracy still lands in the right cell most of the time; tighter than this kills indoor dev GPS
         if (accuracy <= 100) _revealWalkCell(latitude, longitude);
       },
       err => console.warn('[GPS]', err.message),
@@ -385,7 +385,7 @@ const MapModule = (() => {
   }
 
   function _revealWalkCell(lat, lng) {
-    // Check against every kept point, not just the last one — a "last point only" check
+    // Check against every kept point, not just the last one · a "last point only" check
     // lets jittery/backtracking GPS (common on desktop or weak signal) re-stamp a fresh
     // overlapping circle near a spot already covered, which is what produced the jagged
     // scribble: MapLibre can't cleanly tessellate a polygon whose holes cross each other.
@@ -451,7 +451,7 @@ const MapModule = (() => {
     try {
       const data = await DB.Watchtowers?.getAll();
       if (data?.length) allWatchtowersCache = data;
-    } catch { /* allWatchtowersCache stays empty — every district falls back to legacy single-watchtower */ }
+    } catch { /* allWatchtowersCache stays empty · every district falls back to legacy single-watchtower */ }
   }
 
   async function loadSupportNodes() {
@@ -461,7 +461,7 @@ const MapModule = (() => {
         // normalise district_id → districtId so existing render code works unchanged
         supportNodes = data.map(n => ({ ...n, districtId: n.district_id }));
       }
-    } catch { /* supportNodes stays empty — nodes just won't render */ }
+    } catch { /* supportNodes stays empty · nodes just won't render */ }
   }
 
   async function loadFigureNodes() {
@@ -547,14 +547,14 @@ const MapModule = (() => {
     if (!node) return;
 
     if (!isDev() && (!lastKnownPosition || haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, node.lat, node.lng) > (node.radius_m || 50))) {
-      window.AppCore?.showToast('คุณอยู่ไกลเกินไป — เดินทางให้ใกล้กว่านี้');
+      window.AppCore?.showToast('คุณอยู่ไกลเกินไป · เดินทางให้ใกล้กว่านี้');
       return;
     }
 
     // Quiz-before-save used to gate here on a district-level quiz_questions row,
     // routing into a separate quiz-sheet. Superseded by app.js's own pre/post
     // retrieval-practice flow (quiz_questions.lore_id + assessment_type), which
-    // runs around this same save from openLoreSheet — keeping both caused saves
+    // runs around this same save from openLoreSheet · keeping both caused saves
     // to silently divert into the old sheet and never actually persist.
     await completeLoreUnlock(node);
   }
@@ -635,7 +635,7 @@ const MapModule = (() => {
   // ── Real-time fog sync, with reconnect ──────────────
   // The postgres_changes subscription existed but had no status handling: Supabase Realtime
   // websockets drop on tab backgrounding / network blips, and with no reconnect logic the
-  // subscription silently goes stale — another device's check-in stops arriving until a
+  // subscription silently goes stale · another device's check-in stops arriving until a
   // full page reload. Track the channel and re-subscribe with backoff on CHANNEL_ERROR/
   // TIMED_OUT/CLOSED instead of leaving it dead.
   let _userDistrictsChannel = null;
@@ -667,7 +667,7 @@ const MapModule = (() => {
   // back from the check-in point outward, instead of an instant pop. Real MapLibre fill
   // layer (not CSS/canvas), so it tilts/rotates with the camera exactly like fog-layer does.
   // Bumped by every playFogClearSweep call so an older, still-running sweep can tell it's
-  // been superseded and stop — without this, checking in at a second watchtower before the
+  // been superseded and stop · without this, checking in at a second watchtower before the
   // first one's 1.4s animation finishes leaves two independent frame() loops both writing
   // to the same fog-clear-fx-source every frame, which looks like two overlapping circles
   // fighting each other (and can leave a stuck ghost shape if one loop "wins" mid-shrink).
@@ -680,7 +680,7 @@ const MapModule = (() => {
     const myGeneration = ++_sweepGeneration;
 
     // Exterior is a fixed circle at the final reveal radius (matching buildFogLayer's real
-    // hole exactly) — NOT the district's polygon_coords placeholder rectangle. The donut
+    // hole exactly) · NOT the district's polygon_coords placeholder rectangle. The donut
     // (exterior minus a growing inner hole) starts as a full solid circle covering the area
     // and shrinks to nothing, so it lines up seamlessly with the real circular hole underneath.
     const exterior = _ringWithWinding(_circleRing(centerLat, centerLng, maxRadiusM), true); // CCW
@@ -691,7 +691,7 @@ const MapModule = (() => {
 
     const start = performance.now();
     function frame(now) {
-      if (myGeneration !== _sweepGeneration) return; // a newer sweep took over — stop quietly
+      if (myGeneration !== _sweepGeneration) return; // a newer sweep took over · stop quietly
       try {
         const t = Math.min(1, (now - start) / DURATION);
         const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic: fast start, slow settle
@@ -716,7 +716,7 @@ const MapModule = (() => {
   }
 
   // A fixed 180m circle can leave a district's own support nodes sitting outside the
-  // revealed area — invisible (per _isRevealedAt) with no way to know they're there to
+  // revealed area · invisible (per _isRevealedAt) with no way to know they're there to
   // walk toward. Grows the single-watchtower reveal radius just enough to cover every
   // support node that belongs to this district, never shrinking below the base radius.
   function _watchtowerRevealRadius(districtId, centerLat, centerLng) {
@@ -732,10 +732,10 @@ const MapModule = (() => {
 
   // ── Fog: single inverted polygon ───────────────────
   // One polygon covers all Bangkok; holes are cut for each explored district.
-  // Ring winding (exterior CCW, holes CW) marks holes — no evenodd fill rule in MapLibre.
+  // Ring winding (exterior CCW, holes CW) marks holes · no evenodd fill rule in MapLibre.
   function buildFogLayer(districts) {
     // Cleared districts reveal as a circle around the watchtower, not the raw district
-    // polygon — polygon_coords is a known-approximate placeholder shape (rough rectangle,
+    // polygon · polygon_coords is a known-approximate placeholder shape (rough rectangle,
     // not a real administrative boundary), so using it made every check-in reveal a square.
     // A circle at WATCHTOWER_REVEAL_RADIUS_M matches the "~1km2 around the checkpoint" area
     // the game already describes, and matches playFogClearSweep's animation radius exactly
@@ -778,7 +778,7 @@ const MapModule = (() => {
 
     // Walk-trail holes: a small circle per walked point (smooth trail, not grid squares).
     // bbox pre-filter just skips points already inside a revealed shape to keep the
-    // union below cheap — it's a performance trim, not a correctness requirement.
+    // union below cheap · it's a performance trim, not a correctness requirement.
     const clearedBboxes = clearedPolys.map(poly => {
       let s = Infinity, n = -Infinity, w = Infinity, e = -Infinity;
       poly.forEach(([lng, lat]) => { s = Math.min(s, lat); n = Math.max(n, lat); w = Math.min(w, lng); e = Math.max(e, lng); });
@@ -791,7 +791,7 @@ const MapModule = (() => {
     // Merge every cleared shape (watchtower/district circles + walk-trail circles) into
     // one set of simple, non-crossing hole rings. The old approach bridged overlapping
     // circles with a fixed-width strip sized to the smaller radius, which cut inside the
-    // larger circle and crossed back out through its boundary — self-intersecting hole
+    // larger circle and crossed back out through its boundary · self-intersecting hole
     // rings, which MapLibre's tessellator rendered as a jagged black wedge. A real
     // polygon union can't produce that: overlapping, touching, or contained shapes always
     // merge into one clean simple boundary, regardless of how many shapes overlap at once
@@ -871,7 +871,7 @@ const MapModule = (() => {
       const districtWatchtowers = allWatchtowersCache.filter(w => w.district_id === d.id);
 
       if (districtWatchtowers.length === 0) {
-        // Legacy single-watchtower district — unchanged behavior.
+        // Legacy single-watchtower district · unchanged behavior.
         const fogged = userDistrictState[d.id]?.fogged ?? true;
         const wt = _addMarker(d.center_lat, d.center_lng, watchtowerIconHtml(!fogged, d.name_th),
           { anchorX: 16, anchorY: 38 });
@@ -882,7 +882,7 @@ const MapModule = (() => {
         return;
       }
 
-      // Multi-watchtower district — one marker per watchtower, each tracked individually.
+      // Multi-watchtower district · one marker per watchtower, each tracked individually.
       // District-level "fogged" only flips once every watchtower here has been visited
       // (handled server-side by the completion trigger); each marker's own visited state
       // is purely "did THIS user check in at THIS point".
@@ -902,7 +902,7 @@ const MapModule = (() => {
   // multi-watchtower district, fogged=false already means every watchtower was visited
   // (the completion trigger sets it), so the whole polygon is revealed and anything in
   // the district should show. But a legacy single-watchtower district's check-in only
-  // ever punches a small WATCHTOWER_REVEAL_RADIUS_M circle — fogged flips false on the
+  // ever punches a small WATCHTOWER_REVEAL_RADIUS_M circle · fogged flips false on the
   // FIRST check-in while most of the district is still fogged, so without this distance
   // check, nodes/lore across the whole district would appear floating outside the fog
   // that's actually been cleared.
@@ -913,7 +913,7 @@ const MapModule = (() => {
     const districtWatchtowers = allWatchtowersCache.filter(w => w.district_id === districtId);
     if (districtWatchtowers.length) {
       // Mirror buildFogLayer's own fully-cleared shape exactly (polygon_coords, or a
-      // fallback union of watchtower circles) instead of trusting fogged=false blindly —
+      // fallback union of watchtower circles) instead of trusting fogged=false blindly ·
       // polygon_coords is a known-approximate rough rectangle, so a node near a district's
       // edge can sit outside it even though every watchtower here has been visited.
       if (lat == null || lng == null) return false;
@@ -945,7 +945,7 @@ const MapModule = (() => {
       const html = `<div class="marker-node marker-${node.type}" style="color:${cfg.color}">${cfg.svg}</div>`;
 
       const nodeMarker = _addMarker(node.lat, node.lng, html, { anchorX: 11, anchorY: 11 });
-      // Use custom card instead of a map popup — avoids z-index conflict with bottom-nav
+      // Use custom card instead of a map popup · avoids z-index conflict with bottom-nav
       nodeMarker.getElement().addEventListener('click', () => showNodeInfoCard(node));
       markers[`node-${i}`] = nodeMarker;
     });
@@ -1029,7 +1029,7 @@ const MapModule = (() => {
     window.AppCore?.openSheet('c-capture-sheet');
   }
 
-  // Raid-only figures skip the solo quiz entirely — they can only be captured
+  // Raid-only figures skip the solo quiz entirely · they can only be captured
   // through RaidModule's group lobby (canStartRaid checks online guild members).
   function _startRaidEncounter(figure) {
     if (!window.RaidModule) return;
@@ -1143,31 +1143,29 @@ const MapModule = (() => {
         : '<line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><polygon points="12 2 20 7 4 7"/>';
 
     content.innerHTML = `
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:var(--space-md)">
-        <div style="width:36px;height:36px;border-radius:50%;background:${cfg.bg};
-                    display:flex;align-items:center;justify-content:center;
-                    flex-shrink:0;color:${cfg.color}">
+      <div class="sq-node-head" style="--node-color:${cfg.color};--node-tint:${cfg.bg}">
+        <div class="sq-node-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-               stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px">
+               stroke-linecap="round" stroke-linejoin="round">
             ${iconInner}
           </svg>
         </div>
-        <div style="flex:1;min-width:0">
-          <div style="display:flex;align-items:center;gap:6px">
-            <p style="margin:0;font-weight:600;font-size:15px;color:var(--color-white);line-height:1.3;
-                      white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(node.name)}</p>
+        <div class="sq-node-copy">
+          <div class="sq-node-title-row">
+            <p class="sq-node-title">${escapeHtml(node.name)}</p>
             ${visited ? '<span class="explored-badge">✓ เยี่ยมชมแล้ว</span>' : ''}
           </div>
-          <p style="margin:2px 0 0;font-size:11px;color:var(--color-muted)">
+          <p class="sq-node-meta">
             ${escapeHtml(cfg.label)}${district ? ' · ' + escapeHtml(district.name_th) : ''}
           </p>
         </div>
       </div>
+      <div class="sq-node-route-note"><span>FIELD STOP</span><b>100 m radius</b></div>
       ${visited ? '' : `
-      <button class="btn btn-primary btn-sm btn-full"
+      <button class="btn btn-primary btn-sm btn-full sq-node-action"
               id="btn-visit-support-node"
               onclick="MapModule.visitSupportNode('${escapeHtml(id)}')">
-        เยี่ยมชมสถานที่นี้
+        บันทึกจุดนี้ <span aria-hidden="true">↗</span>
       </button>`}
     `;
 
@@ -1179,7 +1177,7 @@ const MapModule = (() => {
     if (!node || visitedSupportNodeIds.has(nodeId)) return;
 
     if (!isDev() && (!lastKnownPosition || haversineDistance(lastKnownPosition.lat, lastKnownPosition.lng, node.lat, node.lng) > 100)) {
-      window.AppCore?.showToast('คุณอยู่ไกลเกินไป — เดินทางให้ใกล้กว่านี้');
+      window.AppCore?.showToast('คุณอยู่ไกลเกินไป · เดินทางให้ใกล้กว่านี้');
       return;
     }
 
@@ -1227,7 +1225,7 @@ const MapModule = (() => {
   function showCheckInSheet(district) {
     activeDistrict = district;
     const state = userDistrictState[district.id] || {};
-    // Multi-watchtower district: "already visited" is per-watchtower, not per-district —
+    // Multi-watchtower district: "already visited" is per-watchtower, not per-district ·
     // the district only flips fogged=false once every watchtower in it is done.
     const fogged = district.watchtowerId
       ? !visitedWatchtowerIds.has(district.watchtowerId)
@@ -1265,15 +1263,21 @@ const MapModule = (() => {
 
     document.getElementById('checkin-checklist').innerHTML = `
       <div class="checklist-item ${vc >= rc ? 'done' : ''}">
-        <div class="check-icon ${vc >= rc ? 'done' : ''}">${vc >= rc ? checkSVG() : ''}</div>
+        <div class="sq-stamp-mark ${vc >= rc ? 'is-stamped' : ''}" aria-label="${vc >= rc ? 'สำเร็จ' : 'รอสะสม'}">
+          <span>${vc >= rc ? 'สำเร็จ' : 'รอสะสม'}</span>
+        </div>
         <span class="checklist-text">${vc}/${rc} Local Cafes visited</span>
       </div>
       <div class="checklist-item ${vo >= ro ? 'done' : ''}">
-        <div class="check-icon ${vo >= ro ? 'done' : ''}">${vo >= ro ? checkSVG() : ''}</div>
+        <div class="sq-stamp-mark ${vo >= ro ? 'is-stamped' : ''}" aria-label="${vo >= ro ? 'สำเร็จ' : 'รอสะสม'}">
+          <span>${vo >= ro ? 'สำเร็จ' : 'รอสะสม'}</span>
+        </div>
         <span class="checklist-text">${vo}/${ro} OTOP / Workshop visited</span>
       </div>
       <div class="checklist-item ${vl >= rl ? 'done' : ''}">
-        <div class="check-icon ${vl >= rl ? 'done' : ''}">${vl >= rl ? checkSVG() : ''}</div>
+        <div class="sq-stamp-mark ${vl >= rl ? 'is-stamped' : ''}" aria-label="${vl >= rl ? 'สำเร็จ' : 'รอสะสม'}">
+          <span>${vl >= rl ? 'สำเร็จ' : 'รอสะสม'}</span>
+        </div>
         <span class="checklist-text">${vl}/${rl} Landmarks checked</span>
       </div>
     `;
@@ -1282,8 +1286,8 @@ const MapModule = (() => {
     const badge    = document.getElementById('checkin-explored-badge');
     const alreadyCleared = !fogged;
 
-    // Already-explored is redundant once checked in — the encounter/support-node
-    // content below already implies it — so it moves up to a small status badge
+    // Already-explored is redundant once checked in · the encounter/support-node
+    // content below already implies it · so it moves up to a small status badge
     // next to the district name instead of a disabled ghost button in the action
     // stack, leaving just the real actions (Encounter CTA / Cancel) down there.
     if (badge) badge.hidden = !alreadyCleared;
@@ -1293,7 +1297,7 @@ const MapModule = (() => {
       btn.hidden      = false;
       btn.textContent = 'Check In & Clear Fog';
       btn.disabled    = false;
-      btn.className   = 'btn btn-sm btn-full btn-primary';
+      btn.className   = 'btn btn-sm btn-full btn-primary sq-checkin-primary';
     }
 
     window.AppCore?.openSheet('checkin-sheet');
@@ -1305,9 +1309,12 @@ const MapModule = (() => {
 
     if (!state.has_encounter_key) {
       container.innerHTML = `
-        <div class="card-outlined mb-3" style="text-align:center;padding:var(--space-md)">
-          <span style="color:var(--color-muted)">${keySVG(22)}</span>
-          <p style="font-size:var(--text-sm);color:var(--color-muted);margin:var(--space-xs) 0 0">เช็กอิน Watchtower เพื่อรับกุญแจ Encounter</p>
+        <div class="sq-encounter-locked mb-3">
+          <span class="sq-encounter-key">${keySVG(22)}</span>
+          <div>
+            <strong>Encounter key locked</strong>
+            <p>เช็กอิน Watchtower เพื่อรับกุญแจ Encounter</p>
+          </div>
         </div>
       `;
       return;
@@ -1322,27 +1329,37 @@ const MapModule = (() => {
 
     if (canUnlock) {
       container.innerHTML = `
-        <button class="btn btn-primary btn-sm btn-full mb-3" onclick="MapModule.openLegendaryEncounter('${escapeHtml(district.id)}')">
-          ${keySVG(16)} ใช้กุญแจ Encounter
-        </button>
+        <div class="sq-encounter-ready mb-3">
+          <div class="sq-ready-stamp"><span>KEY</span><b>READY</b></div>
+          <div class="sq-ready-copy">
+            <strong>Legendary Encounter ready</strong>
+            <span>ครบทุก Support Stamp แล้ว</span>
+          </div>
+          <button class="btn btn-primary btn-sm btn-full sq-encounter-button" onclick="MapModule.openLegendaryEncounter('${escapeHtml(district.id)}')">
+            ${keySVG(16)} ใช้กุญแจ Encounter ↗
+          </button>
+        </div>
       `;
       return;
     }
 
     container.innerHTML = `
-      <div class="card-outlined mb-3">
-        <p style="font-size:var(--text-sm);font-weight:700;margin-bottom:var(--space-sm);color:var(--color-muted)">${keySVG(14)} มีกุญแจแล้ว — รอ Support Nodes</p>
+      <div class="sq-support-progress mb-3">
+        <div class="sq-support-progress-head">
+          <p>${keySVG(14)} Encounter key / Support Stamps</p>
+          <span>${rows.filter(row => row.count >= row.required).length}/${rows.length}</span>
+        </div>
+        <div class="sq-support-progress-list">
         ${rows.map(row => {
           const pct = Math.min(100, Math.round((row.count / row.required) * 100));
           return `
-            <div style="margin-bottom:10px">
-              <div style="display:flex;justify-content:space-between;font-size:var(--text-xs);color:var(--color-muted);margin-bottom:4px">
-                <span>${row.label}</span><span>${row.count}/${row.required}</span>
-              </div>
-              <div class="progress-track"><div class="progress-fill orange" style="width:${pct}%"></div></div>
+            <div class="sq-support-progress-row">
+              <div class="sq-support-progress-label"><span>${row.label}</span><b>${row.count}/${row.required}</b></div>
+              <div class="sq-support-progress-track"><div class="sq-support-progress-fill" style="width:${pct}%"></div></div>
             </div>
           `;
         }).join('')}
+        </div>
       </div>
     `;
   }
@@ -1357,7 +1374,7 @@ const MapModule = (() => {
       return;
     }
 
-    // A completed Jigsaw mission grants this figure directly — same as
+    // A completed Jigsaw mission grants this figure directly · same as
     // finishing the support-node chain, just via the collab route instead.
     const jigsawUnlocked = jigsawUnlockedFigureIds.has(figure.id);
     if (!jigsawUnlocked && district && !canCheckIn(districtId, district)) {
@@ -1372,7 +1389,7 @@ const MapModule = (() => {
     const figure = figureNodes.find(item => item.id === figureId);
     if (!figure) return;
 
-    // Proximity gate — every other capture/interact path on the map has one (C-class 80m,
+    // Proximity gate · every other capture/interact path on the map has one (C-class 80m,
     // watchtower 500m, lore 50m, support node 100m); this was the one gap where a B/A/S
     // quiz could be started from anywhere once district/support-node prerequisites were met.
     // Only checked on a fresh quiz start (questionIndex 0, no carried-over questions), not
@@ -1395,7 +1412,7 @@ const MapModule = (() => {
     } catch { /* use fallback */ }
 
     if (!quizQuestions?.length) {
-      window.AppCore?.showToast?.('ไม่พบคำถาม Quiz — กรุณาตรวจสอบการเชื่อมต่อ');
+      window.AppCore?.showToast?.('ไม่พบคำถาม Quiz · กรุณาตรวจสอบการเชื่อมต่อ');
       return;
     }
     const question = quizQuestions[questionIndex];
@@ -1469,7 +1486,7 @@ const MapModule = (() => {
         feedbackEl.className = 'quiz-feedback';
         optionsEl?.after(feedbackEl);
       }
-      feedbackEl.textContent = 'ตอบผิด — ลองใหม่อีกครั้ง';
+      feedbackEl.textContent = 'ตอบผิด · ลองใหม่อีกครั้ง';
       activeQuiz.selected = null;
 
       const isHard = activeQuiz.figure?.class === 'S' || activeQuiz.figure?.class === 'A';
@@ -1509,7 +1526,7 @@ const MapModule = (() => {
     const btn = document.getElementById('btn-checkin');
 
     if (!isDev() && !isWithinCheckInRange(d)) {
-      window.AppCore?.showToast('คุณอยู่ไกลเกินไป — เดินทางให้ใกล้กว่านี้');
+      window.AppCore?.showToast('คุณอยู่ไกลเกินไป · เดินทางให้ใกล้กว่านี้');
       return;
     }
 
@@ -1521,7 +1538,7 @@ const MapModule = (() => {
     const sweepLng = d.checkinLng ?? d.watchtower_lng ?? d.center_lng;
 
     if (d.watchtowerId) {
-      // Multi-watchtower district: insert-only visit row — the completion trigger
+      // Multi-watchtower district: insert-only visit row · the completion trigger
       // decides server-side whether this finishes the district. We mirror that same
       // "all watchtowers visited?" check locally so fog updates instantly, without
       // waiting on the realtime round-trip.
@@ -1545,13 +1562,13 @@ const MapModule = (() => {
 
       if (districtComplete) {
         userDistrictState[d.id] = { ...userDistrictState[d.id], fogged: false, has_encounter_key: true };
-        window.AppCore?.showToast('ครบทุก Watchtower แล้ว — ได้รับกุญแจ Encounter! 🗝️');
+        window.AppCore?.showToast('ครบทุก Watchtower แล้ว · ได้รับกุญแจ Encounter! 🗝️');
       } else {
         const remaining = siblingIds.length - siblingIds.filter(id => visitedWatchtowerIds.has(id)).length;
-        window.AppCore?.showToast(`เช็คอินแล้ว — เหลืออีก ${remaining} จุดในเขตนี้`);
+        window.AppCore?.showToast(`เช็คอินแล้ว · เหลืออีก ${remaining} จุดในเขตนี้`);
       }
     } else {
-      // Legacy single-watchtower district — unchanged behavior.
+      // Legacy single-watchtower district · unchanged behavior.
       if (user) {
         try {
           await DB.Districts.checkIn(user.id, d.id);

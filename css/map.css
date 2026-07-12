@@ -5,7 +5,7 @@
   height: calc(100dvh - var(--top-bar-height) - var(--bottom-nav-height));
 }
 
-/* Ink tint (Dither Ink palette) — sits above the map canvas, below markers/UI.
+/* Ink tint (Dither Ink palette) · sits above the map canvas, below markers/UI.
    pointer-events:none so it doesn't block map drag/click/rotate underneath. */
 #map-view::after {
   content: '';
@@ -18,14 +18,14 @@
   z-index: 1;
 }
 
-/* Markers have no z-index of their own by default (auto) — force them above the tint
+/* Markers have no z-index of their own by default (auto) · force them above the tint
    overlay explicitly, otherwise they'd paint underneath it and look washed out/dim. */
 .maplibregl-marker {
   z-index: 2;
 }
 
 #map-view .maplibregl-canvas {
-  /* light warm shift only — sepia muddied the base tiles too much, dropped it.
+  /* light warm shift only · sepia muddied the base tiles too much, dropped it.
      just enough saturation + hue nudge to read cream/warm instead of stock CartoDB grey. */
   filter: contrast(1.05) saturate(1.15) hue-rotate(-6deg) brightness(1.02);
 }
@@ -77,7 +77,7 @@
 }
 
 /* All stat text uses the app's own ink-purple (--color-bg) instead of red/green/orange
-   accent colors — keeps this pill visually tied to the rest of the theme. */
+   accent colors · keeps this pill visually tied to the rest of the theme. */
 .map-stats-pill .stat-value { font-size: var(--text-sm); font-weight: 600; color: var(--color-bg); }
 .map-stats-pill .stat-label { font-size: 9px; color: rgba(35,34,58,0.65); }
 .map-stats-pill .text-white,
@@ -225,7 +225,7 @@
   cursor: pointer;
   /* transform is NOT transitioned: MapLibre sets this element's transform directly every
      frame to position it (this IS the element passed as marker.element). Transitioning
-     transform here made every position update ease/lag instead of snap — read as the
+     transform here made every position update ease/lag instead of snap · read as the
      pin drifting on its own during pan/pitch. box-shadow is safe to animate. */
   transition: box-shadow 0.15s ease;
 }
@@ -313,7 +313,7 @@
 }
 
 /* ── Home location marker ─────────────────────────── */
-/* Teardrop pin shape — rotated square with one rounded corner */
+/* Teardrop pin shape · rotated square with one rounded corner */
 .marker-home {
   width: 38px;
   height: 38px;

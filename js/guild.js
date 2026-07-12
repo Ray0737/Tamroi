@@ -108,7 +108,7 @@ const GuildModule = (() => {
     return `
       <div>
 
-        <!-- ── Team header — compact profile row ── -->
+        <!-- ── Team header · compact profile row ── -->
         <div class="guild-section">
           <div class="guild-header-row">
             <div class="guild-emblem">${escapeHtml(guild.name.substring(0, 2).toUpperCase())}</div>
@@ -118,7 +118,7 @@ const GuildModule = (() => {
                 <span class="guild-status-dot"></span>
                 <span>${onlineCount}/${members.length} ออนไลน์</span>
                 <span>·</span>
-                <span id="guild-score-display">—</span>
+                <span id="guild-score-display">·</span>
               </p>
             </div>
             ${isLeader ? `
@@ -126,7 +126,7 @@ const GuildModule = (() => {
               <i class="bi bi-pencil"></i></button>` : ''}
           </div>
 
-          <!-- ── Quick actions — moved up from the bottom ── -->
+          <!-- ── Quick actions · moved up from the bottom ── -->
           <div class="guild-action-row">
             <button id="btn-rally-pin" class="guild-action-btn" style="color:var(--color-primary)">
               <i class="bi bi-geo-alt-fill"></i> Rally</button>
@@ -164,7 +164,7 @@ const GuildModule = (() => {
           </div>` : ''}
         </div>
 
-        <!-- ── Sub-nav — switches the panels below, mirrors the main bottom nav ── -->
+        <!-- ── Sub-nav · switches the panels below, mirrors the main bottom nav ── -->
         <div class="guild-subnav">
           <button class="guild-subnav-item active" data-guild-tab="members">
             <i class="bi bi-people"></i><span>สมาชิก</span></button>

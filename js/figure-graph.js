@@ -315,7 +315,7 @@ const FigureGraphModule = (() => {
   function _fillDetailCard(node) {
     document.getElementById('fg-detail-name').textContent = node.captured ? (node.label || '') : '???';
     document.getElementById('fg-detail-sub').textContent  = node.captured ? (node.sub || '') : '';
-    document.getElementById('fg-detail-desc').textContent = node.captured ? (node.detail?.description || '') : 'ยังไม่ถูกจับ — ไปสำรวจพื้นที่เพื่อพบตัวละครนี้';
+    document.getElementById('fg-detail-desc').textContent = node.captured ? (node.detail?.description || '') : 'ยังไม่ถูกจับ · ไปสำรวจพื้นที่เพื่อพบตัวละครนี้';
 
     const relsEl = document.getElementById('fg-detail-relations');
     const connectedRels = _edges

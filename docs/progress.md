@@ -137,6 +137,14 @@
 | Top bar: removed dashed separator line; profile avatar circle (`#topbar-avatar`) added back to `.top-bar__left`, filled by `updateTopBar()` (https avatar_url or initials) | `app.html`, `css/street-quest.css`, `js/app.js` |
 | Class badges (S/A/B/C): regenerated via Codex — vintage worn letterpress stamp tiles, no chroma-key green; also refreshed with generated paper label texture, ink shadow, and slight handmade skew | `css/components.css`, `assets/street-quest/badge-class-*.png`, `assets/street-quest/class-label-paper.png` |
 | Settings/Notifications offcanvas desktop fix | ✅ Done | `.offcanvas.offcanvas-end` was viewport-right aligned (real browser edge), detached from the 430px frame on wide screens; pulled in to the frame's right edge same as top-bar/bottom-nav | `css/layout.css` |
+| Field UI sheets restyle | ✅ Done | Lore, chain, and Support Node sheets now use ink-paper evidence cards, readable paper narrative panels, route metadata, and clearer action states | `app.html`, `js/app.js`, `js/map.js`, `css/street-quest.css` |
+| Settings + Notifications scrapbook panels | ✅ Done | Bootstrap offcanvas panels now use Explorer Pass / Field Notes framing, textured cards, practical control rows, and readable notification states | `app.html`, `js/app.js`, `css/street-quest.css` |
+| Mission ticket board | ✅ Done | Active and daily missions render as route checkpoints, stamped task rows, paper tickets, and completion marks while preserving existing data/actions | `js/missions.js`, `css/street-quest.css` |
+| Runtime copy punctuation cleanup | ✅ Done | Replaced em dashes in website HTML, CSS, and JavaScript copy/comments with middle dots or direct punctuation | `*.html`, `js/*.js`, `css/*.css` |
+| Watchtower ticket restyle | ✅ Done | Check-In now reads as a paper pass with a dark district ticket, stamped support requirements, and a stronger encounter action | `app.html`, `js/map.js`, `css/street-quest.css` |
+| Support Node ticket restyle | ✅ Done | Support Node sheets now use a generated paper frame, ink location block, visited stamp, key-ready stamp, and receipt-like progress rows | `js/map.js`, `css/street-quest.css` |
+| Support requirement stamp treatment | ✅ Done | Completed Watchtower requirements now render as rotated `สำเร็จ` ink stamps instead of generic circular checkmarks; incomplete rows keep an open stamp slot | `js/map.js`, `css/street-quest.css` |
+| Passport Settings + Notifications | ✅ Done | Settings now reads as an identity page with an issued stamp and field permit; Notifications uses an inbox passport card, route-log stamp, paper note slips, and ticket-style empty state | `app.html`, `css/street-quest.css` |
 
 ### Known Gaps (Deferred)
 

@@ -81,14 +81,14 @@ const CoopModule = (() => {
       const lat = d.watchtower_lat || d.center_lat;
       const lng = d.watchtower_lng || d.center_lng;
       if (_haversine(pos.lat, pos.lng, lat, lng) > 500) {
-        window.AppCore?.showToast('คุณอยู่ไกลเกินไป — เดินทางให้ใกล้กว่านี้');
+        window.AppCore?.showToast('คุณอยู่ไกลเกินไป · เดินทางให้ใกล้กว่านี้');
         return;
       }
     }
     try {
       await DB.Coop.checkInToMission(mission.id, guild.guild.id, user.id);
       // UI update comes from the postgres_changes subscription
-    } catch { /* duplicate checkin — ignore */ }
+    } catch { /* duplicate checkin · ignore */ }
   }
 
   function renderMissionCard(mission, checkinCount, myCheckin) {
@@ -154,7 +154,7 @@ const CoopModule = (() => {
       </div>`;
   }
 
-  // ── Jigsaw v2 — GPS checkpoint + timeline reconstruction ──────────────
+  // ── Jigsaw v2 · GPS checkpoint + timeline reconstruction ──────────────
   const _CHAPTER_LABELS = ['บทที่ 1: กำแพงเมือง', 'บทที่ 2: แกนพระราชวัง', 'บทที่ 3: วัดโพธิ์'];
   const _jigsawQuizPassed  = new Set(); // session-only: assignment.id once recall quiz cleared
   const _jigsawRecallCache = new Map(); // lore_node_id → questions[]
@@ -264,11 +264,11 @@ const CoopModule = (() => {
     return `
       <div class="jigsaw-locked">
         <i class="bi bi-check-circle"></i>
-        <p>คุณส่งสรุปแล้ว — รอสมาชิกคนอื่น (${done}/${assignments.length} บท)</p>
+        <p>คุณส่งสรุปแล้ว · รอสมาชิกคนอื่น (${done}/${assignments.length} บท)</p>
       </div>`;
   }
 
-  // ── Phase 4: merge — shuffle, drag-reorder, vote ──────
+  // ── Phase 4: merge · shuffle, drag-reorder, vote ──────
   async function _jigsawMergeBody(mission, assignments, guildId, currentUserId) {
     const myAssign = assignments.find(a => a.user_id === currentUserId);
     const votes = assignments.filter(a => a.proposed_order);
@@ -285,7 +285,7 @@ const CoopModule = (() => {
 
     const order = _seededShuffle(assignments.map(a => a.chapter_index), `${guildId}:${mission.id}`);
     return `
-      <p class="jigsaw-hint">${votes.length}/${assignments.length} คนยืนยันลำดับแล้ว — ลากการ์ดให้เรียงตามช่วงเวลาที่ถูกต้อง แล้วกดยืนยัน</p>
+      <p class="jigsaw-hint">${votes.length}/${assignments.length} คนยืนยันลำดับแล้ว · ลากการ์ดให้เรียงตามช่วงเวลาที่ถูกต้อง แล้วกดยืนยัน</p>
       <div class="jigsaw-merge-list" data-mission-id="${escapeHtml(mission.id)}" data-guild-id="${escapeHtml(guildId)}">
         ${order.map(chapterIdx => {
           const a = assignments.find(x => x.chapter_index === chapterIdx);
@@ -298,7 +298,7 @@ const CoopModule = (() => {
                   ${avatarHTML(a?.profiles?.avatar_url, escapeHtml((a?.profiles?.username || '?').slice(0, 2).toUpperCase()), 20, 'var(--color-border)')}
                   <span class="jigsaw-merge-author">${escapeHtml(a?.profiles?.username || '?')}</span>
                 </div>
-                <p class="jigsaw-merge-line"><strong>${escapeHtml(summary.period || '—')}</strong> · ${escapeHtml(summary.figure || '—')}</p>
+                <p class="jigsaw-merge-line"><strong>${escapeHtml(summary.period || '·')}</strong> · ${escapeHtml(summary.figure || '·')}</p>
                 <p class="jigsaw-merge-line muted">${escapeHtml(summary.event || '')}</p>
               </div>
             </div>`;
@@ -318,7 +318,7 @@ const CoopModule = (() => {
     return `
       <div class="jigsaw-result jigsaw-result-lose">
         <i class="bi bi-x-circle"></i>
-        <p>ลำดับยังไม่ถูกต้อง — คุยกับกิลด์แล้วลองใหม่</p>
+        <p>ลำดับยังไม่ถูกต้อง · คุยกับกิลด์แล้วลองใหม่</p>
         <button class="btn btn-outline btn-sm" data-jigsaw-retry-order>ลองใหม่</button>
       </div>`;
   }
@@ -328,7 +328,7 @@ const CoopModule = (() => {
   }
 
   // Tiny seeded PRNG (mulberry32-style) so every guild member sees the same
-  // shuffle order for a given mission — doesn't affect correctness (each
+  // shuffle order for a given mission · doesn't affect correctness (each
   // client submits its own dragged order), just keeps group discussion sane.
   function _seededShuffle(arr, seedStr) {
     let seed = 0;
@@ -357,7 +357,7 @@ const CoopModule = (() => {
     });
   }
 
-  // ── Wiring — attaches listeners for whichever state just rendered ────
+  // ── Wiring · attaches listeners for whichever state just rendered ────
   function _wireJigsawCard(wrapper, mission, assignments, currentUserId, guildId) {
     const myAssign = assignments.find(a => a.user_id === currentUserId);
 
@@ -367,7 +367,7 @@ const CoopModule = (() => {
       window.MapModule?.flyToLocation?.(lat, lng, 17);
     });
 
-    // Quiz gate — click to select, all-correct unlocks the summary form
+    // Quiz gate · click to select, all-correct unlocks the summary form
     const quizEl = wrapper.querySelector('.jigsaw-quiz');
     if (quizEl && myAssign) {
       const answers = {};
@@ -412,7 +412,7 @@ const CoopModule = (() => {
       } catch { window.AppCore?.showToast?.('ไม่สามารถส่งสรุปได้'); }
     });
 
-    // Merge phase — drag reorder + vote
+    // Merge phase · drag reorder + vote
     const mergeList = wrapper.querySelector('.jigsaw-merge-list');
     if (mergeList) {
       _enableJigsawDrag(mergeList);
@@ -420,7 +420,7 @@ const CoopModule = (() => {
         const order = [...mergeList.querySelectorAll('.jigsaw-merge-card')].map(c => Number(c.dataset.chapter));
         try {
           await DB.Coop.setProposedOrder(myAssign.id, order);
-          window.AppCore?.showToast?.('✓ ยืนยันลำดับแล้ว — รอสมาชิกคนอื่น');
+          window.AppCore?.showToast?.('✓ ยืนยันลำดับแล้ว · รอสมาชิกคนอื่น');
           CoopModule.load();
         } catch { window.AppCore?.showToast?.('ไม่สามารถบันทึกลำดับได้'); }
       });
@@ -435,7 +435,7 @@ const CoopModule = (() => {
     });
   }
 
-  // No dedup guard needed — _cancelProgressSubs() at the top of every _liveLoad()
+  // No dedup guard needed · _cancelProgressSubs() at the top of every _liveLoad()
   // call already unsubscribes and clears _progressChannels, so this always
   // starts fresh each render pass.
   function _jigsawSubscribeMerge(missionId, guildId) {

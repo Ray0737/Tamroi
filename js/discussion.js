@@ -39,7 +39,7 @@ const DiscussionModule = (() => {
         </div>
         ${!comments.length
           ? `<p style="text-align:center;color:var(--color-muted);font-size:12px;padding:var(--space-md)">
-               ยังไม่มีความเห็น — เป็นคนแรก!</p>`
+               ยังไม่มีความเห็น · เป็นคนแรก!</p>`
           : comments.map(c => _commentCard(c, user, false)).join('')}
       </div>`;
 

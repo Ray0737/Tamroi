@@ -30,7 +30,7 @@ const CommunityForumModule = (() => {
       </div>
       <div id="forum-posts-list">
         ${!posts.length
-          ? `<p class="forum-empty no-posts-msg"><i class="bi bi-chat-square-text"></i>ยังไม่มีโพสต์ — เป็นคนแรก!</p>`
+          ? `<p class="forum-empty no-posts-msg"><i class="bi bi-chat-square-text"></i>ยังไม่มีโพสต์ · เป็นคนแรก!</p>`
           : posts.map(p => _postCard(p, user)).join('')}
       </div>`;
 
@@ -155,7 +155,7 @@ const CommunityForumModule = (() => {
       const newPost = await DB.Community.postMessage(user.id, text);
       ta.value = '';
 
-      // Prepend the new card — no full reload, no flash
+      // Prepend the new card · no full reload, no flash
       newPost.profiles  = { username: window.AppCore?.App?.profile?.username };
       newPost.likeCount = 0;
       newPost.likedByMe = false;
@@ -194,7 +194,7 @@ const CommunityForumModule = (() => {
     try { await DB.Community.flagPost(postId, user.id); } catch {}
   }
 
-  // One-time consent gate — required before a user's first post/reply.
+  // One-time consent gate · required before a user's first post/reply.
   async function _ensureGuidelinesAccepted(user) {
     const profile = window.AppCore?.App?.profile;
     if (profile?.guidelines_accepted_at) return true;
@@ -210,7 +210,7 @@ const CommunityForumModule = (() => {
     try {
       await DB.Profiles.update(user.id, { guidelines_accepted_at: new Date().toISOString() });
       if (profile) profile.guidelines_accepted_at = new Date().toISOString();
-    } catch { /* best-effort — don't block the post on this write */ }
+    } catch { /* best-effort · don't block the post on this write */ }
     return true;
   }
 

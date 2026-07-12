@@ -84,14 +84,14 @@ const MissionModule = (() => {
           </svg>
         </div>
         <p>ยังไม่มีภารกิจให้ทำตอนนี้</p>
-        <p class="sub">สำรวจพื้นที่ใหม่เพื่อปลดล็อคภารกิจส่วนตัว — ภารกิจกลุ่มจะเปิดให้เล่นเร็ว ๆ นี้</p>
+        <p class="sub">สำรวจพื้นที่ใหม่เพื่อปลดล็อคภารกิจส่วนตัว · ภารกิจกลุ่มจะเปิดให้เล่นเร็ว ๆ นี้</p>
       </div>`;
   }
 
-  // Thai historical seasonal events — month is 0-indexed (JS Date)
+  // Thai historical seasonal events · month is 0-indexed (JS Date)
   const SEASONAL_EVENTS = [
     {
-      name: 'สงกรานต์ — Year Reset Bonus',
+      name: 'สงกรานต์: Year Reset Bonus',
       name_en: 'Songkran Festival',
       start: { month: 3, day: 13 }, end: { month: 3, day: 15 },
       color: '#4FC3F7',
@@ -99,7 +99,7 @@ const MissionModule = (() => {
       desc: 'เทศกาลสงกรานต์! คะแนนทุกกิจกรรมเพิ่ม ×2 ตลอดช่วงปีใหม่ไทย',
     },
     {
-      name: 'วันที่ 14 ตุลา — Democracy Bonus',
+      name: 'วันที่ 14 ตุลา: Democracy Bonus',
       name_en: '14 October Uprising',
       start: { month: 9, day: 14 }, end: { month: 9, day: 14 },
       color: '#EF5350',
@@ -107,7 +107,7 @@ const MissionModule = (() => {
       desc: 'วันครบรอบเหตุการณ์ 14 ตุลา 2516 รับโบนัส +50% สำหรับ Lore Nodes ทั้งหมด',
     },
     {
-      name: 'วันปิยมหาราช — Legacy Surge',
+      name: 'วันปิยมหาราช: Legacy Surge',
       name_en: 'Chulalongkorn Day',
       start: { month: 9, day: 23 }, end: { month: 9, day: 23 },
       color: '#EAE7E1',
@@ -115,7 +115,7 @@ const MissionModule = (() => {
       desc: 'วันปิยมหาราช! Legacy Points จากบุคคล S-Class เพิ่มเป็น ×2 ตลอดวันนี้',
     },
     {
-      name: 'วันพ่อ — Royal Heritage Day',
+      name: 'วันพ่อ: Royal Heritage Day',
       name_en: 'Father\'s Day / Rama IX Birthday',
       start: { month: 11, day: 5 }, end: { month: 11, day: 5 },
       color: '#FFD700',
@@ -123,7 +123,7 @@ const MissionModule = (() => {
       desc: 'วันพระราชสมภพรัชกาลที่ 9 รับโบนัส +50% สำหรับ Districts ที่สำรวจใหม่',
     },
     {
-      name: 'วันคล้ายวันเฉลิมพระชนม์พรรษา — King\'s Bonus',
+      name: 'วันคล้ายวันเฉลิมพระชนม์พรรษา: King\'s Bonus',
       name_en: 'Vajiralongkorn\'s Birthday',
       start: { month: 6, day: 28 }, end: { month: 6, day: 28 },
       color: '#CE93D8',
@@ -151,25 +151,15 @@ const MissionModule = (() => {
     if (!active.length) { el.innerHTML = ''; return; }
 
     el.innerHTML = active.map(ev => `
-      <div style="
-        display:flex;align-items:center;gap:12px;
-        background:${ev.color}18;
-        border:1px solid ${ev.color}30;
-        border-left:3px solid ${ev.color};
-        border-radius:var(--radius-md);
-        padding:12px var(--space-md);
-        margin-bottom:10px">
-        <div style="width:36px;height:36px;border-radius:50%;background:${ev.color}22;
-                    display:flex;align-items:center;justify-content:center;
-                    flex-shrink:0;color:${ev.color}">
+      <div class="sq-seasonal-card" style="--event-color:${ev.color}">
+        <div class="sq-seasonal-icon">
           ${_calendarSVG}
         </div>
-        <div style="flex:1">
-          <p style="margin:0;font-size:13px;font-weight:700;color:${ev.color}">${escapeHtml(ev.name)}</p>
-          <p style="margin:2px 0 0;font-size:10px;color:var(--color-muted)">${escapeHtml(ev.desc)}</p>
+        <div class="sq-seasonal-copy">
+          <p class="sq-seasonal-title">${escapeHtml(ev.name)}</p>
+          <p class="sq-seasonal-desc">${escapeHtml(ev.desc)}</p>
         </div>
-        <span style="flex-shrink:0;font-size:18px;font-weight:800;font-family:var(--font-heading);
-                     color:${ev.color}">×${ev.multiplier}</span>
+        <span class="sq-seasonal-multiplier">×${ev.multiplier}</span>
       </div>
     `).join('');
   }
@@ -180,7 +170,7 @@ const MissionModule = (() => {
     renderSeasonalContent();
     _renderActiveFallback();
     _renderDailyFallback();
-    _loadMissionData(); // async — re-renders when data arrives
+    _loadMissionData(); // async · re-renders when data arrives
   }
 
   // ── Active mission ────────────────────────────────
@@ -242,68 +232,43 @@ const MissionModule = (() => {
     const progress = steps.filter(s => s.done).length;
 
     el.innerHTML = `
-      <div style="background:var(--color-card-dark);border-radius:var(--radius-xl);
-                  border:1px solid rgba(234,231,225,0.2);overflow:hidden" class="anim-fade-up">
-
-        <div style="background:linear-gradient(135deg,rgba(234,231,225,0.18),rgba(234,231,225,0.05));
-                    padding:var(--space-md);border-bottom:1px solid rgba(234,231,225,0.12)">
-          <div style="display:flex;align-items:center;gap:10px">
-            <div style="width:38px;height:38px;border-radius:var(--radius-md);
-                        background:rgba(234,231,225,0.15);border:1.5px solid rgba(234,231,225,0.4);
-                        display:flex;align-items:center;justify-content:center;
-                        flex-shrink:0;color:var(--color-primary)">${_crownSVG}</div>
-            <div style="flex:1;min-width:0">
-              <p style="margin:0;font-size:10px;text-transform:uppercase;letter-spacing:1.4px;
-                        color:var(--color-primary);font-weight:600">Active Quest</p>
-              <h3 style="margin:2px 0 0;font-family:var(--font-heading);font-size:15px;
-                          font-weight:700;line-height:1.2">${escapeHtml(target.name_th)}</h3>
+      <article class="sq-mission-ticket anim-fade-up">
+        <div class="sq-ticket-header">
+          <div class="sq-ticket-kicker"><span>ROUTE 01</span><span>ACTIVE QUEST</span></div>
+          <div class="sq-ticket-title-row">
+            <div class="sq-ticket-emblem">${_crownSVG}</div>
+            <div class="sq-ticket-heading">
+              <h3>${escapeHtml(target.name_th)}</h3>
+              <p>${escapeHtml(era)} <span class="sq-ticket-divider">/</span> <b>+${(target.legacy_pts||0).toLocaleString()} pts</b></p>
             </div>
             <span class="badge badge-${target.class.toLowerCase()}">${target.class}</span>
           </div>
-          <p style="margin:6px 0 0;font-size:11px;color:var(--color-muted)">
-            ${escapeHtml(era)} &nbsp;·&nbsp;
-            Reward: <span style="color:var(--color-primary);font-weight:600">+${(target.legacy_pts||0).toLocaleString()} pts</span>
-          </p>
         </div>
 
-        <div style="padding:var(--space-md) var(--space-md) 0;display:flex;align-items:center">
+        <div class="sq-route-progress" aria-label="${progress} of ${steps.length} mission steps complete">
           ${steps.map((s, i) => `
-            <div style="display:flex;align-items:center;flex:1">
-              <div style="width:26px;height:26px;border-radius:50%;flex-shrink:0;
-                background:${s.done ? 'var(--color-success)' : i === progress ? 'rgba(234,231,225,0.15)' : 'var(--color-card-darker)'};
-                border:2px solid ${s.done ? 'var(--color-success)' : i === progress ? 'var(--color-primary)' : 'var(--color-border)'};
-                display:flex;align-items:center;justify-content:center;
-                font-size:10px;font-weight:700;
-                color:${s.done ? '#1C1B2E' : i === progress ? 'var(--color-primary)' : 'var(--color-muted)'}">
+            <div class="sq-route-node-wrap">
+              <div class="sq-route-node ${s.done ? 'is-done' : i === progress ? 'is-current' : ''}">
                 ${s.done ? checkSVGSmall() : i + 1}
               </div>
-              ${i < steps.length - 1 ? `<div style="flex:1;height:2px;margin:0 3px;
-                  background:${s.done ? 'var(--color-success)' : 'var(--color-border)'};border-radius:2px"></div>` : ''}
+              ${i < steps.length - 1 ? `<div class="sq-route-line ${s.done ? 'is-done' : ''}"></div>` : ''}
             </div>
           `).join('')}
         </div>
 
-        <div style="padding:var(--space-sm) var(--space-md) var(--space-md)">
-          ${steps.map((s, i) => `
-            <div style="display:flex;align-items:flex-start;gap:10px;padding:6px 0;
-                        ${i < steps.length - 1 ? 'border-bottom:1px solid rgba(255,255,255,0.04)' : ''}">
-              <div style="width:16px;height:16px;border-radius:50%;flex-shrink:0;margin-top:2px;
-                          background:${s.done ? 'var(--color-success)' : 'transparent'};
-                          border:1.5px solid ${s.done ? 'var(--color-success)' : 'var(--color-border)'};
-                          display:flex;align-items:center;justify-content:center">
-                ${s.done ? checkSVGSmall() : ''}
-              </div>
-              <div>
-                <p style="margin:0;font-size:12px;font-weight:600;
-                          color:${s.done ? 'var(--color-muted)' : 'var(--color-white)'};
-                          text-decoration:${s.done ? 'line-through' : 'none'}">${escapeHtml(s.text)}</p>
-                <p style="margin:1px 0 0;font-size:10px;
-                          color:${s.done ? 'rgba(137,134,168,0.5)' : 'var(--color-muted)'}">${escapeHtml(s.sub)}</p>
+        <div class="sq-mission-steps">
+          ${steps.map(s => `
+            <div class="sq-mission-step ${s.done ? 'is-done' : ''}">
+              <div class="sq-step-check">${s.done ? checkSVGSmall() : ''}</div>
+              <div class="sq-step-copy">
+                <p>${escapeHtml(s.text)}</p>
+                <span>${escapeHtml(s.sub)}</span>
               </div>
             </div>
           `).join('')}
         </div>
-      </div>
+        <div class="sq-ticket-foot"><span>KEEP EXPLORING</span><b>${progress}/${steps.length} CHECKPOINTS</b></div>
+      </article>
     `;
   }
 
@@ -345,59 +310,39 @@ const MissionModule = (() => {
     const donePct = Math.round((challenges.filter(c => c.completed).length / challenges.length) * 100);
 
     el.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <h3 class="section-title">Daily Challenges</h3>
-        <div style="display:flex;align-items:center;gap:6px">
-          <span style="font-size:var(--text-xs);color:var(--color-muted)">Resets in ${hLeft}h</span>
-          <span style="font-size:11px;font-weight:700;color:var(--color-success);
-                       background:var(--color-success-dim);border-radius:var(--radius-full);
-                       padding:2px 8px">${donePct}%</span>
+      <div class="sq-daily-heading">
+        <div>
+          <span class="sq-section-kicker">FIELD TASKS</span>
+          <h3 class="section-title">Daily Challenges</h3>
+        </div>
+        <div class="sq-daily-status">
+          <span>RESETS ${hLeft}H</span>
+          <b>${donePct}%</b>
         </div>
       </div>
 
-      <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="sq-daily-list">
         ${challenges.map(c => {
           const style = _DAILY_TYPE_STYLE[c.type] || _DAILY_TYPE_STYLE.quiz;
-          const color = c.completed ? 'var(--color-success)' : style.color;
           const showProg = c.target_count > 1 && !c.completed;
           const isRecall = c.type === 'lore_recall' && !c.completed;
         return `
-          <div onclick="${isRecall ? `MissionModule.openRecall(${JSON.stringify(c).replace(/"/g, '&quot;')})` : ''}"
-               style="
-            display:flex;align-items:center;gap:10px;
-            background:var(--color-card-dark);
-            border:1px solid ${c.completed ? 'rgba(123,198,126,0.2)' : 'var(--color-border)'};
-            border-left:3px solid ${color};
-            border-radius:var(--radius-md);
-            padding:10px 12px;
-            ${isRecall ? 'cursor:pointer;' : ''}
-          ">
-            <div style="
-              width:32px;height:32px;border-radius:50%;
-              background:${style.color}1A;
-              display:flex;align-items:center;justify-content:center;
-              flex-shrink:0;color:${style.color}">
+          <div class="sq-daily-row ${c.completed ? 'is-complete' : ''} ${isRecall ? 'is-clickable' : ''}"
+               ${isRecall ? `onclick="MissionModule.openRecall(${JSON.stringify(c).replace(/"/g, '&quot;')})"` : ''}>
+            <div class="challenge-icon-box" style="--challenge-color:${style.color}">
               ${style.icon}
             </div>
-            <div style="flex:1;min-width:0">
-              <p style="margin:0;font-size:13px;font-weight:600;
-                        color:${c.completed ? 'var(--color-muted)' : 'var(--color-white)'};
-                        text-decoration:${c.completed ? 'line-through' : 'none'};
-                        white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(c.title_th)}</p>
-              ${showProg ? `<p style="margin:3px 0 0;font-size:11px;color:var(--color-muted)">${c.current}/${c.target_count}</p>` : ''}
+            <div class="sq-daily-copy">
+              <p class="challenge-name">${escapeHtml(c.title_th)}</p>
+              ${showProg ? `<span class="challenge-loc">${c.current}/${c.target_count} complete</span>` : ''}
             </div>
             ${c.completed
-              ? `<div style="width:26px;height:26px;border-radius:50%;background:var(--color-success-dim);
-                             display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              ? `<div class="sq-complete-mark">
                    <svg viewBox="0 0 16 16" fill="none" stroke="var(--color-success)" stroke-width="2.5" style="width:12px;height:12px">
                      <polyline points="2,8 6,12 14,4"/>
                    </svg>
                  </div>`
-              : `<span style="
-                   flex-shrink:0;background:var(--color-primary-dim);
-                   border:1px solid var(--color-primary);border-radius:var(--radius-full);
-                   padding:4px 10px;font-size:11px;font-weight:700;
-                   color:var(--color-primary);white-space:nowrap">+${c.pts_reward}</span>`
+              : `<span class="challenge-pts">+${c.pts_reward}</span>`
             }
           </div>`;
         }).join('')}
@@ -468,7 +413,7 @@ const MissionModule = (() => {
     resultEl.style.color      = correct ? 'var(--color-success)' : 'var(--color-primary)';
     resultEl.textContent      = correct
       ? '✓ ถูกต้อง! +30 pts · ยอดเยี่ยม'
-      : '✗ ไม่ถูกต้อง — จะนำกลับมาทบทวนใน 3 วัน';
+      : '✗ ไม่ถูกต้อง · จะนำกลับมาทบทวนใน 3 วัน';
     resultEl.hidden = false;
     doneBtn.hidden  = false;
 

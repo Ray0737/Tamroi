@@ -129,7 +129,7 @@ body { overflow-x: hidden; }
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Subtle dark bg on hover — muted icon lifts to white, still in dark palette */
+/* Subtle dark bg on hover · muted icon lifts to white, still in dark palette */
 .icon-btn:hover  { background: rgba(255,255,255,0.06); color: var(--color-white); }
 .icon-btn:active { background: var(--color-card-dark); color: var(--color-white); }
 .icon-btn svg { width: 22px; height: 22px; }
@@ -179,7 +179,7 @@ body { overflow-x: hidden; }
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Icon wrapper — inactive: transparent passthrough */
+/* Icon wrapper · inactive: transparent passthrough */
 .nav-icon-wrap {
   display: flex;
   align-items: center;
@@ -261,7 +261,7 @@ body { overflow-x: hidden; }
   }
 }
 
-/* Subtle film grain — SVG feTurbulence noise, 3% opacity, non-interactive */
+/* Subtle film grain · SVG feTurbulence noise, 3% opacity, non-interactive */
 body::after {
   content: '';
   position: fixed;

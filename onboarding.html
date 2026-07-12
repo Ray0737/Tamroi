@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="color-scheme" content="dark">
-  <title>Setup — Tamroi</title>
+  <title>Setup · Tamroi</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/layout.css">
@@ -89,7 +89,7 @@
       flex-shrink: 0;
     }
 
-    /* Location illustration — pulsing rings */
+    /* Location illustration · pulsing rings */
     .pulse-ring {
       position: absolute;
       border-radius: 50%;
@@ -350,7 +350,7 @@
           อนุญาตการเข้าถึงตำแหน่ง
         </button>
 
-        <button class="skip-link" onclick="goToStep2()">ข้ามก่อน — ตั้งค่าในภายหลัง</button>
+        <button class="skip-link" onclick="goToStep2()">ข้ามก่อน · ตั้งค่าในภายหลัง</button>
 
       </div><!-- end step-location -->
 
@@ -396,20 +396,20 @@
     try { session = await DB.Auth.getSession(); } catch { /* not configured */ }
 
     if (localStorage.getItem('tam_roi_onboarded')) {
-      // Already completed onboarding — only go to app if actually logged in
+      // Already completed onboarding · only go to app if actually logged in
       if (session) { window.location.replace('app.html'); return; }
-      // Session gone (expired etc.) — clear stale flag and re-login
+      // Session gone (expired etc.) · clear stale flag and re-login
       localStorage.removeItem('tam_roi_onboarded');
     }
 
     // Must be logged in to reach onboarding
     if (!session) { window.location.replace('login.html'); return; }
 
-    // First time onboarding — also listen for OAuth SIGNED_IN
+    // First time onboarding · also listen for OAuth SIGNED_IN
     // (in case Supabase is still exchanging the token when this page loads)
     if (!session) {
       DB.Auth.onStateChange((event, s) => {
-        if (event === 'SIGNED_IN' && s) { /* proceed — page already loaded */ }
+        if (event === 'SIGNED_IN' && s) { /* proceed · page already loaded */ }
         else if (event === 'INITIAL_SESSION' && !s) {
           window.location.replace('login.html');
         }
@@ -455,7 +455,7 @@
         } catch { /* ignore */ }
         goToStep2();
       },
-      () => goToStep2(),  // denied or error — continue anyway
+      () => goToStep2(),  // denied or error · continue anyway
       { timeout: 8000, maximumAge: 0 }
     );
   }
@@ -533,7 +533,7 @@
       if (session?.user) {
         await DB.Profiles.update(session.user.id, { age_consent_at: new Date().toISOString() });
       }
-    } catch { /* consent record best-effort — don't block onboarding on it */ }
+    } catch { /* consent record best-effort · don't block onboarding on it */ }
 
     window.location.href = 'app.html';
   }
