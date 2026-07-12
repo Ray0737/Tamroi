@@ -238,7 +238,6 @@ const CollectionModule = (() => {
     'Chao Phraya Yomarat':         WP + '%E0%B9%80%E0%B8%88%E0%B9%89%E0%B8%B2%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A2%E0%B8%B2%E0%B8%A2%E0%B8%A1%E0%B8%A3%E0%B8%B2%E0%B8%8A.jpeg?width=250',
     'Prince Damrong Rajanubhab':   WP + 'Tisavarakumara_Damrong_Rajanubhab.jpg?width=250',
     'Prince Naris':                WP + 'Naritsaranuwattiwong_-_001.jpg?width=250',
-    'Princess Sirindhorn':         WP + 'Princess_Sirindhorn_2009-12-7_Royal_Thai_Government_House_2_%28Cropped%29.jpg?width=250',
   };
 
   function renderFigures() {

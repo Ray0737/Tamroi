@@ -240,9 +240,12 @@ Run patches in this order:
 23. SQL Editor → `supabase/patch_multi_watchtower.sql`
 24. SQL Editor → `supabase/patch_encounter_key.sql`
 25. SQL Editor → `supabase/patch_jigsaw_v2.sql`
-26. Authentication → Email → **disable "Confirm email"** for dev
-27. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
-28. Settings → API → copy URL + anon key into `js/env.js`
+26. SQL Editor → `supabase/patch_remove_sirindhorn.sql` — content-safety swap, same rationale as the Rama-line removal
+27. Authentication → Email → **disable "Confirm email"** for dev
+28. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
+29. Settings → API → copy URL + anon key into `js/env.js`
+
+> Note: this list is not exhaustive — several later content/bugfix patches (e.g. `patch_c_class_proximity.sql`, `patch_review_status.sql`, `patch_child_safety.sql`, `patch_fix_user_fk.sql`, the `patch_remove_rama*.sql` set) exist in `supabase/` but predate this list being kept current. Check `ls supabase/*.sql` against this list before a from-scratch setup.
 
 ---
 

@@ -19,7 +19,7 @@ Columns: `id`, `name_th`, `name_en`, `class` (S/A/B/C), `legacy_pts`, `district_
 | 🏙️ | Chao Phraya Yomarat | เจ้าพระยายมราช (ปั้น สุขุม) | ดุสิต (dusit) | No | Modernized Bangkok's public health and city planning; laid out early road systems under Rama V. |
 | 📚 | Prince Damrong Rajanubhab | กรมพระยาดำรงราชานุภาพ | ดุสิต (dusit) | No | "Father of Thai History"; founded the National Library, National Museum, and modern education system. |
 | 🎨 | Prince Naris | สมเด็จเจ้าฟ้ากรมพระยานริศรานุวัดติวงศ์ | พระนคร (rattanakosin) | No | Versatile genius — architect, painter, composer, poet; designed Wat Benchamabophit (Marble Temple). |
-| 🌺 | Princess Sirindhorn | สมเด็จพระกนิษฐาธิราชเจ้า กรมสมเด็จพระเทพรัตนราชสุดาฯ | ดุสิต (dusit) | No | Received the rare Maha Chakri title for work in education, arts, and development. |
+| ⚔️ | Chao Phraya Bodindecha (Sing Singhaseni) | เจ้าพระยาบดินทรเดชา (สิงห์ สิงหเสนี) | ดุสิต (dusit) | No | Supreme commander under Rama III; led the Siamese–Vietnamese War (Anam Sayam Yut) and campaigns in Cambodia/Laos. Replaced 2026-07-12 — the prior fig-s-19 was Princess Sirindhorn, a living member of the current reigning family; pulled for the same content-sensitivity reason the Rama-line kings were removed, even though the game's written policy only names reigning kings. |
 
 ## Class A — Epic (200 pts, 20 figures)
 
