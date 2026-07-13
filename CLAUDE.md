@@ -38,7 +38,7 @@
 ├── vercel.json          Deployment config + security headers
 ├── restyling/           Seven page-by-page UI concept sets + comparison boards (no runtime dependency)
 ├── assets/
-│   └── street-quest/    Generated Bangkok collage, route paper, UI textures, class badge stamps/paper label, generated mission/watchtower ink stamps, Collection archive hero, and Community podium hero
+│   └── street-quest/    Generated Bangkok collage, route paper, UI textures, class badge stamps/paper label, generated mission/watchtower ink stamps, guild seal/journal/control tickets, field-kit slips, image-backed numbered mission passes, join-request action tickets, figure capture/dossier/field-sheet/settings/notification templates, and tab icons, Collection archive hero, and Community podium hero
 ├── css/
 │   ├── variables.css    Design tokens (DO NOT override these inline)
 │   ├── layout.css       Top bar, bottom nav, tab shell
@@ -90,6 +90,7 @@
     ├── patch_multi_watchtower.sql watchtowers + user_watchtower_visits tables + district-completion trigger (multi-tower districts, e.g. Wattana)
     ├── patch_encounter_key.sql has_encounter_key column on user_districts + backfill for existing check-ins
     ├── patch_jigsaw_v2.sql     GPS-gated jigsaw v2 — lore_node_id/proposed_order on assignments, unlocks_figure_id on collab_missions, user_jigsaw_encounters table, on_jigsaw_proposed_order SECURITY DEFINER trigger
+    ├── patch_walk_trail.sql    user_walk_points table — per-account walk-trail fog reveal (was localStorage-only)
     └── patch_mock_satit.sql    Test-only seed data — REMOVE before production
 └── docs/
     ├── Db.md                   Figure roster snapshot from the live Supabase DB
@@ -120,7 +121,7 @@
 
 **`js/env.js` is trackable in this prototype.** Keep it limited to public Supabase anon/dev-safe values. Never put service-role keys or private credentials in client code.
 
-The Thailand Street Quest visual treatment now spans the full runtime: the landing page uses generated Bangkok explorer collage art; onboarding uses generated route-paper art; auth keeps the explorer-pass treatment; and app chrome, missions, cards, and sheets use generated cream/ink/map/kraft materials through `css/street-quest.css`. Collection adds a dedicated generated archive-evidence collage, dark archive page, Thailand-wide archive hero labels, torn-paper toolbox, and poster-like cards. Community adds a generated three-poster podium, separate MY RANK ticket, compact dark ranking/group ledgers, and parchment forum; the current player is also shown in the main list at their actual rank with a highlighted row. The latest UI pass extends the same treatment into Lore and Support Node evidence sheets, Explorer Pass settings, Field Notes notifications, generated blue/red Mission and Watchtower ink stamps, and paper mission tickets with stamped route checkpoints. Text and controls keep comfortable mobile sizing, and the map shows the illustrated route texture until Carto raster tiles are ready. The eleven browser-verified 430px captures, including populated My Group, Forum, and Watchtower Check-In states, live in `restyling/05_bangkok_street_quest/screenshots/`; `tests/ui-visual.spec.mjs` also checks 430px and 375px layouts for horizontal leaks and top-bar collisions. The full set was regenerated on 2026-07-12 after the generated stamp pass.
+The Thailand Street Quest visual treatment now spans the full runtime: the landing page uses generated Bangkok explorer collage art; onboarding uses generated route-paper art; auth keeps the explorer-pass treatment; and app chrome, missions, cards, and sheets use generated cream/ink/map/kraft materials through `css/street-quest.css`. Collection adds a dedicated generated archive-evidence collage, dark archive page, Thailand-wide archive hero labels, torn-paper toolbox, and poster-like cards. Community adds a generated three-poster podium, separate MY RANK ticket, compact dark ranking/group ledgers, and parchment forum; the My Group hub now continues that language with an ink field-crew dossier, generated compass crew seal, torn kraft-paper invite/member ticket, image-generated action/tab tickets, roster slips, note cards, image-backed numbered co-op mission passes (`mission-pass-01/02/03.webp`), readable pending join-request tickets, and custom field-journal tab icons that replace generic control chrome; the current player is also shown in the main list at their actual rank with a highlighted row. The latest UI pass extends the same treatment into generated capture/reveal posters for every figure class, figure dossier modals, C-class encounter sheets, compact Support Node and Watchtower paper tickets, Explorer Pass settings, Field Notes notifications, a stamped GPS permission state, a scrapbook relationship graph, generated blue/red Mission and Watchtower ink stamps, and paper mission tickets with stamped route checkpoints. Live Thai/English text and controls remain in HTML/JS over the blank printed zones for readability and accessibility. Text and controls keep comfortable mobile sizing, and the map shows the illustrated route texture until Carto raster tiles are ready. The eleven browser-verified 430px captures, including populated My Group, Forum, and Watchtower Check-In states, live in `restyling/05_bangkok_street_quest/screenshots/`; `tests/ui-visual.spec.mjs` also checks 430px and 375px layouts for horizontal leaks and top-bar collisions. The full set was regenerated on 2026-07-13 after the generated guild field-kit pass.
 
 Locked Collection figure cards use a larger, high-contrast lock badge with a dark backing and light border so phase-locked figures remain visible over portrait imagery. Collection class badges use generated worn letterpress tiles plus a distressed paper label texture, ink offset shadow, and class-specific micro-rotation.
 
@@ -241,9 +242,10 @@ Run patches in this order:
 24. SQL Editor → `supabase/patch_encounter_key.sql`
 25. SQL Editor → `supabase/patch_jigsaw_v2.sql`
 26. SQL Editor → `supabase/patch_remove_sirindhorn.sql` — content-safety swap, same rationale as the Rama-line removal
-27. Authentication → Email → **disable "Confirm email"** for dev
-28. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
-29. Settings → API → copy URL + anon key into `js/env.js`
+27. SQL Editor → `supabase/patch_walk_trail.sql`
+28. Authentication → Email → **disable "Confirm email"** for dev
+29. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
+30. Settings → API → copy URL + anon key into `js/env.js`
 
 > Note: this list is not exhaustive — several later content/bugfix patches (e.g. `patch_c_class_proximity.sql`, `patch_review_status.sql`, `patch_child_safety.sql`, `patch_fix_user_fk.sql`, the `patch_remove_rama*.sql` set) exist in `supabase/` but predate this list being kept current. Check `ls supabase/*.sql` against this list before a from-scratch setup.
 
@@ -315,12 +317,14 @@ Run patches in this order:
 - Community leaderboard selector menus raise the active control above following rank cards; leaderboard panels are width-contained and desktop fixed chrome centers with the 430px app frame.
 - Solo Community leaderboard rendering keeps the current player in the sorted rank list as well as the MY RANK ticket, using the existing `lb-my-row` marker and a themed highlight.
 - Lore and Support Node sheets use textured evidence-card framing, paper narrative panels, route metadata, and stronger action hierarchy without changing their data flow.
-- Watchtower Check-In uses the generated `class-label-paper.png` frame, a dark district pass, stamped support requirements, and a paper-backed encounter gate.
-- Support Node cards use the same physical ticket language, with a visited stamp, key-ready stamp, and progress receipt states.
+- Watchtower Check-In uses the compact generated `class-label-paper.png` frame, a dark district pass, stamped support requirements, a paper-backed encounter gate, and a bottom Cancel ticket.
+- Support Node cards use the same compact physical ticket language, with a bordered location card, visited stamp, route metadata, and paper Close control.
 - Completed Watchtower support requirements render as rotated `สำเร็จ` ink stamps; incomplete requirements render as open stamp slots rather than circular checkmarks.
 - Settings uses an identity-page passport layout with passport metadata, an issued stamp, a field-permit strip, and a departure action.
+- Settings keeps fixed printed-slot positioning for its generated portrait, identity, permit, and bottom-ticket zones; compact Support Node and Watchtower overlays keep their live text/actions inside the supplied paper-ticket zones; Playwright verification covers 412×700 Support Node and 411×800 Watchtower states.
 - Notifications uses an inbox passport card, route-log stamp, paper note slips, unread ticket rails, and a ticket-style empty state.
 - Missions use a paper route ticket for the active quest and stamped daily task rows; the generated `YOUR FIELD ROUTE` label keeps positive spacing above the ticket so its frame does not cover the lettering; runtime copy uses direct punctuation instead of em dashes.
+- Guild co-op mission cards use numbered blue/pink/lime mission rails, larger high-contrast Thai text, explicit progress percentages, and orange full-width check-in actions; Jigsaw missions reuse the same pass shell while keeping their GPS, quiz, summary, and merge behavior.
 
 ### DB Tables
 
@@ -360,6 +364,7 @@ Run patches in this order:
 | `user_watchtower_visits` | patch_multi_watchtower | Per-user, per-watchtower visit rows; unique per `(user_id, watchtower_id)` |
 | `check_district_watchtowers_complete` trigger | patch_multi_watchtower | Flips `user_districts.fogged = false` once a user has visited every watchtower in a district |
 | `user_districts.has_encounter_key` | patch_encounter_key | Set true on check-in; required alongside support-node chain to start an A-tier Legendary Encounter |
+| `user_walk_points` | patch_walk_trail | Per-account walk-trail fog-reveal points; PK `(user_id, lat, lng)`; own-row RLS; localStorage kept as offline cache, re-synced on boot |
 | `quiz_questions.lore_id` | patch_retrieval_practice | Links recall questions to their source lore node |
 | `quiz_questions.assessment_type` | patch_retrieval_practice | `'capture'` / `'pretest'` / `'recall'` |
 | `user_lore.recall_due_at` | patch_retrieval_practice | Spaced-repetition due timestamp; auto-set by DB trigger |
@@ -374,6 +379,7 @@ Run patches in this order:
 - `window.DB.Missions`: `getRecallMissions(userId)`, `completeRecall(userId, loreNodeId, wasCorrect)`
 - `window.DB.Quiz`: `getForFigure(figureId, count)`
 - `window.DB.Districts.getVisitedSupportNodes(userId)`, `updateNodeVisit(userId, districtId, nodeType, nodeId)`
+- `window.DB.WalkTrail`: `getPoints(userId)`, `addPoints(userId, points)` — per-account walk-trail fog persistence (idempotent upsert)
 - `window.DB.Profiles.addLegacyPoints(userId, pts)`
 - `window.DB.Leaderboard.subscribe(callback)`
 - `window.DB.Notifications.subscribe(userId, callback)`

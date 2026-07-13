@@ -248,6 +248,29 @@ const Watchtowers = {
   },
 };
 
+// ── Walk Trail (path-based fog reveal points) ─────────
+const WalkTrail = {
+  async getPoints(userId) {
+    const { data, error } = await _sb
+      .from('user_walk_points')
+      .select('lat, lng')
+      .eq('user_id', userId);
+    if (error) throw error;
+    return data || [];
+  },
+
+  // Idempotent · re-syncing a point already in the DB is a no-op, so the
+  // localStorage catch-up on boot can resend safely.
+  async addPoints(userId, points) {
+    if (!points.length) return;
+    const { error } = await _sb
+      .from('user_walk_points')
+      .upsert(points.map(p => ({ user_id: userId, lat: p.lat, lng: p.lng })),
+              { onConflict: 'user_id,lat,lng', ignoreDuplicates: true });
+    if (error) throw error;
+  },
+};
+
 // ── Figures ───────────────────────────────────────────
 const Figures = {
   async getAll() {
@@ -1307,4 +1330,4 @@ const Debates = {
 };
 
 // Expose globally
-window.DB = { Auth, Profiles, Districts, Watchtowers, Figures, SupportNodes, Artifacts, Leaderboard, Lore, Quiz, Notifications, Missions, Coop, Raid, Discussion, Community, Debates };
+window.DB = { Auth, Profiles, Districts, Watchtowers, WalkTrail, Figures, SupportNodes, Artifacts, Leaderboard, Lore, Quiz, Notifications, Missions, Coop, Raid, Discussion, Community, Debates };

@@ -25,3 +25,16 @@ assert(cells.every(cell => cell.bounds.length === 4), 'each grid cell must expos
 const bangkokCell = sandbox.window.FogGrid.findCellForLatLng(13.7563, 100.5018, cells);
 assert(bangkokCell, 'Bangkok coordinate must resolve to a Thailand grid cell');
 assert(bangkokCell.id.startsWith('th-r'), 'resolved grid cell must use th-rXX-cXX id format');
+
+// Walk-trail persistence (patch_walk_trail) · trail points must sync to Supabase, not localStorage only
+const walkPatch = read('supabase/patch_walk_trail.sql');
+assert(walkPatch.includes('user_walk_points'), 'patch_walk_trail.sql must create user_walk_points');
+assert(walkPatch.includes('ENABLE ROW LEVEL SECURITY'), 'user_walk_points must enable RLS');
+
+const clientJs = read('js/supabase-client.js');
+assert(clientJs.includes("from('user_walk_points')"), 'supabase-client.js must read/write user_walk_points');
+assert(/window\.DB = \{[^}]*WalkTrail/.test(clientJs), 'WalkTrail must be exported on window.DB');
+
+const mapJs = read('js/map.js');
+assert(mapJs.includes('DB.WalkTrail.getPoints'), 'map.js must load walk points from the DB on boot');
+assert(mapJs.includes('DB.WalkTrail?.addPoints'), 'map.js must persist new walk points to the DB');

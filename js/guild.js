@@ -109,7 +109,11 @@ const GuildModule = (() => {
       <div>
 
         <!-- ── Team header · compact profile row ── -->
-        <div class="guild-section">
+        <div class="guild-section guild-overview">
+          <div class="guild-panel-kicker" aria-hidden="true">
+            <span>FIELD CREW</span>
+            <span>JOURNAL / 01</span>
+          </div>
           <div class="guild-header-row">
             <div class="guild-emblem">${escapeHtml(guild.name.substring(0, 2).toUpperCase())}</div>
             <div class="guild-header-main">
@@ -128,14 +132,14 @@ const GuildModule = (() => {
 
           <!-- ── Quick actions · moved up from the bottom ── -->
           <div class="guild-action-row">
-            <button id="btn-rally-pin" class="guild-action-btn" style="color:var(--color-primary)">
+            <button id="btn-rally-pin" class="guild-action-btn guild-action-btn--rally">
               <i class="bi bi-geo-alt-fill"></i> Rally</button>
-            <button id="btn-open-discuss" class="guild-action-btn" style="color:var(--color-muted)">
+            <button id="btn-open-discuss" class="guild-action-btn guild-action-btn--discuss">
               <i class="bi bi-chat"></i> ถกเถียง</button>
             ${!isLeader ? `
-              <button id="btn-leave-guild" class="guild-action-btn" style="color:var(--color-danger)">
+              <button id="btn-leave-guild" class="guild-action-btn guild-action-btn--danger">
                 <i class="bi bi-box-arrow-right"></i> ออกจากกลุ่ม</button>` : `
-              <button id="btn-delete-guild" class="guild-action-btn" style="color:var(--color-danger)">
+              <button id="btn-delete-guild" class="guild-action-btn guild-action-btn--danger">
                 <i class="bi bi-trash"></i> ลบกลุ่ม</button>`}
           </div>
 
@@ -143,7 +147,7 @@ const GuildModule = (() => {
           <p class="guild-desc-text">${escapeHtml(guild.description)}</p>` : ''}
           ${guild.announcement ? `
           <div class="guild-announce-row">
-            <i class="bi bi-megaphone"></i>
+            <span class="guild-note-icon guild-note-icon--announce" aria-hidden="true"></span>
             <p>${escapeHtml(guild.announcement)}</p>
           </div>` : ''}
 
@@ -167,19 +171,19 @@ const GuildModule = (() => {
         <!-- ── Sub-nav · switches the panels below, mirrors the main bottom nav ── -->
         <div class="guild-subnav">
           <button class="guild-subnav-item active" data-guild-tab="members">
-            <i class="bi bi-people"></i><span>สมาชิก</span></button>
+            <span class="guild-tab-icon guild-tab-icon--members" aria-hidden="true"></span><span>สมาชิก</span></button>
           <button class="guild-subnav-item" data-guild-tab="announce">
-            <i class="bi bi-megaphone"></i><span>ประกาศ</span></button>
+            <span class="guild-tab-icon guild-tab-icon--announce" aria-hidden="true"></span><span>ประกาศ</span></button>
           <button class="guild-subnav-item" data-guild-tab="log">
-            <i class="bi bi-journal-text"></i><span>บันทึก</span></button>
+            <span class="guild-tab-icon guild-tab-icon--log" aria-hidden="true"></span><span>บันทึก</span></button>
           <button class="guild-subnav-item" data-guild-tab="missions">
-            <i class="bi bi-lightning"></i><span>ภารกิจ</span></button>
+            <span class="guild-tab-icon guild-tab-icon--missions" aria-hidden="true"></span><span>ภารกิจ</span></button>
         </div>
 
         <!-- ── Members + Requests ── -->
         <div class="guild-section guild-subpanel" data-guild-panel="members">
           <div class="guild-invite-line">
-            <span>รหัสเชิญ</span>
+            <span class="guild-invite-label">รหัสเชิญ</span>
             <span class="guild-invite-code">${escapeHtml(guild.invite_code)}</span>
             <button id="btn-copy-invite" class="guild-invite-copy-btn" title="คัดลอก">
               <i class="bi bi-clipboard"></i></button>
@@ -188,7 +192,7 @@ const GuildModule = (() => {
             ${members.map(m => _memberRow(m, onlineIds)).join('')}
           </div>
           ${isLeader ? `
-          <div id="guild-requests-top" style="margin-top:10px">
+            <div id="guild-requests-top">
             <div style="display:flex;justify-content:center;padding:4px"><div class="spinner"></div></div>
           </div>` : ''}
         </div>
@@ -314,6 +318,7 @@ const GuildModule = (() => {
         const ago  = _relativeTime(a.created_at);
         return `
           <div class="guild-announcement-item">
+            <span class="guild-announcement-marker" aria-hidden="true"></span>
             <div class="guild-announcement-body">
               <p class="guild-announcement-text">${escapeHtml(a.content)}</p>
               <p class="guild-announcement-meta">${name} · ${ago}</p>
@@ -354,12 +359,12 @@ const GuildModule = (() => {
     const iAmLeader = _state.guild.myRole === 'leader';
 
     return `
-      <div class="guild-member-row">
+      <div class="guild-member-row${isLeader ? ' guild-member-row--leader' : ''}">
         <div class="guild-member-avatar-wrap">
           ${avatarHTML(profile.avatar_url, initials, 34, isLeader ? 'var(--color-primary)' : 'var(--color-muted)')}
           <span class="guild-status-badge ${isOnline ? 'online' : 'offline'}"></span>
         </div>
-        <div style="flex:1;min-width:0">
+        <div class="guild-member-copy">
           <p class="guild-member-name">
             ${username}${isMe ? ' <span class="guild-member-you">(คุณ)</span>' : ''}
           </p>
@@ -395,26 +400,33 @@ const GuildModule = (() => {
     if (!el) return;
     try {
       const requests = await DB.Coop.getJoinRequests(guildId);
-      const header = `<p style="margin:0 0 10px;font-size:11px;font-weight:700;color:var(--color-primary);
-                                 display:flex;align-items:center;gap:6px">
-                        <i class="bi bi-person-plus"></i> คำขอเข้าร่วม${requests.length ? ` (${requests.length})` : ''}</p>`;
+      const header = `
+        <div class="guild-requests-heading">
+          <span><i class="bi bi-person-plus" aria-hidden="true"></i> คำขอเข้าร่วม</span>
+          ${requests.length ? `<b class="guild-request-count">${requests.length}</b>` : ''}
+        </div>`;
       if (!requests.length) {
-        el.innerHTML = header + `<p style="margin:0;font-size:12px;color:var(--color-muted)">ไม่มีคำขอ</p>`;
+        el.innerHTML = header + `<p class="guild-request-empty">ไม่มีคำขอใหม่</p>`;
         return;
       }
       el.innerHTML = header + requests.map(r => {
         const name     = escapeHtml(r.profiles?.username || '?');
         const initials = name.substring(0, 2).toUpperCase();
         return `
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;
-                      border-bottom:1px solid rgba(255,255,255,0.05)">
-            ${avatarHTML(r.profiles?.avatar_url, initials, 34, 'var(--color-muted)')}
-            <p style="margin:0;flex:1;font-size:13px;font-weight:600;color:var(--color-white)">${name}</p>
-            <button class="btn btn-primary" style="font-size:11px;padding:5px 12px;white-space:nowrap"
-                    data-approve="${escapeHtml(r.id)}">ยอมรับ</button>
-            <button class="btn btn-ghost"
-                    style="font-size:11px;padding:5px 12px;white-space:nowrap;border-color:var(--color-border)"
-                    data-reject="${escapeHtml(r.id)}">ปฏิเสธ</button>
+          <div class="guild-request-row">
+            <div class="guild-request-avatar">
+              ${avatarHTML(r.profiles?.avatar_url, initials, 38, 'var(--color-muted)')}
+            </div>
+            <div class="guild-request-copy">
+              <p class="guild-request-name">${name}</p>
+              <p class="guild-request-meta">ขอเข้าร่วมทีมภาคสนาม</p>
+            </div>
+            <div class="guild-request-actions">
+              <button class="guild-request-btn guild-request-btn--approve" type="button"
+                      data-approve="${escapeHtml(r.id)}">ยอมรับ</button>
+              <button class="guild-request-btn guild-request-btn--reject" type="button"
+                      data-reject="${escapeHtml(r.id)}">ปฏิเสธ</button>
+            </div>
           </div>`;
       }).join('');
       el.querySelectorAll('[data-approve]').forEach(btn =>
@@ -445,11 +457,11 @@ const GuildModule = (() => {
       }
       el.innerHTML = '';
       el.style.cssText += 'display:flex;flex-direction:column;gap:8px';
-      for (const m of missions) {
+      for (const [missionIndex, m] of missions.entries()) {
         const checkins  = allCheckins.filter(c => c.mission_id === m.id);
         const myCheckin = checkins.find(c => c.user_id === user?.id);
         const wrapper   = document.createElement('div');
-        wrapper.innerHTML = window.CoopModule?.renderMissionCard(m, checkins.length, myCheckin) ?? '';
+        wrapper.innerHTML = window.CoopModule?.renderMissionCard(m, checkins.length, myCheckin, missionIndex + 1) ?? '';
         wrapper.querySelector('[data-checkin-btn]')?.addEventListener('click', async () => {
           try {
             await DB.Coop.checkInToMission(m.id, guildId, user.id);
@@ -508,11 +520,11 @@ const GuildModule = (() => {
         el.innerHTML = `<p class="guild-list-empty">ยังไม่มีกิจกรรม</p>`;
         return;
       }
-      const iconFor  = { capture: 'bi-trophy', fog: 'bi-map', lore: 'bi-book' };
+      const markerFor = { capture: 'capture', fog: 'fog', lore: 'lore' };
       const labelFor = { capture: 'จับ', fog: 'เปิดหมอก', lore: 'ปลดล็อก Lore:' };
       el.innerHTML = events.map(e => `
         <div class="guild-log-item">
-          <i class="bi ${iconFor[e.type]} guild-log-icon"></i>
+          <span class="guild-log-marker guild-log-marker--${markerFor[e.type] || 'lore'}" aria-hidden="true"></span>
           <div class="guild-log-body">
             <p class="guild-log-text">
               <strong>${escapeHtml(e.user)}</strong> ${labelFor[e.type]}
@@ -735,6 +747,12 @@ const GuildModule = (() => {
       resultsEl.querySelectorAll('button[data-guild-id]:not([disabled])').forEach(btn => {
         btn.addEventListener('click', async () => {
           try {
+            const session = await DB.Auth.getSession();
+            if (!session || session.expires_at * 1000 < Date.now()) {
+              window.AppCore?.showToast?.('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่');
+              window.location.href = 'login.html';
+              return;
+            }
             await DB.Coop.sendJoinRequest(btn.dataset.guildId, user.id);
             btn.textContent = 'รอการอนุมัติ';
             btn.disabled = true;

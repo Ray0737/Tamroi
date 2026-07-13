@@ -209,7 +209,7 @@
   background: var(--sq-lime);
   border: 2px solid var(--sq-ink);
   color: var(--sq-ink);
-  font: 800 12px/1 var(--font-display);
+  font: 800 12.5px/1 var(--font-display);
   letter-spacing: 0.08em;
   transform: rotate(2deg);
 }
@@ -2524,3 +2524,3022 @@
 .street-quest--app .notif-title { color: var(--sq-ink); font-size: 14px; }
 .street-quest--app .notif-msg { color: rgba(24, 21, 16, 0.62); }
 .street-quest--app .notif-dot { background: var(--sq-orange); }
+
+/* ── Guild hub: field crew journal / paper ticket ─────────────── */
+.street-quest--app #guild-panel {
+  position: relative;
+  overflow: visible;
+  padding: 0;
+  border: 3px solid var(--sq-paper-light);
+  border-radius: 4px;
+  background-color: var(--sq-ink-soft);
+  background-image:
+    linear-gradient(rgba(9, 9, 8, 0.48), rgba(9, 9, 8, 0.48)),
+    url('../assets/street-quest/ui-paper-ink.webp');
+  background-size: auto, 480px 480px;
+  color: #fff8e8;
+  box-shadow: 5px 5px 0 var(--sq-orange);
+}
+
+.street-quest--app #guild-panel .guild-overview {
+  padding: 19px 18px 16px;
+  border-bottom: 1px solid rgba(255, 248, 229, 0.2);
+}
+
+.street-quest--app #guild-panel .guild-panel-kicker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  color: rgba(255, 248, 229, 0.48);
+  font: 800 8px/1 var(--font-display);
+  letter-spacing: 0.16em;
+}
+.street-quest--app #guild-panel .guild-panel-kicker span:first-child { color: var(--sq-lime); }
+.street-quest--app #guild-panel .guild-panel-kicker span:last-child { color: rgba(255, 248, 229, 0.42); }
+
+.street-quest--app #guild-panel .guild-header-row { align-items: center; gap: 12px; }
+.street-quest--app #guild-panel .guild-emblem {
+  width: 58px;
+  height: 58px;
+  margin-top: 0;
+  border: none;
+  border-radius: 0;
+  background: url('../assets/street-quest/generated-stamps/guild-crew-seal.png') center / contain no-repeat;
+  color: var(--sq-ink);
+  font: 800 13px/1 var(--font-display);
+  text-shadow: 0 1px 0 rgba(244, 234, 208, 0.72);
+  box-shadow: none;
+  transform: rotate(-4deg);
+}
+.street-quest--app #guild-panel .guild-name {
+  color: #fff8e8;
+  font-size: 20px;
+  line-height: 1.15;
+}
+.street-quest--app #guild-panel .guild-header-meta {
+  gap: 6px;
+  margin-top: 5px;
+  color: rgba(255, 248, 229, 0.52);
+  font: 700 10px/1 var(--font-display);
+  letter-spacing: 0.03em;
+}
+.street-quest--app #guild-panel .guild-status-dot { width: 7px; height: 7px; }
+.street-quest--app #guild-panel .guild-header-edit-btn {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 248, 229, 0.25);
+  border-radius: 3px;
+  color: rgba(255, 248, 229, 0.66);
+  transform: rotate(3deg);
+}
+.street-quest--app #guild-panel .guild-header-edit-btn:hover {
+  border-color: var(--sq-orange);
+  color: var(--sq-orange);
+}
+
+.street-quest--app #guild-panel .guild-action-row {
+  gap: 7px;
+  margin: 16px 0 0;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(255, 248, 229, 0.2);
+}
+.street-quest--app #guild-panel .guild-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 38px;
+  padding: 8px 13px 9px;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  background-image: url('../assets/street-quest/generated-stamps/guild-action-ticket.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  box-shadow: none;
+  font: 800 11px/1 var(--font-body);
+  text-shadow: none;
+  transform: rotate(var(--guild-action-tilt, 0deg));
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+.street-quest--app #guild-panel .guild-action-btn--rally {
+  --guild-action-tilt: -1.2deg;
+  color: var(--sq-orange);
+}
+.street-quest--app #guild-panel .guild-action-btn--discuss {
+  --guild-action-tilt: 0.8deg;
+  color: var(--sq-ink);
+  opacity: 0.82;
+}
+.street-quest--app #guild-panel .guild-action-btn--danger {
+  --guild-action-tilt: -0.5deg;
+  background-image: url('../assets/street-quest/generated-stamps/guild-danger-ticket.png');
+  color: #7a2222;
+}
+.street-quest--app #guild-panel .guild-action-btn:hover,
+.street-quest--app #guild-panel .guild-action-btn:focus-visible {
+  background: transparent url('../assets/street-quest/generated-stamps/guild-action-ticket.png') center / 100% 100% no-repeat;
+  filter: brightness(1.04) saturate(1.08);
+  opacity: 1;
+  outline: none;
+  transform: translateY(-1px) rotate(var(--guild-action-tilt, 0deg));
+}
+.street-quest--app #guild-panel .guild-action-btn--danger:hover,
+.street-quest--app #guild-panel .guild-action-btn--danger:focus-visible {
+  background-image: url('../assets/street-quest/generated-stamps/guild-danger-ticket.png');
+}
+.street-quest--app #guild-panel .guild-action-btn:focus-visible {
+  outline: 2px solid var(--sq-lime);
+  outline-offset: 1px;
+}
+.street-quest--app #guild-panel .guild-action-btn:active {
+  transform: translateY(1px) rotate(var(--guild-action-tilt, 0deg));
+}
+
+.street-quest--app #guild-panel .guild-desc-text {
+  margin-top: 14px;
+  color: rgba(255, 248, 229, 0.66);
+  line-height: 1.6;
+}
+.street-quest--app #guild-panel .guild-announce-row {
+  margin-top: 13px;
+  padding: 10px 11px;
+  border: 1px solid rgba(255, 248, 229, 0.16);
+  border-left: 4px solid var(--sq-orange);
+  background: rgba(255, 248, 229, 0.055);
+}
+.street-quest--app #guild-panel .guild-announce-row i { color: var(--sq-orange); }
+.street-quest--app #guild-panel .guild-announce-row p { color: rgba(255, 248, 229, 0.72); }
+
+.street-quest--app #guild-panel .guild-subnav {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+  margin: 0 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 248, 229, 0.2);
+}
+.street-quest--app #guild-panel .guild-subnav-item {
+  min-height: 55px;
+  gap: 5px;
+  padding: 8px 3px 7px;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  background-image: none;
+  color: rgba(255, 248, 229, 0.46);
+  font-family: var(--font-heading);
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+.street-quest--app #guild-panel .guild-subnav-item i { font-size: 17px; }
+.street-quest--app #guild-panel .guild-subnav-item span { font-size: 10px; }
+.street-quest--app #guild-panel .guild-subnav-item:hover,
+.street-quest--app #guild-panel .guild-subnav-item:focus-visible {
+  color: #fff8e8;
+  background: rgba(255, 248, 229, 0.07);
+  outline: none;
+  transform: translateY(-1px) rotate(-0.5deg);
+}
+.street-quest--app #guild-panel .guild-subnav-item.active {
+  background-color: transparent;
+  background-image: url('../assets/street-quest/generated-stamps/guild-tab-marker.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  color: var(--sq-ink);
+  filter: none;
+  transform: rotate(-1.2deg);
+}
+.street-quest--app #guild-panel .guild-subnav-item.active:hover,
+.street-quest--app #guild-panel .guild-subnav-item.active:focus-visible {
+  background: transparent url('../assets/street-quest/generated-stamps/guild-tab-marker.png') center / 100% 100% no-repeat;
+  color: var(--sq-ink);
+  filter: brightness(1.04) saturate(1.08);
+  transform: translateY(-1px) rotate(-1.2deg);
+}
+.street-quest--app #guild-panel .guild-subnav-item.active::after { display: none; }
+
+.street-quest--app #guild-panel .guild-subpanel {
+  margin: 14px 14px 18px;
+  padding: 14px 14px 9px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 3px;
+  background-color: var(--sq-paper-light);
+  background-image:
+    linear-gradient(rgba(255, 247, 224, 0.67), rgba(255, 247, 224, 0.67)),
+    url('../assets/street-quest/ui-paper-kraft.webp');
+  background-size: auto, 460px 460px;
+  color: var(--sq-ink);
+  box-shadow: 4px 4px 0 var(--sq-blue);
+}
+
+.street-quest--app #guild-panel .guild-invite-line {
+  align-items: center;
+  min-height: 55px;
+  margin: -2px -4px 11px;
+  padding: 9px 12px 9px 16px;
+  border-bottom: none;
+  background: url('../assets/street-quest/generated-stamps/guild-journal-label.png') center / 100% 100% no-repeat;
+  color: rgba(24, 21, 16, 0.66);
+}
+.street-quest--app #guild-panel .guild-invite-label {
+  font: 800 9px/1 var(--font-display);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.street-quest--app #guild-panel .guild-invite-code {
+  color: var(--sq-orange);
+  font: 800 18px/1 var(--font-display);
+  letter-spacing: 0.14em;
+}
+.street-quest--app #guild-panel .guild-invite-copy-btn {
+  border-color: rgba(24, 21, 16, 0.35);
+  border-radius: 2px;
+  color: rgba(24, 21, 16, 0.62);
+}
+.street-quest--app #guild-panel .guild-invite-copy-btn:hover {
+  border-color: var(--sq-orange);
+  color: var(--sq-orange);
+}
+
+.street-quest--app #guild-panel #guild-member-list { counter-reset: guild-member; }
+.street-quest--app #guild-panel .guild-member-row {
+  position: relative;
+  gap: 9px;
+  min-height: 58px;
+  padding: 9px 0;
+  border-bottom: 1px dashed rgba(24, 21, 16, 0.2);
+  color: var(--sq-ink);
+}
+.street-quest--app #guild-panel .guild-member-row::before {
+  counter-increment: guild-member;
+  content: counter(guild-member, decimal-leading-zero);
+  width: 20px;
+  flex: 0 0 20px;
+  color: rgba(24, 21, 16, 0.42);
+  font: 800 9px/1 var(--font-display);
+  letter-spacing: 0.04em;
+}
+.street-quest--app #guild-panel .guild-member-row:last-child { border-bottom: none; }
+.street-quest--app #guild-panel .guild-status-badge { border-color: var(--sq-paper-light); }
+.street-quest--app #guild-panel .guild-member-name {
+  color: var(--sq-ink);
+  font-size: 15px;
+}
+.street-quest--app #guild-panel .guild-member-you { color: rgba(24, 21, 16, 0.55); }
+.street-quest--app #guild-panel .guild-member-leader-tag {
+  color: var(--sq-orange);
+  font: 800 10px/1 var(--font-display);
+  letter-spacing: 0.03em;
+}
+.street-quest--app #guild-panel .guild-icon-btn {
+  border-color: rgba(24, 21, 16, 0.3);
+  border-radius: 2px;
+  color: rgba(24, 21, 16, 0.64);
+}
+.street-quest--app #guild-panel .guild-icon-btn:hover {
+  border-color: var(--sq-orange);
+  color: var(--sq-orange);
+}
+.street-quest--app #guild-panel .guild-icon-btn.danger {
+  border-color: rgba(192, 54, 37, 0.42);
+  color: #b63e2f;
+}
+
+.street-quest--app #guild-panel #guild-requests-top {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(24, 21, 16, 0.18);
+}
+.street-quest--app #guild-panel .guild-announcement-item,
+.street-quest--app #guild-panel .guild-log-item {
+  border-bottom-color: rgba(24, 21, 16, 0.16);
+}
+.street-quest--app #guild-panel .guild-announcement-text,
+.street-quest--app #guild-panel .guild-log-text { color: var(--sq-ink); }
+.street-quest--app #guild-panel .guild-announcement-meta,
+.street-quest--app #guild-panel .guild-log-time,
+.street-quest--app #guild-panel .guild-list-empty { color: rgba(24, 21, 16, 0.57); }
+.street-quest--app #guild-panel .guild-log-icon { color: var(--sq-orange); }
+.street-quest--app #guild-panel .guild-log-detail { color: #a94622; }
+.street-quest--app #guild-panel .guild-compose-row { border-bottom-color: rgba(24, 21, 16, 0.27); }
+.street-quest--app #guild-panel .guild-compose-row textarea { color: var(--sq-ink); }
+.street-quest--app #guild-panel .guild-compose-row textarea::placeholder { color: rgba(24, 21, 16, 0.5); }
+
+/* ── Guild field kit: roster slips, note cards, mission passes, ink icons ── */
+.street-quest--app #guild-panel .guild-tab-icon,
+.street-quest--app #guild-panel .guild-note-icon,
+.street-quest--app #guild-panel .guild-announcement-marker,
+.street-quest--app #guild-panel .guild-log-marker {
+  display: block;
+  flex: 0 0 auto;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.street-quest--app #guild-panel .guild-tab-icon {
+  width: 28px;
+  height: 28px;
+  opacity: 0.72;
+  filter: saturate(0.82);
+}
+.street-quest--app #guild-panel .guild-tab-icon--members { background-image: url('../assets/street-quest/generated-stamps/guild-icon-members.png'); }
+.street-quest--app #guild-panel .guild-tab-icon--announce { background-image: url('../assets/street-quest/generated-stamps/guild-icon-announce.png'); }
+.street-quest--app #guild-panel .guild-tab-icon--log { background-image: url('../assets/street-quest/generated-stamps/guild-icon-log.png'); }
+.street-quest--app #guild-panel .guild-tab-icon--missions { background-image: url('../assets/street-quest/generated-stamps/guild-icon-missions.png'); }
+.street-quest--app #guild-panel .guild-subnav-item.active .guild-tab-icon {
+  opacity: 1;
+  filter: saturate(1.08) contrast(1.05);
+}
+.street-quest--app #guild-panel .guild-note-icon {
+  width: 25px;
+  height: 25px;
+  background-image: url('../assets/street-quest/generated-stamps/guild-icon-announce.png');
+  transform: rotate(-4deg);
+}
+
+.street-quest--app #guild-panel #guild-member-list {
+  padding-top: 3px;
+}
+.street-quest--app #guild-panel .guild-member-row {
+  min-height: 72px;
+  margin: 0 -3px 8px;
+  padding: 13px 14px 13px 11px;
+  border: 0;
+  background-color: transparent;
+  background-image: url('../assets/street-quest/generated-stamps/guild-member-slip.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  color: var(--sq-ink);
+}
+.street-quest--app #guild-panel .guild-member-row:last-child { margin-bottom: 0; }
+.street-quest--app #guild-panel .guild-member-copy {
+  flex: 1;
+  min-width: 0;
+}
+.street-quest--app #guild-panel .guild-member-row::before {
+  color: rgba(24, 21, 16, 0.5);
+}
+.street-quest--app #guild-panel .guild-announcement-item,
+.street-quest--app #guild-panel .guild-log-item {
+  position: relative;
+  align-items: center;
+  min-height: 64px;
+  margin: 8px -3px;
+  padding: 13px 14px;
+  border: 0;
+  background-color: transparent;
+  background-image: url('../assets/street-quest/generated-stamps/guild-member-slip.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.street-quest--app #guild-panel .guild-announcement-marker,
+.street-quest--app #guild-panel .guild-log-marker {
+  width: 27px;
+  height: 27px;
+}
+.street-quest--app #guild-panel .guild-announcement-marker { background-image: url('../assets/street-quest/generated-stamps/guild-icon-announce.png'); }
+.street-quest--app #guild-panel .guild-log-marker--capture { background-image: url('../assets/street-quest/generated-stamps/guild-icon-members.png'); }
+.street-quest--app #guild-panel .guild-log-marker--fog { background-image: url('../assets/street-quest/generated-stamps/guild-icon-missions.png'); }
+.street-quest--app #guild-panel .guild-log-marker--lore { background-image: url('../assets/street-quest/generated-stamps/guild-icon-log.png'); }
+.street-quest--app #guild-panel .guild-announcement-item:last-child,
+.street-quest--app #guild-panel .guild-log-item:last-child { margin-bottom: 0; }
+.street-quest--app #guild-panel .guild-announcement-text,
+.street-quest--app #guild-panel .guild-log-text { line-height: 1.5; }
+.street-quest--app #guild-panel .guild-del-btn {
+  width: 27px;
+  height: 27px;
+  border: 1px solid rgba(192, 54, 37, 0.35);
+  color: #a94622;
+}
+.street-quest--app #guild-panel .guild-list-empty {
+  min-height: 120px;
+  display: grid;
+  place-items: center;
+  margin: 8px -3px 0;
+  padding: 18px;
+  background: url('../assets/street-quest/generated-stamps/guild-note-slip.png') center / 100% 100% no-repeat;
+  color: rgba(24, 21, 16, 0.54);
+}
+
+.street-quest--app #guild-panel .guild-subpanel[data-guild-panel="announce"],
+.street-quest--app #guild-panel .guild-subpanel[data-guild-panel="log"] {
+  background-color: transparent;
+  background-image: url('../assets/street-quest/generated-stamps/guild-note-slip.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.street-quest--app #guild-panel .guild-compose-row {
+  margin: 0 -3px 11px;
+  padding: 12px 14px 13px;
+  border-bottom: 1px dashed rgba(24, 21, 16, 0.34);
+}
+.street-quest--app #guild-panel .guild-compose-row .forum-send-btn {
+  width: 68px;
+  height: 38px;
+  border: 0;
+  border-radius: 0;
+  background: transparent url('../assets/street-quest/generated-stamps/guild-action-ticket.png') center / 100% 100% no-repeat;
+  color: var(--sq-orange);
+  box-shadow: none;
+}
+.street-quest--app #guild-panel .guild-compose-row .forum-send-btn:hover,
+.street-quest--app #guild-panel .guild-compose-row .forum-send-btn:focus-visible {
+  background: transparent url('../assets/street-quest/generated-stamps/guild-action-ticket.png') center / 100% 100% no-repeat;
+  color: var(--sq-ink);
+  filter: brightness(1.04) saturate(1.08);
+}
+
+.street-quest--app #guild-panel .guild-subpanel[data-guild-panel="missions"] {
+  padding: 11px 10px 14px;
+  background-color: rgba(244, 234, 208, 0.78);
+  background-image: url('../assets/street-quest/ui-paper-kraft.webp');
+  background-size: 460px 460px;
+}
+.street-quest--app #guild-panel #guild-hub-missions { gap: 10px !important; }
+.street-quest--app #guild-panel #guild-hub-missions .coop-mission-card {
+  min-height: 225px;
+  margin: 0;
+  padding: 27px 23px 24px;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  background-image: url('../assets/street-quest/generated-stamps/guild-mission-ticket.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  box-shadow: none;
+}
+.street-quest--app #guild-panel #guild-hub-missions .coop-mission-head { align-items: flex-start; gap: 8px; }
+.street-quest--app #guild-panel #guild-hub-missions .coop-mission-head > i {
+  display: block;
+  width: 27px;
+  height: 27px;
+  flex: 0 0 27px;
+  margin-top: -2px;
+  background: url('../assets/street-quest/generated-stamps/guild-icon-missions.png') center / contain no-repeat;
+  color: transparent;
+  font-size: 0;
+}
+.street-quest--app #guild-panel #guild-hub-missions .coop-mission-title {
+  color: var(--sq-ink);
+  font: 800 16px/1.25 var(--font-heading);
+}
+.street-quest--app #guild-panel #guild-hub-missions .coop-mission-badge {
+  color: var(--sq-orange);
+  font: 800 11px/1.2 var(--font-display);
+  white-space: nowrap;
+}
+.street-quest--app #guild-panel #guild-hub-missions .coop-mission-desc {
+  margin: 9px 0 13px;
+  color: rgba(24, 21, 16, 0.66);
+  font-size: 12px;
+  line-height: 1.55;
+}
+.street-quest--app #guild-panel #guild-hub-missions .coop-progress-row {
+  margin-bottom: 6px;
+  color: rgba(24, 21, 16, 0.56);
+  font-size: 11px;
+}
+.street-quest--app #guild-panel #guild-hub-missions .coop-progress-track {
+  height: 7px;
+  border: 1px solid rgba(24, 21, 16, 0.32);
+  border-radius: 0;
+  background: rgba(24, 21, 16, 0.1);
+}
+.street-quest--app #guild-panel #guild-hub-missions .coop-progress-fill {
+  border-radius: 0;
+  background: var(--sq-orange);
+}
+.street-quest--app #guild-panel #guild-hub-missions .coop-progress-fill.done { background: var(--sq-lime); }
+.street-quest--app #guild-panel #guild-hub-missions .coop-checkin-btn {
+  min-height: 39px;
+  margin-top: 14px;
+  padding: 8px 15px;
+  border: 0;
+  border-radius: 0;
+  background: transparent url('../assets/street-quest/generated-stamps/guild-action-ticket.png') center / 100% 100% no-repeat;
+  color: var(--sq-orange);
+  font: 800 12px/1 var(--font-heading);
+  box-shadow: none;
+}
+.street-quest--app #guild-panel #guild-hub-missions .coop-checkin-btn:hover,
+.street-quest--app #guild-panel #guild-hub-missions .coop-checkin-btn:focus-visible {
+  background: transparent url('../assets/street-quest/generated-stamps/guild-action-ticket.png') center / 100% 100% no-repeat;
+  color: var(--sq-ink);
+  filter: brightness(1.04) saturate(1.08);
+}
+
+/* ── Co-op mission passes: numbered field cards with high-contrast copy ── */
+.street-quest--app #tab-mission .sq-mission-pass,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass {
+  --sq-mission-accent: var(--sq-blue);
+  position: relative;
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr);
+  align-items: stretch;
+  min-height: 202px;
+  margin: 0;
+  padding: 0 10px 0 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 2px;
+  background-color: var(--sq-paper-light);
+  background-image: url('../assets/street-quest/generated-stamps/guild-mission-ticket.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  color: var(--sq-ink);
+  box-shadow: 4px 4px 0 var(--sq-ink);
+}
+
+.street-quest--app #tab-mission .sq-mission-pass--02,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass--02 { --sq-mission-accent: #d43d6f; }
+.street-quest--app #tab-mission .sq-mission-pass--03,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass--03 { --sq-mission-accent: #9db817; }
+
+.street-quest--app #tab-mission .sq-mission-rail,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-rail {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 178px;
+  margin: 6px 0 6px -7px;
+  padding: 15px 6px 11px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background: var(--sq-mission-accent);
+  color: var(--sq-ink);
+  clip-path: polygon(0 0, 100% 0, 94% 7%, 100% 14%, 94% 21%, 100% 28%, 94% 35%, 100% 42%, 94% 49%, 100% 56%, 94% 63%, 100% 70%, 94% 77%, 100% 84%, 94% 91%, 100% 100%, 0 100%);
+  box-shadow: 3px 3px 0 var(--sq-ink);
+}
+
+.street-quest--app #tab-mission .sq-mission-rail strong,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-rail strong {
+  display: block;
+  color: #fff8e8;
+  font: 900 43px/0.85 var(--font-display);
+  letter-spacing: -0.04em;
+  text-shadow: 1px 1px 0 rgba(24, 21, 16, 0.28);
+}
+
+.street-quest--app #tab-mission .sq-mission-rail span,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-rail span {
+  margin-top: 7px;
+  color: #fff8e8;
+  font: 900 10px/1 var(--font-display);
+  letter-spacing: 0.05em;
+}
+
+.street-quest--app #tab-mission .sq-mission-rail i,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-rail i {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  margin-top: auto;
+  border: 2px solid var(--sq-ink);
+  border-radius: 50%;
+  background: rgba(255, 248, 232, 0.78);
+  color: var(--sq-ink);
+  font-size: 12px;
+}
+
+.street-quest--app #tab-mission .sq-mission-pass-body,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass-body {
+  min-width: 0;
+  padding: 19px 10px 15px 12px;
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-mission-head,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-mission-head {
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-mission-head > i,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-mission-head > i {
+  display: none;
+}
+
+.street-quest--app #tab-mission .sq-mission-heading,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-heading {
+  min-width: 0;
+  flex: 1;
+}
+
+.street-quest--app #tab-mission .sq-mission-kicker,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-kicker {
+  display: block;
+  margin-bottom: 5px;
+  color: rgba(24, 21, 16, 0.53);
+  font: 900 9px/1 var(--font-display);
+  letter-spacing: 0.12em;
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-mission-title,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-mission-title {
+  color: var(--sq-ink);
+  font: 900 17px/1.17 var(--font-heading);
+  overflow-wrap: anywhere;
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-mission-badge,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-mission-badge {
+  flex: 0 0 auto;
+  padding-top: 1px;
+  color: #c43e18;
+  font: 900 12px/1.15 var(--font-display);
+  white-space: nowrap;
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-mission-badge.done,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-mission-badge.done {
+  color: #3b7f38;
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-mission-desc,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-mission-desc {
+  margin: 9px 0 13px;
+  color: rgba(24, 21, 16, 0.82);
+  font: 600 13px/1.48 var(--font-body);
+  overflow-wrap: anywhere;
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-progress-row,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-progress-row {
+  margin-bottom: 5px;
+  color: rgba(24, 21, 16, 0.68);
+  font: 700 11px/1.2 var(--font-body);
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-progress-row strong,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-progress-row strong {
+  color: var(--sq-ink);
+  font-weight: 900;
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-progress-row b,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-progress-row b {
+  color: #c43e18;
+  font: 900 12px/1 var(--font-display);
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-progress-track,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-progress-track {
+  height: 9px;
+  border: 1px solid rgba(24, 21, 16, 0.38);
+  border-radius: 0;
+  background: rgba(24, 21, 16, 0.16);
+  overflow: hidden;
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-progress-fill,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-progress-fill {
+  border-radius: 0;
+  background: #c43e18;
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-progress-fill.done,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-progress-fill.done { background: #5b9b4a; }
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-checkin-btn,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-checkin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  margin-top: 14px;
+  padding: 8px 13px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 1px;
+  background: var(--sq-orange);
+  color: #fff;
+  font: 900 14px/1 var(--font-heading);
+  box-shadow: 3px 3px 0 var(--sq-ink);
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-checkin-btn::before,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-checkin-btn::before {
+  content: '→';
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sq-ink);
+  color: var(--sq-orange);
+  font: 900 18px/1 var(--font-display);
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-checkin-btn:hover,
+.street-quest--app #tab-mission .sq-mission-pass .coop-checkin-btn:focus-visible,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-checkin-btn:hover,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-checkin-btn:focus-visible {
+  border-color: var(--sq-ink);
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+  filter: none;
+}
+
+/* Jigsaw uses the same readable pass shell while keeping its quiz/form body. */
+.street-quest--app #tab-mission .sq-mission-pass.jigsaw-card,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass.jigsaw-card {
+  overflow: visible;
+  border: 0;
+  border-radius: 2px;
+  background-color: var(--sq-paper-light);
+  background-image: url('../assets/street-quest/generated-stamps/guild-mission-ticket.png');
+  box-shadow: 4px 4px 0 var(--sq-ink);
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-main,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-main { min-width: 0; }
+.street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-head,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-head {
+  align-items: flex-start;
+  gap: 8px;
+  padding: 0;
+  border-bottom: 0;
+}
+.street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-label,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-label { color: rgba(24, 21, 16, 0.53); }
+.street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-title,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-title {
+  margin-top: 5px;
+  color: var(--sq-ink);
+  font: 900 17px/1.17 var(--font-heading);
+  overflow-wrap: anywhere;
+}
+.street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-pts,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-pts {
+  color: #c43e18;
+  font: 900 12px/1.15 var(--font-display);
+  white-space: nowrap;
+}
+.street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-body,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-body {
+  padding: 12px 0 0;
+  color: var(--sq-ink);
+}
+.street-quest--app #tab-mission .sq-mission-pass .jigsaw-hint,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-hint,
+.street-quest--app #tab-mission .sq-mission-pass .jigsaw-chapter-label,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-chapter-label { color: rgba(24, 21, 16, 0.76); }
+
+@media (max-width: 380px) {
+  .street-quest--app #tab-mission .sq-mission-pass,
+  .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass { grid-template-columns: 61px minmax(0, 1fr); }
+  .street-quest--app #tab-mission .sq-mission-rail,
+  .street-quest--app #guild-panel #guild-hub-missions .sq-mission-rail { padding-inline: 4px; }
+  .street-quest--app #tab-mission .sq-mission-rail strong,
+  .street-quest--app #guild-panel #guild-hub-missions .sq-mission-rail strong { font-size: 38px; }
+  .street-quest--app #tab-mission .sq-mission-pass-body,
+  .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass-body { padding-left: 9px; padding-right: 7px; }
+  .street-quest--app #tab-mission .sq-mission-pass .coop-mission-title,
+  .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-mission-title,
+  .street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-title,
+  .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-title { font-size: 15px; }
+}
+
+/* ── Image-backed co-op pass revision ──────────────────────────────
+   The paper, tabs, tape, seals, barcode, XP marks, and action strip are
+   raster artwork. HTML remains responsible only for live mission copy and
+   the real check-in control. */
+.street-quest--app #tab-mission .sq-mission-pass,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass {
+  background-color: transparent;
+  background-image: url('../assets/street-quest/generated-stamps/mission-pass-01.webp');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  border: 0;
+  box-shadow: none;
+}
+
+.street-quest--app #tab-mission .sq-mission-pass--02,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass--02,
+.street-quest--app #tab-mission .sq-mission-pass.jigsaw-card.sq-mission-pass--02,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass.jigsaw-card.sq-mission-pass--02 {
+  background-image: url('../assets/street-quest/generated-stamps/mission-pass-02.webp');
+}
+
+.street-quest--app #tab-mission .sq-mission-pass--03,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass--03,
+.street-quest--app #tab-mission .sq-mission-pass.jigsaw-card.sq-mission-pass--03,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass.jigsaw-card.sq-mission-pass--03 {
+  background-image: url('../assets/street-quest/generated-stamps/mission-pass-03.webp');
+}
+
+.street-quest--app #tab-mission .sq-mission-rail,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-rail {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  clip-path: none;
+  visibility: hidden;
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .sq-mission-kicker,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .sq-mission-kicker,
+.street-quest--app #tab-mission .sq-mission-pass .coop-mission-badge,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-mission-badge,
+.street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-pts,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-pts {
+  display: none;
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-mission-title,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-mission-title,
+.street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-title,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-title {
+  max-width: 180px;
+  font-size: 18px;
+  line-height: 1.18;
+}
+
+.street-quest--app #tab-mission .sq-mission-pass-body,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass-body {
+  padding: 19px 45px 15px 20px;
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-progress-row b,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-progress-row b {
+  display: none;
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-checkin-btn,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-checkin-btn {
+  border: 0;
+  background: transparent;
+  color: var(--sq-ink);
+  box-shadow: none;
+  text-shadow: 0 1px rgba(255, 234, 194, 0.55);
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-checkin-btn::before,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-checkin-btn::before {
+  display: none;
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-checkin-btn:hover,
+.street-quest--app #tab-mission .sq-mission-pass .coop-checkin-btn:focus-visible,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-checkin-btn:hover,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-checkin-btn:focus-visible {
+  border: 0;
+  background: transparent;
+  color: var(--sq-ink);
+  filter: none;
+}
+
+/* ── Join-request ticket: readable approval queue ──────────────────
+   The request card and action plates are raster surfaces; live names and
+   controls stay in the DOM so they remain readable and interactive. */
+.street-quest--app #guild-panel #guild-requests-top {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(24, 21, 16, 0.2);
+}
+
+.street-quest--app #guild-panel .guild-requests-heading {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 10px;
+  color: #a94622;
+  font: 800 13px/1.2 var(--font-heading);
+}
+
+.street-quest--app #guild-panel .guild-requests-heading > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.street-quest--app #guild-panel .guild-requests-heading i { font-size: 14px; }
+
+.street-quest--app #guild-panel .guild-request-count {
+  display: inline-grid;
+  min-width: 21px;
+  height: 21px;
+  place-items: center;
+  padding: 0 6px;
+  border-radius: 50%;
+  background: var(--sq-orange);
+  color: #fff8e8;
+  font: 900 11px/1 var(--font-display);
+}
+
+.street-quest--app #guild-panel .guild-request-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 76px;
+  margin: 0 -3px;
+  padding: 12px 10px 12px 11px;
+  background: transparent url('../assets/street-quest/generated-stamps/guild-member-slip.png') center / 100% 100% no-repeat;
+  color: var(--sq-ink);
+}
+
+.street-quest--app #guild-panel .guild-request-avatar {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 2px solid rgba(24, 21, 16, 0.55);
+  border-radius: 50%;
+  background: rgba(255, 248, 232, 0.72);
+}
+
+.street-quest--app #guild-panel .guild-request-copy { min-width: 0; }
+
+.street-quest--app #guild-panel .guild-request-name {
+  margin: 0;
+  overflow: hidden;
+  color: var(--sq-ink);
+  font: 800 15px/1.25 var(--font-heading);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.street-quest--app #guild-panel .guild-request-meta {
+  margin: 3px 0 0;
+  color: rgba(24, 21, 16, 0.58);
+  font: 600 10px/1.2 var(--font-body);
+}
+
+.street-quest--app #guild-panel .guild-request-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.street-quest--app #guild-panel .guild-request-btn {
+  min-width: 68px;
+  min-height: 42px;
+  padding: 9px 11px;
+  border: 0;
+  border-radius: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  box-shadow: none;
+  cursor: pointer;
+  font: 800 12px/1 var(--font-heading);
+  white-space: nowrap;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.street-quest--app #guild-panel .guild-request-btn--approve {
+  background-image: url('../assets/street-quest/generated-stamps/guild-request-approve.png');
+  color: #fff8e8;
+  text-shadow: 0 1px 0 rgba(24, 21, 16, 0.28);
+}
+
+.street-quest--app #guild-panel .guild-request-btn--reject {
+  background-image: url('../assets/street-quest/generated-stamps/guild-request-reject.png');
+  color: #fff8e8;
+  text-shadow: 0 1px 0 rgba(24, 21, 16, 0.45);
+}
+
+.street-quest--app #guild-panel .guild-request-btn:hover,
+.street-quest--app #guild-panel .guild-request-btn:focus-visible {
+  filter: brightness(1.08) saturate(1.08);
+  outline: 2px solid var(--sq-lime);
+  outline-offset: 2px;
+  transform: translateY(-1px);
+}
+
+.street-quest--app #guild-panel .guild-request-btn:active { transform: translateY(1px); }
+
+.street-quest--app #guild-panel .guild-request-empty {
+  margin: 0;
+  padding: 18px 12px;
+  background: transparent url('../assets/street-quest/generated-stamps/guild-note-slip.png') center / 100% 100% no-repeat;
+  color: rgba(24, 21, 16, 0.56);
+  font: 600 12px/1.4 var(--font-body);
+  text-align: center;
+}
+
+@media (max-width: 380px) {
+  .street-quest--app #guild-panel .guild-request-row { grid-template-columns: auto minmax(0, 1fr); }
+  .street-quest--app #guild-panel .guild-request-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+    padding-top: 2px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Generated field UI surfaces
+   The raster templates carry the torn paper, ink, tape, stamps, and tickets;
+   live copy stays as HTML above them so it remains readable and accessible.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Capture reveal: a proper field-card reveal instead of a dark generic modal. */
+.street-quest--app .capture-reveal-overlay {
+  padding: 16px;
+  background: rgba(4, 4, 4, 0.86);
+  z-index: 20000;
+  animation: none;
+  opacity: 1;
+}
+
+.street-quest--app .capture-reveal-card {
+  width: min(360px, 92vw);
+  aspect-ratio: 2 / 3;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent url('../assets/street-quest/generated-stamps/capture-reveal-template.webp') center / 100% 100% no-repeat;
+  box-shadow: none;
+  color: var(--sq-ink);
+  isolation: isolate;
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
+.street-quest--app .capture-reveal-card.capture-reveal-legendary {
+  border: 0;
+  box-shadow: none;
+}
+
+.street-quest--app .capture-reveal-card .capture-glow-ring,
+.street-quest--app .capture-reveal-card .capture-shimmer,
+.street-quest--app .capture-reveal-card .capture-confetti { display: none; }
+
+.street-quest--app .capture-reveal-card .capture-header {
+  position: absolute;
+  top: 10.5%;
+  left: 12%;
+  right: 12%;
+  margin: 0;
+  color: var(--sq-ink) !important;
+  font: 900 clamp(11px, 3.2vw, 15px)/1 var(--font-display);
+  letter-spacing: 0.11em;
+  text-align: center;
+}
+
+.street-quest--app .capture-reveal-card .capture-emoji {
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  display: grid;
+  width: 31%;
+  height: 34%;
+  margin: 0;
+  place-items: center;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 4px 4px rgba(24, 21, 16, 0.22));
+  font-size: clamp(56px, 17vw, 86px);
+}
+
+.street-quest--app .capture-reveal-card .capture-name-th {
+  position: absolute;
+  top: 60.5%;
+  left: 11%;
+  right: 11%;
+  margin: 0;
+  color: #fff8e8;
+  font: 900 clamp(17px, 5.4vw, 25px)/1.12 var(--font-heading);
+  text-align: center;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.36);
+}
+
+.street-quest--app .capture-reveal-card .capture-name-en {
+  position: absolute;
+  top: 65.3%;
+  left: 11%;
+  right: 11%;
+  margin: 0;
+  overflow: hidden;
+  color: #f1dfc0;
+  font: 600 clamp(9px, 2.7vw, 12px)/1.2 var(--font-body);
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.street-quest--app .capture-reveal-card .badge {
+  position: absolute;
+  top: 70.4%;
+  left: 50%;
+  margin: 0;
+  min-width: 34px;
+  padding: 7px 11px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background: var(--sq-pink);
+  color: #fff8e8;
+  font: 900 16px/1 var(--font-display);
+  transform: translateX(-50%) rotate(-3deg);
+  box-shadow: 2px 2px 0 var(--sq-ink);
+}
+
+.street-quest--app .capture-reveal-card .capture-pts {
+  position: absolute;
+  top: 77%;
+  left: 15%;
+  right: 15%;
+  margin: 0;
+  color: var(--sq-ink) !important;
+  font: 900 clamp(13px, 4vw, 18px)/1 var(--font-display);
+  text-align: center;
+  animation: none;
+}
+
+.street-quest--app .capture-reveal-dismiss {
+  position: absolute;
+  right: 11%;
+  bottom: 4.5%;
+  left: 11%;
+  min-height: 49px;
+  padding: 11px 40px 11px 16px;
+  border: 0;
+  background: transparent url('../assets/street-quest/generated-stamps/guild-request-approve.png') center / 100% 100% no-repeat;
+  color: var(--sq-ink);
+  font: 900 clamp(15px, 4.7vw, 21px)/1 var(--font-heading);
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255, 248, 232, 0.45);
+  cursor: pointer;
+}
+
+.street-quest--app .capture-reveal-dismiss span {
+  position: absolute;
+  right: 18px;
+  font: 900 23px/0.8 var(--font-display);
+}
+
+.street-quest--app .capture-reveal-dismiss:hover,
+.street-quest--app .capture-reveal-dismiss:focus-visible {
+  filter: brightness(1.08) saturate(1.08);
+  outline: 2px solid var(--sq-lime);
+  outline-offset: 3px;
+}
+
+/* Figure detail: the modal is a full dossier sheet with readable text over
+   the blank printed zones in the generated template. */
+.street-quest--app .figure-detail-dialog {
+  width: min(390px, calc(100vw - 24px));
+  max-width: none;
+  height: min(780px, calc(100vh - 24px));
+  margin: 12px auto;
+}
+
+.street-quest--app .figure-detail-dossier {
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: transparent url('../assets/street-quest/generated-stamps/figure-detail-template.webp') center / 100% 100% no-repeat;
+  box-shadow: 7px 7px 0 var(--sq-orange);
+  color: var(--sq-ink);
+}
+
+.street-quest--app .figure-detail-dossier .figure-dossier-header {
+  position: relative;
+  display: block;
+  height: 42%;
+  flex: 0 0 42%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.street-quest--app .figure-dossier-header .btn-close {
+  top: 12px !important;
+  right: 12px !important;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 50%;
+  background-color: var(--sq-paper-light);
+  opacity: 0.88;
+}
+
+.street-quest--app .figure-dossier-header-row {
+  position: absolute;
+  inset: 0;
+  display: block;
+  animation: none;
+  transform: none;
+}
+
+.street-quest--app .figure-dossier-header .figure-modal-portrait {
+  position: absolute;
+  top: 4.5%;
+  left: 50%;
+  display: grid;
+  width: 43%;
+  height: 67%;
+  margin: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--sq-ink);
+  font-size: clamp(44px, 14vw, 76px);
+  transform: translateX(-50%);
+  box-shadow: none;
+}
+
+.street-quest--app .figure-dossier-copy {
+  position: absolute;
+  top: 73%;
+  right: 9%;
+  left: 9%;
+  min-width: 0;
+  padding: 0;
+  color: #fff8e8;
+  text-align: center;
+}
+
+.street-quest--app .figure-dossier-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.street-quest--app .figure-dossier-name {
+  max-width: 100%;
+  margin: 0;
+  color: #fff8e8;
+  font: 900 clamp(18px, 5.4vw, 25px)/1.05 var(--font-heading);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.36);
+}
+
+.street-quest--app .figure-dossier-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border: 1px solid #fff8e8;
+  border-radius: 2px;
+  background: var(--sq-pink);
+  color: #fff8e8;
+  font: 900 9px/1 var(--font-display);
+  letter-spacing: 0.08em;
+}
+
+.street-quest--app .figure-dossier-en {
+  margin: 4px 0 0;
+  overflow: hidden;
+  color: #d9ceb3;
+  font: 600 10px/1.2 var(--font-body);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.street-quest--app .figure-dossier-stats {
+  margin: 6px 0 0;
+  color: #d9ceb3;
+  font: 700 10px/1.2 var(--font-display);
+}
+
+.street-quest--app .figure-dossier-points { color: var(--sq-lime); }
+
+.street-quest--app .figure-detail-dossier .figure-dossier-body {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 5% 11% 2%;
+  border: 0;
+  background: transparent;
+  color: var(--sq-ink);
+  scrollbar-width: thin;
+}
+
+.street-quest--app .figure-detail-dossier .fig-bio-section {
+  margin: 0 0 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--sq-ink);
+}
+
+.street-quest--app .figure-detail-dossier .figure-dossier-bio {
+  margin: 0;
+  color: var(--sq-ink);
+  font: 600 13px/1.62 var(--font-body);
+}
+
+.street-quest--app .figure-detail-dossier .fig-bio-section-title {
+  margin: 0 0 6px;
+  color: var(--sq-orange);
+  font: 900 10px/1 var(--font-display);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.street-quest--app .figure-detail-dossier .fig-relation-chip,
+.street-quest--app .figure-detail-dossier .fig-lore-item,
+.street-quest--app .figure-detail-dossier .fig-location-item {
+  border-color: rgba(24, 21, 16, 0.28);
+  background: rgba(255, 248, 232, 0.34);
+  color: var(--sq-ink);
+}
+
+.street-quest--app .figure-detail-dossier .figure-dossier-footer {
+  display: flex;
+  height: 14%;
+  min-height: 76px;
+  flex: 0 0 14%;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 8px;
+  padding: 7% 10% 3%;
+  border: 0;
+  background: transparent;
+}
+
+.street-quest--app .figure-dossier-footer .btn {
+  min-height: 42px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--sq-ink);
+  font: 900 10px/1.1 var(--font-heading);
+}
+
+.street-quest--app .figure-dossier-footer #btn-figure-graph {
+  background: transparent url('../assets/street-quest/generated-stamps/guild-request-approve.png') center / 100% 100% no-repeat;
+}
+
+.street-quest--app .figure-dossier-footer [data-bs-dismiss="modal"] {
+  background: transparent url('../assets/street-quest/generated-stamps/guild-request-reject.png') center / 100% 100% no-repeat;
+}
+
+/* Printed-sheet alignment pass.
+   These three generated surfaces are full-page forms, not normal cards. Keep
+   their live controls in the blank/ink zones of the artwork so the layout does
+   not drift when the content or viewport changes. */
+.street-quest--app .sq-settings-body {
+  position: relative;
+  display: block;
+  height: calc(100% - 91.5px);
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.street-quest--app .sq-settings-card {
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  width: auto;
+  margin: 0;
+}
+
+.street-quest--app .sq-profile-card {
+  top: 62px;
+  height: 257px;
+  min-height: 0;
+  padding: 0;
+  overflow: visible;
+  transform: rotate(-0.4deg);
+}
+
+.street-quest--app .sq-profile-avatar {
+  position: absolute;
+  top: 22px;
+  left: 9%;
+  width: 92px;
+  height: 92px;
+  margin: 0;
+}
+
+.street-quest--app .sq-passport-meta {
+  top: 9px;
+  left: 43%;
+  right: 3%;
+  width: auto;
+}
+
+.street-quest--app .sq-username-view {
+  position: absolute;
+  top: 103px;
+  left: 43%;
+  right: 3%;
+  width: auto;
+  justify-content: flex-start;
+  margin: 0;
+  text-align: left;
+}
+
+.street-quest--app .sq-username-view p {
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.street-quest--app .sq-username-edit {
+  position: absolute;
+  top: 96px;
+  left: 43%;
+  right: 3%;
+}
+
+.street-quest--app .sq-settings-email {
+  position: absolute;
+  top: 138px;
+  left: 43%;
+  right: 3%;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.street-quest--app .sq-passport-stamp {
+  top: 120px;
+  right: 4%;
+  bottom: auto;
+}
+
+.street-quest--app .sq-preferences-card {
+  top: 339px;
+  height: 242px;
+  min-height: 0;
+  padding: 0;
+}
+
+.street-quest--app .sq-preferences-card .sq-card-kicker {
+  position: absolute;
+  top: -35px;
+  left: 9%;
+  margin: 0;
+}
+
+.street-quest--app .sq-visa-strip {
+  position: absolute;
+  top: -19px;
+  right: 8%;
+  left: 8%;
+  margin: 0;
+}
+
+.street-quest--app .sq-preferences-card .sq-setting-row {
+  position: absolute;
+  right: 8%;
+  left: 8%;
+  width: auto;
+  margin: 0;
+}
+
+.street-quest--app .sq-preferences-card .sq-setting-row-toggle { top: 12px; }
+.street-quest--app .sq-preferences-card .sq-gps-row { top: 60px; }
+
+.street-quest--app .sq-home-setting {
+  position: absolute;
+  top: 108px;
+  right: 8%;
+  left: 8%;
+  padding: 0;
+}
+
+.street-quest--app .sq-version-card {
+  top: 588px;
+  height: 72px;
+  min-height: 0;
+  padding: 18px 8% 0;
+}
+
+.street-quest--app .sq-version-card .sq-card-kicker {
+  position: absolute;
+  top: -14px;
+  left: 9%;
+  margin: 0;
+}
+
+.street-quest--app .sq-version-line { margin: 0; }
+
+.street-quest--app .sq-signout-btn {
+  position: absolute;
+  top: 675px;
+  right: 7%;
+  left: 7%;
+  width: auto;
+  height: 180px;
+  min-height: 0;
+  margin: 0;
+  padding: 5px 12px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+/* The field-sheet artwork has four distinct zones: title, black pass, ruled
+   checklist, and the orange action/bottom ticket. */
+.street-quest--app .sq-checkin-sheet,
+.street-quest--app .sq-node-sheet {
+  position: fixed;
+  overflow: hidden;
+  width: 100%;
+  max-width: var(--max-width);
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background-size: 100% 100%;
+}
+
+.street-quest--app .sq-checkin-sheet {
+  height: min(800px, calc(100dvh - 18px));
+}
+
+.street-quest--app .sq-node-sheet {
+  height: min(320px, calc(100dvh - 18px));
+}
+
+.street-quest--app .sq-checkin-sheet .sheet-handle,
+.street-quest--app .sq-node-sheet .sheet-handle {
+  position: absolute;
+  z-index: 2;
+  top: 17px;
+  left: 50%;
+  margin: 0;
+  transform: translateX(-50%);
+}
+
+.street-quest--app .sq-checkin-title {
+  position: absolute;
+  z-index: 2;
+  top: 39px;
+  right: 5%;
+  left: 38%;
+  margin: 0;
+  font-size: clamp(20px, 6vw, 29px);
+  line-height: 1.02;
+  text-align: center;
+}
+
+.street-quest--app .sq-checkin-title .sq-checkin-icon {
+  position: absolute;
+  top: 2px;
+  left: -46px;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  vertical-align: initial;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-district-ticket {
+  position: absolute;
+  z-index: 1;
+  top: 18.5%;
+  right: 16%;
+  left: 16%;
+  height: 19%;
+  margin: 0;
+  padding: 14px 14px 10px;
+  background: transparent;
+  transform: none;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-name {
+  max-width: 65%;
+  font-size: clamp(17px, 5vw, 22px);
+}
+
+.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-province {
+  margin: 5px 0 8px;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-reveals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-requirements {
+  position: absolute;
+  z-index: 1;
+  top: 38.5%;
+  right: 11%;
+  left: 16%;
+  height: 25%;
+  margin: 0;
+  padding: 0;
+}
+
+.street-quest--app .sq-checkin-section-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+}
+
+.street-quest--app .sq-checkin-requirements .checklist {
+  position: absolute;
+  top: 31px;
+  right: 0;
+  left: 0;
+  gap: 0;
+}
+
+.street-quest--app .sq-checkin-requirements .checklist-item {
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr);
+  min-height: 45px;
+  padding: 0;
+  gap: 8px;
+  align-items: center;
+  border-bottom: 0;
+}
+
+.street-quest--app .sq-checkin-requirements .sq-generated-stamp {
+  width: 44px;
+  height: 44px;
+  flex-basis: 44px;
+}
+
+.street-quest--app .sq-checkin-requirements .sq-generated-stamp.sq-stamp-frame {
+  width: 54px;
+  height: 32px;
+  flex-basis: 54px;
+}
+
+.street-quest--app .sq-checkin-requirements .checklist-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-encounter-locked {
+  position: absolute;
+  z-index: 1;
+  right: 25%;
+  bottom: 6%;
+  left: 25%;
+  height: 12%;
+  margin: 0 !important;
+  padding: 7px 8px;
+  background: transparent;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-encounter-locked,
+.street-quest--app .sq-checkin-sheet .sq-encounter-locked strong { color: #fff8e8; }
+.street-quest--app .sq-checkin-sheet .sq-encounter-locked p { color: rgba(255, 248, 232, 0.7); }
+.street-quest--app .sq-checkin-sheet .sq-encounter-key { border-color: rgba(255, 248, 232, 0.72); color: #fff8e8; }
+
+.street-quest--app .sq-checkin-sheet .sq-encounter-ready,
+.street-quest--app .sq-checkin-sheet .sq-support-progress {
+  position: absolute;
+  z-index: 1;
+  right: 9%;
+  bottom: 17%;
+  left: 38%;
+  margin: 0 !important;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-primary {
+  position: absolute;
+  z-index: 2;
+  right: 9%;
+  bottom: 17%;
+  left: 38%;
+  width: auto;
+  margin: 0;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-secondary,
+.street-quest--app .sq-node-sheet .sq-sheet-secondary {
+  position: absolute;
+  z-index: 2;
+  right: 19%;
+  bottom: 1.5%;
+  left: 19%;
+  width: auto;
+  margin: 0 !important;
+}
+
+.street-quest--app .sq-node-sheet #node-info-content {
+  position: static;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-head {
+  position: absolute;
+  z-index: 1;
+  top: 21%;
+  right: 16%;
+  left: 16%;
+  height: 24%;
+  margin: 0;
+  padding: 8px 10px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-icon {
+  width: 36px;
+  height: 36px;
+  flex-basis: 36px;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-title {
+  color: #fff8e8;
+  font-size: clamp(15px, 4vw, 18px);
+}
+
+.street-quest--app .sq-node-sheet .sq-node-meta { color: rgba(255, 248, 232, 0.68); }
+
+.street-quest--app .sq-node-sheet .sq-node-route-note {
+  position: absolute;
+  z-index: 1;
+  top: 47%;
+  right: 24%;
+  left: 24%;
+  height: 11%;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-action {
+  position: absolute;
+  z-index: 2;
+  right: 9%;
+  bottom: 18%;
+  left: 38%;
+  width: auto;
+  margin: 0;
+}
+
+/* Restore the compact paper-ticket map sheets shown in the reference captures.
+   These are intentionally flow-light surfaces: the artwork is the frame and
+   the live controls occupy the printed ticket zones instead of the tall field
+   sheet crop. */
+.street-quest--app .sq-checkin-sheet,
+.street-quest--app .sq-node-sheet {
+  position: fixed;
+  width: 100%;
+  max-width: var(--max-width);
+  max-height: min(700px, calc(100dvh - 18px));
+  min-height: 0;
+  height: min(700px, calc(100dvh - 18px));
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--sq-paper-light) url('../assets/street-quest/class-label-paper.png') center / 100% 100% no-repeat;
+  box-shadow: 0 -8px 0 rgba(0, 0, 0, 0.56), 0 -20px 42px rgba(0, 0, 0, 0.42), 6px 0 0 var(--sq-orange);
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-node-sheet {
+  height: 226px;
+  max-height: 226px;
+}
+
+.street-quest--app .sq-checkin-sheet::before,
+.street-quest--app .sq-node-sheet::before {
+  display: block;
+  position: absolute;
+  z-index: 3;
+  top: 5px;
+  left: 50%;
+  width: max-content;
+  margin: 0;
+  padding: 5px 9px;
+  border: 2px solid var(--sq-ink);
+  background: var(--sq-orange);
+  color: #fff8e8;
+  font: 800 10px/1 var(--font-display);
+  letter-spacing: 0.1em;
+  transform: translateX(-50%) rotate(-1deg);
+  box-shadow: 3px 3px 0 var(--sq-ink);
+}
+
+.street-quest--app .sq-node-sheet::before {
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-checkin-sheet .sheet-handle,
+.street-quest--app .sq-node-sheet .sheet-handle {
+  position: absolute;
+  z-index: 3;
+  top: 35px;
+  left: 50%;
+  width: 48px;
+  height: 5px;
+  margin: 0;
+  border-radius: 0;
+  background: var(--sq-ink);
+  box-shadow: none;
+  transform: translateX(-50%);
+}
+
+.street-quest--app .sq-node-sheet .sheet-handle { top: 39px; }
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-title {
+  position: absolute;
+  z-index: 2;
+  top: 54px;
+  right: 4%;
+  left: 2.5%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 40px;
+  margin: 0;
+  color: #fff8e8;
+  font: 900 clamp(20px, 6vw, 28px)/1 var(--font-display);
+  text-align: left;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.18);
+}
+
+.street-quest--app .sq-checkin-title .sq-checkin-icon {
+  position: static;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  margin: 0;
+  place-items: center;
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background: var(--sq-orange);
+  color: #fff;
+  box-shadow: 3px 3px 0 var(--sq-ink);
+  transform: rotate(-4deg);
+}
+
+.street-quest--app .sq-checkin-title .sq-checkin-icon svg { width: 21px; height: 21px; }
+
+.street-quest--app .sq-checkin-sheet .sq-district-ticket {
+  position: absolute;
+  z-index: 1;
+  top: 108px;
+  right: 4.2%;
+  left: 2.2%;
+  height: 124px;
+  margin: 0;
+  padding: 17px 15px 10px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background-color: var(--sq-ink-soft);
+  background-image:
+    linear-gradient(rgba(11, 11, 10, 0.82), rgba(11, 11, 10, 0.82)),
+    url('../assets/street-quest/card-texture.png');
+  background-size: auto, 460px 460px;
+  color: #fff8e8;
+  box-shadow: 4px 4px 0 var(--sq-orange);
+  transform: none;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-district-ticket::before {
+  display: block;
+  top: 8px;
+  right: 10px;
+  color: var(--sq-lime);
+  font: 800 9px/1 var(--font-display);
+  letter-spacing: 0.13em;
+  transform: rotate(2deg);
+}
+
+.street-quest--app .sq-checkin-sheet .sq-district-ticket-head { padding-right: 84px; }
+.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-name { max-width: 68%; font-size: clamp(19px, 5vw, 23px); }
+.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-province { margin: 6px 0 12px; color: #bdb29a; }
+.street-quest--app .sq-checkin-sheet .sq-district-ticket .explored-badge { top: 39px; right: 12px; }
+.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-reveals { gap: 6px; }
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-requirements {
+  position: absolute;
+  z-index: 1;
+  top: 247px;
+  right: 4.5%;
+  left: 2.5%;
+  height: 235px;
+  margin: 0;
+  padding: 10px 6px 4px;
+  border: 2px dashed rgba(24, 21, 16, 0.55);
+  background: rgba(244, 234, 208, 0.28);
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-section-label {
+  position: absolute;
+  top: 16px;
+  left: 12px;
+  margin: 0;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist {
+  position: absolute;
+  top: 48px;
+  right: 8px;
+  left: 8px;
+  display: grid;
+  gap: 0;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist-item {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  min-height: 59px;
+  gap: 8px;
+  padding: 0;
+  align-items: center;
+  border-bottom: 1px dashed rgba(24, 21, 16, 0.25);
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist-item:last-child { border-bottom: 0; }
+.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .sq-generated-stamp { width: 50px; height: 50px; flex-basis: 50px; }
+.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .sq-generated-stamp.sq-stamp-frame { width: 68px; height: 37px; flex-basis: 68px; }
+.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist-text { color: var(--sq-ink); font: 800 12px/1.25 var(--font-heading); }
+
+.street-quest--app .sq-checkin-sheet .sq-encounter-ready {
+  position: absolute;
+  z-index: 2;
+  top: 495px;
+  right: 4.5%;
+  left: 2.5%;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 8px;
+  height: 138px;
+  margin: 0 !important;
+  padding: 10px 12px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 0;
+  background: rgba(255, 253, 245, 0.36);
+  box-shadow: 3px 3px 0 var(--sq-lime);
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-checkin-sheet .sq-encounter-ready .sq-ready-stamp { width: 54px; height: 54px; }
+.street-quest--app .sq-checkin-sheet .sq-encounter-button {
+  grid-column: 1 / -1;
+  min-height: 46px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 0;
+  background: var(--sq-orange);
+  color: #fff;
+  box-shadow: none;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-encounter-locked {
+  position: absolute;
+  z-index: 2;
+  top: 495px;
+  right: 4.5%;
+  left: 2.5%;
+  height: 96px;
+  margin: 0 !important;
+  padding: 10px 12px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 0;
+  background: rgba(255, 253, 245, 0.36);
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-primary {
+  position: absolute;
+  z-index: 2;
+  top: 573px;
+  right: 8%;
+  left: 6%;
+  width: auto;
+  margin: 0;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-secondary {
+  position: absolute;
+  z-index: 3;
+  right: 4.5%;
+  bottom: 10px;
+  left: 2.5%;
+  width: auto;
+  height: 42px;
+  min-height: 42px;
+  margin: 0 !important;
+  border: 1px solid rgba(24, 21, 16, 0.48);
+  border-radius: 8px;
+  background: rgba(255, 253, 245, 0.36);
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-node-sheet .sq-node-head {
+  position: absolute;
+  z-index: 1;
+  top: 60px;
+  right: 3.5%;
+  left: 3%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 76px;
+  margin: 0;
+  padding: 9px 10px;
+  border: 2px solid var(--sq-ink);
+  border-bottom-style: dashed;
+  background: rgba(255, 253, 245, 0.3);
+  box-shadow: none;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-icon {
+  width: 48px;
+  height: 48px;
+  flex-basis: 48px;
+  border: 2px solid var(--sq-ink);
+  background: var(--sq-ink);
+  color: var(--sq-paper-light);
+  box-shadow: 2px 2px 0 var(--sq-orange);
+}
+
+.street-quest--app .sq-node-sheet .sq-node-copy { min-width: 0; flex: 1; }
+.street-quest--app .sq-node-sheet .sq-node-title-row { display: block; min-width: 0; }
+.street-quest--app .sq-node-sheet .sq-node-title { color: var(--sq-ink); font-size: 18px; }
+.street-quest--app .sq-node-sheet .sq-node-meta { margin-top: 4px; color: rgba(24, 21, 16, 0.62); }
+.street-quest--app .sq-node-sheet .explored-badge { position: absolute; top: 7px; right: 27px; border: 2px solid var(--sq-ink); border-radius: 2px; background: var(--sq-lime); color: var(--sq-ink); box-shadow: 2px 2px 0 var(--sq-ink); transform: rotate(3deg); }
+
+.street-quest--app .sq-node-sheet .sq-node-route-note {
+  position: absolute;
+  z-index: 1;
+  top: 149px;
+  right: 4%;
+  left: 3%;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  color: rgba(24, 21, 16, 0.72);
+}
+
+.street-quest--app .sq-node-sheet .sq-node-route-note b { color: #5d7f18; }
+.street-quest--app .sq-node-sheet .sq-node-action,
+.street-quest--app .sq-node-sheet .sq-sheet-secondary {
+  position: absolute;
+  z-index: 2;
+  right: 4%;
+  bottom: 10px;
+  left: 3%;
+  width: auto;
+  height: 42px;
+  min-height: 42px;
+  margin: 0 !important;
+  border: 1px solid rgba(24, 21, 16, 0.48);
+  border-radius: 8px;
+  background: rgba(255, 253, 245, 0.36);
+  color: var(--sq-ink);
+  box-shadow: none;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-action {
+  border: 2px solid var(--sq-ink);
+  border-radius: 0;
+  background: var(--sq-orange);
+  color: #fff;
+}
+
+@media (max-width: 430px) {
+  .street-quest--app .sq-checkin-sheet .sq-checkin-title { font-size: clamp(18px, 6vw, 25px); }
+}
+
+/* Keep the compact reference layout ahead of the older generated-sheet rules
+   that follow this section in the legacy stylesheet. */
+body.street-quest--app .sq-checkin-sheet,
+body.street-quest--app .sq-node-sheet {
+  height: min(700px, calc(100dvh - 18px));
+  max-height: min(700px, calc(100dvh - 18px));
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--sq-paper-light) url('../assets/street-quest/class-label-paper.png') center / 100% 100% no-repeat;
+  box-shadow: 0 -8px 0 rgba(0, 0, 0, 0.56), 0 -20px 42px rgba(0, 0, 0, 0.42), 6px 0 0 var(--sq-orange);
+}
+
+body.street-quest--app .sq-node-sheet {
+  height: 226px;
+  max-height: 226px;
+}
+
+body.street-quest--app .sq-checkin-sheet::before,
+body.street-quest--app .sq-node-sheet::before {
+  display: block;
+  position: absolute;
+  z-index: 3;
+  top: 5px;
+  left: 50%;
+  width: max-content;
+  margin: 0;
+  padding: 5px 9px;
+  border: 2px solid var(--sq-ink);
+  background: var(--sq-orange);
+  color: #fff8e8;
+  font: 800 12px/1 var(--font-display);
+  letter-spacing: 0.1em;
+  transform: translateX(-50%) rotate(-1deg);
+  box-shadow: 3px 3px 0 var(--sq-ink);
+}
+
+body.street-quest--app .sq-node-sheet::before { background: var(--sq-lime); color: var(--sq-ink); }
+
+body.street-quest--app .sq-checkin-sheet .sheet-handle,
+body.street-quest--app .sq-node-sheet .sheet-handle {
+  top: 35px;
+  left: 50%;
+  width: 48px;
+  height: 5px;
+  margin: 0;
+  border-radius: 0;
+  background: var(--sq-ink);
+  box-shadow: none;
+  transform: translateX(-50%);
+}
+
+body.street-quest--app .sq-node-sheet .sheet-handle { top: 39px; }
+
+body.street-quest--app .sq-checkin-sheet .sq-checkin-title {
+  top: 54px;
+  right: 4%;
+  left: 2.5%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 40px;
+  margin: 0;
+  color: #fff8e8;
+  font: 900 clamp(18px, 6vw, 25px)/1 var(--font-display);
+  text-align: left;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.18);
+}
+
+body.street-quest--app .sq-checkin-title .sq-checkin-icon {
+  position: static;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  margin: 0;
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background: var(--sq-orange);
+  color: #fff;
+  box-shadow: 3px 3px 0 var(--sq-ink);
+  transform: rotate(-4deg);
+}
+
+body.street-quest--app .sq-checkin-title .sq-checkin-icon svg { width: 21px; height: 21px; }
+
+body.street-quest--app .sq-checkin-sheet .sq-district-ticket {
+  top: 108px;
+  right: 4.2%;
+  left: 2.2%;
+  height: 124px;
+  margin: 0;
+  padding: 17px 15px 10px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background-color: var(--sq-ink-soft);
+  background-image: linear-gradient(rgba(11, 11, 10, 0.82), rgba(11, 11, 10, 0.82)), url('../assets/street-quest/card-texture.png');
+  background-size: auto, 460px 460px;
+  color: #fff8e8;
+  box-shadow: 4px 4px 0 var(--sq-orange);
+  transform: none;
+}
+
+body.street-quest--app .sq-checkin-sheet .sq-district-ticket::before { display: block; top: 8px; right: 10px; color: var(--sq-lime); font: 800 9px/1 var(--font-display); letter-spacing: 0.13em; transform: rotate(2deg); }
+body.street-quest--app .sq-checkin-sheet .sq-district-ticket-head { padding-right: 84px; }
+body.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-name { width: calc(100% - 50px); max-width: none; overflow: visible; font-size: 21px; white-space: nowrap; }
+body.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-province { margin: 6px 0 12px; color: #bdb29a; }
+body.street-quest--app .sq-checkin-sheet .sq-district-ticket .explored-badge { top: 39px; right: 12px; padding: 6px 10px; font: 800 13px/1 var(--font-heading); white-space: nowrap; }
+
+body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements {
+  top: 247px;
+  right: 4.5%;
+  left: 2.5%;
+  height: 235px;
+  margin: 0;
+  padding: 10px 6px 4px;
+  border: 2px dashed rgba(24, 21, 16, 0.55);
+  background: rgba(244, 234, 208, 0.28);
+}
+
+body.street-quest--app .sq-checkin-sheet .sq-checkin-section-label { top: 16px; left: 12px; margin: 0; }
+body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist { top: 48px; right: 8px; left: 8px; display: grid; gap: 0; }
+body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist-item { grid-template-columns: 58px minmax(0, 1fr); min-height: 59px; gap: 8px; padding: 0; border-bottom: 1px dashed rgba(24, 21, 16, 0.25); }
+body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist-item:last-child { border-bottom: 0; }
+body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .sq-generated-stamp { width: 50px; height: 50px; flex-basis: 50px; }
+body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .sq-generated-stamp.sq-stamp-frame { width: 68px; height: 37px; flex-basis: 68px; }
+body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist-text { color: var(--sq-ink); font: 800 12px/1.25 var(--font-heading); }
+
+body.street-quest--app .sq-checkin-sheet .sq-encounter-ready {
+  top: 495px;
+  right: 4.5%;
+  left: 2.5%;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 8px;
+  height: 138px;
+  margin: 0 !important;
+  padding: 10px 12px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 0;
+  background: rgba(255, 253, 245, 0.36);
+  box-shadow: 3px 3px 0 var(--sq-lime);
+  color: var(--sq-ink);
+}
+
+body.street-quest--app .sq-checkin-sheet .sq-encounter-ready .sq-ready-stamp { width: 54px; height: 54px; }
+body.street-quest--app .sq-checkin-sheet .sq-encounter-button { grid-column: 1 / -1; min-height: 46px; border: 2px solid var(--sq-ink); border-radius: 0; background: var(--sq-orange); color: #fff; box-shadow: none; }
+body.street-quest--app .sq-checkin-sheet .sq-encounter-locked { top: 495px; right: 4.5%; left: 2.5%; height: 96px; margin: 0 !important; padding: 10px 12px; border: 2px solid var(--sq-ink); border-radius: 0; background: rgba(255, 253, 245, 0.36); color: var(--sq-ink); }
+body.street-quest--app .sq-checkin-sheet .sq-checkin-primary { top: 573px; right: 8%; left: 6%; width: auto; margin: 0; }
+body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary { right: 4.5%; bottom: 10px; left: 2.5%; width: auto; height: 42px; min-height: 42px; margin: 0 !important; border: 1px solid rgba(24, 21, 16, 0.48); border-radius: 8px; background: rgba(255, 253, 245, 0.36); color: var(--sq-ink); }
+
+body.street-quest--app .sq-node-sheet .sq-node-head { top: 60px; right: 3.5%; left: 3%; display: flex; gap: 12px; height: 76px; padding: 9px 10px; border: 2px solid var(--sq-ink); border-bottom-style: dashed; background: rgba(255, 253, 245, 0.3); box-shadow: none; }
+body.street-quest--app .sq-node-sheet .sq-node-icon { width: 48px; height: 48px; flex-basis: 48px; border: 2px solid var(--sq-ink); background: var(--sq-ink); color: var(--sq-paper-light); box-shadow: 2px 2px 0 var(--sq-orange); }
+body.street-quest--app .sq-node-sheet .sq-node-copy { min-width: 0; flex: 1; }
+body.street-quest--app .sq-node-sheet .sq-node-title-row { display: block; min-width: 0; }
+body.street-quest--app .sq-node-sheet .sq-node-title { color: var(--sq-ink); font-size: 18px; }
+body.street-quest--app .sq-node-sheet .sq-node-meta { margin-top: 4px; color: rgba(24, 21, 16, 0.62); }
+body.street-quest--app .sq-node-sheet .explored-badge { top: 7px; right: 27px; padding: 5px 12px; border: 2px solid var(--sq-ink); border-radius: 2px; background: var(--sq-lime); color: var(--sq-ink); box-shadow: 2px 2px 0 var(--sq-ink); font: 800 12px/1 var(--font-heading); white-space: nowrap; transform: rotate(3deg); }
+body.street-quest--app .sq-node-sheet .sq-node-route-note { top: 149px; right: auto; left: 3%; display: flex; width: 93%; height: 16px; margin: 0; padding: 0; align-items: center; justify-content: space-between; gap: 0; color: rgba(24, 21, 16, 0.72); }
+body.street-quest--app .sq-node-sheet .sq-node-route-note b { color: #5d7f18; }
+body.street-quest--app .sq-node-sheet .sq-node-route-note b { letter-spacing: 0; }
+body.street-quest--app .sq-node-sheet .sq-node-action,
+body.street-quest--app .sq-node-sheet .sq-sheet-secondary { right: 4%; bottom: 10px; left: 3%; width: auto; height: 42px; min-height: 42px; margin: 0 !important; border: 1px solid rgba(24, 21, 16, 0.48); border-radius: 8px; background: rgba(255, 253, 245, 0.36); color: var(--sq-ink); box-shadow: none; }
+body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--sq-ink); border-radius: 0; background: var(--sq-orange); color: #fff; }
+
+/* Final Support Node slot map; keep this after the shared field-sheet rules. */
+.street-quest--app .sq-node-sheet { height: min(370px, calc(100dvh - 18px)); }
+.street-quest--app .sq-node-sheet .sq-node-head { top: 0; right: 0; left: 0; height: 100%; display: block; padding: 0; }
+.street-quest--app .sq-node-sheet .sq-node-icon { position: absolute; top: 17%; left: 37%; }
+.street-quest--app .sq-node-sheet .sq-node-copy { position: absolute; top: 13%; right: 9%; left: 50%; }
+.street-quest--app .sq-node-sheet .sq-node-title-row { display: block; }
+.street-quest--app .sq-node-sheet .sq-node-title { color: var(--sq-ink); }
+.street-quest--app .sq-node-sheet .sq-node-meta { color: rgba(24, 21, 16, 0.62); }
+.street-quest--app .sq-node-sheet .sq-node-route-note { top: 40%; right: auto; left: 36%; width: 33%; justify-content: flex-start; gap: 16px; }
+.street-quest--app .sq-node-sheet .sq-node-action,
+.street-quest--app .sq-node-sheet .sq-sheet-secondary { right: auto; left: 37%; width: 28%; }
+.street-quest--app .sq-node-sheet .sq-node-action { top: 53%; bottom: auto; }
+.street-quest--app .sq-node-sheet .sq-sheet-secondary { bottom: 20%; }
+.street-quest--app .sq-checkin-title .sq-checkin-icon { left: -4px; }
+.street-quest--app .sq-checkin-sheet .sq-encounter-locked { right: 26%; left: 16%; }
+
+/* Higher specificity keeps the slot map ahead of the shared field-sheet
+   baseline that is declared later in this legacy stylesheet. */
+body.street-quest--app .sq-node-sheet { height: min(370px, calc(100dvh - 18px)); }
+body.street-quest--app .sq-node-sheet .sq-node-head { top: 0; right: 0; left: 0; height: 100%; display: block; padding: 0; }
+body.street-quest--app .sq-node-sheet .sq-node-icon { position: absolute; top: 17%; left: 37%; }
+body.street-quest--app .sq-node-sheet .sq-node-copy { position: absolute; top: 13%; right: 9%; left: 50%; }
+body.street-quest--app .sq-node-sheet .sq-node-title-row { display: block; }
+body.street-quest--app .sq-node-sheet .sq-node-title { color: var(--sq-ink); }
+body.street-quest--app .sq-node-sheet .sq-node-meta { color: rgba(24, 21, 16, 0.62); }
+body.street-quest--app .sq-node-sheet .sq-node-route-note { top: 40%; right: auto; left: 36%; width: 33%; justify-content: flex-start; gap: 16px; }
+body.street-quest--app .sq-node-sheet .sq-node-action,
+body.street-quest--app .sq-node-sheet .sq-sheet-secondary { right: auto; left: 37%; width: 28%; }
+body.street-quest--app .sq-node-sheet .sq-node-action { top: 53%; bottom: auto; }
+body.street-quest--app .sq-node-sheet .sq-sheet-secondary { bottom: 20%; }
+body.street-quest--app .sq-checkin-title .sq-checkin-icon { left: -4px; }
+body.street-quest--app .sq-checkin-sheet .sq-encounter-locked { right: 26%; left: 16%; }
+
+/* Final compact Support Node override after the legacy full-sheet slot maps. */
+body.street-quest--app .sq-node-sheet .sq-node-head { top: 60px; right: 3.5%; left: 3%; display: flex; gap: 12px; height: 76px; padding: 9px 10px; border: 2px solid var(--sq-ink); border-bottom-style: dashed; background: rgba(255, 253, 245, 0.3); box-shadow: none; }
+body.street-quest--app .sq-node-sheet .sq-node-icon { position: static; width: 48px; height: 48px; flex-basis: 48px; border: 2px solid var(--sq-ink); background: var(--sq-ink); color: var(--sq-paper-light); box-shadow: 2px 2px 0 var(--sq-orange); }
+body.street-quest--app .sq-node-sheet .sq-node-copy { position: static; min-width: 0; flex: 1; }
+body.street-quest--app .sq-node-sheet .sq-node-title-row { display: block; min-width: 0; }
+body.street-quest--app .sq-node-sheet .sq-node-title { color: var(--sq-ink); font-size: 18px; }
+body.street-quest--app .sq-node-sheet .sq-node-meta { margin-top: 4px; color: rgba(24, 21, 16, 0.62); }
+body.street-quest--app .sq-node-sheet .explored-badge { top: 7px; right: 27px; padding: 5px 12px; border: 2px solid var(--sq-ink); border-radius: 2px; background: var(--sq-lime); color: var(--sq-ink); box-shadow: 2px 2px 0 var(--sq-ink); font: 800 12px/1 var(--font-heading); white-space: nowrap; transform: rotate(3deg); }
+body.street-quest--app .sq-node-sheet .sq-node-route-note { top: 149px; right: auto; left: 3%; display: flex; width: 93%; height: 16px; margin: 0; padding: 0; align-items: center; justify-content: space-between; gap: 0; color: rgba(24, 21, 16, 0.72); }
+body.street-quest--app .sq-node-sheet .sq-node-route-note { font: 700 11px/1 var(--font-display); letter-spacing: 0.12em; }
+body.street-quest--app .sq-node-sheet .sq-node-route-note b { color: #5d7f18; letter-spacing: 0.12em; }
+body.street-quest--app .sq-node-sheet .sq-node-action,
+body.street-quest--app .sq-node-sheet .sq-sheet-secondary { right: 4%; bottom: 10px; left: 3%; width: auto; height: 42px; min-height: 42px; margin: 0 !important; border: 1px solid rgba(24, 21, 16, 0.48); border-radius: 8px; background: rgba(255, 253, 245, 0.36); color: var(--sq-ink); box-shadow: none; }
+body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--sq-ink); border-radius: 0; background: var(--sq-orange); color: #fff; }
+
+/* Final slot nudges for the 375px field-kit capture. */
+.street-quest--app .sq-profile-avatar { left: 9%; }
+.street-quest--app .sq-passport-meta,
+.street-quest--app .sq-username-view,
+.street-quest--app .sq-username-edit,
+.street-quest--app .sq-settings-email { left: 43%; }
+.street-quest--app .sq-preferences-card .sq-card-kicker { left: 9%; }
+.street-quest--app .sq-visa-strip,
+.street-quest--app .sq-preferences-card .sq-setting-row { right: 8%; left: 8%; }
+.street-quest--app .sq-home-setting { right: 8%; left: 8%; }
+.street-quest--app .sq-version-card { padding-inline: 8%; }
+
+/* The Support Node capture uses the compact 941:1672 field print at a
+   370px crop. Its live controls need their own slots instead of sharing the
+   Watchtower flow layout. */
+.street-quest--app .sq-node-sheet { height: min(370px, calc(100dvh - 18px)); }
+
+.street-quest--app .sq-node-sheet .sq-node-head {
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 100%;
+  display: block;
+  padding: 0;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-icon {
+  position: absolute;
+  top: 17%;
+  left: 37%;
+  width: 36px;
+  height: 36px;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-copy {
+  position: absolute;
+  top: 13%;
+  right: 9%;
+  left: 50%;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-title-row { display: block; }
+.street-quest--app .sq-node-sheet .sq-node-title { color: var(--sq-ink); }
+.street-quest--app .sq-node-sheet .sq-node-meta { color: rgba(24, 21, 16, 0.62); }
+
+.street-quest--app .sq-node-sheet .sq-node-route-note {
+  top: 40%;
+  right: auto;
+  left: 36%;
+  width: 33%;
+  justify-content: flex-start;
+  gap: 16px;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-action,
+.street-quest--app .sq-node-sheet .sq-sheet-secondary {
+  right: auto;
+  left: 37%;
+  width: 28%;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-action {
+  top: 53%;
+  bottom: auto;
+}
+
+.street-quest--app .sq-node-sheet .sq-sheet-secondary { bottom: 20%; }
+
+.street-quest--app .sq-checkin-title .sq-checkin-icon { left: -4px; }
+.street-quest--app .sq-checkin-sheet .sq-encounter-locked { right: 26%; left: 16%; }
+
+/* Support and Watchtower sheets share a single field-sheet print. */
+.street-quest--app .sq-checkin-sheet,
+.street-quest--app .sq-node-sheet,
+.street-quest--app .sq-lore-sheet {
+  max-height: min(800px, calc(100vh - 18px));
+  overflow-y: auto;
+  padding: 0 8% 4%;
+  border: 0;
+  border-radius: 0;
+  background: transparent url('../assets/street-quest/generated-stamps/field-sheet-template.webp') center / 100% 100% no-repeat;
+  box-shadow: 6px 0 0 var(--sq-blue), -6px 0 0 var(--sq-orange);
+  color: var(--sq-ink);
+  scrollbar-width: thin;
+}
+
+.street-quest--app .sq-checkin-sheet::before,
+.street-quest--app .sq-node-sheet::before { display: none; }
+
+.street-quest--app .sq-checkin-sheet .sheet-handle,
+.street-quest--app .sq-node-sheet .sheet-handle,
+.street-quest--app .sq-lore-sheet .sheet-handle {
+  width: 48px;
+  height: 5px;
+  margin: 18px auto 18px;
+  border-radius: 0;
+  background: var(--sq-ink);
+  opacity: 0.9;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-title {
+  margin: 0 0 14px;
+  color: var(--sq-ink);
+  font: 900 clamp(20px, 6vw, 29px)/1 var(--font-heading);
+  text-align: center;
+  text-shadow: 1px 1px 0 rgba(255, 248, 232, 0.65);
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-icon {
+  display: inline-grid;
+  width: 32px;
+  height: 32px;
+  margin-right: 6px;
+  place-items: center;
+  border: 2px solid var(--sq-ink);
+  background: var(--sq-orange);
+  color: #fff8e8;
+  transform: rotate(-5deg);
+  vertical-align: -8px;
+}
+.street-quest--app .sq-checkin-sheet .sq-checkin-icon svg { width: 18px; height: 18px; }
+
+.street-quest--app .sq-district-ticket,
+.street-quest--app .sq-checkin-requirements,
+.street-quest--app .sq-encounter-locked,
+.street-quest--app .sq-encounter-ready,
+.street-quest--app .sq-support-progress,
+.street-quest--app .sq-node-sheet .sq-node-head {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.street-quest--app .sq-district-ticket {
+  margin: 0 0 13px;
+  padding: 14px 15px 12px;
+  background: rgba(9, 9, 8, 0.94);
+  color: #fff8e8;
+  transform: rotate(-0.4deg);
+}
+
+.street-quest--app .sq-district-ticket::before { display: none; }
+.street-quest--app .sq-district-ticket .district-preview-name { color: #fff8e8; font: 900 19px/1.15 var(--font-heading); }
+.street-quest--app .sq-district-ticket .district-preview-province { color: #c9bea7; }
+.street-quest--app .sq-district-ticket .explored-badge { border: 0; background: var(--sq-lime); color: var(--sq-ink); box-shadow: 2px 2px 0 var(--sq-orange); }
+.street-quest--app .sq-district-ticket .reveal-chip { border-color: rgba(255, 248, 232, 0.45); color: #f1dfc0; }
+
+.street-quest--app .sq-checkin-requirements {
+  margin-bottom: 12px;
+  padding: 10px 5px 4px;
+}
+.street-quest--app .sq-checkin-section-label {
+  margin-bottom: 8px;
+  background: var(--sq-ink);
+  color: var(--sq-lime);
+  transform: rotate(-1deg);
+}
+.street-quest--app .sq-checkin-requirements .checklist-item { min-height: 42px; padding: 5px 0; border-bottom: 1px dashed rgba(24, 21, 16, 0.25); }
+.street-quest--app .sq-checkin-requirements .checklist-text { color: var(--sq-ink); font: 800 11px/1.25 var(--font-heading); }
+
+.street-quest--app .sq-checkin-primary,
+.street-quest--app .sq-encounter-button,
+.street-quest--app .sq-node-action,
+.street-quest--app .sq-sheet-primary,
+.street-quest--app .sq-sheet-secondary {
+  min-height: 46px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  font: 900 13px/1.1 var(--font-heading);
+}
+.street-quest--app .sq-checkin-primary,
+.street-quest--app .sq-encounter-button,
+.street-quest--app .sq-node-action,
+.street-quest--app .sq-sheet-primary {
+  background: transparent url('../assets/street-quest/generated-stamps/guild-request-approve.png') center / 100% 100% no-repeat;
+  color: var(--sq-ink);
+}
+.street-quest--app .sq-checkin-secondary,
+.street-quest--app .sq-sheet-secondary {
+  background: transparent url('../assets/street-quest/generated-stamps/guild-request-reject.png') center / 100% 100% no-repeat;
+  color: #fff8e8;
+}
+.street-quest--app .sq-checkin-primary:hover,
+.street-quest--app .sq-checkin-primary:focus-visible,
+.street-quest--app .sq-encounter-button:hover,
+.street-quest--app .sq-encounter-button:focus-visible,
+.street-quest--app .sq-node-action:hover,
+.street-quest--app .sq-sheet-primary:hover { filter: brightness(1.08) saturate(1.08); color: var(--sq-ink); }
+
+.street-quest--app .sq-encounter-locked,
+.street-quest--app .sq-encounter-ready,
+.street-quest--app .sq-support-progress { padding: 8px 4px; color: var(--sq-ink); }
+.street-quest--app .sq-encounter-locked strong,
+.street-quest--app .sq-ready-copy strong,
+.street-quest--app .sq-support-progress-head p { color: var(--sq-ink); }
+.street-quest--app .sq-encounter-locked p,
+.street-quest--app .sq-ready-copy span,
+.street-quest--app .sq-support-progress-label { color: rgba(24, 21, 16, 0.62); }
+.street-quest--app .sq-ready-stamp { border-color: var(--sq-orange); color: var(--sq-orange); }
+.street-quest--app .sq-support-progress-track { border-color: var(--sq-ink); background: rgba(24, 21, 16, 0.1); }
+
+.street-quest--app .sq-node-sheet .sq-node-head { padding: 9px 4px 12px; border-bottom: 1px dashed rgba(24, 21, 16, 0.4); }
+.street-quest--app .sq-node-sheet .sq-node-title { color: var(--sq-ink); font: 900 17px/1.15 var(--font-heading); }
+.street-quest--app .sq-node-sheet .sq-node-meta,
+.street-quest--app .sq-node-sheet .sq-node-route-note { color: rgba(24, 21, 16, 0.62); }
+.street-quest--app .sq-node-sheet .sq-node-route-note b { color: #5d7f18; }
+.street-quest--app .sq-node-sheet .sq-node-icon { border: 0; background: var(--sq-ink); color: var(--sq-paper-light); box-shadow: 2px 2px 0 var(--sq-orange); }
+
+/* C-class encounter sheet: the short confirmation step now feels like the
+   same collectible poster as the reveal that follows it. */
+.street-quest--app #c-capture-sheet {
+  min-height: min(650px, calc(100vh - 16px));
+  overflow: hidden;
+  padding: 0 9% 4%;
+  border: 0;
+  border-radius: 0;
+  background: transparent url('../assets/street-quest/generated-stamps/capture-reveal-template.webp') center / 100% 100% no-repeat;
+  box-shadow: 6px 0 0 var(--sq-orange), -6px 0 0 var(--sq-blue);
+  color: var(--sq-ink);
+}
+.street-quest--app #c-capture-sheet::before {
+  content: 'FIELD ENCOUNTER';
+  display: block;
+  margin: 47px auto 0;
+  color: var(--sq-ink);
+  font: 900 12px/1 var(--font-display);
+  letter-spacing: 0.12em;
+  text-align: center;
+}
+.street-quest--app #c-capture-sheet .sheet-handle { width: 44px; height: 5px; margin: 15px auto 0; background: var(--sq-ink); border-radius: 0; }
+.street-quest--app #c-capture-sheet .c-capture-copy { position: absolute; top: 21%; right: 9%; left: 9%; text-align: center; }
+.street-quest--app #c-capture-sheet #c-capture-emoji { display: grid; width: 38%; height: 38%; min-height: 150px; margin: 0 auto; place-items: center; font-size: clamp(70px, 21vw, 100px); line-height: 1; filter: drop-shadow(0 4px 4px rgba(24, 21, 16, 0.22)); }
+.street-quest--app #c-capture-sheet #c-capture-name { margin: 0; color: #fff8e8; font: 900 clamp(20px, 6vw, 29px)/1.1 var(--font-heading); text-shadow: 0 2px 0 rgba(0, 0, 0, 0.32); }
+.street-quest--app #c-capture-sheet .c-capture-primary,
+.street-quest--app #c-capture-sheet .c-capture-secondary { position: absolute; right: 10%; left: 10%; min-height: 48px; border: 0; border-radius: 0; box-shadow: none; font: 900 16px/1 var(--font-heading); }
+.street-quest--app #c-capture-sheet .c-capture-primary,
+.street-quest--app #c-capture-sheet .c-capture-secondary { width: 80%; }
+.street-quest--app #c-capture-sheet .c-capture-primary { bottom: 16%; background: transparent url('../assets/street-quest/generated-stamps/guild-request-approve.png') center / 100% 100% no-repeat; color: var(--sq-ink); }
+.street-quest--app #c-capture-sheet .c-capture-secondary { bottom: 6%; background: transparent url('../assets/street-quest/generated-stamps/guild-request-reject.png') center / 100% 100% no-repeat; color: #fff8e8; }
+.street-quest--app #c-capture-sheet .c-capture-primary:hover,
+.street-quest--app #c-capture-sheet .c-capture-secondary:hover { filter: brightness(1.08) saturate(1.08); }
+
+/* Lore uses the same field-sheet language, with a full-width narrative zone. */
+.street-quest--app .sq-lore-sheet { padding-bottom: 22px; }
+.street-quest--app .sq-lore-sheet .lore-sheet-head { margin-bottom: 8px; }
+.street-quest--app .sq-lore-sheet .lore-type-badge { background: var(--sq-lime); color: var(--sq-ink); }
+.street-quest--app .sq-lore-sheet .lore-pts-badge { background: var(--sq-orange); color: #fff8e8; }
+.street-quest--app .sq-lore-sheet .lore-title { color: var(--sq-ink); font: 900 clamp(22px, 7vw, 30px)/1.08 var(--font-heading); }
+.street-quest--app .sq-lore-sheet .lore-narrator-row { color: rgba(24, 21, 16, 0.62); }
+.street-quest--app .sq-lore-sheet .lore-narrator-avatar { border-color: var(--sq-ink); background: var(--sq-orange); color: var(--sq-ink); box-shadow: 2px 2px 0 var(--sq-blue); }
+.street-quest--app .sq-lore-sheet .lore-narrative {
+  max-height: 38vh;
+  margin-bottom: 13px;
+  padding: 15px 14px;
+  border: 1px solid rgba(24, 21, 16, 0.32);
+  border-radius: 0;
+  background: rgba(255, 248, 232, 0.47);
+  color: var(--sq-ink);
+  box-shadow: 3px 3px 0 var(--sq-orange);
+  font: 600 14px/1.7 var(--font-body);
+}
+.street-quest--app .sq-lore-sheet .lore-narrative.lore-quote { border-left: 4px solid var(--sq-orange); }
+.street-quest--app .sq-lore-sheet .lore-narrative.lore-quote::before { color: var(--sq-orange); }
+.street-quest--app .sq-lore-sheet .lore-quiz-opt { border-color: rgba(24, 21, 16, 0.35); background: rgba(255, 248, 232, 0.42); color: var(--sq-ink); }
+.street-quest--app .sq-lore-sheet .lore-quiz-opt.active,
+.street-quest--app .sq-lore-sheet .lore-quiz-opt:hover { background: var(--sq-lime); color: var(--sq-ink); }
+
+/* Full-page notification field notes. */
+.street-quest--app .sq-notif-panel {
+  border: 0;
+  border-radius: 0;
+  background: #11110f url('../assets/street-quest/generated-stamps/notifications-fieldnotes-template.webp') center / 100% 100% no-repeat;
+  color: #fff8e8;
+}
+.street-quest--app .sq-notif-panel .sq-panel-header { background: transparent; }
+.street-quest--app .sq-notif-panel .sq-panel-title { color: #fff8e8; }
+.street-quest--app .sq-notif-body { padding: 2px 7% 28px; background: transparent; }
+.street-quest--app .sq-notif-passport-card {
+  min-height: 190px;
+  margin: 0 0 18px;
+  padding: 22px 12% 18px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--sq-ink);
+}
+.street-quest--app .sq-notif-passport-stamp { display: none; }
+.street-quest--app .sq-notif-passport-card > div:last-child { max-width: 76%; margin: 0 auto; text-align: center; }
+.street-quest--app .sq-notif-passport-kicker { color: var(--sq-orange); }
+.street-quest--app .sq-notif-passport-card strong { color: var(--sq-ink); font-size: 23px; }
+.street-quest--app .sq-notif-passport-card p { max-width: none; color: rgba(24, 21, 16, 0.62); font-size: 11px; }
+.street-quest--app .notif-row {
+  min-height: 78px;
+  margin: 9px 0;
+  padding: 14px 12px;
+  border: 0;
+  background: transparent url('../assets/street-quest/generated-stamps/guild-note-slip.png') center / 100% 100% no-repeat;
+  color: var(--sq-ink);
+  box-shadow: none;
+}
+.street-quest--app .notif-row.unread { padding-left: 12px; border-left: 0; background-image: url('../assets/street-quest/generated-stamps/guild-member-slip.png'); box-shadow: none; }
+.street-quest--app .notif-icon { width: 36px; height: 36px; border: 0; background: var(--sq-ink); color: var(--sq-lime); box-shadow: 2px 2px 0 var(--sq-orange); }
+.street-quest--app .notif-title { color: var(--sq-ink); font: 900 13px/1.25 var(--font-heading); }
+.street-quest--app .notif-msg { color: rgba(24, 21, 16, 0.62); font-size: 10px; }
+.street-quest--app .notif-dot { background: var(--sq-orange); }
+.street-quest--app .notif-actions { display: flex; gap: 5px; flex-shrink: 0; }
+.street-quest--app .notif-action-btn {
+  min-width: 50px;
+  min-height: 32px;
+  padding: 7px 8px;
+  border: 0;
+  border-radius: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  color: var(--sq-ink);
+  font: 800 10px/1 var(--font-heading);
+}
+.street-quest--app .notif-action-btn--accept { background-image: url('../assets/street-quest/generated-stamps/guild-request-approve.png'); }
+.street-quest--app .notif-action-btn--ignore { background-image: url('../assets/street-quest/generated-stamps/guild-request-reject.png'); color: #fff8e8; }
+.street-quest--app .notif-action-btn:hover,
+.street-quest--app .notif-action-btn:focus-visible { filter: brightness(1.08); outline: 2px solid var(--sq-lime); outline-offset: 2px; }
+.street-quest--app .sq-notif-empty { margin: 0; border: 0; background: transparent url('../assets/street-quest/generated-stamps/guild-note-slip.png') center / 100% 100% no-repeat; color: var(--sq-ink); box-shadow: none; }
+.street-quest--app .sq-notif-empty strong { color: var(--sq-ink); }
+.street-quest--app .sq-notif-empty span:last-child { color: rgba(24, 21, 16, 0.62); }
+
+/* Settings field kit + permission stamp. */
+.street-quest--app .sq-settings-panel {
+  border: 0;
+  border-radius: 0;
+  background: #11110f url('../assets/street-quest/generated-stamps/settings-fieldkit-template.webp') center / 100% 100% no-repeat;
+  color: #fff8e8;
+}
+.street-quest--app .sq-settings-panel .sq-panel-header { background: transparent; }
+.street-quest--app .sq-settings-body { gap: 13px; padding: 8px 7% 28px; background: transparent; }
+.street-quest--app .sq-settings-card {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--sq-ink);
+}
+.street-quest--app .sq-profile-card { min-height: 235px; padding: 30px 9% 18px; }
+.street-quest--app .sq-profile-card::before,
+.street-quest--app .sq-profile-card::after { display: none; }
+.street-quest--app .sq-profile-avatar { width: 92px; height: 92px; margin: 20px auto 8px; border: 3px solid var(--sq-ink); background: var(--sq-orange); box-shadow: 3px 3px 0 var(--sq-blue); }
+.street-quest--app .sq-passport-meta { top: 13px; left: 9%; }
+.street-quest--app .sq-passport-stamp { right: 8%; }
+.street-quest--app .sq-username-view p { color: var(--sq-ink); font-size: 22px; }
+.street-quest--app .sq-settings-email { color: rgba(24, 21, 16, 0.62); }
+.street-quest--app .sq-preferences-card { min-height: 264px; padding: 38px 9% 14px; }
+.street-quest--app .sq-card-kicker { color: var(--sq-orange); }
+.street-quest--app .sq-visa-strip { margin-inline: -2px; background: var(--sq-ink); color: var(--sq-lime); }
+.street-quest--app .sq-preferences-card .sq-setting-row { color: var(--sq-ink); background: rgba(255, 248, 232, 0.58); }
+.street-quest--app #gps-status-label { display: inline-flex; align-items: center; min-height: 31px; padding: 5px 9px; color: rgba(24, 21, 16, 0.62); font: 800 10px/1 var(--font-display); }
+.street-quest--app #gps-status-label.is-granted {
+  min-width: 71px;
+  justify-content: center;
+  background: transparent url('../assets/street-quest/generated-stamps/stamp-blue-ring.png') center / 100% 100% no-repeat;
+  color: #245b9f !important;
+  transform: rotate(-4deg);
+}
+.street-quest--app .sq-gps-request { border: 0; background: var(--sq-orange); color: #fff8e8; }
+.street-quest--app .sq-home-select { border: 1px solid rgba(24, 21, 16, 0.4); border-radius: 0; background: rgba(255, 253, 245, 0.7); color: var(--sq-ink); }
+.street-quest--app .sq-version-card { min-height: 78px; padding: 21px 9%; border: 0; background: transparent; box-shadow: none; color: var(--sq-ink); }
+.street-quest--app .sq-version-card .sq-card-kicker { color: #fff8e8; }
+.street-quest--app .sq-version-line { color: #fff8e8; }
+.street-quest--app .sq-version-line span { color: #c9bea7; }
+.street-quest--app .sq-signout-btn { min-height: 62px; border: 0; border-radius: 0; background: transparent; color: var(--sq-ink); }
+
+/* Invite code: strong contrast on the generated label. */
+.street-quest--app #guild-panel .guild-invite-label { color: rgba(24, 21, 16, 0.76); font-size: 10px; }
+.street-quest--app #guild-panel .guild-invite-code { color: #c7430d; font-size: 20px; letter-spacing: 0.16em; text-shadow: 0 1px 0 #fff8e8; }
+.street-quest--app #guild-panel .guild-invite-copy-btn { width: 34px; height: 34px; background: rgba(255, 248, 232, 0.38); color: var(--sq-ink); }
+
+@media (max-width: 380px) {
+  .street-quest--app .capture-reveal-card { width: min(340px, 94vw); }
+  .street-quest--app .figure-detail-dialog { width: calc(100vw - 12px); height: calc(100vh - 12px); margin: 6px auto; }
+  .street-quest--app .figure-dossier-footer { padding-inline: 8%; }
+  .street-quest--app .notif-actions { flex-direction: column; gap: 3px; }
+  .street-quest--app .notif-action-btn { min-width: 47px; min-height: 28px; padding: 5px 6px; }
+}
+
+/* Keep the artwork alignment rules last: the older field-kit declarations
+   above intentionally remain as the shared visual baseline for Lore and the
+   other transient surfaces. */
+.street-quest--app .sq-settings-body {
+  display: block;
+  height: calc(100% - 91.5px);
+  min-height: 0;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.street-quest--app .sq-settings-card {
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+
+.street-quest--app .sq-profile-card {
+  top: 62px;
+  height: 257px;
+  min-height: 0;
+  padding: 0;
+  overflow: visible;
+}
+
+.street-quest--app .sq-profile-avatar {
+  position: absolute;
+  top: 22px;
+  left: 5%;
+  width: 92px;
+  height: 92px;
+  margin: 0;
+}
+
+.street-quest--app .sq-passport-meta {
+  top: 9px;
+  left: 41%;
+  right: 3%;
+  width: auto;
+}
+
+.street-quest--app .sq-username-view {
+  position: absolute;
+  top: 103px;
+  left: 41%;
+  right: 3%;
+  width: auto;
+  justify-content: flex-start;
+  margin: 0;
+  text-align: left;
+}
+
+.street-quest--app .sq-username-edit {
+  position: absolute;
+  top: 96px;
+  left: 41%;
+  right: 3%;
+}
+
+.street-quest--app .sq-settings-email {
+  position: absolute;
+  top: 138px;
+  left: 41%;
+  right: 3%;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.street-quest--app .sq-passport-stamp {
+  top: 120px;
+  right: 4%;
+  bottom: auto;
+}
+
+.street-quest--app .sq-preferences-card {
+  top: 339px;
+  height: 242px;
+  min-height: 0;
+  padding: 0;
+}
+
+.street-quest--app .sq-preferences-card .sq-card-kicker {
+  position: absolute;
+  top: -35px;
+  left: 2%;
+  margin: 0;
+}
+
+.street-quest--app .sq-visa-strip {
+  position: absolute;
+  top: -19px;
+  right: 4%;
+  left: 4%;
+  margin: 0;
+}
+
+.street-quest--app .sq-preferences-card .sq-setting-row {
+  position: absolute;
+  right: 4%;
+  left: 4%;
+  width: auto;
+  margin: 0;
+}
+
+.street-quest--app .sq-preferences-card .sq-setting-row-toggle { top: 12px; }
+.street-quest--app .sq-preferences-card .sq-gps-row { top: 60px; }
+
+.street-quest--app .sq-home-setting {
+  position: absolute;
+  top: 108px;
+  right: 4%;
+  left: 4%;
+  padding: 0;
+}
+
+.street-quest--app .sq-version-card {
+  top: 588px;
+  height: 72px;
+  min-height: 0;
+  padding: 18px 9% 0;
+}
+
+.street-quest--app .sq-version-card .sq-card-kicker {
+  position: absolute;
+  top: -14px;
+  left: 9%;
+  margin: 0;
+}
+
+.street-quest--app .sq-version-line { margin: 0; }
+
+.street-quest--app .sq-signout-btn {
+  position: absolute;
+  top: 675px;
+  right: 7%;
+  left: 7%;
+  width: auto;
+  height: 180px;
+  min-height: 0;
+  margin: 0;
+  padding: 5px 12px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.street-quest--app .sq-checkin-sheet,
+.street-quest--app .sq-node-sheet {
+  position: fixed;
+  overflow: hidden;
+  width: 100%;
+  max-width: var(--max-width);
+  max-height: min(800px, 100dvh);
+  min-height: 0;
+  padding: 0;
+  background-size: 100% 100%;
+}
+
+.street-quest--app .sq-checkin-sheet { height: min(800px, 100dvh); }
+.street-quest--app .sq-node-sheet { height: min(320px, calc(100dvh - 18px)); }
+
+.street-quest--app .sq-checkin-sheet .sheet-handle,
+.street-quest--app .sq-node-sheet .sheet-handle {
+  position: absolute;
+  z-index: 2;
+  top: 17px;
+  left: 50%;
+  margin: 0;
+  transform: translateX(-50%);
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-title {
+  position: absolute;
+  z-index: 2;
+  top: 39px;
+  right: 5%;
+  left: 38%;
+  margin: 0;
+  line-height: 1.02;
+  text-align: center;
+}
+
+.street-quest--app .sq-checkin-title .sq-checkin-icon {
+  position: absolute;
+  top: 2px;
+  left: -46px;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  vertical-align: initial;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-district-ticket {
+  position: absolute;
+  z-index: 1;
+  top: 18.5%;
+  right: 16%;
+  left: 16%;
+  height: 19%;
+  margin: 0;
+  padding: 14px;
+  background: transparent;
+  transform: none;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-name { max-width: 65%; }
+.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-province { margin: 5px 0 8px; }
+.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-reveals { display: flex; flex-wrap: wrap; gap: 4px; }
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-requirements {
+  position: absolute;
+  z-index: 1;
+  top: 38.5%;
+  right: 11%;
+  left: 16%;
+  height: 25%;
+  margin: 0;
+  padding: 0;
+}
+
+.street-quest--app .sq-checkin-section-label { position: absolute; top: 0; left: 0; margin: 0; }
+
+.street-quest--app .sq-checkin-requirements .checklist {
+  position: absolute;
+  top: 31px;
+  right: 0;
+  left: 0;
+  gap: 0;
+}
+
+.street-quest--app .sq-checkin-requirements .checklist-item {
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr);
+  min-height: 45px;
+  gap: 8px;
+  padding: 0;
+  align-items: center;
+  border-bottom: 0;
+}
+
+.street-quest--app .sq-checkin-requirements .sq-generated-stamp { width: 44px; height: 44px; flex-basis: 44px; }
+.street-quest--app .sq-checkin-requirements .sq-generated-stamp.sq-stamp-frame { width: 54px; height: 32px; flex-basis: 54px; }
+.street-quest--app .sq-checkin-requirements .checklist-text { min-width: 0; overflow-wrap: anywhere; }
+
+.street-quest--app .sq-checkin-sheet .sq-encounter-locked {
+  position: absolute;
+  z-index: 1;
+  right: 25%;
+  bottom: 6%;
+  left: 25%;
+  height: 12%;
+  margin: 0 !important;
+  padding: 7px 8px;
+  background: transparent;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-encounter-ready,
+.street-quest--app .sq-checkin-sheet .sq-support-progress {
+  position: absolute;
+  z-index: 1;
+  right: 9%;
+  bottom: 17%;
+  left: 38%;
+  margin: 0 !important;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-primary {
+  position: absolute;
+  z-index: 2;
+  right: 9%;
+  bottom: 17%;
+  left: 38%;
+  width: auto;
+  margin: 0;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-secondary,
+.street-quest--app .sq-node-sheet .sq-sheet-secondary {
+  position: absolute;
+  z-index: 2;
+  right: 19%;
+  bottom: 1.5%;
+  left: 19%;
+  width: auto;
+  margin: 0 !important;
+}
+
+.street-quest--app .sq-node-sheet #node-info-content { position: static; }
+
+.street-quest--app .sq-node-sheet .sq-node-head {
+  position: absolute;
+  z-index: 1;
+  top: 21%;
+  right: 16%;
+  left: 16%;
+  height: 24%;
+  margin: 0;
+  padding: 8px 10px;
+  border-bottom: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-icon { width: 36px; height: 36px; flex-basis: 36px; }
+.street-quest--app .sq-node-sheet .sq-node-title { color: #fff8e8; font-size: clamp(15px, 4vw, 18px); }
+.street-quest--app .sq-node-sheet .sq-node-meta { color: rgba(255, 248, 232, 0.68); }
+
+.street-quest--app .sq-node-sheet .sq-node-route-note {
+  position: absolute;
+  z-index: 1;
+  top: 47%;
+  right: 24%;
+  left: 24%;
+  height: 11%;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-action {
+  position: absolute;
+  z-index: 2;
+  right: 9%;
+  bottom: 18%;
+  left: 38%;
+  width: auto;
+  margin: 0;
+}

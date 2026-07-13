@@ -517,10 +517,10 @@ function renderNotifications(notifs) {
         <p class="notif-msg">${escapeHtml(n.message)}</p>
       </div>
       ${isPendingJoinRequest(n) ? `
-        <div style="display:flex;gap:6px;flex-shrink:0">
-          <button class="btn btn-primary" style="font-size:10px;padding:4px 10px"
+        <div class="notif-actions">
+          <button class="notif-action-btn notif-action-btn--accept"
                   data-accept="${escapeHtml(String(n.id))}" data-ref="${escapeHtml(String(n.ref_id))}">ยอมรับ</button>
-          <button class="btn btn-ghost" style="font-size:10px;padding:4px 10px;border-color:var(--color-border)"
+          <button class="notif-action-btn notif-action-btn--ignore"
                   data-ignore="${escapeHtml(String(n.id))}" data-ref="${escapeHtml(String(n.ref_id))}">ไม่รับ</button>
         </div>
       ` : (!n.is_read ? `<span class="notif-dot"></span>` : '')}
@@ -706,15 +706,18 @@ document.getElementById('btn-username-save')?.addEventListener('click', async ()
 
   const render = (state) => {
     if (state === 'granted') {
-      label.textContent = 'อนุญาต ✓';
+      label.textContent = 'อนุญาต';
+      label.classList.add('is-granted');
       label.style.color = 'var(--color-success)';
       btn.hidden = true;
     } else if (state === 'denied') {
       label.textContent = 'ถูกปฏิเสธ · เปิดในเบราว์เซอร์';
+      label.classList.remove('is-granted');
       label.style.color = '#e57373';
       btn.hidden = true;
     } else {
       label.textContent = 'ยังไม่อนุญาต';
+      label.classList.remove('is-granted');
       label.style.color = 'var(--color-muted)';
       btn.hidden = false;
     }
@@ -787,36 +790,29 @@ function showCaptureReveal(figure) {
   const cls = figure.class || 'C';
   const isLegendary = cls === 'S' || cls === 'A';
   const headerText  = cls === 'S' ? 'LEGENDARY CAPTURE!' : cls === 'A' ? 'RARE CAPTURE!' : 'CAPTURED!';
-  const glowColor   = cls === 'S' ? 'var(--color-class-s)' : cls === 'A' ? '#C0A060' : 'var(--color-success)';
   const holdMs      = isLegendary ? 3200 : 2200;
 
   const overlay = document.createElement('div');
   overlay.className = 'capture-reveal-overlay';
 
   overlay.innerHTML = `
-    <div class="capture-reveal-card${isLegendary ? ' capture-reveal-legendary' : ''}" style="${isLegendary ? `--glow-color:${glowColor}` : ''}">
-      ${isLegendary ? '<div class="capture-glow-ring"></div><div class="capture-shimmer"></div>' : ''}
-      <div class="capture-header" style="color:${glowColor}">${headerText}</div>
+    <div class="capture-reveal-card capture-reveal-${escapeHtml(cls.toLowerCase())}${isLegendary ? ' capture-reveal-legendary' : ''}">
+      <div class="capture-header">${headerText}</div>
       <span class="capture-emoji">${escapeHtml(figure.image_emoji || '👤')}</span>
       <div class="capture-name-th">${escapeHtml(figure.name_th || '')}</div>
       <div class="capture-name-en">${escapeHtml(figure.name_en || '')}</div>
       <span class="badge badge-${cls.toLowerCase()}">${cls}</span>
-      <div class="capture-pts" style="color:${glowColor}">+${figure.legacy_pts || 0} Legacy Points</div>
+      <div class="capture-pts">+${figure.legacy_pts || 0} Legacy Points</div>
+      <button class="capture-reveal-dismiss" type="button">เยี่ยมไปเลย <span aria-hidden="true">→</span></button>
     </div>`;
-
-  if (isLegendary) {
-    const colors = ['#EAE7E1', '#7BC67E', '#ffffff', '#C0A060', '#EAE7E1', '#7BC67E'];
-    for (let i = 0; i < 14; i++) {
-      const dot = document.createElement('div');
-      dot.className = 'capture-confetti';
-      dot.style.cssText = `left:${15+Math.random()*70}%;top:${15+Math.random()*70}%;width:${5+Math.random()*7}px;height:${5+Math.random()*7}px;background:${colors[i%colors.length]};animation-delay:${(Math.random()*0.5).toFixed(2)}s`;
-      overlay.appendChild(dot);
-    }
-  }
 
   document.body.appendChild(overlay);
   const dismiss = () => { overlay.style.cssText += 'opacity:0;transition:opacity 0.3s'; setTimeout(() => overlay.remove(), 300); };
   overlay.addEventListener('click', dismiss);
+  overlay.querySelector('.capture-reveal-dismiss')?.addEventListener('click', event => {
+    event.stopPropagation();
+    dismiss();
+  });
   setTimeout(dismiss, holdMs);
 }
 

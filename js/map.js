@@ -20,6 +20,7 @@ const MapModule = (() => {
   // v3: replaced the rectangular grid-cell walk reveal with circle-per-point holes
   // (same ring-hole technique already used for districts) · smooth trail, not squares.
   const _WALK_KEY = 'tam_roi_walk_trail_v4'; // bumped: v3 data was recorded under a spacing rule looser than the reveal radius, producing overlapping/jagged holes
+  let _walkStoreKey = _WALK_KEY; // per-user suffix set in _initWalkGrid · a shared browser must not sync one account's cached trail into another account's DB rows
   const WALK_REVEAL_RADIUS_M = 30;
   // Must be >= WALK_REVEAL_RADIUS_M · spacing smaller than the reveal circle guarantees
   // heavy overlap between adjacent circles even walking in a straight line.
@@ -368,10 +369,35 @@ const MapModule = (() => {
     );
   }
 
-  function _initWalkGrid() {
+  async function _initWalkGrid() {
+    // localStorage first (instant paint + offline fallback), then the DB copy
+    // becomes the source of truth · local points missing from the DB (recorded
+    // offline, or pre-dating patch_walk_trail) are synced up on boot.
+    const user = window.AppCore?.App?.user;
+    if (user) {
+      _walkStoreKey = `${_WALK_KEY}:${user.id}`;
+      // one-time migration of the old account-agnostic key · first account to boot claims it
+      const legacy = localStorage.getItem(_WALK_KEY);
+      if (legacy) {
+        if (!localStorage.getItem(_walkStoreKey)) localStorage.setItem(_walkStoreKey, legacy);
+        localStorage.removeItem(_WALK_KEY);
+      }
+    }
+    let local = [];
+    try { local = JSON.parse(localStorage.getItem(_walkStoreKey) || '[]'); } catch {}
+    _walkedPoints = local;
+
+    if (!user || !DB.WalkTrail) return;
     try {
-      _walkedPoints = JSON.parse(localStorage.getItem(_WALK_KEY) || '[]');
-    } catch { _walkedPoints = []; }
+      const dbPoints = await DB.WalkTrail.getPoints(user.id);
+      const inDb = new Set(dbPoints.map(p => `${p.lat},${p.lng}`));
+      // filter _walkedPoints (not `local`) so GPS points revealed while the
+      // fetch was in flight survive the replacement below
+      const missing = _walkedPoints.filter(p => !inDb.has(`${p.lat},${p.lng}`));
+      if (missing.length) DB.WalkTrail.addPoints(user.id, missing).catch(() => {});
+      _walkedPoints = dbPoints.concat(missing);
+      if (allDistrictsCache) buildFogLayer(allDistrictsCache);
+    } catch { /* offline · keep the localStorage copy */ }
   }
 
   function _pointInPoly(lat, lng, coords) {
@@ -392,7 +418,9 @@ const MapModule = (() => {
     const tooClose = _walkedPoints.some(p => haversineDistance(p.lat, p.lng, lat, lng) < WALK_MIN_SPACING_M);
     if (tooClose) return;
     _walkedPoints.push({ lat, lng });
-    try { localStorage.setItem(_WALK_KEY, JSON.stringify(_walkedPoints)); } catch {}
+    try { localStorage.setItem(_walkStoreKey, JSON.stringify(_walkedPoints)); } catch {}
+    const user = window.AppCore?.App?.user;
+    if (user) DB.WalkTrail?.addPoints(user.id, [{ lat, lng }]).catch(() => {}); // fire-and-forget · localStorage line above is the offline net, _initWalkGrid re-syncs it
     if (allDistrictsCache) buildFogLayer(allDistrictsCache);
   }
 

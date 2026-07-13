@@ -165,7 +165,7 @@
       margin: 0 auto var(--space-sm);
     }
   </style>
-  <link rel="stylesheet" href="css/street-quest.css?v=4">
+  <link rel="stylesheet" href="css/street-quest.css?v=9">
 </head>
 <body class="street-quest street-quest--app">
 <div class="app-wrapper">
@@ -604,46 +604,43 @@
   <!-- ════ C-CLASS CAPTURE SHEET ════ -->
   <div class="bottom-sheet" id="c-capture-sheet">
     <div class="sheet-handle"></div>
-    <div style="text-align:center;padding:16px 0">
-      <div id="c-capture-emoji" style="font-size:48px;line-height:1;margin-bottom:10px"></div>
-      <h3 class="sheet-title" id="c-capture-name" style="margin:0 0 20px"></h3>
+    <div class="c-capture-copy">
+      <div id="c-capture-emoji"></div>
+      <h3 class="sheet-title" id="c-capture-name"></h3>
     </div>
-    <button class="btn btn-primary btn-sm btn-full" id="btn-c-capture">จับ!</button>
-    <button class="btn btn-outline btn-sm btn-full mt-2" onclick="AppCore.closeAllSheets()" style="margin-top:8px">ยกเลิก</button>
+    <button class="btn btn-primary btn-sm btn-full c-capture-primary" id="btn-c-capture">จับ!</button>
+    <button class="btn btn-outline btn-sm btn-full c-capture-secondary" onclick="AppCore.closeAllSheets()">ยกเลิก</button>
   </div>
 
   <!-- ════ FIGURE DETAIL MODAL ════ -->
   <div class="modal fade" id="figure-modal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width:360px;margin-left:auto;margin-right:auto">
-      <div class="modal-content">
-        <div class="modal-header" style="border:none;padding:22px var(--space-md) 18px;display:block">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable figure-detail-dialog">
+      <div class="modal-content figure-detail-dossier">
+        <div class="modal-header figure-dossier-header">
           <button type="button" class="btn-close" data-bs-dismiss="modal" style="position:absolute;top:16px;right:16px;z-index:2"></button>
           <!-- IG/Threads-style profile header: avatar left, name+handle right -->
-          <div class="anim-stamp" style="display:flex;align-items:flex-start;gap:16px">
-            <div class="figure-modal-portrait" id="modal-figure-emoji" style="width:64px;height:64px;font-size:26px;margin:0;flex-shrink:0">
+          <div class="anim-stamp figure-dossier-header-row">
+            <div class="figure-modal-portrait" id="modal-figure-emoji">
               <i class="bi bi-person-fill"></i>
             </div>
-            <div style="flex:1;min-width:0;padding-top:8px">
-              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                <h3 style="font-family:var(--font-heading);font-size:var(--text-md);font-weight:800;margin:0" id="modal-figure-name">–</h3>
-                <span class="figure-class-label" id="modal-figure-badge"
-                      style="display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;
-                             letter-spacing:0.5px;padding:2px 8px;border-radius:var(--radius-full);
-                             background:var(--color-primary-dim);color:var(--color-primary);flex-shrink:0">C-Class</span>
+            <div class="figure-dossier-copy">
+              <div class="figure-dossier-name-row">
+                <h3 class="figure-dossier-name" id="modal-figure-name">–</h3>
+                <span class="figure-class-label figure-dossier-badge" id="modal-figure-badge">C-Class</span>
               </div>
-              <p style="font-size:var(--text-xs);color:var(--color-muted);margin:3px 0 0" id="modal-figure-en">–</p>
+              <p class="figure-dossier-en" id="modal-figure-en">–</p>
               <!-- Compact stat line · was a big number-block row, moved here and shrunk -->
-              <p style="font-size:10px;color:var(--color-muted);margin:8px 0 0">
-                <span style="color:var(--color-primary);font-weight:700" id="modal-figure-pts">–</span> Legacy
-                &nbsp;·&nbsp; เขต <span id="modal-figure-district" style="font-weight:600">–</span>
-                <span id="modal-figure-years-row" hidden>&nbsp;·&nbsp; ปี <span id="modal-figure-years" style="font-weight:600">–</span></span>
+              <p class="figure-dossier-stats">
+                <span class="figure-dossier-points" id="modal-figure-pts">–</span> Legacy
+                &nbsp;·&nbsp; เขต <span id="modal-figure-district">–</span>
+                <span id="modal-figure-years-row" hidden>&nbsp;·&nbsp; ปี <span id="modal-figure-years">–</span></span>
               </p>
             </div>
           </div>
         </div>
-        <div class="modal-body" style="text-align:left;padding:8px var(--space-md) var(--space-md);overflow-y:auto">
+        <div class="modal-body figure-dossier-body">
           <div id="modal-figure-bio-card" class="fig-bio-section">
-            <p style="font-size:var(--text-xs);line-height:1.6;margin:0;color:var(--color-white)" id="modal-figure-bio">–</p>
+            <p class="figure-dossier-bio" id="modal-figure-bio">–</p>
           </div>
           <!-- Relations -->
           <div id="modal-figure-relations" class="fig-bio-section" style="display:none">
@@ -661,7 +658,7 @@
             <div id="modal-figure-locations-list"></div>
           </div>
         </div>
-        <div class="modal-footer" style="border:none;flex-direction:column;gap:8px;padding-top:var(--space-sm);padding-bottom:var(--space-md)">
+        <div class="modal-footer figure-dossier-footer">
           <button type="button" id="btn-figure-graph" class="btn btn-outline btn-sm btn-full">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;margin-right:4px;vertical-align:-2px"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8.2 7.2l2.4 8.6M15.8 7.2l-2.4 8.6M8.5 6h7"/></svg>
             ดูแผนผังความสัมพันธ์
@@ -673,7 +670,7 @@
   </div>
 
   <!-- ════ FIGURE GRAPH OVERLAY ════ -->
-  <div id="figure-graph-overlay" style="display:none;position:fixed;inset:0;z-index:1055;background:var(--color-bg)"></div>
+  <div id="figure-graph-overlay"></div>
 
   <!-- ════ NOTIFICATION OFFCANVAS ════ -->
   <div class="offcanvas offcanvas-end sq-offcanvas sq-notif-panel" tabindex="-1" id="notif-panel">

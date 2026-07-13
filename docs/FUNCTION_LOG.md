@@ -144,7 +144,8 @@
 
 | Function | File | Purpose | Supabase Tables | Status |
 |----------|------|---------|-----------------|--------|
-| `_initWalkGrid()` / `_revealWalkCell(lat, lng)` | js/map.js | Walk-cell fog reveal: FogGrid cell per GPS fix, persisted to localStorage (`tam_roi_walk_cells`), skipped when GPS accuracy > 100m | — (localStorage only, not per-account) | ✅ Working |
+| `_initWalkGrid()` / `_revealWalkCell(lat, lng)` | js/map.js | Walk-trail fog reveal: circle hole per GPS fix (30 m spacing), skipped when GPS accuracy > 100m; boot loads points from DB then re-syncs any localStorage-only points (offline catch-up), new points dual-write localStorage + DB | user_walk_points (per-account; localStorage kept as offline cache) | ✅ Fixed 2026-07-13 — was localStorage-only, trail didn't follow the account |
+| `DB.WalkTrail.getPoints(userId)` / `addPoints(userId, points)` | js/supabase-client.js | Read/write walk-trail points; addPoints upserts with `ignoreDuplicates` so offline catch-up resends are no-ops | user_walk_points | ✅ Working |
 | `buildFogLayer()` walk-cell filter | js/map.js | Drops walk cells whose bbox intersects a cleared district so evenodd fill can't re-fog district holes | user_districts | ✅ Fixed 2026-07-05 |
 | `DB.Districts.checkIn()` encounter key | js/supabase-client.js | Check-in now also sets `has_encounter_key = true`; A-tier encounters require the key + support chain | user_districts | ✅ Added 2026-07-04 |
 | C-class proximity capture (`_pendingCaptureC`, `btn-c-capture`, `_completeCapture`) | js/map.js, app.html | C figures render through fog with an 80m orange circle; tap inside radius opens `#c-capture-sheet`, capture completes without quiz; marker + circle removed on capture | user_captures, profiles | ✅ Added 2026-07-05 |

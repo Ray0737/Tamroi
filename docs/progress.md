@@ -1,6 +1,6 @@
 # Tamroi — Implementation Progress
 
-> Last updated: 2026-07-12
+> Last updated: 2026-07-14
 
 ---
 
@@ -75,7 +75,7 @@
 | Find Group panel | ✅ Done | Search by name, shows member count + score; `DB.Coop.searchGuilds()` |
 | Guild management overhaul | ✅ Done | Transfer leadership, edit name/announcement, pending requests list |
 | Community forum | ✅ Done | `js/community-forum.js` · `community_posts` + `community_post_likes` · likes + replies + flag |
-| Class-tiered capture animation | ✅ Done | CSS reveal animation varies by figure class (C/B/A/S) |
+| Class-tiered capture reveal | ✅ Done | Generated scrapbook capture poster with readable live figure text, class badge, points, and action ticket for C/B/A/S figures |
 | Themed dialogs | ✅ Done | Native `confirm`/`alert` replaced with styled modals throughout |
 | Leaderboard filter dropdowns | ✅ Done | Replaced filter pills with `<select>` dropdowns |
 | Actionable join-request notification | ✅ Done | Notification tab shows Accept/Ignore buttons on `join_request` notifs (via `ref_id`); stays unread until acted on |
@@ -106,7 +106,7 @@
 | Feature | Status | Notes |
 |---|---|---|
 | Light-theme map | ✅ Done | White CartoDB tiles, darker fog, adapted marker/UI colors |
-| Walk-cell fog reveal | ✅ Done | FogGrid cells revealed by walking; gated on GPS accuracy ≤100m; localStorage-only (per-device) |
+| Walk-cell fog reveal | ✅ Done | Trail revealed by walking; gated on GPS accuracy ≤100m; per-account in `user_walk_points` since 2026-07-13 (localStorage kept as offline cache, re-synced on boot) |
 | Fog rebuild fixes | ✅ Done | Thailand-bbox outer ring; walk cells no longer cancel cleared district holes (bbox intersection) |
 | Encounter Key | ✅ Done | `patch_encounter_key.sql` · watchtower check-in gates A-tier encounters |
 | C-Class proximity capture | ✅ Done | 80m circle, fog-visible markers, tap-to-capture sheet; `patch_c_class_proximity.sql` (fig-c-21/22 + fig-c-14 coords) |
@@ -117,7 +117,7 @@
 
 | Figure Biography + Relation Graph | ✅ Done | `patch_figure_bio.sql` · `figure_relations` table · extended figure modal (bio_th, birth/death year, relation chips, related lore, related locations) · `FigureGraphModule` SVG canvas with pan/zoom/drag/focus animations · `MapModule.flyToLocation` |
 
-### UI Polish — 2026-07-12
+### UI Polish — 2026-07-12 → 07-14
 
 | Change | Files |
 |---|---|
@@ -149,11 +149,19 @@
 | Full page screenshot refresh | ✅ Done | Regenerated all eleven 430px reference captures, including populated My Group, Forum, and Watchtower Check-In states, with `tests/ui-visual.spec.mjs`; 430px/375px layout checks passed | `restyling/05_bangkok_street_quest/screenshots/` |
 | Mission ticket stamp treatment | ✅ Done | Replaced Mission route and completion checkmarks with generated blue/red ink stamps, paper stamp slots, and removed the vertical `QUEST FILE 01` label | `js/missions.js`, `css/street-quest.css`, `assets/street-quest/generated-stamps/` |
 | Watchtower generated stamp treatment | ✅ Done | Applied generated blue circular and red frame stamps to Watchtower support requirements and added a browser-captured Check-In sheet state | `js/map.js`, `css/street-quest.css`, `tests/ui-visual.spec.mjs` |
+| Guild field-journal panel restyle | ✅ Done | Reworked the My Group hub into an ink dossier with a stamped header, route-style subnav, and kraft-paper invite/member ticket while preserving guild actions and DOM hooks | `js/guild.js`, `css/street-quest.css` |
+| Generated guild paper accents | ✅ Done | Added a generated distressed compass crew seal and torn journal ticket label for the My Group emblem and invite code strip; chroma-key sources were removed after alpha validation | `assets/street-quest/generated-stamps/guild-crew-seal.png`, `assets/street-quest/generated-stamps/guild-journal-label.png`, `css/street-quest.css` |
+| Generated guild control tickets | ✅ Done | Replaced generic action buttons and the active group tab with generated torn-paper ticket, danger ticket, and field-note marker assets while keeping live labels/icons and accessible button behavior | `assets/street-quest/generated-stamps/guild-action-ticket.png`, `assets/street-quest/generated-stamps/guild-danger-ticket.png`, `assets/street-quest/generated-stamps/guild-tab-marker.png`, `js/guild.js`, `css/street-quest.css` |
+| Generated guild field-kit surfaces | ✅ Done | Added generated roster slips, announcement/log note cards, collaborative mission passes, and four custom travel-journal tab icons; live guild content remains DOM text over the artwork | `assets/street-quest/generated-stamps/guild-member-slip.png`, `assets/street-quest/generated-stamps/guild-note-slip.png`, `assets/street-quest/generated-stamps/guild-mission-ticket.png`, `assets/street-quest/generated-stamps/guild-icon-*.png`, `js/guild.js`, `css/street-quest.css` |
+| Co-op mission pass readability | ✅ Done | Replaced CSS-drawn mission decoration with generated image-backed 01/02/03 passes for the paper, torn tabs, tape, seals, barcodes, XP blocks, and orange action strips; live Thai title, description, progress, and check-in controls remain HTML and Jigsaw keeps its existing flow | `app.html`, `js/coop.js`, `js/guild.js`, `css/street-quest.css`, `assets/street-quest/generated-stamps/mission-pass-01.webp`, `assets/street-quest/generated-stamps/mission-pass-02.webp`, `assets/street-quest/generated-stamps/mission-pass-03.webp` |
+| Guild join-request readability | ✅ Done | Replaced inline pending-request markup with a readable paper member slip, clearer request count/name/meta hierarchy, responsive action layout, and image-backed approve/reject tickets while preserving the existing request handlers | `app.html`, `js/guild.js`, `css/street-quest.css`, `assets/street-quest/generated-stamps/guild-request-approve.png`, `assets/street-quest/generated-stamps/guild-request-reject.png` |
+| Generated figure + field UI surfaces | ✅ Done | Added image-backed capture/reveal posters, figure dossiers, C-class encounter sheets, compact Support Node/Watchtower paper tickets, Explorer Pass settings, Field Notes notifications, stamped GPS status, and a scrapbook relationship graph while keeping live content/actions in HTML/JS | `app.html`, `js/app.js`, `js/map.js`, `css/street-quest.css`, `css/figure-graph.css`, `assets/street-quest/generated-stamps/*-template.webp` |
+| Compact map ticket rollback | ✅ Done | Restored the supplied compact paper-ticket layouts for Support Node and Watchtower Check-In, including the dark district pass, ruled support stamps, ready card, and bottom close/cancel controls; Playwright-verified at 412×700 and 411×800 | `css/street-quest.css` |
 
 ### Known Gaps (Deferred)
 
 - CoopModule GPS gate for mission checkin (currently DB-only, no distance check)
-- Walk-cell fog is device-local (localStorage), not synced per account — batched-write sync planned
+- ~~Walk-cell fog is device-local (localStorage), not synced per account~~ ✅ Done 2026-07-13 — `patch_walk_trail.sql` + `DB.WalkTrail`, per-account with offline catch-up
 - Group mission cards render in two places (Mission tab + Guild panel) without shared refresh
 - `figures.era` column never applied to live DB — era text always falls back to generic label
 
