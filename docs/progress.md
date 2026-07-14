@@ -1,6 +1,6 @@
 # Tamroi — Implementation Progress
 
-> Last updated: 2026-07-14
+> Last updated: 2026-07-15
 
 ---
 
@@ -97,7 +97,7 @@
 | Lore pre/post-test | ✅ Done | `patch_prepost.sql` · `user_lore_assessments`, per-phase scores |
 | Review-status enforcement | ✅ Done | `patch_review_status.sql` · client filters `review_status = 'approved'` |
 | Forum probation + PDPA consent | ✅ Done | `patch_child_safety.sql` · new-account post hold, age consent at onboarding |
-| Raid figure ⚔️ icon + raid-only gate | ✅ Done | Was a deferred gap; raid figures no longer solo-capturable |
+| Raid figure icon + raid-only gate | ✅ Done | Was a deferred gap; raid figures no longer solo-capturable; icon is `bi-shield-fill-exclamation` (was ⚔️ emoji, replaced 2026-07-15) |
 | Raid notification deep-link | ✅ Done | Was a deferred gap; notification opens the raid lobby |
 | Rama-line kings removed from pool | ✅ Done | `patch_remove_all_rama.sql` (two earlier attempts had silently failed) |
 
@@ -117,7 +117,7 @@
 
 | Figure Biography + Relation Graph | ✅ Done | `patch_figure_bio.sql` · `figure_relations` table · extended figure modal (bio_th, birth/death year, relation chips, related lore, related locations) · `FigureGraphModule` SVG canvas with pan/zoom/drag/focus animations · `MapModule.flyToLocation` |
 
-### UI Polish — 2026-07-12 → 07-14
+### UI Polish — 2026-07-12 → 07-15
 
 | Change | Files |
 |---|---|
@@ -157,6 +157,9 @@
 | Guild join-request readability | ✅ Done | Replaced inline pending-request markup with a readable paper member slip, clearer request count/name/meta hierarchy, responsive action layout, and image-backed approve/reject tickets while preserving the existing request handlers | `app.html`, `js/guild.js`, `css/street-quest.css`, `assets/street-quest/generated-stamps/guild-request-approve.png`, `assets/street-quest/generated-stamps/guild-request-reject.png` |
 | Generated figure + field UI surfaces | ✅ Done | Added image-backed capture/reveal posters, figure dossiers, C-class encounter sheets, compact Support Node/Watchtower paper tickets, Explorer Pass settings, Field Notes notifications, stamped GPS status, and a scrapbook relationship graph while keeping live content/actions in HTML/JS | `app.html`, `js/app.js`, `js/map.js`, `css/street-quest.css`, `css/figure-graph.css`, `assets/street-quest/generated-stamps/*-template.webp` |
 | Compact map ticket rollback | ✅ Done | Restored the supplied compact paper-ticket layouts for Support Node and Watchtower Check-In, including the dark district pass, ruled support stamps, ready card, and bottom close/cancel controls; Playwright-verified at 412×700 and 411×800 | `css/street-quest.css` |
+| Raid modal icon cleanup | ✅ Done | Replaced all emoji in the raid lobby/quiz/result screens with Bootstrap Icons (`bi-shield-fill-exclamation`, `bi-check-circle-fill`, `bi-x-circle-fill`, `bi-trophy-fill`, `bi-x-octagon-fill`); raid-start notification title text also dropped its emoji (notif titles render as escaped text, not HTML) | `js/raid.js` |
+| Lore/pretest/posttest raid-style rebuild | ✅ Done | `#lore-sheet` dropped the field-note ticket chrome entirely — no drag handle, no "ARCHIVE / READ & REMEMBER" tab, no boxed title banner or nested narrative card. It's now a fixed-centered flat card (`var(--color-card-dark)`, same shape/position as `#raid-modal`) instead of a bottom-anchored slide-up sheet. Pretest/posttest quiz (`renderQuiz` in `js/app.js`) is a literal copy of the raid quiz screen: one question at a time, progress counter + thin bar, plain `.btn-outline` A–D options with orange border on pick, auto-advance | `app.html`, `js/app.js`, `css/street-quest.css` |
+| Lore sheet duplicate close-button fix | ✅ Done | Result phase set `#btn-save-lore` to "ปิด" while the separate secondary "ปิด" button (`#btn-close-lore`, newly IDed) stayed visible too; now hidden in `showResultPhase()` and reset visible on every `openLoreSheet()` call | `app.html`, `js/app.js` |
 
 ### Known Gaps (Deferred)
 

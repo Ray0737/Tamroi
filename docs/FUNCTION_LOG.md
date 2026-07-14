@@ -67,7 +67,7 @@
 | `updateMapStatsPill()` | js/app.js | Updates top map stats pill from `App.profile` at boot and after capture | profiles | ✅ Working |
 | `loadNotifications()` | js/app.js | Loads unread notifications from DB; shows bell badge count. `join_request` notifs render Accept/Ignore buttons (via `ref_id` → `guild_join_requests.id`) and stay unread until acted on | notifications | ✅ Updated 2026-07-01 |
 | `subscribeNotifications()` | js/app.js | Supabase Realtime sub on `notifications` for this user | notifications (realtime) | ✅ Working |
-| `openLoreSheet(node)` | js/app.js | Opens lore reading bottom sheet with pre/post assessment flow; async with phase machine (pretest → read → posttest) | user_lore_assessments | ✅ Updated 2026-07-02: now async, runs pre/post assessment phases |
+| `openLoreSheet(node)` | js/app.js | Opens `#lore-sheet` (fixed-centered card, same shape as `#raid-modal` — not a bottom-anchored sheet since 2026-07-15) with pre/post assessment flow; async with phase machine (pretest → read → posttest); pretest/posttest quiz (`renderQuiz`) is a straight copy of raid.js's one-question-at-a-time quiz screen | user_lore_assessments | ✅ Updated 2026-07-15: raid-modal card styling + raid-quiz layout |
 | `openLoreChainSheet(chain)` | js/app.js | Opens lore chain summary sheet | — | ✅ Working |
 
 ---

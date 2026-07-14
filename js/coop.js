@@ -1,6 +1,10 @@
 // ── Co-op Mission Module ──────────────────────────────
 const CoopModule = (() => {
   let _progressChannels = [];
+  // Session-only: mission ids the player has tapped open. Every mission
+  // (checkin or jigsaw) starts as a closed paper-ticket cover; opening one
+  // swaps that single slot for its full content instead of reloading the list.
+  const _openMissions = new Set();
 
   async function load() {
     const el = document.getElementById('coop-missions');
@@ -53,14 +57,11 @@ const CoopModule = (() => {
               assignments.push(...fresh);
             }
           }
-          wrapper.innerHTML = await _renderJigsawCard(m, assignments, user.id, guild.guild.id, missionIndex + 1);
-          _wireJigsawCard(wrapper, m, assignments, user.id, guild.guild.id);
+          await _renderJigsawSlot(wrapper, m, assignments, user.id, guild.guild.id, missionIndex + 1);
         } else {
           const checkins  = existingCheckins.filter(c => c.mission_id === m.id);
           const myCheckin = checkins.find(c => c.user_id === user.id);
-          wrapper.innerHTML = renderMissionCard(m, checkins.length, myCheckin, missionIndex + 1);
-          wrapper.querySelector('[data-checkin-btn]')?.addEventListener('click', () => _doCheckin(m, guild, user, wrapper));
-          subscribeProgress(m.id, guild.guild.id, wrapper, m, user, missionIndex + 1);
+          _renderCheckinSlot(wrapper, m, checkins.length, myCheckin, guild, user, missionIndex + 1);
         }
 
         cardsEl.appendChild(wrapper);
@@ -94,6 +95,71 @@ const CoopModule = (() => {
       await DB.Coop.checkInToMission(mission.id, guild.guild.id, user.id);
       // UI update comes from the postgres_changes subscription
     } catch { /* duplicate checkin · ignore */ }
+  }
+
+  // ── Closed paper-ticket cover, shared by checkin + jigsaw missions ────
+  function _missionCoverHtml(mission, indexLabel, kicker, done) {
+    return `
+      <article class="coop-mission-card sq-mission-pass sq-mission-pass--${indexLabel} sq-mission-cover ${done ? 'done' : ''}" data-cover>
+        <div class="sq-mission-rail" aria-hidden="true">
+          <strong>${indexLabel}</strong>
+          <span>MISSION</span>
+          <i class="bi bi-lightning-charge-fill"></i>
+        </div>
+        <div class="sq-mission-pass-body">
+          <div class="coop-mission-head">
+            <i class="bi bi-flag" aria-hidden="true"></i>
+            <div class="sq-mission-heading">
+              <span class="sq-mission-kicker">${escapeHtml(kicker)}</span>
+              <p class="coop-mission-title">${escapeHtml(mission.title_th)}</p>
+            </div>
+            <span class="coop-mission-badge ${done ? 'done' : ''}">
+              ${done ? `<i class="bi bi-check-circle-fill"></i> สำเร็จ` : `+${mission.reward_pts} pts`}
+            </span>
+          </div>
+          <button type="button" class="sq-cover-open-btn" data-open-mission>
+            <i class="bi bi-chevron-down"></i> แตะเพื่อเปิดภารกิจ
+          </button>
+        </div>
+      </article>`;
+  }
+
+  function _renderCheckinSlot(wrapper, mission, checkinCount, myCheckin, guild, user, missionIndex = 1, skipSubscribe = false) {
+    const done = checkinCount >= mission.required_players;
+    const indexLabel = String(missionIndex).padStart(2, '0');
+
+    if (!_openMissions.has(mission.id)) {
+      wrapper.innerHTML = _missionCoverHtml(mission, indexLabel, `FIELD MISSION ${indexLabel}`, done);
+      wrapper.querySelector('[data-open-mission]')?.addEventListener('click', () => {
+        _openMissions.add(mission.id);
+        _renderCheckinSlot(wrapper, mission, checkinCount, myCheckin, guild, user, missionIndex);
+      });
+      return;
+    }
+
+    wrapper.innerHTML = renderMissionCard(mission, checkinCount, myCheckin, missionIndex);
+    wrapper.querySelector('[data-checkin-btn]')?.addEventListener('click', () => _doCheckin(mission, guild, user, wrapper));
+    if (!skipSubscribe) subscribeProgress(mission.id, guild.guild.id, wrapper, mission, user, missionIndex);
+  }
+
+  async function _renderJigsawSlot(wrapper, mission, assignments, currentUserId, guildId, missionIndex = 1) {
+    const indexLabel = String(missionIndex).padStart(2, '0');
+
+    if (!_openMissions.has(mission.id)) {
+      wrapper.innerHTML = _missionCoverHtml(mission, indexLabel, `JIGSAW MISSION ${indexLabel}`, false);
+      wrapper.querySelector('[data-open-mission]')?.addEventListener('click', async () => {
+        _openMissions.add(mission.id);
+        await _renderJigsawSlot(wrapper, mission, assignments, currentUserId, guildId, missionIndex);
+      });
+      return;
+    }
+
+    wrapper.innerHTML = await _renderJigsawCard(mission, assignments, currentUserId, guildId, missionIndex);
+    wrapper.querySelector('[data-jigsaw-collapse]')?.addEventListener('click', () => {
+      _openMissions.delete(mission.id);
+      _renderJigsawSlot(wrapper, mission, assignments, currentUserId, guildId, missionIndex);
+    });
+    _wireJigsawCard(wrapper, mission, assignments, currentUserId, guildId);
   }
 
   function renderMissionCard(mission, checkinCount, myCheckin, missionIndex = 1) {
@@ -140,10 +206,7 @@ const CoopModule = (() => {
       try {
         const checkins  = await DB.Coop.getMissionCheckins(missionId, guildId);
         const myCheckin = checkins.find(c => c.user_id === user?.id);
-        wrapperEl.innerHTML = renderMissionCard(mission, checkins.length, myCheckin, missionIndex);
-        wrapperEl.querySelector('[data-checkin-btn]')?.addEventListener('click', () =>
-          _doCheckin(mission, { guild: { id: guildId } }, user, wrapperEl)
-        );
+        _renderCheckinSlot(wrapperEl, mission, checkins.length, myCheckin, { guild: { id: guildId } }, user, missionIndex, true);
       } catch {}
     });
     _progressChannels.push(ch);
@@ -257,6 +320,9 @@ const CoopModule = (() => {
     const myAssign = assignments.find(a => a.user_id === currentUserId);
     const indexLabel = String(missionIndex).padStart(2, '0');
     let bodyHtml;
+    let step = 1;             // which checkpoint node (1-4) is active
+    let status = 'WAITING';   // top-right eyebrow label
+    let footerHint = 'รอผู้นำกิลด์แจกบทอ่าน';
 
     if (!myAssign) {
       bodyHtml = `<p style="font-size:12px;color:var(--color-muted)">
@@ -266,36 +332,59 @@ const CoopModule = (() => {
       const unlocked = window.MapModule?.getUnlockedLoreIds?.()?.includes(myAssign.lore_node_id);
       if (!unlocked) {
         bodyHtml = _jigsawLockedBody(myAssign);
+        step = 1; status = 'ACTIVE QUEST'; footerHint = 'เดินทางไปจุดหมายเพื่อปลดล็อกบท';
       } else {
         const questions = await _jigsawGetRecallQuestions(myAssign.lore_node_id);
-        bodyHtml = (questions.length && !_jigsawQuizPassed.has(myAssign.id))
-          ? _jigsawQuizBody(myAssign, questions)
-          : _jigsawContributeBody(mission, myAssign, assignments);
+        if (questions.length && !_jigsawQuizPassed.has(myAssign.id)) {
+          bodyHtml = _jigsawQuizBody(myAssign, questions);
+          step = 2; status = 'ACTIVE QUEST'; footerHint = 'ตอบคำถามให้ถูกก่อนสรุปบท';
+        } else {
+          bodyHtml = _jigsawContributeBody(mission, myAssign, assignments);
+          step = 3; status = 'ACTIVE QUEST'; footerHint = 'กรอกสรุปบทของคุณ';
+        }
       }
     } else if (!assignments.every(a => a.summary_posted)) {
       bodyHtml = _jigsawSubmittedBody(assignments);
+      step = 3; status = 'WAITING TEAM'; footerHint = 'รอสมาชิกคนอื่นส่งสรุปบท';
     } else {
       bodyHtml = await _jigsawMergeBody(mission, assignments, guildId, currentUserId);
+      const won = bodyHtml.includes('jigsaw-result-win');
+      const lost = bodyHtml.includes('jigsaw-result-lose');
+      step = 4;
+      status = won ? 'COMPLETE' : lost ? 'RETRY' : 'MERGE PHASE';
+      footerHint = won ? 'สำเร็จ! ทุกคนได้รับรางวัลแล้ว' : lost ? 'ลำดับยังไม่ถูกต้อง ลองใหม่' : 'เรียงลำดับเวลาให้ถูกต้องแล้วยืนยัน';
     }
 
+    const doneCount = Math.min(step - 1, 4);
+    const track = [1, 2, 3, 4].map((n, i) => {
+      const cls = n < step ? 'done' : n === step ? 'active' : '';
+      return `<span class="jigsaw-route-node ${cls}">${String(n).padStart(2, '0')}</span>${i < 3 ? '<span class="jigsaw-route-connector"></span>' : ''}`;
+    }).join('');
+
     return `
-      <article class="jigsaw-card sq-mission-pass sq-mission-pass--${indexLabel}" data-mission-id="${escapeHtml(mission.id)}">
-        <div class="sq-mission-rail" aria-hidden="true">
-          <strong>${indexLabel}</strong>
-          <span>MISSION</span>
-          <i class="bi bi-lightning-charge-fill"></i>
+      <article class="jigsaw-route-card" data-mission-id="${escapeHtml(mission.id)}">
+        <div class="jigsaw-route-topbar">
+          <span class="jigsaw-route-eyebrow">ROUTE ${indexLabel}</span>
+          <span class="jigsaw-route-status">${status}</span>
+          <button type="button" class="jigsaw-route-collapse" data-jigsaw-collapse aria-label="ย่อภารกิจ">
+            <i class="bi bi-chevron-up"></i>
+          </button>
         </div>
-        <div class="sq-mission-pass-body jigsaw-card-main">
-          <div class="jigsaw-card-head">
-            <div>
-              <span class="jigsaw-card-label sq-mission-kicker">JIGSAW MISSION ${indexLabel}</span>
-              <h4 class="jigsaw-card-title">${escapeHtml(mission.title_th)}</h4>
-            </div>
-            <span class="jigsaw-card-pts">+${mission.reward_pts} pts</span>
+        <div class="jigsaw-route-header">
+          <div class="jigsaw-route-icon"><i class="bi bi-puzzle-fill"></i></div>
+          <div class="jigsaw-route-heading">
+            <h4 class="jigsaw-route-title">${escapeHtml(mission.title_th)}</h4>
+            <p class="jigsaw-route-sub">Jigsaw Mission ${indexLabel}</p>
           </div>
-          ${_jigsawTimerMarkup(assignments)}
-          <div class="jigsaw-card-body">${bodyHtml}</div>
-          ${_jigsawOverviewMarkup(assignments)}
+          <span class="jigsaw-route-badge">+${mission.reward_pts}<small>PTS</small></span>
+        </div>
+        <div class="jigsaw-route-track" aria-hidden="true">${track}</div>
+        ${_jigsawTimerMarkup(assignments)}
+        <div class="jigsaw-route-body">${bodyHtml}</div>
+        ${_jigsawOverviewMarkup(assignments)}
+        <div class="jigsaw-route-footer">
+          <span>${escapeHtml(footerHint)}</span>
+          <span>${doneCount}/4 CHECKPOINTS</span>
         </div>
       </article>`;
   }

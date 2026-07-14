@@ -2084,9 +2084,19 @@
 }
 
 /* Lore reads like an evidence card, with a calm paper panel for the actual copy. */
-.street-quest--app #lore-sheet::before,
 .street-quest--app #chain-sheet::before {
   content: 'ARCHIVE / READ & REMEMBER';
+}
+
+/* Lore/pretest/posttest drops the field-note ticket chrome entirely and
+   copies the raid quiz screen: one flat centered card, no drag handle,
+   no decorative tab, no nested boxes — new content just extends the card. */
+.street-quest--app #lore-sheet::before {
+  display: none;
+}
+
+.street-quest--app .sq-lore-sheet .sheet-handle {
+  display: none;
 }
 
 .street-quest--app .lore-sheet-head {
@@ -2185,25 +2195,8 @@
 
 .street-quest--app #lore-phase-panel .lore-narrative {
   margin-bottom: 8px;
-  padding: 12px 14px;
   font-size: 13px;
   line-height: 1.55;
-  box-shadow: 3px 3px 0 var(--sq-blue);
-}
-
-.street-quest--app .lore-quiz-opt {
-  border: 1px solid rgba(244, 234, 208, 0.48);
-  border-radius: 2px;
-  background: rgba(244, 234, 208, 0.05);
-  color: #fff8e8;
-}
-
-.street-quest--app .lore-quiz-opt.active,
-.street-quest--app .lore-quiz-opt:hover,
-.street-quest--app .lore-quiz-opt:focus-visible {
-  border-color: var(--sq-orange);
-  background: var(--sq-orange);
-  color: #fff;
 }
 
 /* Support node card: the map tap becomes a field stop ticket. */
@@ -4957,61 +4950,224 @@
   filter: none;
 }
 
-/* Jigsaw uses the same readable pass shell while keeping its quiz/form body. */
-.street-quest--app #tab-mission .sq-mission-pass.jigsaw-card,
-.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass.jigsaw-card {
-  overflow: visible;
-  border: 0;
-  border-radius: 2px;
-  background-color: var(--sq-paper-light);
-  background-image: url('../assets/street-quest/generated-stamps/guild-mission-ticket.png');
-  box-shadow: 4px 4px 0 var(--sq-ink);
+/* Jigsaw route card — dark checkpoint-track frame (raid-style), independent of the paper mission-pass shell. */
+.street-quest--app #tab-mission .jigsaw-route-card,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-card {
+  display: block;
+  margin: 0 0 14px;
+  padding: 14px 14px 0;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: var(--color-bg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
 }
 
-.street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-main,
-.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-main {
-  min-width: 0;
-}
-
-.street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-head,
-.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-head {
-  align-items: flex-start;
+.street-quest--app #tab-mission .jigsaw-route-topbar,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-topbar {
+  display: flex;
+  align-items: center;
   gap: 8px;
-  padding: 0;
-  border-bottom: 0;
+  margin-bottom: 12px;
 }
 
-.street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-label,
-.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-label {
-  color: rgba(24, 21, 16, 0.53);
+.street-quest--app #tab-mission .jigsaw-route-status,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-status {
+  margin-right: auto;
 }
 
-.street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-title,
-.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-title {
-  margin-top: 5px;
+.street-quest--app #tab-mission .jigsaw-route-collapse,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-collapse {
+  display: grid;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.street-quest--app #tab-mission .jigsaw-route-collapse:hover,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-collapse:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-white);
+}
+
+/* Closed paper-ticket cover — shared rest state for checkin + jigsaw mission cards.
+   Keeps the same footprint as the full card: the ticket artwork is a fixed-ratio
+   background image (background-size:100% 100%), so shrinking the card squishes
+   and misaligns it — only the inner content is shorter, not the shell. */
+.street-quest--app #tab-mission .sq-cover-open-btn,
+.street-quest--app #guild-panel #guild-hub-missions .sq-cover-open-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 7px 12px;
+  border: 1px dashed rgba(24, 21, 16, 0.4);
+  border-radius: 1px;
+  background: transparent;
   color: var(--sq-ink);
-  font: 900 17px/1.17 var(--font-heading);
+  font: 800 11px/1 var(--font-body, inherit);
+  letter-spacing: 0.03em;
+}
+
+.street-quest--app #tab-mission .sq-cover-open-btn:hover,
+.street-quest--app #guild-panel #guild-hub-missions .sq-cover-open-btn:hover {
+  border-style: solid;
+  border-color: var(--sq-ink);
+}
+
+.street-quest--app #tab-mission .jigsaw-route-eyebrow,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-eyebrow {
+  color: var(--color-success);
+  font: 800 11px/1 var(--font-body, inherit);
+  letter-spacing: 0.08em;
+}
+
+.street-quest--app #tab-mission .jigsaw-route-status,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-status {
+  color: var(--color-primary);
+  font: 800 11px/1 var(--font-body, inherit);
+  letter-spacing: 0.08em;
+}
+
+.street-quest--app #tab-mission .jigsaw-route-header,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.street-quest--app #tab-mission .jigsaw-route-icon,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-icon {
+  display: grid;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 18px;
+}
+
+.street-quest--app #tab-mission .jigsaw-route-heading,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-heading {
+  min-width: 0;
+  flex: 1;
+}
+
+.street-quest--app #tab-mission .jigsaw-route-title,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-title {
+  margin: 0;
+  color: var(--color-white);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.25;
   overflow-wrap: anywhere;
 }
 
-.street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-pts,
-.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-pts {
-  color: #c43e18;
-  font: 900 12px/1.15 var(--font-display);
+.street-quest--app #tab-mission .jigsaw-route-sub,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-sub {
+  margin: 3px 0 0;
+  color: var(--color-muted);
+  font-size: 11px;
+}
+
+.street-quest--app #tab-mission .jigsaw-route-badge,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-badge {
+  display: grid;
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font: 800 13px/1.1 var(--font-body, inherit);
+  text-align: center;
+}
+
+.street-quest--app #tab-mission .jigsaw-route-badge small,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-badge small {
+  display: block;
+  font-size: 8px;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+.street-quest--app #tab-mission .jigsaw-route-track,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-track {
+  display: flex;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.street-quest--app #tab-mission .jigsaw-route-node,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-node {
+  display: grid;
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 2px dashed rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  color: var(--color-muted);
+  font: 800 10px/1 var(--font-body, inherit);
+}
+
+.street-quest--app #tab-mission .jigsaw-route-node.active,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-node.active {
+  border-style: solid;
+  border-color: var(--color-primary);
+  background: var(--color-primary-dim);
+  color: var(--color-primary);
+}
+
+.street-quest--app #tab-mission .jigsaw-route-node.done,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-node.done {
+  border-style: solid;
+  border-color: var(--color-success);
+  background: var(--color-success);
+  color: var(--color-bg);
+}
+
+.street-quest--app #tab-mission .jigsaw-route-connector,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-connector {
+  flex: 1;
+  height: 0;
+  margin: 0 4px;
+  border-top: 2px dashed rgba(255, 255, 255, 0.18);
+}
+
+.street-quest--app #tab-mission .jigsaw-route-body,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-body {
+  padding-bottom: 4px;
+}
+
+.street-quest--app #tab-mission .jigsaw-route-footer,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 12px -14px 0;
+  padding: 10px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--color-card-dark);
+  color: var(--color-muted);
+  font: 700 10px/1.3 var(--font-body, inherit);
+  letter-spacing: 0.03em;
+}
+
+.street-quest--app #tab-mission .jigsaw-route-footer span:last-child,
+.street-quest--app #guild-panel #guild-hub-missions .jigsaw-route-footer span:last-child {
+  color: var(--color-primary);
   white-space: nowrap;
-}
-
-.street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-body,
-.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-body {
-  padding: 12px 0 0;
-  color: var(--sq-ink);
-}
-
-.street-quest--app #tab-mission .sq-mission-pass .jigsaw-hint,
-.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-hint,
-.street-quest--app #tab-mission .sq-mission-pass .jigsaw-chapter-label,
-.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-chapter-label {
-  color: rgba(24, 21, 16, 0.76);
 }
 
 @media (max-width: 380px) {
@@ -5087,18 +5243,49 @@
 
 .street-quest--app #tab-mission .sq-mission-pass .sq-mission-kicker,
 .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .sq-mission-kicker,
-.street-quest--app #tab-mission .sq-mission-pass .coop-mission-badge,
-.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-mission-badge,
 .street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-pts,
 .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-pts {
   display: none;
+}
+
+/* The ribbon in mission-pass-0X.webp has a placeholder "+100/150/200 XP" baked
+   into the raster art — it doesn't reflect the mission's real reward_pts.
+   Keep the real badge in the DOM (don't display:none it like the rest of the
+   raster-replaced chrome above) and paint a solid pill over the same spot so
+   the true reward number is what the player actually sees. */
+.street-quest--app #tab-mission .sq-mission-pass .coop-mission-badge,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-mission-badge {
+  display: flex;
+  position: absolute;
+  top: 6px;
+  right: 2px;
+  z-index: 2;
+  align-items: center;
+  justify-content: center;
+  width: 190px;
+  height: 52px;
+  padding: 0;
+  border-radius: 3px;
+  background: #c43e18;
+  color: #fff8e8 !important;
+  font: 900 13px/1 var(--font-display);
+  text-align: center;
+  white-space: nowrap;
+  box-shadow: 1px 1px 0 rgba(11, 11, 10, 0.35);
+}
+
+.street-quest--app #tab-mission .sq-mission-pass .coop-mission-badge.done,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-mission-badge.done {
+  background: #3b7f38;
 }
 
 .street-quest--app #tab-mission .sq-mission-pass .coop-mission-title,
 .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-mission-title,
 .street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-title,
 .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-title {
-  max-width: 180px;
+  /* Capped so a long title's first line never runs under the reward pill
+     (positioned absolute, right: 2px, width: 190px — see .coop-mission-badge). */
+  max-width: 100px;
   font-size: 18px;
   line-height: 1.18;
 }
@@ -7356,17 +7543,41 @@ body.street-quest--app .sq-node-sheet .sq-node-action {
   scrollbar-width: thin;
 }
 
-/* Lore's card art is a fixed-size printed slip, not an endless scroll — the
-   sheet itself must stay the artwork's height so the background never gets
-   cut mid-print. Only the narrative paragraph inside it scrolls. */
+/* Copy the raid quiz screen exactly: one flat card, fixed-centered on the
+   viewport (not bottom-anchored), everything inside flows on the same
+   surface instead of stacking separate boxed sub-panels. */
 .street-quest--app .sq-lore-sheet {
+  position: fixed;
+  top: 50%;
+  bottom: auto;
+  left: 50%;
   display: flex;
   flex-direction: column;
-  height: min(700px, calc(100dvh - 18px));
-  max-height: min(700px, calc(100dvh - 18px));
-  overflow-y: hidden;
-  padding-left: 3%;
-  padding-right: 3%;
+  width: calc(100% - 32px);
+  max-width: 400px;
+  height: auto;
+  max-height: 85dvh;
+  overflow-y: auto;
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-card-dark);
+  box-shadow: none;
+  color: #fff8e8;
+  transform: translate(-50%, -50%) scale(0.96);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform var(--transition-slow), opacity var(--transition-slow);
+}
+
+.street-quest--app .sq-lore-sheet.open {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.street-quest--app .sq-lore-sheet .sq-sheet-primary {
+  box-shadow: none;
 }
 
 .street-quest--app .sq-lore-sheet #btn-save-lore:disabled {
@@ -7377,18 +7588,16 @@ body.street-quest--app .sq-node-sheet .sq-node-action {
 }
 
 .street-quest--app .sq-lore-sheet .lore-narrative {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-height: 0;
   overflow-y: auto;
-  border: 2px solid var(--sq-ink);
-  background-color: var(--sq-paper-light);
-  background-image:
-    linear-gradient(rgba(255, 250, 236, 0.76), rgba(255, 250, 236, 0.76)),
-    url('../assets/street-quest/ui-paper-cream.webp');
-  background-size: auto, 460px 460px;
-  box-shadow: 4px 4px 0 var(--sq-orange);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
   scrollbar-width: thin;
-  scrollbar-color: rgba(24, 21, 16, 0.2) transparent;
+  scrollbar-color: rgba(244, 234, 208, 0.2) transparent;
 }
 
 .street-quest--app .sq-lore-sheet .lore-narrative::-webkit-scrollbar {
@@ -7400,11 +7609,15 @@ body.street-quest--app .sq-node-sheet .sq-node-action {
 }
 
 .street-quest--app .sq-lore-sheet .lore-narrative::-webkit-scrollbar-thumb {
-  background: rgba(24, 21, 16, 0.2);
+  background: rgba(244, 234, 208, 0.2);
   border-radius: 3px;
 }
 
-.street-quest--app .sq-lore-sheet #lore-phase-panel:not([hidden]),
+.street-quest--app .sq-lore-sheet #lore-phase-panel:not([hidden]) {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
 .street-quest--app .sq-lore-sheet .btn-outline,
 .street-quest--app .sq-lore-sheet .sq-sheet-secondary {
   flex: 0 0 auto;
@@ -7418,7 +7631,7 @@ body.street-quest--app .sq-node-sheet .sq-node-action {
   background: rgba(244, 234, 208, 0.14);
   border: 1.5px solid rgba(244, 234, 208, 0.6);
   color: #fff8e8;
-  box-shadow: 2px 2px 0 rgba(11, 11, 10, 0.4);
+  box-shadow: none;
 }
 
 .street-quest--app .sq-lore-sheet .sq-sheet-secondary:hover,
@@ -7442,6 +7655,10 @@ body.street-quest--app .sq-node-sheet .sq-node-action {
   border-radius: 0;
   background: var(--sq-ink);
   opacity: 0.9;
+}
+
+.street-quest--app .sq-lore-sheet .sheet-handle {
+  background: var(--color-border);
 }
 
 .street-quest--app .sq-checkin-sheet .sq-checkin-title {
@@ -7715,85 +7932,70 @@ body.street-quest--app .sq-node-sheet .sq-node-action {
   filter: brightness(1.08);
 }
 
-/* Lore uses the same field-sheet language, with a full-width narrative zone. */
-.street-quest--app .sq-lore-sheet {
-  padding-bottom: 22px;
-}
-
+/* Flat hierarchy, raid-quiz style: small muted label row → plain title →
+   plain body copy, all on the one card — no boxed sub-panels. */
 .street-quest--app .sq-lore-sheet .lore-sheet-head {
-  margin: 8px 0 14px;
+  margin: 0 0 10px;
 }
 
 .street-quest--app .sq-lore-sheet .lore-type-badge {
-  background: var(--sq-lime);
-  color: var(--sq-ink);
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--color-muted);
+  font: 700 11px/1 var(--font-body);
+  letter-spacing: 0.04em;
+  text-transform: none;
 }
 
 .street-quest--app .sq-lore-sheet .explored-badge {
-  border: 1px solid var(--sq-ink);
-  border-radius: 2px;
-  padding: 5px 9px;
-  font: 800 10px/1 var(--font-display);
-  letter-spacing: 0.04em;
+  border: 0;
+  border-radius: var(--radius-full);
+  padding: 4px 10px;
+  font: 700 10px/1 var(--font-body);
+  letter-spacing: 0.02em;
   white-space: nowrap;
-  background: var(--sq-paper-light);
-  color: var(--sq-ink);
-  box-shadow: 2px 2px 0 var(--sq-ink);
+  background: rgba(123, 198, 126, 0.16);
+  color: var(--color-success);
+  box-shadow: none;
 }
 
 .street-quest--app .sq-lore-sheet .lore-pts-badge {
-  background: var(--sq-orange);
-  color: #fff8e8;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--color-primary);
+  font: 700 11px/1 var(--font-body);
 }
 
 .street-quest--app .sq-lore-sheet .lore-title {
-  background: var(--sq-blue);
-  color: #fff8e8;
-  font: 900 clamp(17px, 5vw, 21px)/1.08 var(--font-heading);
-  padding: 10px 14px;
-  border-radius: 2px;
-  margin: 0 0 12px;
+  background: none;
+  color: var(--color-white);
+  font: 800 19px/1.2 var(--font-heading);
+  padding: 0;
+  margin: 0 0 10px;
 }
 
 .street-quest--app .sq-lore-sheet .lore-narrator-row {
-  margin-bottom: 12px;
-  color: rgba(24, 21, 16, 0.62);
-}
-
-.street-quest--app .sq-lore-sheet .lore-narrator-avatar {
-  border-color: var(--sq-ink);
-  background: var(--sq-orange);
-  color: var(--sq-ink);
-  box-shadow: 2px 2px 0 var(--sq-blue);
+  display: none;
 }
 
 .street-quest--app .sq-lore-sheet .lore-narrative {
-  margin-bottom: 16px;
-  padding: 22px 16px 18px 34px;
-  border-radius: 2px;
-  color: var(--sq-ink);
+  margin-bottom: 12px;
+  padding: 0;
+  color: var(--color-white);
   font: 600 14px/1.6 var(--font-body);
   overflow-wrap: anywhere;
 }
 
 .street-quest--app .sq-lore-sheet .lore-narrative.lore-quote {
-  border-left: 4px solid var(--sq-orange);
+  border-left: 0;
 }
 
 .street-quest--app .sq-lore-sheet .lore-narrative.lore-quote::before {
-  color: var(--sq-orange);
-}
-
-.street-quest--app .sq-lore-sheet .lore-quiz-opt {
-  border-color: rgba(24, 21, 16, 0.35);
-  background: rgba(255, 248, 232, 0.42);
-  color: var(--sq-ink);
-}
-
-.street-quest--app .sq-lore-sheet .lore-quiz-opt.active,
-.street-quest--app .sq-lore-sheet .lore-quiz-opt:hover {
-  background: var(--sq-lime);
-  color: var(--sq-ink);
+  content: none;
 }
 
 /* Full-page notification field notes. */
@@ -9222,7 +9424,7 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: var(--sq-orange);
+  background: var(--sq-blue);
   color: #fff;
   font: 800 20px/1 var(--font-heading);
   overflow: hidden;
@@ -9263,7 +9465,7 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
 }
 
 .street-quest--app .sqs-edit-name:hover {
-  color: var(--sq-orange);
+  color: var(--sq-blue);
 }
 
 .street-quest--app .sqs-email {
@@ -9348,10 +9550,10 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
 
 .street-quest--app .sqs-section-label {
   margin: 0 0 6px;
-  color: var(--sq-orange);
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
@@ -9359,13 +9561,12 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
   margin-top: 22px;
 }
 
-/* Grouped card, same shape as the reference "After" redesign: each
-   settings group sits in its own rounded card instead of a flat list. */
+/* Minimal: plain text + icon, no boxed card, no chip backgrounds. */
 .street-quest--app .sqs-group {
-  padding: 2px 14px;
-  border: 1px solid rgba(255, 248, 232, 0.1);
-  border-radius: 14px;
-  background: rgba(255, 248, 232, 0.04);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
 }
 
 .street-quest--app .sqs-group-lg .sqs-row {
@@ -9405,22 +9606,16 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
   align-items: center;
   gap: 10px;
   color: #fff8e8;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .street-quest--app .sqs-row-label i {
-  display: grid;
-  place-items: center;
-  flex: 0 0 30px;
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  background: rgba(240, 90, 25, 0.16);
-  color: var(--sq-orange);
-  font-size: 14px;
+  flex: 0 0 auto;
+  color: var(--sq-blue);
+  font-size: 16px;
 }
 
 /* Home district: native <select> popups can't be themed (browser chrome
@@ -9457,7 +9652,7 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
 
 .street-quest--app .sqs-select-trigger:hover,
 .street-quest--app .sqs-select-trigger.open {
-  border-color: var(--sq-orange);
+  border-color: var(--sq-blue);
   background: rgba(255, 248, 232, 0.12);
 }
 
@@ -9503,7 +9698,7 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
 }
 
 .street-quest--app .sqs-select-option.selected {
-  background: var(--sq-orange);
+  background: var(--sq-blue);
   color: #fff8e8;
 }
 
@@ -9540,13 +9735,12 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
   display: grid;
   place-items: center;
   width: 100%;
-  height: 42px;
-  border: 1.5px solid rgba(255, 248, 232, 0.2);
-  border-radius: 8px;
-  background: rgba(255, 248, 232, 0.05);
-  color: rgba(255, 248, 232, 0.8);
-  font-size: 17px;
-  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  height: 32px;
+  border: 0;
+  background: none;
+  color: rgba(255, 248, 232, 0.7);
+  font-size: 18px;
+  transition: color 0.15s ease;
 }
 
 .street-quest--app .sqs-feedback-label {
@@ -9558,9 +9752,7 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
 }
 
 .street-quest--app .sqs-feedback-item:hover .sqs-feedback-btn {
-  border-color: var(--sq-orange);
-  background: rgba(240, 90, 25, 0.12);
-  color: #fff8e8;
+  color: var(--sq-blue);
 }
 
 .street-quest--app .sqs-feedback-item:hover .sqs-feedback-label {
@@ -9617,7 +9809,7 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
   border: 0;
   border-radius: 8px;
   padding: 5px 10px;
-  background: var(--sq-orange);
+  background: var(--sq-blue);
   color: #fff;
   font-family: var(--font-body);
   font-size: 12px;

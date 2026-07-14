@@ -253,9 +253,11 @@ async function openLoreSheet(node) {
   const audio     = document.getElementById('lore-audio');
   const audioToggle = document.getElementById('lore-audio-toggle');
   const saveBtn   = document.getElementById('btn-save-lore');
+  const closeBtn  = document.getElementById('btn-close-lore');
   const exploredBadge = document.getElementById('lore-explored-badge');
   const phasePanel = document.getElementById('lore-phase-panel');
   if (!title || !typeBadge || !ptsBadge || !narrative || !saveBtn) return;
+  if (closeBtn) closeBtn.hidden = false;
 
   // ── populate static header (always) ──────────────────
   const contentType = node.content_type || 'text';
@@ -316,32 +318,57 @@ async function openLoreSheet(node) {
   const needsPretest  = hasQuestions && !priorPre;
   const needsPosttest = hasQuestions && !priorPost;
 
-  // ── helper: render a quiz into #lore-phase-panel ──────
+  // ── helper: render a quiz into #lore-phase-panel (raid-quiz-screen layout) ──
   function renderQuiz(qs, onSubmit) {
     if (!phasePanel) return;
-    let answers = {};
-    phasePanel.innerHTML = qs.map((q, i) => `
-      <p class="lore-narrative"><strong>${escapeHtml(q.question_th)}</strong></p>
-      <div class="lore-quiz-options mb-3">
-        ${['A','B','C','D'].map(opt => `
-          <button class="btn btn-ghost btn-full lore-quiz-opt mb-1" data-q="${i}" data-opt="${opt}">
-            ${escapeHtml(q['option_' + opt.toLowerCase()])}
-          </button>`).join('')}
-      </div>`).join('');
-    phasePanel.querySelectorAll('.lore-quiz-opt').forEach(btn => {
-      btn.onclick = () => {
-        const qi = btn.dataset.q;
-        phasePanel.querySelectorAll(`[data-q="${qi}"]`).forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        answers[qi] = btn.dataset.opt;
-      };
-    });
-    saveBtn.textContent = 'ส่งคำตอบ';
-    saveBtn.disabled    = false;
-    saveBtn.onclick     = () => {
-      const score = qs.filter((q, i) => answers[i] === q.correct_option).length;
-      onSubmit(score, qs.length);
-    };
+    saveBtn.hidden = true;
+    let qIndex = 0;
+    const answers = {};
+
+    function renderQuestion() {
+      const q = qs[qIndex];
+      phasePanel.innerHTML = `
+        <div style="padding:var(--space-md) 0">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-sm)">
+            <span style="font-size:11px;color:var(--color-muted)">คำถาม ${qIndex + 1} / ${qs.length}</span>
+          </div>
+          <div style="width:100%;background:rgba(255,255,255,0.08);border-radius:var(--radius-full);
+                      height:4px;margin-bottom:var(--space-md);overflow:hidden">
+            <div style="height:100%;width:${(qIndex / qs.length * 100)}%;background:var(--color-primary);
+                 border-radius:var(--radius-full)"></div>
+          </div>
+          <p style="font-size:14px;font-weight:600;line-height:1.6;margin-bottom:var(--space-md)">
+            ${escapeHtml(q.question_th)}</p>
+          <div style="display:flex;flex-direction:column;gap:var(--space-sm)">
+            ${['A','B','C','D'].filter(opt => q['option_' + opt.toLowerCase()]).map(opt => `
+              <button type="button" class="btn btn-outline" data-opt="${opt}"
+                      style="text-align:left;font-size:13px;padding:10px var(--space-sm)">
+                <span style="font-weight:700;margin-right:8px">${opt}.</span>
+                ${escapeHtml(q['option_' + opt.toLowerCase()])}
+              </button>`).join('')}
+          </div>
+        </div>`;
+
+      phasePanel.querySelectorAll('[data-opt]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          phasePanel.querySelectorAll('[data-opt]').forEach(b => b.disabled = true);
+          btn.style.borderColor = 'var(--color-primary)';
+          answers[qIndex] = btn.dataset.opt;
+          setTimeout(() => {
+            qIndex++;
+            if (qIndex >= qs.length) {
+              saveBtn.hidden = false;
+              const score = qs.filter((q, i) => answers[i] === q.correct_option).length;
+              onSubmit(score, qs.length);
+            } else {
+              renderQuestion();
+            }
+          }, 400);
+        });
+      });
+    }
+
+    renderQuestion();
   }
 
   // ── helper: show content phase ────────────────────────
@@ -407,6 +434,7 @@ async function openLoreSheet(node) {
     saveBtn.textContent = 'ปิด';
     saveBtn.disabled    = false;
     saveBtn.onclick     = () => closeAllSheets();
+    if (closeBtn) closeBtn.hidden = true;
   }
 
   // ── phase entry ───────────────────────────────────────

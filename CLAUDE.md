@@ -125,6 +125,8 @@ The Thailand Street Quest visual treatment now spans the full runtime: the landi
 
 Locked Collection figure cards use a larger, high-contrast lock badge with a dark backing and light border so phase-locked figures remain visible over portrait imagery. Collection class badges use generated worn letterpress tiles plus a distressed paper label texture, ink offset shadow, and class-specific micro-rotation.
 
+**`#lore-sheet` (lore read + pretest/posttest) is the one runtime surface that opts out of the paper-ticket treatment (2026-07-15).** It dropped the field-note ticket chrome — no drag handle, no "ARCHIVE / READ & REMEMBER" tab, no boxed title banner or nested narrative card — in favor of a flat, fixed-centered card (`var(--color-card-dark)`, same shape/position as `#raid-modal`). The pretest/posttest quiz is a literal copy of `js/raid.js`'s quiz screen: one question at a time, progress counter + thin bar, plain outline A–D buttons, auto-advance. Raid's own lobby/quiz/result screens dropped their emoji for Bootstrap Icons in the same pass (`bi-shield-fill-exclamation`, `bi-check-circle-fill`, `bi-x-circle-fill`, `bi-trophy-fill`, `bi-x-octagon-fill`).
+
 ---
 
 ## Design System
