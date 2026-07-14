@@ -9509,6 +9509,7 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
 
 .street-quest--app .sqs-version-value {
   color: rgba(255, 248, 232, 0.75);
+  font-family: var(--font-body);
   font-size: 13px;
   font-weight: 700;
 }
@@ -9550,6 +9551,7 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
 
 .street-quest--app .sqs-feedback-label {
   color: rgba(255, 248, 232, 0.55);
+  font-family: var(--font-body);
   font-size: 11px;
   font-weight: 600;
   text-align: center;
@@ -9584,6 +9586,7 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
   border-radius: 8px;
   background: #c93a2e;
   color: #fff8e8;
+  font-family: var(--font-heading);
   font-size: 13px;
   font-weight: 700;
 }
@@ -9601,6 +9604,7 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
 
 .street-quest--app #gps-status-label {
   color: rgba(255, 248, 232, 0.6);
+  font-family: var(--font-body);
   font-size: 12px;
 }
 
@@ -9615,6 +9619,7 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
   padding: 5px 10px;
   background: var(--sq-orange);
   color: #fff;
+  font-family: var(--font-body);
   font-size: 12px;
   font-weight: 700;
 }

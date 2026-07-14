@@ -6,7 +6,12 @@ const CoopModule = (() => {
     const el = document.getElementById('coop-missions');
     if (!el) return;
 
-    const user  = window.AppCore?.App?.user;
+    const user = window.AppCore?.App?.user;
+    // GuildModule.init() fires once at boot and isn't necessarily done yet
+    // by the time a user taps the Mission tab — without this await, a
+    // guild member landing here early sees "join a guild" because
+    // getState() is read before the fetch resolves.
+    await window.GuildModule?.ready?.();
     const guild = window.GuildModule?.getState();
 
     if (!user || !guild) {
@@ -39,7 +44,7 @@ const CoopModule = (() => {
 
         if (m.type === 'jigsaw') {
           const assignments = await DB.Coop.getJigsawAssignments(guild.guild.id, m.id);
-          if (guild.role === 'leader' && assignments.length === 0) {
+          if (guild.guild.myRole === 'leader' && assignments.length === 0) {
             const members = await DB.Coop.getGuildMembers(guild.guild.id);
             const memberIds = members.map(mem => mem.user_id);
             if (memberIds.length >= 2) {

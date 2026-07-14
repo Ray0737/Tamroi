@@ -111,7 +111,7 @@ const RaidModule = (() => {
       try {
         await DB.Notifications.push(
           m.user_id, 'raid',
-          `⚔️ Raid เริ่มแล้ว!`,
+          `Raid เริ่มแล้ว!`,
           `กลุ่มของคุณเริ่ม Raid ${figure.name_th || figure.id} · เข้าร่วมได้เลย`,
           session.id
         );
@@ -127,7 +127,7 @@ const RaidModule = (() => {
     content.innerHTML = `
       <div style="padding:var(--space-md)">
         <div style="text-align:center;margin-bottom:var(--space-md)">
-          <p style="font-size:32px;margin:0">⚔️</p>
+          <i class="bi bi-shield-fill-exclamation" style="font-size:32px;color:var(--color-primary)"></i>
           <h3 style="font-family:var(--font-heading);font-size:18px;font-weight:700;margin:6px 0 4px">
             ${escapeHtml(figure?.name_th || 'Raid')} Raid</h3>
           <p style="font-size:11px;color:var(--color-muted)">รอสมาชิกกดพร้อม ${minReady} คนขึ้นไป</p>
@@ -173,7 +173,7 @@ const RaidModule = (() => {
       <div style="text-align:center">
         <div style="position:relative;display:inline-block">
           ${avatarHTML(p.avatar_url, init, 48, m.is_ready ? 'var(--color-success)' : 'var(--color-border)')}
-          ${m.is_ready ? `<span style="position:absolute;bottom:-2px;right:-2px;font-size:12px">✅</span>` : ''}
+          ${m.is_ready ? `<i class="bi bi-check-circle-fill" style="position:absolute;bottom:-2px;right:-2px;font-size:14px;color:var(--color-success);background:var(--color-bg);border-radius:50%"></i>` : ''}
         </div>
         <p style="font-size:10px;margin:4px 0 0;color:var(--color-muted);max-width:52px;
                   overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
@@ -194,7 +194,7 @@ const RaidModule = (() => {
     _broadcastCh?.send({ type: 'broadcast', event: 'READY', payload: { user_id: user.id } });
     _refreshLobby();
     const btn = document.getElementById('btn-ready-up');
-    if (btn) btn.textContent = '✅ พร้อมแล้ว';
+    if (btn) btn.innerHTML = '<i class="bi bi-check-circle-fill"></i> พร้อมแล้ว';
   }
 
   async function _startRaid(figure) {
@@ -347,7 +347,7 @@ const RaidModule = (() => {
 
     content.innerHTML = `
       <div style="padding:var(--space-lg);text-align:center">
-        <p style="font-size:48px;margin:0">${passed ? '✅' : '❌'}</p>
+        <i class="bi ${passed ? 'bi-check-circle-fill' : 'bi-x-circle-fill'}" style="font-size:48px;color:${passed ? 'var(--color-success)' : 'var(--color-primary)'}"></i>
         <h3 style="font-family:var(--font-heading);font-size:20px;font-weight:700;margin:var(--space-sm) 0 4px">
           ${passed ? 'ผ่าน!' : 'ลองใหม่'}</h3>
         <p style="font-size:13px;color:var(--color-muted)">
@@ -387,7 +387,7 @@ const RaidModule = (() => {
     if (!content) return;
     content.innerHTML = `
       <div style="padding:var(--space-lg);text-align:center">
-        <p style="font-size:48px;margin:0">🏆</p>
+        <i class="bi bi-trophy-fill" style="font-size:48px;color:var(--color-primary)"></i>
         <h3 style="font-family:var(--font-heading);font-size:20px;font-weight:700;margin:var(--space-sm) 0 8px">
           Raid สำเร็จ!</h3>
         <p style="font-size:13px;color:var(--color-muted);margin-bottom:var(--space-md)">
@@ -406,7 +406,7 @@ const RaidModule = (() => {
     if (!content) return;
     content.innerHTML = `
       <div style="padding:var(--space-lg);text-align:center">
-        <p style="font-size:48px;margin:0">💀</p>
+        <i class="bi bi-x-octagon-fill" style="font-size:48px;color:var(--color-muted)"></i>
         <h3 style="font-family:var(--font-heading);font-size:20px;font-weight:700;margin:var(--space-sm) 0 8px">
           Raid ล้มเหลว</h3>
         <p style="font-size:13px;color:var(--color-muted);margin-bottom:var(--space-md)">

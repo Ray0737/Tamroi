@@ -767,7 +767,11 @@ const GuildModule = (() => {
     }
   }
 
-  return { init, getState, getOnlineMemberIds, subscribePresence, renderGuildPanel };
+  // Lets other modules (e.g. CoopModule) await the in-flight guild fetch
+  // instead of racing getState() against it and reading a stale null.
+  function ready() { return _initPromise || Promise.resolve(); }
+
+  return { init, ready, getState, getOnlineMemberIds, subscribePresence, renderGuildPanel };
 })();
 
 window.GuildModule = GuildModule;
