@@ -2534,9 +2534,15 @@
 }
 
 .street-quest--app .sq-settings-email {
+  display: inline-block;
   margin: 0;
-  color: rgba(24, 21, 16, 0.58);
+  padding: 4px 9px;
+  border-radius: 0;
+  border: 1px solid rgba(24, 21, 16, 0.35);
+  background: rgba(255, 253, 245, 0.55);
+  color: var(--sq-ink);
   font-size: 11px;
+  font-weight: 700;
 }
 
 .street-quest--app .sq-name-input {
@@ -5190,7 +5196,8 @@
   place-items: center;
   border: 2px solid rgba(24, 21, 16, 0.55);
   border-radius: 50%;
-  background: rgba(255, 248, 232, 0.72);
+  background: rgba(255, 248, 232, 0.92);
+  box-shadow: 2px 2px 0 rgba(11, 11, 10, 0.18);
 }
 
 .street-quest--app #guild-panel .guild-request-copy {
@@ -5353,9 +5360,12 @@
   left: 11%;
   right: 11%;
   margin: 0;
+  overflow: hidden;
   color: #fff8e8;
-  font: 900 clamp(17px, 5.4vw, 25px)/1.12 var(--font-heading);
+  font: 900 clamp(13px, 4.2vw, 25px)/1.12 var(--font-heading);
   text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   text-shadow: 0 2px 0 rgba(0, 0, 0, 0.36);
 }
 
@@ -5501,7 +5511,7 @@
   position: static;
   width: 82%;
   min-width: 0;
-  padding: 10px 12px;
+  padding: 18px 16px;
   background: var(--sq-ink);
   border-radius: 2px;
   color: #fff8e8;
@@ -5512,42 +5522,43 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 8px;
   flex-wrap: wrap;
+  margin-bottom: 4px;
 }
 
 .street-quest--app .figure-dossier-name {
   max-width: 100%;
   margin: 0;
   color: #fff8e8;
-  font: 900 clamp(18px, 5.4vw, 25px)/1.05 var(--font-heading);
+  font: 900 clamp(18px, 5.4vw, 25px)/1.2 var(--font-heading);
   text-shadow: 0 2px 0 rgba(0, 0, 0, 0.36);
 }
 
 .street-quest--app .figure-dossier-badge {
   display: inline-block;
-  padding: 4px 8px;
+  padding: 4px 9px;
   border: 1px solid #fff8e8;
   border-radius: 2px;
   background: var(--sq-pink);
   color: #fff8e8;
-  font: 900 9px/1 var(--font-display);
+  font: 900 10px/1 var(--font-display);
   letter-spacing: 0.08em;
 }
 
 .street-quest--app .figure-dossier-en {
-  margin: 4px 0 0;
+  margin: 8px 0 0;
   overflow: hidden;
   color: #d9ceb3;
-  font: 600 10px/1.2 var(--font-body);
+  font: 600 11px/1.3 var(--font-body);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .street-quest--app .figure-dossier-stats {
-  margin: 6px 0 0;
+  margin: 10px 0 0;
   color: #d9ceb3;
-  font: 700 10px/1.2 var(--font-display);
+  font: 700 11px/1.3 var(--font-display);
 }
 
 .street-quest--app .figure-dossier-points {
@@ -5575,6 +5586,10 @@
 
 .street-quest--app .figure-detail-dossier .figure-dossier-bio {
   margin: 0;
+  padding: 12px 14px;
+  background: rgba(255, 248, 232, 0.92);
+  box-shadow: 2px 2px 0 rgba(11, 11, 10, 0.18);
+  border-radius: 2px;
   color: var(--sq-ink);
   font: 600 13px/1.62 var(--font-body);
 }
@@ -5587,12 +5602,118 @@
   text-transform: uppercase;
 }
 
-.street-quest--app .figure-detail-dossier .fig-relation-chip,
-.street-quest--app .figure-detail-dossier .fig-lore-item,
-.street-quest--app .figure-detail-dossier .fig-location-item {
-  border-color: rgba(24, 21, 16, 0.28);
-  background: rgba(255, 248, 232, 0.34);
+.street-quest--app .figure-detail-dossier #modal-figure-relations-list,
+.street-quest--app .figure-detail-dossier #modal-figure-lore-list,
+.street-quest--app .figure-detail-dossier #modal-figure-locations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.street-quest--app .figure-detail-dossier .fig-relation-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  border: 1.5px solid var(--sq-blue);
+  border-radius: 3px;
+  background: rgba(255, 248, 232, 0.92);
+  box-shadow: 2px 2px 0 var(--sq-orange);
+  padding: 9px 12px;
   color: var(--sq-ink);
+  font: 600 12px/1.3 var(--font-body);
+  text-align: left;
+}
+
+.street-quest--app .figure-detail-dossier .fig-relation-chip.fig-chip-locked {
+  opacity: 0.65;
+}
+
+.street-quest--app .figure-detail-dossier .fig-chip-emoji {
+  flex: 0 0 auto;
+  font-size: 16px;
+}
+
+.street-quest--app .figure-detail-dossier .fig-chip-name {
+  flex: 1 1 auto;
+  font-weight: 800;
+}
+
+.street-quest--app .figure-detail-dossier .fig-chip-rel {
+  flex: 0 0 auto;
+  color: var(--sq-orange);
+  font-size: 11px;
+}
+
+.street-quest--app .figure-detail-dossier .fig-lore-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  border: 1.5px solid var(--sq-blue);
+  border-radius: 3px;
+  background: rgba(255, 248, 232, 0.92);
+  box-shadow: 2px 2px 0 var(--sq-orange);
+  padding: 10px 12px;
+  color: var(--sq-ink);
+  font: 600 12px/1.35 var(--font-body);
+  text-align: left;
+}
+
+.street-quest--app .figure-detail-dossier .fig-lore-row.fig-lore-locked {
+  opacity: 0.6;
+}
+
+.street-quest--app .figure-detail-dossier .fig-lore-icon {
+  flex: 0 0 auto;
+  font-size: 16px;
+}
+
+.street-quest--app .figure-detail-dossier .fig-lore-name {
+  flex: 1 1 auto;
+}
+
+.street-quest--app .figure-detail-dossier .fig-location-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  border: 1.5px solid var(--sq-blue);
+  border-radius: 3px;
+  background: rgba(255, 248, 232, 0.92);
+  box-shadow: 2px 2px 0 var(--sq-orange);
+  padding: 10px 12px;
+  color: var(--sq-ink);
+}
+
+.street-quest--app .figure-detail-dossier .fig-loc-name {
+  flex: 1 1 100%;
+  font: 800 13px/1.3 var(--font-body);
+}
+
+.street-quest--app .figure-detail-dossier .fig-loc-sub {
+  flex: 1 1 auto;
+  color: rgba(24, 21, 16, 0.62);
+  font: 600 11px/1.3 var(--font-body);
+}
+
+.street-quest--app .figure-detail-dossier .fig-loc-map-btn {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--sq-orange);
+  border-radius: 3px;
+  background: rgba(240, 90, 25, 0.12);
+  padding: 6px 10px;
+  color: var(--sq-orange);
+  font: 800 10px/1 var(--font-display);
+  white-space: nowrap;
+}
+
+.street-quest--app .figure-detail-dossier .fig-loc-map-btn svg {
+  width: 12px;
+  height: 12px;
 }
 
 .street-quest--app .figure-detail-dossier .figure-dossier-footer {
@@ -7253,14 +7374,15 @@ body.street-quest--app .sq-node-sheet .sq-node-action {
    as a stray double ring, so give it the plain flat secondary style instead. */
 .street-quest--app .sq-lore-sheet .sq-sheet-secondary {
   margin-top: 10px;
-  background: rgba(244, 234, 208, 0.04);
-  border: 1px solid rgba(244, 234, 208, 0.45);
-  color: #f4ead0;
+  background: rgba(244, 234, 208, 0.14);
+  border: 1.5px solid rgba(244, 234, 208, 0.6);
+  color: #fff8e8;
+  box-shadow: 2px 2px 0 rgba(11, 11, 10, 0.4);
 }
 
 .street-quest--app .sq-lore-sheet .sq-sheet-secondary:hover,
 .street-quest--app .sq-lore-sheet .sq-sheet-secondary:focus-visible {
-  background: rgba(244, 234, 208, 0.12);
+  background: rgba(244, 234, 208, 0.24);
   color: #fff8e8;
   border-color: var(--sq-paper-light);
 }
@@ -7590,7 +7712,7 @@ body.street-quest--app .sq-node-sheet .sq-node-action {
 }
 
 .street-quest--app .sq-lore-sheet .lore-title {
-  background: var(--sq-ink);
+  background: var(--sq-blue);
   color: #fff8e8;
   font: 900 clamp(17px, 5vw, 21px)/1.08 var(--font-heading);
   padding: 10px 14px;
@@ -7651,8 +7773,17 @@ body.street-quest--app .sq-node-sheet .sq-node-action {
   background: transparent;
 }
 
+.street-quest--app .sq-notif-panel .sq-panel-kicker {
+  color: var(--sq-orange);
+  font-size: 11px;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+}
+
 .street-quest--app .sq-notif-panel .sq-panel-title {
   color: #fff8e8;
+  font-size: 34px;
+  letter-spacing: 0.01em;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.55), 0 0 18px rgba(255, 248, 232, 0.25);
 }
 
 .street-quest--app .sq-notif-body {
@@ -7855,7 +7986,12 @@ body.street-quest--app .sq-node-sheet .sq-node-action {
 }
 
 .street-quest--app .sq-card-kicker {
-  color: var(--sq-orange);
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 0;
+  background: var(--sq-ink);
+  color: var(--sq-lime);
+  transform: rotate(-1deg);
 }
 
 .street-quest--app .sq-visa-strip {
@@ -8453,6 +8589,26 @@ body.street-quest--app .sq-checkin-title .sq-checkin-icon {
   margin: 0 0 16px;
 }
 
+/* Check In button had the same absolute-pin bug as Cancel below, but never
+   got the flow-based fix — it was shrink-to-fit at the flow's left edge
+   instead of centered and sized to match Cancel. Give it the identical
+   box geometry so both buttons line up. */
+.street-quest--app .sq-checkin-sheet .sq-checkin-primary,
+body.street-quest--app .sq-checkin-sheet .sq-checkin-primary {
+  position: relative;
+  top: auto;
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  display: block;
+  width: 64%;
+  height: auto;
+  min-height: 46px;
+  margin: 20px 0 0;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
 /* Cancel button on the check-in sheet: a higher-specificity
    "body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary" rule
    earlier in the file still pins it absolute and strips its theme, same
@@ -8489,4 +8645,744 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
   background: rgba(24, 21, 16, 0.08);
   border-color: var(--sq-ink);
   color: var(--sq-ink);
+}
+
+/* Settings passport: everything above is pinned to fixed pixel offsets
+   matching a specific printed background that no longer lines up with
+   real content (long emails, longer usernames), so text overlaps the
+   tape/stamp art. Put the whole panel back in normal document flow. */
+.street-quest--app .sq-settings-body {
+  display: block;
+  height: auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 14px 16px 24px;
+}
+
+.street-quest--app .sq-settings-card {
+  position: static;
+  left: auto;
+  right: auto;
+  top: auto;
+  width: auto;
+  height: auto;
+  min-height: 0;
+  margin: 0 0 14px;
+  padding: 16px;
+}
+
+.street-quest--app .sq-profile-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 16px;
+  min-height: 0;
+  background-color: var(--sq-paper-light);
+  background-image:
+    linear-gradient(rgba(255, 250, 236, 0.76), rgba(255, 250, 236, 0.76)),
+    url('../assets/street-quest/ui-paper-kraft.webp');
+  background-size: auto, 380px 380px;
+}
+
+.street-quest--app .sq-profile-avatar {
+  position: static;
+  flex: 0 0 60px;
+  width: 60px;
+  height: 60px;
+  margin: 0;
+}
+
+.street-quest--app .sq-passport-meta {
+  position: static;
+  flex: 1 1 auto;
+  order: 1;
+}
+
+.street-quest--app .sq-passport-stamp {
+  position: static;
+  flex: 0 0 auto;
+  order: 5;
+  margin: 8px 0 0 auto;
+}
+
+.street-quest--app .sq-username-view,
+.street-quest--app .sq-username-edit {
+  position: static;
+  flex: 1 1 100%;
+  width: auto;
+  margin: 2px 0 0;
+  text-align: left;
+}
+
+.street-quest--app .sq-settings-email {
+  position: static;
+  flex: 1 1 100%;
+  width: auto;
+  margin: 4px 0 0;
+}
+
+.street-quest--app .sq-preferences-card {
+  padding: 34px 16px 16px;
+}
+
+.street-quest--app .sq-preferences-card .sq-card-kicker,
+.street-quest--app .sq-visa-strip {
+  position: static;
+  width: auto;
+  margin: 0 0 10px;
+}
+
+.street-quest--app .sq-preferences-card .sq-setting-row {
+  position: static;
+  width: auto;
+  margin: 0 0 8px;
+}
+
+.street-quest--app .sq-preferences-card .sq-setting-row:last-of-type {
+  margin-bottom: 0;
+}
+
+.street-quest--app .sq-home-setting {
+  position: static;
+  margin: 8px 0 0;
+}
+
+.street-quest--app .sq-version-card {
+  padding: 28px 16px 16px;
+}
+
+.street-quest--app .sq-version-card .sq-card-kicker {
+  position: static;
+  margin: 0 0 6px;
+}
+
+.street-quest--app .sq-signout-btn {
+  position: static;
+  width: 100%;
+  margin: 4px 0 0;
+}
+
+/* Settings body: the passport artwork is just a plain lined-paper texture,
+   not a printed form with fixed fields (checked the raw asset) — so there
+   is no layout to line up against. Drop the decorative photo backgrounds
+   from every content box and give each piece of text its own flat,
+   bordered, high-contrast box instead. Texture stays only on the top
+   panel header banner. */
+.street-quest--app .sq-settings-card {
+  border: 2px solid var(--sq-ink);
+  border-radius: 4px;
+  background-color: var(--sq-paper-light);
+  background-image:
+    linear-gradient(rgba(255, 253, 245, 0.62), rgba(255, 253, 245, 0.62)),
+    url('../assets/street-quest/ui-paper-kraft.webp');
+  background-size: auto, 380px 380px;
+  box-shadow: 3px 3px 0 rgba(11, 11, 10, 0.25);
+}
+
+.street-quest--app .sq-profile-card {
+  background-color: var(--sq-paper-light);
+  background-image:
+    linear-gradient(rgba(255, 253, 245, 0.62), rgba(255, 253, 245, 0.62)),
+    url('../assets/street-quest/ui-paper-kraft.webp');
+  background-size: auto, 380px 380px;
+}
+
+.street-quest--app .sq-profile-avatar {
+  border: 2px solid var(--sq-ink);
+}
+
+.street-quest--app .sq-passport-meta {
+  display: none;
+}
+
+.street-quest--app .sq-passport-stamp {
+  display: none;
+}
+
+.street-quest--app .sq-username-view p,
+.street-quest--app #settings-username {
+  color: var(--sq-ink);
+  font: 800 17px/1.2 var(--font-heading);
+}
+
+.street-quest--app .sq-settings-email {
+  display: inline-block;
+  border: 1.5px solid var(--sq-ink);
+  background: rgba(255, 253, 245, 0.85);
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-preferences-card .sq-card-kicker {
+  margin-bottom: 10px;
+}
+
+.street-quest--app .sq-visa-strip {
+  border: 1.5px solid var(--sq-ink);
+}
+
+.street-quest--app .sq-preferences-card .sq-setting-row {
+  border: 1.5px solid rgba(24, 21, 16, 0.35);
+  border-radius: 3px;
+  background: rgba(255, 253, 245, 0.75);
+  padding: 10px 12px;
+}
+
+.street-quest--app .sq-setting-label {
+  color: var(--sq-ink);
+  font-weight: 700;
+}
+
+.street-quest--app .sq-home-setting {
+  border: 1.5px solid rgba(24, 21, 16, 0.35);
+  border-radius: 3px;
+  background: rgba(255, 253, 245, 0.75);
+  padding: 10px 12px;
+}
+
+.street-quest--app .sq-home-select {
+  background: transparent;
+  border: 0;
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-version-card .sq-card-kicker {
+  color: var(--sq-lime);
+}
+
+.street-quest--app .sq-version-line {
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-version-line span {
+  color: rgba(24, 21, 16, 0.55);
+}
+
+.street-quest--app .sq-signout-btn {
+  border: 2px solid var(--sq-ink);
+  background: var(--sq-paper-light);
+  color: var(--sq-ink);
+}
+
+/* Use the app's main accent color for the settings card headers instead
+   of plain black/lime, per request. */
+.street-quest--app .sq-card-kicker {
+  background: var(--sq-orange);
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-version-card .sq-card-kicker {
+  color: #fff8e8;
+}
+
+/* Darken every settings card so body text can run plain white/cream and
+   stand out clearly, instead of dark ink on light paper. Header bubbles
+   stay a flat orange rectangle (no radius). */
+.street-quest--app .sq-settings-card {
+  background-color: var(--sq-ink-soft);
+  background-image:
+    linear-gradient(rgba(9, 9, 8, 0.65), rgba(9, 9, 8, 0.65)),
+    url('../assets/street-quest/ui-paper-ink.webp');
+  background-size: auto, 480px 480px;
+  border-color: var(--sq-paper-light);
+}
+
+.street-quest--app .sq-profile-card {
+  background-color: var(--sq-ink-soft);
+  background-image:
+    linear-gradient(rgba(9, 9, 8, 0.65), rgba(9, 9, 8, 0.65)),
+    url('../assets/street-quest/ui-paper-ink.webp');
+  background-size: auto, 480px 480px;
+}
+
+.street-quest--app .sq-profile-avatar {
+  border-color: var(--sq-paper-light);
+}
+
+.street-quest--app .sq-username-view p,
+.street-quest--app #settings-username {
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-edit-name {
+  color: rgba(255, 248, 232, 0.7);
+}
+
+.street-quest--app .sq-settings-email {
+  border-color: rgba(255, 248, 232, 0.4);
+  background: rgba(255, 248, 232, 0.1);
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-visa-strip {
+  border-color: var(--sq-paper-light);
+}
+
+.street-quest--app .sq-preferences-card .sq-setting-row {
+  border-color: rgba(255, 248, 232, 0.28);
+  background: rgba(255, 248, 232, 0.08);
+}
+
+.street-quest--app .sq-setting-label {
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-setting-symbol {
+  color: var(--sq-orange);
+}
+
+.street-quest--app #gps-status-label {
+  color: rgba(255, 248, 232, 0.75);
+}
+
+.street-quest--app .sq-home-setting {
+  border-color: rgba(255, 248, 232, 0.28);
+  background: rgba(255, 248, 232, 0.08);
+}
+
+.street-quest--app .sq-home-select {
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-home-select option {
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-version-line {
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-version-line span {
+  color: rgba(255, 248, 232, 0.55);
+}
+
+.street-quest--app .sq-signout-btn {
+  border-color: var(--sq-paper-light);
+  background: var(--sq-ink-soft);
+  color: #fff8e8;
+}
+
+/* ============================================================
+   Settings tab — full redo. One shared background (ui-paper-ink)
+   with a black darkening filter across every card, plain minimal
+   white text (no per-row boxes/borders), flat rectangle header
+   bubbles (no border-radius). Supersedes the piecemeal passes above.
+   ============================================================ */
+.street-quest--app .sq-settings-body {
+  display: block;
+  height: auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 14px 16px 24px;
+}
+
+.street-quest--app .sq-settings-card,
+.street-quest--app .sq-profile-card,
+.street-quest--app .sq-preferences-card,
+.street-quest--app .sq-version-card {
+  position: static;
+  left: auto;
+  right: auto;
+  top: auto;
+  width: auto;
+  height: auto;
+  min-height: 0;
+  margin: 0 0 14px;
+  padding: 16px;
+  border: 0;
+  border-radius: 4px;
+  box-shadow: none;
+  background-color: #0b0b0a;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
+    url('../assets/street-quest/ui-paper-ink.webp');
+  background-size: auto, 480px 480px;
+}
+
+/* Profile card: avatar + name + email, one plain row, wraps to a second
+   line for the email. */
+.street-quest--app .sq-profile-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+}
+
+.street-quest--app .sq-profile-avatar {
+  position: static;
+  flex: 0 0 56px;
+  width: 56px;
+  height: 56px;
+  margin: 0;
+  border: 2px solid #fff8e8;
+}
+
+.street-quest--app .sq-passport-meta,
+.street-quest--app .sq-passport-stamp {
+  display: none;
+}
+
+.street-quest--app .sq-username-view,
+.street-quest--app .sq-username-edit {
+  position: static;
+  flex: 1 1 auto;
+  width: auto;
+  margin: 0;
+  text-align: left;
+}
+
+.street-quest--app .sq-username-view p,
+.street-quest--app #settings-username {
+  margin: 0;
+  color: #fff8e8;
+  font: 800 17px/1.2 var(--font-heading);
+}
+
+.street-quest--app .sq-edit-name {
+  color: rgba(255, 248, 232, 0.6);
+}
+
+.street-quest--app .sq-settings-email {
+  display: block;
+  position: static;
+  flex: 1 1 100%;
+  width: auto;
+  margin: 2px 0 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: rgba(255, 248, 232, 0.65);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+/* Preferences card: flat plain rows, hairline dividers, no per-row box. */
+.street-quest--app .sq-visa-strip {
+  display: none;
+}
+
+.street-quest--app .sq-preferences-card .sq-setting-row {
+  position: static;
+  width: auto;
+  margin: 0;
+  padding: 12px 0;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 248, 232, 0.14);
+  border-radius: 0;
+  background: none;
+}
+
+.street-quest--app .sq-home-setting {
+  position: static;
+  margin: 0;
+  padding: 12px 0 0;
+  border: 0;
+  background: none;
+}
+
+.street-quest--app .sq-setting-label {
+  color: #fff8e8;
+  font-weight: 700;
+}
+
+.street-quest--app .sq-setting-symbol {
+  color: var(--sq-orange);
+}
+
+.street-quest--app #gps-status-label {
+  color: rgba(255, 248, 232, 0.7);
+  background: none;
+}
+
+.street-quest--app .sq-home-select {
+  width: 100%;
+  margin-top: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #fff8e8;
+  font-weight: 700;
+}
+
+.street-quest--app .sq-home-select option {
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-version-card .sq-card-kicker {
+  margin: 0 0 6px;
+}
+
+.street-quest--app .sq-version-line {
+  margin: 0;
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-version-line span {
+  color: rgba(255, 248, 232, 0.5);
+}
+
+.street-quest--app .sq-signout-btn {
+  position: static;
+  width: 100%;
+  margin: 4px 0 0;
+  border: 2px solid #fff8e8;
+  background: none;
+  color: #fff8e8;
+}
+
+/* Header bubbles: flat rectangle, main orange accent, no radius. */
+.street-quest--app .sq-card-kicker {
+  display: inline-block;
+  margin: 0 0 10px;
+  padding: 4px 10px;
+  border-radius: 0;
+  background: var(--sq-orange);
+  color: #fff8e8;
+  transform: none;
+}
+
+/* ============================================================
+   Settings tab — clean rebuild. Fresh "sqs-*" classes so none of
+   the old sq-profile-card / sq-preferences-card / sq-version-card
+   rules above (which fight each other across a dozen duplicated
+   blocks) apply here. One card, Bootstrap Icons, rounded, minimal.
+   ============================================================ */
+.street-quest--app .sqs-body {
+  padding: 16px;
+}
+
+.street-quest--app .sqs-card {
+  border-radius: 14px;
+  background: var(--sq-ink-soft);
+  overflow: hidden;
+}
+
+.street-quest--app .sqs-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 16px;
+}
+
+.street-quest--app .sqs-avatar {
+  flex: 0 0 56px;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sq-orange);
+  color: #fff;
+  font: 800 20px/1 var(--font-heading);
+  overflow: hidden;
+}
+
+.street-quest--app .sqs-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.street-quest--app .sqs-profile-info {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.street-quest--app .sqs-username-view {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.street-quest--app .sqs-username-view p {
+  margin: 0;
+  color: #fff8e8;
+  font: 800 17px/1.2 var(--font-heading);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.street-quest--app .sqs-edit-name {
+  flex: 0 0 auto;
+  border: 0;
+  background: none;
+  color: rgba(255, 248, 232, 0.55);
+  font-size: 13px;
+}
+
+.street-quest--app .sqs-edit-name:hover {
+  color: var(--sq-orange);
+}
+
+.street-quest--app .sqs-email {
+  margin: 3px 0 0;
+  color: rgba(255, 248, 232, 0.6);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.street-quest--app .sqs-username-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.street-quest--app .sqs-name-input {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 248, 232, 0.35);
+  border-radius: 8px;
+  background: rgba(255, 248, 232, 0.08);
+  color: #fff8e8;
+}
+
+.street-quest--app .sqs-name-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.street-quest--app .sqs-name-cancel,
+.street-quest--app .sqs-name-save {
+  flex: 1 1 0;
+  border-radius: 8px;
+}
+
+.street-quest--app .sqs-divider {
+  height: 1px;
+  margin: 0 16px;
+  background: rgba(255, 248, 232, 0.12);
+}
+
+.street-quest--app .sqs-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  cursor: default;
+}
+
+.street-quest--app .sqs-row-select {
+  flex-wrap: wrap;
+}
+
+.street-quest--app .sqs-row-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff8e8;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.street-quest--app .sqs-row-label i {
+  color: var(--sq-orange);
+  font-size: 15px;
+  width: 18px;
+  text-align: center;
+}
+
+.street-quest--app .sqs-select {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 248, 232, 0.25);
+  border-radius: 8px;
+  background: rgba(255, 248, 232, 0.06);
+  color: #fff8e8;
+  font-weight: 700;
+}
+
+.street-quest--app .sqs-select option {
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sqs-version-value {
+  color: rgba(255, 248, 232, 0.75);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.street-quest--app .sqs-muted {
+  color: rgba(255, 248, 232, 0.4);
+  font-weight: 500;
+}
+
+.street-quest--app .sqs-signout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 32px);
+  margin: 4px 16px 16px;
+  padding: 12px;
+  border: 1.5px solid rgba(255, 248, 232, 0.3);
+  border-radius: 10px;
+  background: none;
+  color: #fff8e8;
+  font-weight: 700;
+}
+
+.street-quest--app .sqs-signout-btn:hover {
+  border-color: var(--sq-orange);
+  background: rgba(240, 90, 25, 0.12);
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-gps-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.street-quest--app #gps-status-label {
+  color: rgba(255, 248, 232, 0.6);
+  font-size: 12px;
+}
+
+.street-quest--app #gps-status-label.is-granted {
+  color: #6fcf6f;
+  font-weight: 700;
+}
+
+.street-quest--app .sq-gps-request {
+  border: 0;
+  border-radius: 8px;
+  padding: 5px 10px;
+  background: var(--sq-orange);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Notification toggle: chunky square switch instead of a rounded pill.
+   Uses ID selectors so it beats any earlier stray rule regardless of
+   source order. JS only sets background-color/thumb position inline —
+   shape is CSS-only. */
+.street-quest--app #notif-toggle-track {
+  width: 46px;
+  height: 26px;
+  border-radius: 5px;
+  border: 1.5px solid rgba(255, 248, 232, 0.25);
+}
+
+.street-quest--app #notif-toggle-thumb {
+  top: 3px;
+  left: 3px;
+  width: 19px;
+  height: 19px;
+  border-radius: 3px;
+  background: #fff8e8;
+}
+
+/* GPS status: plain colored text, no rotated stamp-ring image. */
+.street-quest--app #gps-status-label.is-granted {
+  min-width: 0;
+  background: none;
+  color: #6fcf6f !important;
+  font-weight: 700;
+  transform: none;
 }
