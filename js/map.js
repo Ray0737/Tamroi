@@ -1022,8 +1022,11 @@ const MapModule = (() => {
         return;
       }
 
+      const raidReady = figure.raid_only && window.RaidModule?.canStartRaid(figure);
       const html = figure.raid_only
-        ? `<div class="marker-node" style="color:#EF5350;background:rgba(239,83,80,0.15);border-color:#EF5350" title="Raid Encounter">⚔️</div>`
+        ? raidReady
+          ? `<div class="marker-node" style="color:#EF5350;background:rgba(239,83,80,0.15);border-color:#EF5350" title="Raid Encounter — พร้อมเริ่ม">⚔️</div>`
+          : `<div class="marker-node" style="color:#EF5350;background:rgba(239,83,80,0.15);border-color:#EF5350;opacity:0.5" title="Raid Encounter — ต้องมีสมาชิกกลุ่มออนไลน์อย่างน้อย ${figure.raid_min_players || 2} คน">⚔️🔒</div>`
         : `<div class="marker-node" style="color:#fff;background:var(--color-map-pin);border-color:var(--color-map-pin)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
               <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
