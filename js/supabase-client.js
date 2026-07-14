@@ -62,8 +62,20 @@ const Profiles = {
 
   // getOrCreate: used after Google OAuth where the DB trigger may not have run yet
   async getOrCreate(user) {
+    const metaAvatar = user.user_metadata?.avatar_url || user.user_metadata?.picture || null;
     const { data: existing } = await _sb.from('profiles').select('*').eq('id', user.id).single();
-    if (existing) return existing;
+    if (existing) {
+      // The signup DB trigger creates this row without an avatar_url · backfill it
+      // from the OAuth profile once it's available instead of leaving it null forever.
+      if (!existing.avatar_url && metaAvatar) {
+        const { data: updated, error } = await _sb.from('profiles')
+          .update({ avatar_url: metaAvatar })
+          .eq('id', user.id)
+          .select().single();
+        if (!error) return updated;
+      }
+      return existing;
+    }
 
     const username = user.user_metadata?.full_name?.split(' ')[0]
                   || user.user_metadata?.name?.split(' ')[0]
@@ -72,7 +84,7 @@ const Profiles = {
                   || 'Traveler';
 
     const { data, error } = await _sb.from('profiles')
-      .upsert({ id: user.id, username, avatar_url: user.user_metadata?.avatar_url || null },
+      .upsert({ id: user.id, username, avatar_url: metaAvatar },
                { onConflict: 'id' })
       .select().single();
     if (error) throw error;

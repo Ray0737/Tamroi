@@ -517,8 +517,10 @@
       const session = await DB.Auth.getSession();
       if (session?.user) {
         await DB.Profiles.update(session.user.id, { age_consent_at: new Date().toISOString() });
+        await DB.Profiles.addLegacyPoints(session.user.id, 50);
+        sessionStorage.setItem('tam_roi_show_welcome_bonus', '1');
       }
-    } catch { /* consent record best-effort · don't block onboarding on it */ }
+    } catch { /* consent/bonus best-effort · don't block onboarding on it */ }
 
     window.location.href = 'app.html';
   }

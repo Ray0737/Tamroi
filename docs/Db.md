@@ -161,7 +161,7 @@ Watthana has 2 check-in points total: the district-level tower above (Satit PSM 
 
 Note: `pathumwan` and `silom` each have one landmark row still tagged with a legacy `node-sukhumvit-*` / `node-silom-*` id prefix from an earlier district split (บ้านจิม ทอมป์สัน, ศาลเจ้าพ่อเสือ) — harmless (the row's `district_id` column is correct), just an id-naming leftover.
 
-## Lore Nodes (`lore_nodes` table, 51 rows — all `review_status = 'approved'` as of 2026-07-13)
+## Lore Nodes (`lore_nodes` table, 55 rows — 51 `review_status = 'approved'` as of 2026-07-13, 4 `pending` added 2026-07-14 to `chain-grand-palace-heritage`)
 
 ### Standalone district-overview nodes (13, all approved, no chain)
 
@@ -186,7 +186,7 @@ Note: `pathumwan` and `silom` each have one landmark row still tagged with a leg
 | Chain | District | Status | Parts (in order) |
 |---|---|---|---|
 | `chain-rattanakosin-founding` | rattanakosin | approved | 1. City Walls of Rattanakosin (13.7526,100.4892,r80,30pt) → 2. The Grand Palace (13.7500,100.4913,r100,40pt) → 3. Wat Phra Kaew (13.7514,100.4925,r100,50pt) |
-| `chain-grand-palace-heritage` | rattanakosin | approved | 1. The Upper Terrace of Wat Phra Kaew (13.751457,100.492503,r30,60pt) → 2. Queen Sirikit Museum of Textiles (13.7511,100.4903,r60,30pt) — **restructured 2026-07-14**: merged from 4 parts to 2; the original Chedi/Mondop/Emerald Buddha nodes sat 24–45m apart with r60 each, so all three unlocked from a single spot with zero walking. Merged into one "Upper Terrace" node (mystery-box framing: poses a real puzzle — Wat Phra Kaew is Thailand's only royal temple with no resident monks), resolved 255m away at the museum stop |
+| `chain-grand-palace-heritage` | rattanakosin | approved (gp-1/gp-4) + pending (gp-2/gp-3/gp-5/gp-6) | 1. The Upper Terrace of Wat Phra Kaew (13.751457,100.492503,r30,60pt) → 2. The Emerald Buddha (13.75145,100.49180,r100,20pt) *pending* → 3. Chakri Maha Prasat Throne Hall (13.75130,100.49175,r100,20pt) *pending* → 4. Queen Sirikit Museum of Textiles (13.7511,100.4903,r60,30pt) → 5. Museum of Wat Phra Kaew (13.75095,100.49215,r100,20pt) *pending* → 6. The Grand Mahamontien Residential Group (13.75155,100.49150,r100,20pt) *pending* — restructured 2026-07-14 from 4 parts to 2 (see note below table), then re-expanded same day with 4 pending nodes pulled verbatim from the Grand Palace Google Doc — awaiting content review before `approved` |
 | `chain-1932-revolution` | dusit→rattanakosin→pathumwan | approved | 1. Royal Plaza (13.7697,100.5137,dusit,r100,40pt) → 2. Democracy Monument (13.7567,100.5017,rattanakosin,r80,40pt) → 3. Thammasat University (13.7567,100.4930,pathumwan,r120,50pt) |
 | `chain-ayutthaya-glory` | ayutthaya | approved | 1. Wat Phra Si Sanphet (14.3558,100.5581,r120,40pt) → 2. Elephant Duel Battlefield (14.3692,100.5878,r120,50pt) → 3. Wat Yai Chaimongkol (14.3455,100.5924,r120,30pt) |
 | `chain-satit-history` [TEST] | satit_test | approved | 1. The Founding of Satit Prasarnmit, 1952–1954 (13.7435,100.5661,r100,25pt) → 2. Becoming Srinakharinwirot University, 1974–2010 (13.7436,100.5655,r100,25pt) → 3. 74 Years On — Sakyavirote Center and Today, 2012–2026 (13.7428,100.5661,r100,30pt) — replaced 2026-07-13 with real school-history content from the official 74th-anniversary infographics |
@@ -202,7 +202,7 @@ Note: `pathumwan` and `silom` each have one landmark row still tagged with a leg
 | `chain-sukhumvit-tobacco-to-towers` | sukhumvit | approved | 1. Benjakitti Park (13.7294,100.5586,r150,30pt) → 2. QSNCC (13.7240,100.5592,r150,30pt) |
 | `chain-watthana-thonglor-shift` | watthana | approved | 1. Wat That Thong (13.7305,100.5852,r120,30pt) → 2. Benchasiri Park (13.7303,100.5673,r120,25pt) → 3. Gateway Ekamai (13.7185,100.5858,r120,25pt) |
 
-`chain-grand-palace-heritage` is the only chain with 4 parts (rest have 2–3) — `map.js`'s chain-completion check is dynamic (filters by `chain_id`, sorts by `chain_part`), so this needed no code change. Approved 2026-07-13 after content review.
+`chain-grand-palace-heritage` is the only chain with 6 parts (rest have 2–3) — `map.js`'s chain-completion check is dynamic (filters by `chain_id`, sorts by `chain_part`), so this needed no code change. Original 3 parts approved 2026-07-13 after content review; restructured to 2 parts 2026-07-14 (merge note above), then re-expanded to 6 parts same day with `lore-gp-2`, `lore-gp-3`, `lore-gp-5`, `lore-gp-6` — content pulled verbatim from the Grand Palace lore Google Doc, inserted with `review_status = 'pending'` (DB default), not yet reviewed/approved.
 
 ## BTS/MRT transit bonus zones (`bts_mrt_stations` table, 6 rows, 300m radius each)
 
@@ -297,6 +297,22 @@ Restructured 2026-07-14 from 4 parts to 2 — the original 3 upper-terrace nodes
 **Part 2 — `lore-gp-4`** Queen Sirikit Museum of Textiles
 - TH: คำตอบอยู่ในอาคารรัษฎากรพิพัฒน์แห่งนี้ — ไม่ใช่พระสงฆ์ แต่คือช่างฝีมือ ปัจจุบันอาคารเก่าภายในเขตพระบรมมหาราชวังหลังนี้ได้รับการปรับปรุงเป็นพิพิธภัณฑ์ผ้าเมื่อ พ.ศ. 2546 จัดแสดงประวัติศาสตร์สิ่งทอไทยและงานฝีมือช่างทอผ้าจากทั่วประเทศ ผู้ที่รักษามรดกแห่งพระบรมมหาราชวังให้คงอยู่ไม่ใช่ผู้อยู่อาศัย แต่คือผู้สืบทอดฝีมือรุ่นแล้วรุ่นเล่า
 - EN: The answer stands in the Ratsadakorn-bhibhathana Building — not monks, but artisans. This historic structure within the Grand Palace grounds was converted into a textile museum in 2003, preserving the history of Thai textiles and the craftsmanship of weavers from across the country. The palace's living heritage was never kept by residents — it was kept by generations of hands who never stopped working.
+
+**Part 3 — `lore-gp-2`** The Emerald Buddha *(pending review, added 2026-07-14, verbatim from Grand Palace lore doc)*
+- TH: พระพุทธมหามณีรัตนปฏิมากร หรือพระแก้วมรกต เป็นพระพุทธรูปปางสมาธิ ศิลปะแบบล้านนาตอนปลาย ประทับนั่งขัดสมาธิราบ องค์พระแกะสลักจากเนื้อหยกสีเขียวทึบชิ้นเดียว ขนาดหน้าตักกว้าง 48.3 เซนติเมตร ความสูงจากฐานถึงพระรัศมี 66 เซนติเมตร ประดิษฐานภายในพระบุษบกทองคำเหนือฐานชุกชี ตามประวัติกล่าวว่า ได้พบพระแก้วมรกตที่วัดป่าเยียะเมืองเชียงราย ในปี พ.ศ. 1977 ... (full origin saga: Chiang Rai → Lampang → Chiang Mai → Luang Prabang/Vientiane → Rama I brings it to Bangkok in 1778, enshrined at Wat Phra Kaew; seasonal costume-change tradition established, 3x/year)
+- Full `content_th` stored verbatim in DB (~3,300 chars) — not reproduced in full here; see `lore_nodes.content_th` for `lore-gp-2`.
+
+**Part 4 — `lore-gp-3`** Chakri Maha Prasat Throne Hall *(pending review, added 2026-07-14, verbatim from Grand Palace lore doc)*
+- TH: เป็นพระที่นั่งแบบผสมผสานระหว่างสถาปัตยกรรมไทยกับสถาปัตยกรรมตะวันตก พระบาทสมเด็จพระจุลจอมเกล้าเจ้าอยู่หัว ทรงพระกรุณาโปรดเกล้าฯ ให้สถาปนิกชาวอังกฤษจากสิงคโปร์ ชื่อ มิสเตอร์ จอห์น คลูนิช ทำหน้าที่เป็นนายช่างออกแบบถวายตามพระราชดำริ ... (the "ฝรั่งสวมชฎา" compromise story — Western-style hall body with Thai prasat roof spires; completed for the 1882 Rattanakosin centennial)
+- Full `content_th` stored verbatim in DB (~2,000 chars) — not reproduced in full here; see `lore_nodes.content_th` for `lore-gp-3`.
+
+**Part 5 — `lore-gp-5`** Museum of Wat Phra Kaew *(pending review, added 2026-07-14, verbatim from Grand Palace lore doc)*
+- TH: ในปี พ.ศ. 2522 พระบาทสมเด็จพระมหาภูมิพลอดุลยเดชมหาราช บรมนาถบพิตร ทรงพระกรุณาโปรดเกล้าฯ ให้สมเด็จพระกนิษฐาธิราชเจ้า กรมสมเด็จพระเทพรัตนราชสุดา ฯ สยามบรมราชกุมารี ทรงเป็นประธานกรรมการอำนวยการปฏิสังขรณ์วัดพระศรีรัตนศาสดารามและพระบรมมหาราชวัง ... museum opened 7 May 1982 for the Bangkok bicentennial; **closed for renovation since 5 Aug 2024 (พ.ศ. 2567), reopening date TBA** — content flags this as current-state-sensitive, worth a freshness check before `approved`.
+- Full `content_th` stored verbatim in DB (~2,000 chars) — not reproduced in full here; see `lore_nodes.content_th` for `lore-gp-5`.
+
+**Part 6 — `lore-gp-6`** The Grand Mahamontien Residential Group *(pending review, added 2026-07-14, verbatim from Grand Palace lore doc)*
+- TH: หมู่พระมหามณเฑียรเป็นหมู่พระที่นั่งแรกที่สร้างขึ้นในสมัยพระบาทสมเด็จพระพุทธยอดฟ้าจุฬาโลกมหาราช ในปี พ.ศ. 2325 ประกอบด้วยพระที่นั่งและหอเชื่อมต่อเนื่องกัน 7 องค์ ... (Chakraphat Phiman, Phaisan Thaksin — coronation rites, Phra Sayam Devadhiraj guardian shrine, Amarin Winitchai throne hall)
+- Full `content_th` stored verbatim in DB (~3,400 chars) — not reproduced in full here; see `lore_nodes.content_th` for `lore-gp-6`.
 
 ### Chain: `chain-1932-revolution` (dusit → rattanakosin → pathumwan, approved)
 

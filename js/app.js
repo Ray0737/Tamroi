@@ -75,6 +75,35 @@ async function _bootApp(user) {
   subscribeNotifications();
   window.GuildModule?.init(user.id);
   switchTab(localStorage.getItem('tamroi_active_tab') || 'map');
+  _maybeShowWelcomeBonus();
+}
+
+// ── First-login welcome bonus: +50 pts, awarded once by onboarding.html
+// (confirmHomeAndStart) right after home-district confirmation — this just
+// shows the celebratory reveal on the very next app.html load, gated by a
+// one-shot sessionStorage flag so it never re-fires on later logins.
+function _maybeShowWelcomeBonus() {
+  if (!sessionStorage.getItem('tam_roi_show_welcome_bonus')) return;
+  sessionStorage.removeItem('tam_roi_show_welcome_bonus');
+
+  const overlay = document.createElement('div');
+  overlay.className = 'capture-reveal-overlay';
+  overlay.innerHTML = `
+    <div class="capture-reveal-card">
+      <div class="capture-header">ยินดีต้อนรับ</div>
+      <span class="capture-emoji">🎉</span>
+      <div class="capture-name-th">ยินดีต้อนรับสู่ ตามรอย!</div>
+      <div class="capture-name-en">Welcome, explorer</div>
+      <div class="capture-pts">+50 Legacy Points</div>
+      <button class="capture-reveal-dismiss">เริ่มสำรวจ <span aria-hidden="true">→</span></button>
+    </div>`;
+  document.body.appendChild(overlay);
+  const dismiss = () => { overlay.style.cssText += 'opacity:0;transition:opacity 0.3s'; setTimeout(() => overlay.remove(), 300); };
+  overlay.addEventListener('click', dismiss);
+  overlay.querySelector('.capture-reveal-dismiss')?.addEventListener('click', event => {
+    event.stopPropagation();
+    dismiss();
+  });
 }
 
 // ── Top Bar ───────────────────────────────────────────
@@ -85,25 +114,7 @@ function updateTopBar() {
   if (usernameEl) usernameEl.textContent = p.username || 'Traveler';
   if (avatarEl) {
     const initials = (p.username || 'T').substring(0, 2).toUpperCase();
-    if (p.avatar_url) {
-      // Validate: only allow https:// avatar URLs to prevent javascript: or data: XSS
-      try {
-        const parsed = new URL(p.avatar_url);
-        if (parsed.protocol === 'https:') {
-          const img = document.createElement('img');
-          img.src    = parsed.href;            // safe · no innerHTML
-          img.alt    = escapeHtml(p.username || '');
-          avatarEl.innerHTML = '';
-          avatarEl.appendChild(img);
-        } else {
-          avatarEl.textContent = initials;     // reject non-https avatars
-        }
-      } catch {
-        avatarEl.textContent = initials;       // invalid URL · fallback to initials
-      }
-    } else {
-      avatarEl.textContent = initials;
-    }
+    avatarEl.innerHTML = avatarHTML(p.avatar_url, initials, 32, 'rgba(255,255,255,0.2)');
   }
 }
 
@@ -648,7 +659,7 @@ document.getElementById('btn-edit-username')?.addEventListener('click', () => {
   const input = document.getElementById('input-username');
   input.value = App.profile?.username || '';
   document.getElementById('settings-username-view').style.display = 'none';
-  document.getElementById('settings-username-edit').style.display = 'block';
+  document.getElementById('settings-username-edit').style.display = 'flex';
   input.focus();
 });
 
@@ -695,7 +706,13 @@ document.getElementById('btn-username-save')?.addEventListener('click', async ()
     localStorage.setItem('tamroi_notif', on ? 'on' : 'off');
   };
   apply(enabled);
-  track.addEventListener('click', () => apply(!checkbox.checked));
+  track.addEventListener('click', (e) => {
+    // #toggle-notifications lives inside this <label>, so a click on the
+    // track also fires the browser's native label→checkbox toggle — left
+    // unchecked, that fights this handler and the switch gets stuck off.
+    e.preventDefault();
+    apply(!checkbox.checked);
+  });
 })();
 
 // ── Settings: GPS Permission ──────────────────────────
@@ -767,6 +784,11 @@ document.getElementById('btn-username-save')?.addEventListener('click', async ()
   sel.innerHTML = DISTRICTS.map(d =>
     `<option value="${d.id}" ${current?.id === d.id ? 'selected' : ''}>${d.name_th}</option>`
   ).join('');
+
+  window.buildCustomSelect?.('select-home-district', {
+    wrapClass: 'sqs-select-wrap', triggerClass: 'sqs-select-trigger',
+    panelClass: 'sqs-select-panel', optionClass: 'sqs-select-option'
+  });
 
   sel.addEventListener('change', () => {
     const d = DISTRICTS.find(x => x.id === sel.value);

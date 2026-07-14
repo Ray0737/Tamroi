@@ -14,7 +14,7 @@
   <!-- App CSS -->
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/components.css?v=3">
   <link rel="stylesheet" href="css/map.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/figure-graph.css">
@@ -145,7 +145,7 @@
     .podium-bar-3 { height: 36px; background: #CD7F32; }
 
   </style>
-  <link rel="stylesheet" href="css/street-quest.css?v=16">
+  <link rel="stylesheet" href="css/street-quest.css?v=34">
 </head>
 <body class="street-quest street-quest--app">
 <div class="app-wrapper">
@@ -598,20 +598,19 @@
       <div class="modal-content figure-detail-dossier">
         <div class="modal-header figure-dossier-header">
           <button type="button" class="btn-close" data-bs-dismiss="modal" style="position:absolute;top:16px;right:16px;z-index:2"></button>
-          <!-- IG/Threads-style profile header: avatar left, name+handle right -->
+          <!-- Badge row + banner title, same language as the lore-sheet head -->
           <div class="anim-stamp figure-dossier-header-row">
+            <div class="figure-dossier-topbar">
+              <span class="figure-dossier-badge" id="modal-figure-badge">C-Class</span>
+              <span class="figure-dossier-pts-badge"><span id="modal-figure-pts">–</span> Legacy</span>
+            </div>
             <div class="figure-modal-portrait" id="modal-figure-emoji">
               <i class="bi bi-person-fill"></i>
             </div>
-            <div class="figure-dossier-copy">
-              <div class="figure-dossier-name-row">
-                <h3 class="figure-dossier-name" id="modal-figure-name">–</h3>
-                <span class="figure-class-label figure-dossier-badge" id="modal-figure-badge">C-Class</span>
-              </div>
-              <p class="figure-dossier-en" id="modal-figure-en">–</p>
-              <!-- Compact stat line · was a big number-block row, moved here and shrunk -->
+            <div class="figure-dossier-name-banner">
+              <h3 class="figure-dossier-name" id="modal-figure-name">–</h3>
               <p class="figure-dossier-stats">
-                <span class="figure-dossier-points" id="modal-figure-pts">–</span> Legacy
+                <span id="modal-figure-en">–</span>
                 &nbsp;·&nbsp; เขต <span id="modal-figure-district">–</span>
                 <span id="modal-figure-years-row" hidden>&nbsp;·&nbsp; ปี <span id="modal-figure-years">–</span></span>
               </p>
@@ -685,8 +684,8 @@
       <button type="button" class="btn-close sq-panel-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body sq-panel-body sqs-body">
-      <div class="sqs-card">
-        <!-- Profile row -->
+      <!-- Profile card: the one boxed element -->
+      <div class="sqs-profile-card">
         <div class="sqs-profile-row">
           <div class="sqs-avatar" id="settings-avatar">T</div>
           <div class="sqs-profile-info">
@@ -698,49 +697,75 @@
             </div>
             <div id="settings-username-edit" class="sqs-username-edit" style="display:none">
               <input id="input-username" type="text" maxlength="30" class="sqs-name-input">
-              <div class="sqs-name-actions">
-                <button class="btn btn-sm sqs-name-cancel" id="btn-username-cancel">ยกเลิก</button>
-                <button class="btn btn-sm btn-primary sqs-name-save" id="btn-username-save">บันทึก</button>
-              </div>
+              <button class="sqs-name-save" id="btn-username-save" aria-label="บันทึก">
+                <i class="bi bi-check-lg"></i>
+              </button>
+              <button class="sqs-name-cancel" id="btn-username-cancel" aria-label="ยกเลิก">
+                <i class="bi bi-x-lg"></i>
+              </button>
             </div>
             <p class="sqs-email" id="settings-email">ยังไม่ได้เชื่อมต่อ</p>
           </div>
         </div>
+      </div>
 
-        <div class="sqs-divider"></div>
+      <!-- Everything below: plain text rows on the darkened page bg -->
+      <div class="sqs-plain-list">
+        <p class="sqs-section-label">การตั้งค่าทั่วไป</p>
 
-        <!-- Notifications toggle -->
-        <label class="sqs-row">
-          <span class="sqs-row-label"><i class="bi bi-bell-fill"></i>การแจ้งเตือน</span>
-          <div id="notif-toggle-wrap">
-            <input type="checkbox" id="toggle-notifications" style="display:none" checked>
-            <div id="notif-toggle-track" class="sq-toggle-track">
-              <div id="notif-toggle-thumb" class="sq-toggle-thumb"></div>
+        <div class="sqs-group sqs-group-lg">
+          <!-- Notifications toggle -->
+          <label class="sqs-row">
+            <span class="sqs-row-label"><i class="bi bi-bell-fill"></i>การแจ้งเตือน</span>
+            <div id="notif-toggle-wrap">
+              <input type="checkbox" id="toggle-notifications" style="display:none" checked>
+              <div id="notif-toggle-track" class="sq-toggle-track">
+                <div id="notif-toggle-thumb" class="sq-toggle-thumb"></div>
+              </div>
+            </div>
+          </label>
+
+          <!-- GPS Permission -->
+          <div class="sqs-row">
+            <span class="sqs-row-label"><i class="bi bi-geo-alt-fill"></i>ตำแหน่ง GPS</span>
+            <div class="sq-gps-status">
+              <span id="gps-status-label">กำลังตรวจสอบ</span>
+              <button id="btn-request-gps" class="sq-gps-request" hidden>ขอสิทธิ์</button>
             </div>
           </div>
-        </label>
 
-        <!-- GPS Permission -->
-        <div class="sqs-row">
-          <span class="sqs-row-label"><i class="bi bi-geo-alt-fill"></i>ตำแหน่ง GPS</span>
-          <div class="sq-gps-status">
-            <span id="gps-status-label">กำลังตรวจสอบ</span>
-            <button id="btn-request-gps" class="sq-gps-request" hidden>ขอสิทธิ์</button>
+          <!-- Home District -->
+          <div class="sqs-row sqs-row-select">
+            <span class="sqs-row-label"><i class="bi bi-house-door-fill"></i>เขตบ้านเกิด</span>
+            <select id="select-home-district" class="sqs-select"></select>
           </div>
         </div>
 
-        <!-- Home District -->
-        <div class="sqs-row sqs-row-select">
-          <span class="sqs-row-label"><i class="bi bi-house-door-fill"></i>เขตบ้านเกิด</span>
-          <select id="select-home-district" class="sqs-select"></select>
+        <p class="sqs-section-label sqs-section-label-spaced">เกี่ยวกับแอป</p>
+
+        <div class="sqs-group sqs-group-sm">
+          <!-- App version -->
+          <div class="sqs-row">
+            <span class="sqs-row-label"><i class="bi bi-info-circle-fill"></i>เวอร์ชัน</span>
+            <span class="sqs-version-value">Tamroi v0.6 <span class="sqs-muted">Prototype</span></span>
+          </div>
         </div>
 
-        <div class="sqs-divider"></div>
+        <p class="sqs-section-label sqs-section-label-spaced">แจ้งปัญหา / ติชม</p>
 
-        <!-- App version -->
-        <div class="sqs-row">
-          <span class="sqs-row-label"><i class="bi bi-info-circle-fill"></i>เวอร์ชัน</span>
-          <span class="sqs-version-value">Tamroi v0.6 <span class="sqs-muted">Prototype</span></span>
+        <div class="sqs-feedback-row">
+          <a class="sqs-feedback-item sqs-feedback-item-disabled" aria-disabled="true" title="เร็ว ๆ นี้">
+            <span class="sqs-feedback-btn"><i class="bi bi-file-earmark-text-fill"></i></span>
+            <span class="sqs-feedback-label">Google Form</span>
+          </a>
+          <a class="sqs-feedback-item" href="mailto:raphee.rattanamanoonporn@gmail.com" title="ส่งอีเมล">
+            <span class="sqs-feedback-btn"><i class="bi bi-envelope-fill"></i></span>
+            <span class="sqs-feedback-label">อีเมล</span>
+          </a>
+          <a class="sqs-feedback-item" href="https://github.com/Ray0737" target="_blank" rel="noopener" title="GitHub">
+            <span class="sqs-feedback-btn"><i class="bi bi-github"></i></span>
+            <span class="sqs-feedback-label">GitHub</span>
+          </a>
         </div>
 
         <button class="btn sqs-signout-btn" id="btn-signout">
@@ -798,6 +823,7 @@
     </div>
     <h3 class="sheet-title lore-title" id="debate-title"></h3>
     <div id="debate-body" style="overflow-y:auto;max-height:55vh;padding-bottom:var(--space-md)"></div>
+    <button class="btn btn-outline btn-sm btn-full" onclick="DebateModule.close()" style="margin-top:8px">ปิด</button>
   </div>
   <div class="bottom-sheet-overlay" id="debate-overlay" onclick="DebateModule.close()"></div>
 
@@ -823,29 +849,38 @@
 <script src="js/raid.js"></script>
 <script src="js/discussion.js"></script>
 <script src="js/community-forum.js"></script>
-<script src="js/debates.js"></script>
+<script src="js/debates.js?v=6"></script>
 <script src="js/figure-graph.js"></script>
 
 <script>
-  // Sync settings panel with loaded profile
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-      const p = window.AppCore?.App?.profile;
-      const u = window.AppCore?.App?.user;
-      if (p) {
-        document.getElementById('settings-username').textContent = p.username || 'Traveler';
-        const avatarEl = document.getElementById('settings-avatar');
-        if (p.avatar_url) {
-          avatarEl.innerHTML = `<img src="${p.avatar_url}" alt="avatar">`;
-        } else {
-          avatarEl.textContent = (p.username || 'T').substring(0,2).toUpperCase();
-        }
+  // Sync settings panel with the loaded profile every time it's opened —
+  // a one-shot timeout after DOMContentLoaded missed the profile/user
+  // when Supabase auth resolved after that fixed 1s window.
+  function syncSettingsProfile() {
+    const p = window.AppCore?.App?.profile;
+    const u = window.AppCore?.App?.user;
+    if (p) {
+      document.getElementById('settings-username').textContent = p.username || 'Traveler';
+      const avatarEl = document.getElementById('settings-avatar');
+      const initials = (p.username || 'T').substring(0, 2).toUpperCase();
+      if (p.avatar_url) {
+        avatarEl.textContent = '';
+        const img = document.createElement('img');
+        img.alt = 'avatar';
+        img.referrerPolicy = 'no-referrer';
+        img.onerror = () => { avatarEl.textContent = initials; };
+        img.src = p.avatar_url;
+        avatarEl.appendChild(img);
+      } else {
+        avatarEl.textContent = initials;
       }
-      if (u) {
-        document.getElementById('settings-email').textContent = u.email || '';
-      }
-    }, 1000);
-  });
+    }
+    if (u) {
+      document.getElementById('settings-email').textContent = u.email || '';
+    }
+  }
+  document.getElementById('settings-panel')?.addEventListener('show.bs.offcanvas', syncSettingsProfile);
+  document.addEventListener('DOMContentLoaded', () => setTimeout(syncSettingsProfile, 1000));
 </script>
 </body>
 </html>

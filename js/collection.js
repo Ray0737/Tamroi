@@ -528,14 +528,14 @@ const CollectionModule = (() => {
     if (districtEl) {
       // Show the slug capitalized right away, then swap in the real Thai district
       // name once it loads · beats a permanent raw "rattanakosin" in the UI.
-      districtEl.textContent = fig.era || (districtSlug ? districtSlug[0].toUpperCase() + districtSlug.slice(1) : '–');
-      if (!fig.era && fig.district_id) {
+      districtEl.textContent = districtSlug ? districtSlug[0].toUpperCase() + districtSlug.slice(1) : '–';
+      if (fig.district_id) {
         _getDistrictName(fig.district_id).then(name => {
           if (name) districtEl.textContent = name;
         });
       }
     }
-    if (bioEl) bioEl.textContent = fig.description || '–';
+    if (bioEl) bioEl.textContent = fig.bio_th || fig.description || '–';
 
     // Clear async sections
     ['modal-figure-relations','modal-figure-lore','modal-figure-locations'].forEach(id => {
@@ -587,11 +587,9 @@ const CollectionModule = (() => {
     if (bioRes.status === 'fulfilled' && bioRes.value) {
       const bio = bioRes.value;
       const bioEl = document.getElementById('modal-figure-bio');
-      const districtEl = document.getElementById('modal-figure-district');
       const yearsEl = document.getElementById('modal-figure-years');
       const yearsRow = document.getElementById('modal-figure-years-row');
       if (bioEl && bio.bio_th) bioEl.textContent = bio.bio_th;
-      if (districtEl && bio.era) districtEl.textContent = bio.era;
       if (yearsEl && yearsRow && (bio.birth_year || bio.death_year)) {
         yearsEl.textContent = [bio.birth_year ? `พ.ศ. ${bio.birth_year + 543}` : null,
                                 bio.death_year ? `พ.ศ. ${bio.death_year + 543}` : null].filter(Boolean).join(' – ');

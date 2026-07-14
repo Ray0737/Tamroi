@@ -173,6 +173,81 @@ const CoopModule = (() => {
 
   function _chapterLabel(i) { return _CHAPTER_LABELS[i] || `บทที่ ${i + 1}`; }
 
+  // ── Timer: 20 min from the group's earliest assignment, purely
+  // client-side (reuses the existing assigned_at column — no schema
+  // change). A single shared interval ticks every [data-jigsaw-deadline]
+  // element on the page once a second.
+  const _JIGSAW_TIME_LIMIT_MS = 20 * 60 * 1000;
+
+  function _jigsawDeadline(assignments) {
+    const times = assignments.map(a => new Date(a.assigned_at).getTime()).filter(t => !Number.isNaN(t));
+    if (!times.length) return null;
+    return Math.min(...times) + _JIGSAW_TIME_LIMIT_MS;
+  }
+
+  function _jigsawTimerMarkup(assignments) {
+    const deadline = _jigsawDeadline(assignments);
+    if (!deadline) return '';
+    return `<span class="jigsaw-timer" data-jigsaw-deadline="${deadline}"><i class="bi bi-stopwatch"></i> --:--</span>`;
+  }
+
+  function _jigsawFormatRemaining(ms) {
+    if (ms <= 0) return 'หมดเวลา';
+    const totalSec = Math.floor(ms / 1000);
+    const m = Math.floor(totalSec / 60);
+    const s = totalSec % 60;
+    return `${m}:${String(s).padStart(2, '0')}`;
+  }
+
+  function _jigsawStartTimerTicker() {
+    setInterval(() => {
+      document.querySelectorAll('[data-jigsaw-deadline]').forEach(el => {
+        const remaining = Number(el.dataset.jigsawDeadline) - Date.now();
+        el.classList.toggle('jigsaw-timer-expired', remaining <= 0);
+        el.innerHTML = `<i class="bi bi-stopwatch"></i> ${_jigsawFormatRemaining(remaining)}`;
+      });
+    }, 1000);
+  }
+  _jigsawStartTimerTicker();
+
+  // ── Overview: always-visible per-member status row, independent of
+  // whichever phase the current viewer happens to be in.
+  const _JIGSAW_STATUS_ICON = {
+    locked: 'bi-lock-fill', quiz: 'bi-question-circle-fill',
+    pending: 'bi-pencil-fill', done: 'bi-check-circle-fill', voted: 'bi-flag-fill',
+  };
+
+  function _jigsawMemberStatus(assign) {
+    if (!assign.summary_posted) {
+      const unlocked = window.MapModule?.getUnlockedLoreIds?.()?.includes(assign.lore_node_id);
+      return unlocked ? { key: 'pending', label: 'กำลังเขียนสรุป' } : { key: 'locked', label: 'ยังไม่ปลดล็อก' };
+    }
+    if (assign.proposed_order) return { key: 'voted', label: 'ยืนยันลำดับแล้ว' };
+    return { key: 'done', label: 'ส่งสรุปแล้ว' };
+  }
+
+  function _jigsawOverviewMarkup(assignments) {
+    if (!assignments.length) return '';
+    return `
+      <div class="jigsaw-overview">
+        <p class="jigsaw-overview-label"><i class="bi bi-people-fill"></i> ภาพรวมทีม</p>
+        <div class="jigsaw-overview-list">
+          ${assignments.map(a => {
+            const status = _jigsawMemberStatus(a);
+            return `
+              <div class="jigsaw-overview-row">
+                ${avatarHTML(a.profiles?.avatar_url, escapeHtml((a.profiles?.username || '?').slice(0, 2).toUpperCase()), 22, 'var(--color-border)')}
+                <span class="jigsaw-overview-name">${escapeHtml(a.profiles?.username || '?')}</span>
+                <span class="jigsaw-overview-chapter">${escapeHtml(_chapterLabel(a.chapter_index))}</span>
+                <span class="jigsaw-overview-status jigsaw-overview-status-${status.key}">
+                  <i class="bi ${_JIGSAW_STATUS_ICON[status.key]}"></i> ${escapeHtml(status.label)}
+                </span>
+              </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+  }
+
   async function _renderJigsawCard(mission, assignments, currentUserId, guildId, missionIndex = 1) {
     const myAssign = assignments.find(a => a.user_id === currentUserId);
     const indexLabel = String(missionIndex).padStart(2, '0');
@@ -213,7 +288,9 @@ const CoopModule = (() => {
             </div>
             <span class="jigsaw-card-pts">+${mission.reward_pts} pts</span>
           </div>
+          ${_jigsawTimerMarkup(assignments)}
           <div class="jigsaw-card-body">${bodyHtml}</div>
+          ${_jigsawOverviewMarkup(assignments)}
         </div>
       </article>`;
   }

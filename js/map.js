@@ -1055,7 +1055,9 @@ const MapModule = (() => {
       return;
     }
     _pendingCaptureC = figure;
-    document.getElementById('c-capture-emoji').textContent = figure.image_emoji || '🧑';
+    document.getElementById('c-capture-emoji').innerHTML = figure.image_emoji
+      ? escapeHtml(figure.image_emoji)
+      : '<i class="bi bi-person-fill"></i>';
     document.getElementById('c-capture-name').textContent = figure.name_th || figure.name_en || '';
     window.AppCore?.openSheet('c-capture-sheet');
   }

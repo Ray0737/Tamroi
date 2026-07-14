@@ -5301,25 +5301,28 @@
   opacity: 1;
 }
 
+/* Plain card matching #quiz-sheet's/the simplified capture sheet's look —
+   the scrapbook collage template didn't line up with real content. */
 .street-quest--app .capture-reveal-card {
-  width: min(360px, 92vw);
-  aspect-ratio: 2 / 3;
+  width: min(340px, 92vw);
+  aspect-ratio: auto;
   min-height: 0;
-  padding: 0;
+  padding: 28px 24px;
   border: 0;
-  border-radius: 0;
-  background: transparent url('../assets/street-quest/generated-stamps/capture-reveal-template.webp') center / 100% 100% no-repeat;
-  box-shadow: none;
-  color: var(--sq-ink);
+  border-radius: var(--radius-2xl);
+  background: var(--color-card-dark);
+  box-shadow: var(--shadow-up);
+  color: var(--color-white);
   isolation: isolate;
   animation: none;
   opacity: 1;
   transform: none;
+  text-align: center;
 }
 
 .street-quest--app .capture-reveal-card.capture-reveal-legendary {
   border: 0;
-  box-shadow: none;
+  box-shadow: var(--shadow-up);
 }
 
 .street-quest--app .capture-reveal-card .capture-glow-ring,
@@ -5329,115 +5332,102 @@
 }
 
 .street-quest--app .capture-reveal-card .capture-header {
-  position: absolute;
-  top: 10.5%;
-  left: 12%;
-  right: 12%;
-  margin: 0;
-  color: var(--sq-ink) !important;
-  font: 900 clamp(11px, 3.2vw, 15px)/1 var(--font-display);
+  position: static;
+  margin: 0 0 16px;
+  color: var(--color-primary) !important;
+  font: 800 12px/1 var(--font-display);
   letter-spacing: 0.11em;
   text-align: center;
 }
 
 .street-quest--app .capture-reveal-card .capture-emoji {
-  position: absolute;
-  top: 22%;
-  left: 50%;
+  position: static;
   display: grid;
-  width: 31%;
-  height: 34%;
-  margin: 0;
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 16px;
   place-items: center;
-  transform: translateX(-50%);
-  filter: drop-shadow(0 4px 4px rgba(24, 21, 16, 0.22));
-  font-size: clamp(56px, 17vw, 86px);
+  border-radius: 50%;
+  background: var(--color-card-darker);
+  transform: none;
+  filter: none;
+  font-size: 46px;
 }
 
 .street-quest--app .capture-reveal-card .capture-name-th {
-  position: absolute;
-  top: 60.5%;
-  left: 11%;
-  right: 11%;
+  position: static;
   margin: 0;
   overflow: hidden;
-  color: #fff8e8;
-  font: 900 clamp(13px, 4.2vw, 25px)/1.12 var(--font-heading);
+  color: var(--color-white);
+  font: 800 22px/1.2 var(--font-heading);
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
-  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.36);
+  text-shadow: none;
 }
 
 .street-quest--app .capture-reveal-card .capture-name-en {
-  position: absolute;
-  top: 65.3%;
-  left: 11%;
-  right: 11%;
-  margin: 0;
+  position: static;
+  margin: 2px 0 0;
   overflow: hidden;
-  color: #f1dfc0;
-  font: 600 clamp(9px, 2.7vw, 12px)/1.2 var(--font-body);
+  color: var(--color-muted);
+  font: 600 12px/1.2 var(--font-body);
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .street-quest--app .capture-reveal-card .badge {
-  position: absolute;
-  top: 70.4%;
-  left: 50%;
-  margin: 0;
+  position: static;
+  display: inline-block;
+  margin: 10px 0 0;
   min-width: 34px;
-  padding: 7px 11px;
-  border: 2px solid var(--sq-ink);
-  border-radius: 2px;
-  background: var(--sq-pink);
-  color: #fff8e8;
-  font: 900 16px/1 var(--font-display);
-  transform: translateX(-50%) rotate(-3deg);
-  box-shadow: 2px 2px 0 var(--sq-ink);
+  padding: 4px 12px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-dim);
+  color: var(--color-primary);
+  font: 800 13px/1 var(--font-display);
+  transform: none;
+  box-shadow: none;
 }
 
 .street-quest--app .capture-reveal-card .capture-pts {
-  position: absolute;
-  top: 77%;
-  left: 15%;
-  right: 15%;
-  margin: 0;
-  color: var(--sq-ink) !important;
-  font: 900 clamp(13px, 4vw, 18px)/1 var(--font-display);
+  position: static;
+  margin: 12px 0 20px;
+  color: var(--color-white) !important;
+  font: 800 16px/1 var(--font-display);
   text-align: center;
   animation: none;
 }
 
 .street-quest--app .capture-reveal-dismiss {
-  position: absolute;
-  right: 11%;
-  bottom: 4.5%;
-  left: 11%;
-  min-height: 49px;
-  padding: 11px 40px 11px 16px;
+  position: static;
+  display: block;
+  width: 100%;
+  min-height: 46px;
+  padding: 0 16px;
   border: 0;
-  background: transparent url('../assets/street-quest/generated-stamps/guild-request-approve.png') center / 100% 100% no-repeat;
-  color: var(--sq-ink);
-  font: 900 clamp(15px, 4.7vw, 21px)/1 var(--font-heading);
+  border-radius: var(--radius-lg);
+  background: var(--color-primary);
+  color: #fff;
+  font: 700 15px/1 var(--font-body);
   text-align: center;
-  text-shadow: 0 1px 0 rgba(255, 248, 232, 0.45);
+  text-shadow: none;
   cursor: pointer;
 }
 
 .street-quest--app .capture-reveal-dismiss span {
-  position: absolute;
-  right: 18px;
-  font: 900 23px/0.8 var(--font-display);
+  position: static;
+  margin-left: 6px;
+  font: 700 15px/0.8 var(--font-body);
 }
 
 .street-quest--app .capture-reveal-dismiss:hover,
 .street-quest--app .capture-reveal-dismiss:focus-visible {
-  filter: brightness(1.08) saturate(1.08);
-  outline: 2px solid var(--sq-lime);
-  outline-offset: 3px;
+  filter: brightness(1.08);
+  outline: none;
+  outline-offset: 0;
 }
 
 /* Figure detail: the modal is a full dossier sheet with readable text over
@@ -5480,6 +5470,13 @@
   border-radius: 50%;
   background-color: var(--sq-paper-light);
   opacity: 0.88;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.street-quest--app .figure-dossier-header .btn-close:hover,
+.street-quest--app .figure-dossier-header .btn-close:focus-visible {
+  transform: scale(1.12) rotate(90deg);
+  opacity: 1;
 }
 
 .street-quest--app .figure-dossier-header-row {
@@ -5507,24 +5504,47 @@
   box-shadow: none;
 }
 
-.street-quest--app .figure-dossier-copy {
-  position: static;
-  width: 82%;
-  min-width: 0;
-  padding: 18px 16px;
-  background: var(--sq-ink);
-  border-radius: 2px;
-  color: #fff8e8;
-  text-align: center;
+/* Badge row, same shape as .lore-sheet-head. Styled by ID because collection.js
+   overwrites #modal-figure-badge's className on every open. */
+.street-quest--app .figure-dossier-topbar {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-right: 38px;
+  margin: 0 0 10px;
 }
 
-.street-quest--app .figure-dossier-name-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 4px;
+.street-quest--app .figure-dossier-topbar #modal-figure-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 2px;
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+  font: 800 10px/1 var(--font-display);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.street-quest--app .figure-dossier-pts-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 2px;
+  background: var(--sq-orange);
+  color: #fff8e8;
+  font: 800 10px/1 var(--font-display);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* Name banner, same shape as .lore-title — name + en/district crammed into one block */
+.street-quest--app .figure-dossier-name-banner {
+  width: 100%;
+  padding: 10px 14px 12px;
+  border-radius: 2px;
+  background: var(--sq-blue);
+  text-align: center;
 }
 
 .street-quest--app .figure-dossier-name {
@@ -5532,37 +5552,13 @@
   margin: 0;
   color: #fff8e8;
   font: 900 clamp(18px, 5.4vw, 25px)/1.2 var(--font-heading);
-  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.36);
-}
-
-.street-quest--app .figure-dossier-badge {
-  display: inline-block;
-  padding: 4px 9px;
-  border: 1px solid #fff8e8;
-  border-radius: 2px;
-  background: var(--sq-pink);
-  color: #fff8e8;
-  font: 900 10px/1 var(--font-display);
-  letter-spacing: 0.08em;
-}
-
-.street-quest--app .figure-dossier-en {
-  margin: 8px 0 0;
-  overflow: hidden;
-  color: #d9ceb3;
-  font: 600 11px/1.3 var(--font-body);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-shadow: none;
 }
 
 .street-quest--app .figure-dossier-stats {
-  margin: 10px 0 0;
-  color: #d9ceb3;
+  margin: 6px 0 0;
+  color: rgba(255, 248, 232, 0.72);
   font: 700 11px/1.3 var(--font-display);
-}
-
-.street-quest--app .figure-dossier-points {
-  color: var(--sq-lime);
 }
 
 .street-quest--app .figure-detail-dossier .figure-dossier-body {
@@ -5595,10 +5591,14 @@
 }
 
 .street-quest--app .figure-detail-dossier .fig-bio-section-title {
-  margin: 0 0 6px;
-  color: var(--sq-orange);
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 5px 10px;
+  border-radius: 2px;
+  background: var(--sq-lime);
+  color: var(--sq-ink);
   font: 900 10px/1 var(--font-display);
-  letter-spacing: 0.11em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -5709,6 +5709,13 @@
   color: var(--sq-orange);
   font: 800 10px/1 var(--font-display);
   white-space: nowrap;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.street-quest--app .figure-detail-dossier .fig-loc-map-btn:hover,
+.street-quest--app .figure-detail-dossier .fig-loc-map-btn:focus-visible {
+  transform: scale(1.05);
+  background: rgba(240, 90, 25, 0.22);
 }
 
 .street-quest--app .figure-detail-dossier .fig-loc-map-btn svg {
@@ -5718,33 +5725,67 @@
 
 .street-quest--app .figure-detail-dossier .figure-dossier-footer {
   display: flex;
-  height: 14%;
-  min-height: 76px;
-  flex: 0 0 14%;
-  flex-direction: row;
+  height: auto;
+  min-height: 0;
+  flex: 0 0 auto;
+  flex-direction: column;
   align-items: stretch;
   gap: 8px;
-  padding: 7% 10% 3%;
+  padding: 10px 6% 5%;
   border: 0;
   background: transparent;
 }
 
 .street-quest--app .figure-dossier-footer .btn {
+  width: 100%;
   min-height: 42px;
   padding: 8px 10px;
   border: 0;
-  border-radius: 0;
+  border-radius: 8px;
   box-shadow: none;
-  color: var(--sq-ink);
-  font: 900 10px/1.1 var(--font-heading);
+  color: #fff8e8;
+  font: 800 12px/1.1 var(--font-heading);
+  text-shadow: none;
+  transition: filter 0.15s ease;
+}
+
+.street-quest--app .figure-dossier-footer .btn:hover,
+.street-quest--app .figure-dossier-footer .btn:focus-visible {
+  filter: brightness(1.1);
 }
 
 .street-quest--app .figure-dossier-footer #btn-figure-graph {
-  background: transparent url('../assets/street-quest/generated-stamps/guild-request-approve.png') center / 100% 100% no-repeat;
+  background: var(--sq-blue);
+}
+
+.street-quest--app .figure-dossier-footer #btn-figure-debate {
+  background: var(--sq-orange);
+  color: #fff8e8;
 }
 
 .street-quest--app .figure-dossier-footer [data-bs-dismiss="modal"] {
-  background: transparent url('../assets/street-quest/generated-stamps/guild-request-reject.png') center / 100% 100% no-repeat;
+  background: var(--sq-ink);
+  border: 1.5px solid rgba(255, 248, 232, 0.3);
+}
+
+/* Debate sheet: thin, near-invisible scrollbar instead of the default
+   chunky OS one. */
+.street-quest--app #debate-body {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 248, 232, 0.2) transparent;
+}
+
+.street-quest--app #debate-body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.street-quest--app #debate-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.street-quest--app #debate-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 248, 232, 0.2);
+  border-radius: 3px;
 }
 
 /* Printed-sheet alignment pass.
@@ -7590,94 +7631,88 @@ body.street-quest--app .sq-node-sheet .sq-node-action {
 
 /* C-class encounter sheet: the short confirmation step now feels like the
    same collectible poster as the reveal that follows it. */
+/* Plain card matching #quiz-sheet's style — the scrapbook collage
+   template above didn't line up with real content and looked cluttered
+   next to the quiz sheet's clean look. */
 .street-quest--app #c-capture-sheet {
-  min-height: min(650px, calc(100vh - 16px));
-  overflow: hidden;
-  padding: 0 9% 4%;
+  min-height: 0;
+  overflow: visible;
+  padding: var(--space-md);
   border: 0;
-  border-radius: 0;
-  background: transparent url('../assets/street-quest/generated-stamps/capture-reveal-template.webp') center / 100% 100% no-repeat;
-  box-shadow: 6px 0 0 var(--sq-orange), -6px 0 0 var(--sq-blue);
-  color: var(--sq-ink);
+  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+  background: var(--color-card-dark);
+  box-shadow: none;
+  color: var(--color-white);
 }
 
 .street-quest--app #c-capture-sheet::before {
-  content: 'FIELD ENCOUNTER';
-  display: block;
-  margin: 47px auto 0;
-  color: var(--sq-ink);
-  font: 900 12px/1 var(--font-display);
-  letter-spacing: 0.12em;
-  text-align: center;
+  content: none;
 }
 
 .street-quest--app #c-capture-sheet .sheet-handle {
-  width: 44px;
-  height: 5px;
-  margin: 15px auto 0;
-  background: var(--sq-ink);
-  border-radius: 0;
+  width: 40px;
+  height: 4px;
+  margin: 0 auto 16px;
+  background: var(--color-border);
+  border-radius: 2px;
 }
 
 .street-quest--app #c-capture-sheet .c-capture-copy {
-  position: absolute;
-  top: 21%;
-  right: 9%;
-  left: 9%;
+  position: static;
+  padding: 8px 0 20px;
   text-align: center;
 }
 
 .street-quest--app #c-capture-sheet #c-capture-emoji {
   display: grid;
-  width: 38%;
-  height: 38%;
-  min-height: 150px;
-  margin: 0 auto;
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 14px;
   place-items: center;
-  font-size: clamp(70px, 21vw, 100px);
+  border-radius: 50%;
+  background: var(--color-card-darker);
+  font-size: 46px;
   line-height: 1;
-  filter: drop-shadow(0 4px 4px rgba(24, 21, 16, 0.22));
+}
+
+.street-quest--app #c-capture-sheet #c-capture-emoji i {
+  color: var(--color-muted);
+  font-size: 40px;
 }
 
 .street-quest--app #c-capture-sheet #c-capture-name {
   margin: 0;
-  color: #fff8e8;
-  font: 900 clamp(20px, 6vw, 29px)/1.1 var(--font-heading);
-  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.32);
+  color: var(--color-white);
+  font: 800 22px/1.2 var(--font-heading);
+  text-shadow: none;
 }
 
 .street-quest--app #c-capture-sheet .c-capture-primary,
 .street-quest--app #c-capture-sheet .c-capture-secondary {
-  position: absolute;
-  right: 10%;
-  left: 10%;
-  min-height: 48px;
+  position: static;
+  width: 100%;
+  min-height: 46px;
   border: 0;
-  border-radius: 0;
+  border-radius: var(--radius-lg);
   box-shadow: none;
-  font: 900 16px/1 var(--font-heading);
-}
-
-.street-quest--app #c-capture-sheet .c-capture-primary,
-.street-quest--app #c-capture-sheet .c-capture-secondary {
-  width: 80%;
+  font: 700 15px/1 var(--font-body);
 }
 
 .street-quest--app #c-capture-sheet .c-capture-primary {
-  bottom: 16%;
-  background: transparent url('../assets/street-quest/generated-stamps/guild-request-approve.png') center / 100% 100% no-repeat;
-  color: var(--sq-ink);
+  margin: 0 0 8px;
+  background: var(--color-primary);
+  color: #fff;
 }
 
 .street-quest--app #c-capture-sheet .c-capture-secondary {
-  bottom: 6%;
-  background: transparent url('../assets/street-quest/generated-stamps/guild-request-reject.png') center / 100% 100% no-repeat;
-  color: #fff8e8;
+  background: transparent;
+  border: 1.5px solid var(--color-border);
+  color: var(--color-white);
 }
 
 .street-quest--app #c-capture-sheet .c-capture-primary:hover,
 .street-quest--app #c-capture-sheet .c-capture-secondary:hover {
-  filter: brightness(1.08) saturate(1.08);
+  filter: brightness(1.08);
 }
 
 /* Lore uses the same field-sheet language, with a full-width narrative zone. */
@@ -7921,7 +7956,7 @@ body.street-quest--app .sq-node-sheet .sq-node-action {
 .street-quest--app .sq-settings-panel {
   border: 0;
   border-radius: 0;
-  background: #11110f url('../assets/street-quest/generated-stamps/settings-fieldkit-template.webp') center / 100% 100% no-repeat;
+  background: var(--sq-ink);
   color: #fff8e8;
 }
 
@@ -8497,6 +8532,7 @@ body.street-quest--app .sq-node-sheet .sq-node-action {
   width: auto;
   margin: 0;
 }
+
 /* Check-in sheet: the checklist and support-stamp progress card were both
    pinned to fixed percentage zones sized for a shorter template, so real
    content (3 checklist rows + 3 progress bars) overflowed and overlapped.
@@ -9148,20 +9184,35 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
    blocks) apply here. One card, Bootstrap Icons, rounded, minimal.
    ============================================================ */
 .street-quest--app .sqs-body {
+  flex: 1 1 auto;
+  min-height: 100%;
   padding: 16px;
+  background-color: transparent;
+  background-image: linear-gradient(rgba(9, 9, 8, 0.8), rgba(9, 9, 8, 0.8));
 }
 
-.street-quest--app .sqs-card {
-  border-radius: 14px;
-  background: var(--sq-ink-soft);
-  overflow: hidden;
+/* Profile card: the one boxed element, flat blue rectangle like the
+   VIEW MODE control on Community. */
+.street-quest--app .sqs-profile-card {
+  margin-bottom: 6px;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 248, 232, 0.12);
+  background: none;
+  box-shadow: none;
 }
 
 .street-quest--app .sqs-profile-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 14px;
-  padding: 18px 16px;
+  padding: 4px 0 16px;
+}
+
+/* Everything else: plain text rows on the darkened page bg, no card box. */
+.street-quest--app .sqs-plain-list {
+  display: flex;
+  flex-direction: column;
 }
 
 .street-quest--app .sqs-avatar {
@@ -9224,30 +9275,69 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
   white-space: nowrap;
 }
 
+/* Edit in place: the name itself becomes an underlined inline field at
+   the same spot/size as the view-mode text, with tiny check/cancel
+   icons trailing it on the same line — not a separate boxed row below. */
 .street-quest--app .sqs-username-edit {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 6px;
+  min-width: 0;
 }
 
 .street-quest--app .sqs-name-input {
-  width: 100%;
-  padding: 7px 10px;
-  border: 1px solid rgba(255, 248, 232, 0.35);
-  border-radius: 8px;
-  background: rgba(255, 248, 232, 0.08);
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0 0 2px;
+  border: 0;
+  border-bottom: 1.5px solid #fff8e8;
+  border-radius: 0;
+  outline: none;
+  box-shadow: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
   color: #fff8e8;
+  font: 800 17px/1.2 var(--font-heading);
 }
 
-.street-quest--app .sqs-name-actions {
-  display: flex;
-  gap: 8px;
+.street-quest--app .sqs-name-input:focus,
+.street-quest--app .sqs-name-input:focus-visible {
+  outline: none;
+  box-shadow: none;
+  border-bottom-color: #fff8e8;
 }
 
-.street-quest--app .sqs-name-cancel,
+.street-quest--app .sqs-name-save,
+.street-quest--app .sqs-name-cancel {
+  display: grid;
+  place-items: center;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 50%;
+  font-size: 13px;
+  cursor: pointer;
+}
+
 .street-quest--app .sqs-name-save {
-  flex: 1 1 0;
-  border-radius: 8px;
+  background: rgba(76, 175, 80, 0.18);
+  color: #7bc67e;
+}
+
+.street-quest--app .sqs-name-save:hover {
+  background: rgba(76, 175, 80, 0.3);
+}
+
+.street-quest--app .sqs-name-cancel {
+  background: rgba(255, 248, 232, 0.1);
+  color: rgba(255, 248, 232, 0.6);
+}
+
+.street-quest--app .sqs-name-cancel:hover {
+  background: rgba(255, 248, 232, 0.18);
+  color: #fff8e8;
 }
 
 .street-quest--app .sqs-divider {
@@ -9256,13 +9346,54 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
   background: rgba(255, 248, 232, 0.12);
 }
 
+.street-quest--app .sqs-section-label {
+  margin: 0 0 6px;
+  color: var(--sq-orange);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.street-quest--app .sqs-section-label-spaced {
+  margin-top: 22px;
+}
+
+/* Grouped card, same shape as the reference "After" redesign: each
+   settings group sits in its own rounded card instead of a flat list. */
+.street-quest--app .sqs-group {
+  padding: 2px 14px;
+  border: 1px solid rgba(255, 248, 232, 0.1);
+  border-radius: 14px;
+  background: rgba(255, 248, 232, 0.04);
+}
+
+.street-quest--app .sqs-group-lg .sqs-row {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.street-quest--app .sqs-group-sm .sqs-row {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.street-quest--app .sqs-group .sqs-row:last-of-type {
+  border-bottom: 0;
+}
+
 .street-quest--app .sqs-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 14px 16px;
+  padding: 14px 2px;
+  border-bottom: 1px solid rgba(255, 248, 232, 0.1);
   cursor: default;
+}
+
+.street-quest--app .sqs-plain-list .sqs-row:last-of-type {
+  border-bottom: 0;
 }
 
 .street-quest--app .sqs-row-select {
@@ -9274,30 +9405,106 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
   align-items: center;
   gap: 10px;
   color: #fff8e8;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
 .street-quest--app .sqs-row-label i {
+  display: grid;
+  place-items: center;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(240, 90, 25, 0.16);
   color: var(--sq-orange);
-  font-size: 15px;
-  width: 18px;
-  text-align: center;
+  font-size: 14px;
 }
 
-.street-quest--app .sqs-select {
+/* Home district: native <select> popups can't be themed (browser chrome
+   renders them), so this is replaced at runtime by buildCustomSelect()
+   with a button + themed option list sharing the app's dark/orange look. */
+.street-quest--app .sqs-select-wrap {
+  position: relative;
   width: 100%;
   margin-top: 8px;
-  padding: 8px 10px;
-  border: 1px solid rgba(255, 248, 232, 0.25);
-  border-radius: 8px;
-  background: rgba(255, 248, 232, 0.06);
-  color: #fff8e8;
-  font-weight: 700;
 }
 
-.street-quest--app .sqs-select option {
-  color: var(--sq-ink);
+.street-quest--app .sqs-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1.5px solid rgba(255, 248, 232, 0.3);
+  border-radius: 10px;
+  background: rgba(255, 248, 232, 0.08);
+  color: #fff8e8;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.street-quest--app .sqs-select-trigger svg {
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.street-quest--app .sqs-select-trigger:hover,
+.street-quest--app .sqs-select-trigger.open {
+  border-color: var(--sq-orange);
+  background: rgba(255, 248, 232, 0.12);
+}
+
+.street-quest--app .sqs-select-trigger.open svg {
+  transform: rotate(180deg);
+}
+
+.street-quest--app .sqs-select-panel {
+  display: none;
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 260px;
+  overflow-y: auto;
+  border: 1.5px solid rgba(255, 248, 232, 0.3);
+  border-radius: 10px;
+  background: var(--sq-ink);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+.street-quest--app .sqs-select-panel.open {
+  display: block;
+}
+
+.street-quest--app .sqs-select-option {
+  padding: 11px 12px;
+  border-bottom: 1px solid rgba(255, 248, 232, 0.08);
+  color: rgba(255, 248, 232, 0.8);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.street-quest--app .sqs-select-option:last-child {
+  border-bottom: 0;
+}
+
+.street-quest--app .sqs-select-option:hover {
+  background: rgba(255, 248, 232, 0.08);
+  color: #fff8e8;
+}
+
+.street-quest--app .sqs-select-option.selected {
+  background: var(--sq-orange);
+  color: #fff8e8;
 }
 
 .street-quest--app .sqs-version-value {
@@ -9311,24 +9518,78 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
   font-weight: 500;
 }
 
+.street-quest--app .sqs-feedback-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.street-quest--app .sqs-feedback-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 0;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.street-quest--app .sqs-feedback-btn {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 42px;
+  border: 1.5px solid rgba(255, 248, 232, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 248, 232, 0.05);
+  color: rgba(255, 248, 232, 0.8);
+  font-size: 17px;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.street-quest--app .sqs-feedback-label {
+  color: rgba(255, 248, 232, 0.55);
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.street-quest--app .sqs-feedback-item:hover .sqs-feedback-btn {
+  border-color: var(--sq-orange);
+  background: rgba(240, 90, 25, 0.12);
+  color: #fff8e8;
+}
+
+.street-quest--app .sqs-feedback-item:hover .sqs-feedback-label {
+  color: #fff8e8;
+}
+
+.street-quest--app .sqs-feedback-item-disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+
 .street-quest--app .sqs-signout-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  width: calc(100% - 32px);
-  margin: 4px 16px 16px;
-  padding: 12px;
-  border: 1.5px solid rgba(255, 248, 232, 0.3);
-  border-radius: 10px;
-  background: none;
+  gap: 6px;
+  width: auto;
+  min-width: 130px;
+  margin: 12px auto 0;
+  padding: 7px 14px;
+  border: 0;
+  border-radius: 8px;
+  background: #c93a2e;
   color: #fff8e8;
+  font-size: 13px;
   font-weight: 700;
 }
 
 .street-quest--app .sqs-signout-btn:hover {
-  border-color: var(--sq-orange);
-  background: rgba(240, 90, 25, 0.12);
+  background: #a92e24;
   color: #fff8e8;
 }
 
@@ -9365,8 +9626,8 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
 .street-quest--app #notif-toggle-track {
   width: 46px;
   height: 26px;
-  border-radius: 5px;
-  border: 1.5px solid rgba(255, 248, 232, 0.25);
+  border-radius: 13px;
+  border: 1.5px solid rgba(255, 248, 232, 0.3);
 }
 
 .street-quest--app #notif-toggle-thumb {
@@ -9374,8 +9635,9 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
   left: 3px;
   width: 19px;
   height: 19px;
-  border-radius: 3px;
+  border-radius: 50%;
   background: #fff8e8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 /* GPS status: plain colored text, no rotated stamp-ring image. */
