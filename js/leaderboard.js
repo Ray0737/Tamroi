@@ -109,10 +109,12 @@ function load() {
 
     // Guild / Solo view toggle
     document.getElementById('leaderboard-view')?.addEventListener('change', e => {
-      const soloEl  = document.getElementById('solo-leaderboard-section');
-      const guildEl = document.getElementById('guild-leaderboard-section');
+      const soloEl   = document.getElementById('solo-leaderboard-section');
+      const guildEl  = document.getElementById('guild-leaderboard-section');
+      const metricEl = document.getElementById('metric-control');
       if (e.target.value === 'guild') {
         soloEl?.setAttribute('hidden', '');
+        metricEl?.setAttribute('hidden', '');
         guildEl?.removeAttribute('hidden');
         window.GuildModule?.renderGuildPanel();
         _renderGuildLeaderboard();
@@ -120,6 +122,7 @@ function load() {
       } else {
         guildEl?.setAttribute('hidden', '');
         soloEl?.removeAttribute('hidden');
+        metricEl?.removeAttribute('hidden');
       }
     });
 

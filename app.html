@@ -144,26 +144,6 @@
     .podium-bar-2 { height: 48px; background: #C0C0C0; }
     .podium-bar-3 { height: 36px; background: #CD7F32; }
 
-    /* ── Figure detail modal ── */
-    .modal-content {
-      background: var(--color-card-dark) !important;
-      border: 1px solid var(--color-border) !important;
-      border-radius: var(--radius-xl) !important;
-    }
-
-    .modal-header { border-bottom: 1px solid var(--color-border) !important; }
-    .modal-footer { border-top: 1px solid var(--color-border) !important; }
-    .btn-close { filter: invert(1) !important; }
-
-    .figure-modal-portrait {
-      width: 80px; height: 80px;
-      border-radius: 50%;
-      background: var(--color-card-darker);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 32px;
-      color: var(--color-muted);
-      margin: 0 auto var(--space-sm);
-    }
   </style>
   <link rel="stylesheet" href="css/street-quest.css?v=9">
 </head>
@@ -396,21 +376,19 @@
 
           <!-- ── อันดับ ── -->
           <div id="community-rank-section" style="display:flex;flex-direction:column;gap:var(--space-md)">
-            <div class="leaderboard-control" data-control="view">
-              <div class="leaderboard-control__head">
-                <span class="leaderboard-control__label"><i class="bi bi-compass"></i> VIEW MODE</span>
-                <span class="leaderboard-control__index">01 / 02</span>
+            <div id="leaderboard-controls-row" class="leaderboard-controls-row">
+              <div class="leaderboard-control" data-control="view">
+                <div class="leaderboard-control__head">
+                  <span class="leaderboard-control__label"><i class="bi bi-compass"></i> VIEW MODE</span>
+                </div>
+                <select id="leaderboard-view" class="lb-select" aria-label="รูปแบบการจัดอันดับ">
+                  <option value="solo">เดี่ยว</option>
+                  <option value="guild">กลุ่ม</option>
+                </select>
               </div>
-              <select id="leaderboard-view" class="lb-select" aria-label="รูปแบบการจัดอันดับ">
-                <option value="solo">เดี่ยว</option>
-                <option value="guild">กลุ่ม</option>
-              </select>
-            </div>
-            <div id="solo-leaderboard-section">
-              <div class="leaderboard-control" data-control="metric">
+              <div class="leaderboard-control" data-control="metric" id="metric-control">
                 <div class="leaderboard-control__head">
                   <span class="leaderboard-control__label"><i class="bi bi-bar-chart-line"></i> SCORE BY</span>
-                  <span class="leaderboard-control__index">02 / 02</span>
                 </div>
                 <select id="leaderboard-metric" class="lb-select" aria-label="เลือกตัวชี้วัดอันดับ">
                   <option value="legacy">Legacy Score</option>
@@ -418,6 +396,8 @@
                   <option value="archive">Archive</option>
                 </select>
               </div>
+            </div>
+            <div id="solo-leaderboard-section">
               <div id="my-rank-card"></div>
               <div id="leaderboard-list">
                 <div style="display:flex;justify-content:center;padding:40px"><div class="spinner"></div></div>

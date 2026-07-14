@@ -1006,6 +1006,28 @@
   padding: 16px 14px 38px;
 }
 
+/* The Collection tab's inherited "color: var(--sq-ink)" from the cream-era
+   section-inner rule above is near-black text sitting on this dark archive
+   card background, making the Lore Journal unreadable. Force light text. */
+.street-quest--app #tab-collection .lore-journal-list,
+.street-quest--app #tab-collection .lore-chain-card,
+.street-quest--app #tab-collection .lore-journal-card {
+  background: var(--color-card-dark);
+  color: #fff8e8;
+}
+
+.street-quest--app #tab-collection .lore-journal-title {
+  color: #fff8e8;
+}
+
+.street-quest--app #tab-collection .lore-journal-meta {
+  color: rgba(255, 248, 232, 0.6);
+}
+
+.street-quest--app #tab-collection .lore-journal-full {
+  color: rgba(255, 248, 232, 0.85);
+}
+
 .collection-archive-hero {
   position: relative;
   min-height: 178px;
@@ -1233,12 +1255,22 @@
   color: #fff;
 }
 
+/* MY RANK card and the leaderboard list below it show the same person's
+   row twice in two clashing materials (cream ticket vs. dark ink card).
+   Unify them onto one dark ink card language, connected with no gap, so
+   they read as one card with a pinned header instead of two stacked ones. */
 .street-quest--app #my-rank-card {
   padding: 10px 13px 10px 66px;
   position: relative;
   overflow: hidden;
   border-color: var(--sq-paper-light);
-  box-shadow: 5px 5px 0 var(--sq-lime);
+  border-radius: 5px 5px 0 0;
+  background-color: var(--sq-ink-soft);
+  background-image:
+    linear-gradient(rgba(9, 9, 8, 0.55), rgba(9, 9, 8, 0.55)),
+    url('../assets/street-quest/ui-paper-ink.webp');
+  background-size: auto, 480px 480px;
+  box-shadow: 5px 5px 0 var(--sq-blue);
 }
 
 .street-quest--app #my-rank-card::before {
@@ -1264,8 +1296,24 @@
   border: 0;
 }
 
+.street-quest--app #my-rank-card .lb-name,
+.street-quest--app #my-rank-card .lb-you {
+  color: #fff8e8;
+}
+
+.street-quest--app #my-rank-card .lb-sub {
+  color: #b9af99;
+}
+
+.street-quest--app #my-rank-card .lb-score {
+  color: var(--sq-lime);
+}
+
 .street-quest--app #leaderboard-list {
+  margin-top: -1px;
   padding: 7px 13px;
+  border-top: 0;
+  border-radius: 0 0 5px 5px;
   border-color: var(--sq-paper-light);
   background-color: var(--sq-ink-soft);
   background-image:
@@ -1297,8 +1345,8 @@
 
 .street-quest--app #leaderboard-list .lb-my-row {
   margin: 0;
-  background: var(--color-primary-dim);
-  border-bottom-color: var(--sq-orange);
+  background: none;
+  border-bottom-color: rgba(255, 248, 229, 0.18);
 }
 
 .street-quest--app #guild-panel {
@@ -1630,6 +1678,20 @@
   font-size: 12px;
 }
 
+/* #guild-edit-form ("My Group" edit) sits on the dark field-crew journal
+   card, not the cream .guild-no-panel create form the ink-dark text color
+   above was written for — dark-on-dark made the fields unreadable. */
+.street-quest--app #guild-edit-form .guild-input,
+.street-quest--app #guild-edit-form .guild-textarea {
+  border-bottom-color: rgba(255, 248, 232, 0.4);
+  color: #fff8e8;
+}
+
+.street-quest--app #guild-edit-form .guild-input::placeholder,
+.street-quest--app #guild-edit-form .guild-textarea::placeholder {
+  color: rgba(255, 248, 232, 0.45);
+}
+
 .street-quest--app #guild-panel .guild-no-title,
 .street-quest--app #guild-panel .guild-no-desc {
   color: var(--sq-ink);
@@ -1797,19 +1859,29 @@
   gap: 12px !important;
 }
 
+.leaderboard-controls-row {
+  display: flex;
+  gap: 10px;
+}
+
 .street-quest--app .leaderboard-control {
   position: relative;
   z-index: 0;
-  padding: 9px 10px 10px;
-  border: 2px solid var(--sq-ink);
-  border-radius: 3px;
-  background-color: var(--sq-paper-light);
-  background-image:
-    linear-gradient(rgba(255, 247, 224, 0.68), rgba(255, 247, 224, 0.68)),
-    url('../assets/street-quest/ui-paper-kraft.webp');
-  background-size: auto, 380px 380px;
-  box-shadow: 4px 4px 0 var(--sq-blue);
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 8px 9px 9px;
+  border: 0;
+  border-radius: 4px;
+  box-shadow: none;
   color: var(--sq-ink);
+}
+
+.street-quest--app .leaderboard-control[data-control="view"] {
+  background: var(--sq-blue);
+}
+
+.street-quest--app .leaderboard-control[data-control="metric"] {
+  background: var(--sq-orange);
 }
 
 /* The open menu must paint above the following rank cards. The metric card
@@ -1819,37 +1891,25 @@
   z-index: 20;
 }
 
-.street-quest--app .leaderboard-control[data-control="metric"] {
-  transform: rotate(-0.25deg);
-  box-shadow: 4px 4px 0 var(--sq-lime);
-}
-
 .leaderboard-control__head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 .leaderboard-control__label {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: rgba(24, 21, 16, 0.68);
+  color: rgba(255, 248, 232, 0.86);
   font: 800 10px/1 var(--font-display);
   letter-spacing: 0.14em;
 }
 
 .leaderboard-control__label i {
-  color: var(--sq-orange);
+  color: #fff8e8;
   font-size: 11px;
-}
-
-.leaderboard-control__index {
-  color: rgba(24, 21, 16, 0.44);
-  font: 700 9px/1 var(--font-display);
-  letter-spacing: 0.1em;
 }
 
 .street-quest--app .leaderboard-control .lb-custom-wrap {
@@ -1883,10 +1943,10 @@
   top: calc(100% + 5px);
   z-index: 30;
   padding: 4px;
-  border: 2px solid var(--sq-ink);
+  border: 1.5px solid var(--sq-ink);
   border-radius: 2px;
   background: var(--sq-paper-light) url('../assets/street-quest/ui-paper-kraft.webp') center / 380px 380px;
-  box-shadow: 4px 4px 0 var(--sq-orange);
+  box-shadow: 2px 2px 0 rgba(24, 21, 16, 0.3);
 }
 
 /* Keep dynamic leaderboard content inside the mobile frame at every width. */
@@ -5393,9 +5453,10 @@
 .street-quest--app .figure-detail-dossier .figure-dossier-header {
   position: relative;
   display: block;
-  height: 42%;
-  flex: 0 0 42%;
-  padding: 0;
+  height: auto;
+  flex: 0 0 auto;
+  min-height: 42%;
+  padding: 5% 0 14px;
   border: 0;
   background: transparent;
 }
@@ -5412,38 +5473,37 @@
 }
 
 .street-quest--app .figure-dossier-header-row {
-  position: absolute;
-  inset: 0;
-  display: block;
+  position: static;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   animation: none;
   transform: none;
 }
 
 .street-quest--app .figure-dossier-header .figure-modal-portrait {
-  position: absolute;
-  top: 4.5%;
-  left: 50%;
+  position: static;
   display: grid;
-  width: 43%;
-  height: 67%;
-  margin: 0;
+  width: 150px;
+  height: 150px;
+  margin: 0 0 10px;
   place-items: center;
   border: 0;
   border-radius: 50%;
   background: transparent;
   color: var(--sq-ink);
   font-size: clamp(44px, 14vw, 76px);
-  transform: translateX(-50%);
+  transform: none;
   box-shadow: none;
 }
 
 .street-quest--app .figure-dossier-copy {
-  position: absolute;
-  top: 73%;
-  right: 9%;
-  left: 9%;
+  position: static;
+  width: 82%;
   min-width: 0;
-  padding: 0;
+  padding: 10px 12px;
+  background: var(--sq-ink);
+  border-radius: 2px;
   color: #fff8e8;
   text-align: center;
 }
