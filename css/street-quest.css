@@ -166,7 +166,9 @@
 }
 
 .street-quest--landing .cta-login,
-.street-quest--landing .cta-login a { color: #f5ecd8; }
+.street-quest--landing .cta-login a {
+  color: #f5ecd8;
+}
 
 /* Explorer-pass authentication. */
 .street-quest--auth .auth-page {
@@ -243,11 +245,19 @@
   background: rgba(255, 253, 245, 0.7);
 }
 
-.street-quest--auth .auth-sticker-tl { background: var(--sq-ink); }
-.street-quest--auth .auth-sticker-tr { background: var(--sq-blue); color: #fff; }
+.street-quest--auth .auth-sticker-tl {
+  background: var(--sq-ink);
+}
+
+.street-quest--auth .auth-sticker-tr {
+  background: var(--sq-blue);
+  color: #fff;
+}
 
 /* Onboarding: spacious route card; benefits become readable rows on small phones. */
-.street-quest--onboarding .app-wrapper { overflow-y: auto; }
+.street-quest--onboarding .app-wrapper {
+  overflow-y: auto;
+}
 
 .street-quest--onboarding .onboard-page {
   justify-content: flex-start;
@@ -292,11 +302,31 @@
   color: #fff;
 }
 
-.street-quest--onboarding .step-line { width: 96px; background: rgba(20, 18, 14, 0.22); }
-.street-quest--onboarding .illus-wrap { width: 122px; height: 122px; margin-bottom: -4px; }
-.street-quest--onboarding .ring-1 { width: 122px; height: 122px; }
-.street-quest--onboarding .ring-2 { width: 94px; height: 94px; }
-.street-quest--onboarding .ring-3 { width: 68px; height: 68px; }
+.street-quest--onboarding .step-line {
+  width: 96px;
+  background: rgba(20, 18, 14, 0.22);
+}
+
+.street-quest--onboarding .illus-wrap {
+  width: 122px;
+  height: 122px;
+  margin-bottom: -4px;
+}
+
+.street-quest--onboarding .ring-1 {
+  width: 122px;
+  height: 122px;
+}
+
+.street-quest--onboarding .ring-2 {
+  width: 94px;
+  height: 94px;
+}
+
+.street-quest--onboarding .ring-3 {
+  width: 68px;
+  height: 68px;
+}
 
 .street-quest--onboarding .onboard-title {
   color: var(--sq-ink);
@@ -338,17 +368,53 @@
   box-shadow: 3px 3px 0 rgba(12, 12, 10, 0.75);
 }
 
-.street-quest--onboarding .benefit-row:nth-child(1) { background: var(--sq-lime); }
-.street-quest--onboarding .benefit-row:nth-child(2) { background: var(--sq-blue); }
-.street-quest--onboarding .benefit-row:nth-child(3) { background: var(--sq-pink); }
-.street-quest--onboarding .benefit-icon { width: 40px; height: 40px; }
-.street-quest--onboarding .benefit-icon svg { width: 20px; height: 20px; }
-.street-quest--onboarding .benefit-text { color: var(--sq-ink); font-size: 13px; line-height: 1.35; }
-.street-quest--onboarding .benefit-row:nth-child(2) .benefit-text { color: #fff; }
-.street-quest--onboarding .benefit-text small { color: currentColor; opacity: 0.78; font-size: 12px; }
-.street-quest--onboarding .skip-link { color: rgba(23, 20, 15, 0.68); min-height: 40px; }
+.street-quest--onboarding .benefit-row:nth-child(1) {
+  background: var(--sq-lime);
+}
 
-.street-quest--onboarding .district-grid-2col { gap: 11px; }
+.street-quest--onboarding .benefit-row:nth-child(2) {
+  background: var(--sq-blue);
+}
+
+.street-quest--onboarding .benefit-row:nth-child(3) {
+  background: var(--sq-pink);
+}
+
+.street-quest--onboarding .benefit-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.street-quest--onboarding .benefit-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.street-quest--onboarding .benefit-text {
+  color: var(--sq-ink);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.street-quest--onboarding .benefit-row:nth-child(2) .benefit-text {
+  color: #fff;
+}
+
+.street-quest--onboarding .benefit-text small {
+  color: currentColor;
+  opacity: 0.78;
+  font-size: 12px;
+}
+
+.street-quest--onboarding .skip-link {
+  color: rgba(23, 20, 15, 0.68);
+  min-height: 40px;
+}
+
+.street-quest--onboarding .district-grid-2col {
+  gap: 11px;
+}
+
 .street-quest--onboarding .dc-card {
   min-height: 112px;
   justify-content: center;
@@ -357,10 +423,26 @@
   background: rgba(255, 253, 243, 0.82);
   color: var(--sq-ink);
 }
-.street-quest--onboarding .dc-card.selected { background: var(--sq-lime); border-color: var(--sq-ink); box-shadow: 3px 3px 0 var(--sq-ink); }
-.street-quest--onboarding .dc-name-th { color: var(--sq-ink); font-size: 14px; }
-.street-quest--onboarding .dc-name-en { color: rgba(22, 20, 15, 0.64); font-size: 11px; }
-.street-quest--onboarding .dc-icon { background: rgba(24, 22, 17, 0.08); }
+
+.street-quest--onboarding .dc-card.selected {
+  background: var(--sq-lime);
+  border-color: var(--sq-ink);
+  box-shadow: 3px 3px 0 var(--sq-ink);
+}
+
+.street-quest--onboarding .dc-name-th {
+  color: var(--sq-ink);
+  font-size: 14px;
+}
+
+.street-quest--onboarding .dc-name-en {
+  color: rgba(22, 20, 15, 0.64);
+  font-size: 11px;
+}
+
+.street-quest--onboarding .dc-icon {
+  background: rgba(24, 22, 17, 0.08);
+}
 
 /* App chrome: ticket header + pasted navigation strip. */
 .street-quest--app .top-bar {
@@ -385,11 +467,31 @@
   overflow: hidden;
 }
 
-.street-quest--app .top-bar__center .page-title { color: var(--sq-ink); }
-.street-quest--app .page-subtitle { color: rgba(26, 23, 17, 0.72); font-size: 10px; font-weight: 800; letter-spacing: 1.25px; }
-.street-quest--app .icon-btn { color: var(--sq-ink); border-radius: 3px; }
-.street-quest--app .icon-btn:hover { background: rgba(20, 18, 14, 0.08); color: var(--sq-orange); }
-.street-quest--app .notif-badge { background: var(--sq-pink); border-color: var(--sq-paper-light); }
+.street-quest--app .top-bar__center .page-title {
+  color: var(--sq-ink);
+}
+
+.street-quest--app .page-subtitle {
+  color: rgba(26, 23, 17, 0.72);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.25px;
+}
+
+.street-quest--app .icon-btn {
+  color: var(--sq-ink);
+  border-radius: 3px;
+}
+
+.street-quest--app .icon-btn:hover {
+  background: rgba(20, 18, 14, 0.08);
+  color: var(--sq-orange);
+}
+
+.street-quest--app .notif-badge {
+  background: var(--sq-pink);
+  border-color: var(--sq-paper-light);
+}
 
 .street-quest--app .bottom-nav {
   height: var(--bottom-nav-height);
@@ -403,16 +505,33 @@
   box-shadow: 0 -5px 0 var(--sq-ink), 0 -12px 24px rgba(0, 0, 0, 0.34);
 }
 
-.street-quest--app .nav-item { gap: 3px; color: #a99f89; padding: 5px 0; }
-.street-quest--app .nav-icon-wrap { width: 52px; height: 32px; border-radius: 2px; }
+.street-quest--app .nav-item {
+  gap: 3px;
+  color: #a99f89;
+  padding: 5px 0;
+}
+
+.street-quest--app .nav-icon-wrap {
+  width: 52px;
+  height: 32px;
+  border-radius: 2px;
+}
+
 .street-quest--app .nav-item.active .nav-icon-wrap {
   background: var(--sq-lime);
   border: 2px solid var(--sq-ink);
   box-shadow: 2px 2px 0 var(--sq-paper);
   transform: rotate(-2deg);
 }
-.street-quest--app .nav-item.active { color: #fff; }
-.street-quest--app .nav-label { font-size: 12px; font-weight: 700; }
+
+.street-quest--app .nav-item.active {
+  color: #fff;
+}
+
+.street-quest--app .nav-label {
+  font-size: 12px;
+  font-weight: 700;
+}
 
 /* Map has a useful generated fallback even if remote tiles are unavailable. */
 .street-quest--app #map-view {
@@ -424,8 +543,14 @@
   background-size: auto, cover;
   background-repeat: no-repeat;
 }
-.street-quest--app #map-view .maplibregl-canvas { transition: opacity 240ms ease; }
-.street-quest--app #map-view.map-texture-fallback .maplibregl-canvas { opacity: 0.16; }
+
+.street-quest--app #map-view .maplibregl-canvas {
+  transition: opacity 240ms ease;
+}
+
+.street-quest--app #map-view.map-texture-fallback .maplibregl-canvas {
+  opacity: 0.16;
+}
 
 .street-quest--app .map-stats-pill {
   top: 14px;
@@ -439,9 +564,20 @@
   transform: rotate(-0.4deg);
 }
 
-.street-quest--app .map-stats-pill .stat-value { font: 800 18px/1 var(--font-display); }
-.street-quest--app .map-stats-pill .stat-label { margin-top: 4px; color: rgba(24, 21, 16, 0.74); font-size: 11px; font-weight: 700; }
-.street-quest--app .map-stat-divider { background: rgba(22, 20, 15, 0.18); }
+.street-quest--app .map-stats-pill .stat-value {
+  font: 800 18px/1 var(--font-display);
+}
+
+.street-quest--app .map-stats-pill .stat-label {
+  margin-top: 4px;
+  color: rgba(24, 21, 16, 0.74);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.street-quest--app .map-stat-divider {
+  background: rgba(22, 20, 15, 0.18);
+}
 
 .street-quest--app .fab-primary {
   border: 2px solid var(--sq-paper-light);
@@ -449,8 +585,11 @@
   background: var(--sq-orange);
   box-shadow: 4px 4px 0 var(--sq-ink);
 }
+
 .street-quest--app .fab-locate,
-.street-quest--app .fab-tilt { background: var(--sq-ink-soft); }
+.street-quest--app .fab-tilt {
+  background: var(--sq-ink-soft);
+}
 
 /* Collection becomes a physical archive page while preserving the existing DOM. */
 .street-quest--app #tab-collection .section-scroll {
@@ -462,7 +601,11 @@
   background-size: auto, cover;
 }
 
-.street-quest--app #tab-collection .section-inner { color: var(--sq-ink); padding: 22px 18px 34px; }
+.street-quest--app #tab-collection .section-inner {
+  color: var(--sq-ink);
+  padding: 22px 18px 34px;
+}
+
 .street-quest--app #tab-collection .search-bar {
   min-height: 50px;
   border: 2px solid var(--sq-ink);
@@ -470,9 +613,16 @@
   background: rgba(255, 253, 244, 0.72);
   box-shadow: 3px 3px 0 rgba(13, 13, 11, 0.76);
 }
-.street-quest--app #tab-collection .search-bar input { color: var(--sq-ink); font-size: 14px; }
+
+.street-quest--app #tab-collection .search-bar input {
+  color: var(--sq-ink);
+  font-size: 14px;
+}
+
 .street-quest--app #tab-collection .search-bar input::placeholder,
-.street-quest--app #tab-collection .search-bar svg { color: rgba(24, 21, 16, 0.58); }
+.street-quest--app #tab-collection .search-bar svg {
+  color: rgba(24, 21, 16, 0.58);
+}
 
 .street-quest--app #tab-collection .filter-pills {
   display: grid;
@@ -480,9 +630,13 @@
   gap: 12px 10px;
   padding: 8px 3px 12px 0;
 }
-.street-quest--app #tab-collection .filter-pills > *,
+
+.street-quest--app #tab-collection .filter-pills>*,
 .street-quest--app #tab-collection .filter-pills .filter-select,
-.street-quest--app #tab-collection .filter-pills .pill { width: 100%; }
+.street-quest--app #tab-collection .filter-pills .pill {
+  width: 100%;
+}
+
 .street-quest--app #tab-collection .pill,
 .street-quest--app #tab-collection .filter-select {
   position: relative;
@@ -490,7 +644,7 @@
   border: 2px solid var(--sq-ink);
   border-radius: 2px;
   background-color: rgba(255, 253, 244, 0.72);
-  background-image: linear-gradient(135deg, rgba(255,255,255,0.26), transparent 42%), url('../assets/street-quest/ui-paper-kraft.webp');
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.26), transparent 42%), url('../assets/street-quest/ui-paper-kraft.webp');
   background-size: auto, 280px 280px;
   color: var(--sq-ink);
   box-shadow: 3px 3px 0 var(--sq-ink);
@@ -499,6 +653,7 @@
   letter-spacing: 0.01em;
   transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
 }
+
 .street-quest--app #tab-collection .pill::after {
   content: '';
   position: absolute;
@@ -511,39 +666,52 @@
   opacity: 0.42;
   pointer-events: none;
 }
+
 .street-quest--app #tab-collection .pill:hover,
 .street-quest--app #tab-collection .pill:focus-visible {
   transform: translate(-1px, -1px);
   box-shadow: 4px 4px 0 var(--sq-ink);
 }
+
 .street-quest--app #tab-collection .pill:active {
   transform: translate(2px, 2px);
   box-shadow: 1px 1px 0 var(--sq-ink);
 }
+
 .street-quest--app #tab-collection .filter-select {
-  background-image: linear-gradient(135deg, rgba(255,255,255,0.26), transparent 42%), url('../assets/street-quest/ui-paper-kraft.webp'), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23181510' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.26), transparent 42%), url('../assets/street-quest/ui-paper-kraft.webp'), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23181510' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-size: auto, 280px 280px, 12px 12px;
   background-repeat: no-repeat;
   background-position: 0 0, center, right 10px center;
 }
+
 .street-quest--app #tab-collection .pill.active,
 .street-quest--app #tab-collection .filter-select.has-value {
   background-color: var(--sq-orange);
   color: #fff;
-  box-shadow: 3px 3px 0 var(--sq-ink), inset 0 -3px 0 rgba(0,0,0,0.16);
+  box-shadow: 3px 3px 0 var(--sq-ink), inset 0 -3px 0 rgba(0, 0, 0, 0.16);
 }
-.street-quest--app #tab-collection .pill.active::after { opacity: 0.72; }
+
+.street-quest--app #tab-collection .pill.active::after {
+  opacity: 0.72;
+}
+
 .street-quest--app #tab-collection .filter-select:disabled {
   opacity: 0.72;
   border-style: dashed;
   background-color: rgba(24, 21, 16, 0.08);
   box-shadow: 2px 2px 0 rgba(11, 11, 10, 0.48);
 }
+
 .street-quest--app #tab-collection .filter-select-wrap {
   position: relative;
   z-index: 5;
 }
-.street-quest--app #tab-collection .filter-select-wrap.is-open { z-index: 30; }
+
+.street-quest--app #tab-collection .filter-select-wrap.is-open {
+  z-index: 30;
+}
+
 .street-quest--app #tab-collection .filter-select-menu {
   position: absolute;
   top: calc(100% + 8px);
@@ -554,10 +722,11 @@
   border: 2px solid var(--sq-ink);
   border-radius: 2px;
   background-color: var(--sq-paper-light);
-  background-image: linear-gradient(rgba(255,255,255,0.16), rgba(255,255,255,0.16)), url('../assets/street-quest/ui-paper-kraft.webp');
+  background-image: linear-gradient(rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.16)), url('../assets/street-quest/ui-paper-kraft.webp');
   background-size: auto, 280px 280px;
   box-shadow: 4px 4px 0 var(--sq-ink);
 }
+
 .street-quest--app #tab-collection .filter-select-menu .dropdown-item {
   display: block;
   width: 100%;
@@ -574,21 +743,28 @@
   text-align: left;
   transition: background-color 120ms ease, color 120ms ease, transform 120ms ease;
 }
-.street-quest--app #tab-collection .filter-select-menu .dropdown-item:last-child { border-bottom: 0; }
+
+.street-quest--app #tab-collection .filter-select-menu .dropdown-item:last-child {
+  border-bottom: 0;
+}
+
 .street-quest--app #tab-collection .filter-select-menu .dropdown-item[aria-selected="true"] {
   background: var(--sq-lime);
   color: var(--sq-ink);
 }
+
 .street-quest--app #tab-collection .filter-select-menu .dropdown-item:hover,
 .street-quest--app #tab-collection .filter-select-menu .dropdown-item:focus-visible {
   background: var(--sq-orange);
   color: #fff;
   transform: translateX(2px);
 }
+
 .street-quest--app #tab-collection .filter-select:focus-visible {
   transform: translate(-1px, -1px);
   box-shadow: 4px 4px 0 var(--sq-ink);
 }
+
 .street-quest--app #tab-collection .stats-row {
   margin-top: 14px;
   padding: 12px;
@@ -596,9 +772,15 @@
   border-radius: 4px;
   background: var(--sq-ink);
 }
+
 .street-quest--app #tab-collection .stats-row .stat-value,
-.street-quest--app #tab-collection .stats-row .stat-label { color: #fff !important; }
-.street-quest--app #tab-collection .stats-row .stat-label { opacity: 0.72; }
+.street-quest--app #tab-collection .stats-row .stat-label {
+  color: #fff !important;
+}
+
+.street-quest--app #tab-collection .stats-row .stat-label {
+  opacity: 0.72;
+}
 
 /* artifact cards keep the kraft-paper treatment; figure cards use the new stamp style from components.css */
 .street-quest--app #tab-collection .artifact-card {
@@ -612,8 +794,17 @@
   color: var(--sq-ink);
   box-shadow: 3px 3px 0 rgba(13, 13, 11, 0.65);
 }
-.street-quest--app #tab-collection .artifact-name { font-size: 12px; line-height: 1.35; color: var(--sq-ink); }
-.street-quest--app #tab-collection .section-title { color: var(--sq-ink); }
+
+.street-quest--app #tab-collection .artifact-name {
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--sq-ink);
+}
+
+.street-quest--app #tab-collection .section-title {
+  color: var(--sq-ink);
+}
+
 .street-quest--app #tab-collection .section-title {
   display: inline-block;
   margin-top: 8px;
@@ -632,8 +823,12 @@
     url('../assets/street-quest/ui-paper-ink.webp');
   background-size: auto, 620px 620px;
 }
+
 .street-quest--app #tab-mission .section-inner,
-.street-quest--app #tab-community .section-inner { padding: 22px 18px 36px; gap: 18px !important; }
+.street-quest--app #tab-community .section-inner {
+  padding: 22px 18px 36px;
+  gap: 18px !important;
+}
 
 .street-quest--app .mission-card,
 .street-quest--app .mission-empty,
@@ -654,18 +849,45 @@
   box-shadow: 4px 4px 0 var(--sq-orange);
 }
 
-.street-quest--app .mission-card { padding: 20px; }
-.street-quest--app .mission-title { color: var(--sq-ink); font-size: 25px; }
+.street-quest--app .mission-card {
+  padding: 20px;
+}
+
+.street-quest--app .mission-title {
+  color: var(--sq-ink);
+  font-size: 25px;
+}
+
 .street-quest--app .mission-sub,
 .street-quest--app .mission-banner-sub,
 .street-quest--app .mission-empty p.sub,
-.street-quest--app .challenge-loc { color: rgba(24, 21, 16, 0.72); font-size: 13px; line-height: 1.5; }
+.street-quest--app .challenge-loc {
+  color: rgba(24, 21, 16, 0.72);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .street-quest--app .mission-banner-title,
 .street-quest--app .mission-empty p,
-.street-quest--app .challenge-name { color: var(--sq-ink); }
-.street-quest--app .challenge-row { min-height: 76px; gap: 12px; border-color: rgba(24, 21, 16, 0.16); }
-.street-quest--app .challenge-icon-box { width: 42px; height: 42px; border: 1.5px solid var(--sq-ink); }
-.street-quest--app .challenge-pts { color: #c7430d; }
+.street-quest--app .challenge-name {
+  color: var(--sq-ink);
+}
+
+.street-quest--app .challenge-row {
+  min-height: 76px;
+  gap: 12px;
+  border-color: rgba(24, 21, 16, 0.16);
+}
+
+.street-quest--app .challenge-icon-box {
+  width: 42px;
+  height: 42px;
+  border: 1.5px solid var(--sq-ink);
+}
+
+.street-quest--app .challenge-pts {
+  color: #c7430d;
+}
 
 .street-quest--app #community-sub-tabs {
   display: grid;
@@ -676,6 +898,7 @@
   border-radius: 4px;
   background: #171714;
 }
+
 .street-quest--app #community-sub-tabs .pill {
   min-height: 44px;
   width: 100%;
@@ -685,7 +908,12 @@
   font-size: 12px;
   font-weight: 700;
 }
-.street-quest--app #community-sub-tabs .pill.active { background: var(--sq-orange); color: #fff; }
+
+.street-quest--app #community-sub-tabs .pill.active {
+  background: var(--sq-orange);
+  color: #fff;
+}
+
 .street-quest--app .lb-select {
   min-height: 42px;
   border: none;
@@ -699,28 +927,71 @@
   background-position: right 2px center;
   transition: border-color 0.15s ease;
 }
+
 .street-quest--app .lb-select:hover,
-.street-quest--app .lb-select:focus { border-bottom-color: var(--sq-orange); }
+.street-quest--app .lb-select:focus {
+  border-bottom-color: var(--sq-orange);
+}
+
 .street-quest--app #my-rank-card,
 .street-quest--app #leaderboard-list,
 .street-quest--app #guild-leaderboard-list,
 .street-quest--app #guild-panel,
-.street-quest--app #community-forum-panel { padding: 14px 16px; }
+.street-quest--app #community-forum-panel {
+  padding: 14px 16px;
+}
+
 .street-quest--app .rank-row,
-.street-quest--app .lb-row { min-height: 68px; gap: 12px; padding-block: 14px; border-bottom: 1px solid rgba(24, 21, 16, 0.13); border-radius: 0; }
-.street-quest--app .rank-row:nth-child(even) { background: rgba(23, 20, 15, 0.04); }
+.street-quest--app .lb-row {
+  min-height: 68px;
+  gap: 12px;
+  padding-block: 14px;
+  border-bottom: 1px solid rgba(24, 21, 16, 0.13);
+  border-radius: 0;
+}
+
+.street-quest--app .rank-row:nth-child(even) {
+  background: rgba(23, 20, 15, 0.04);
+}
+
 .street-quest--app .rank-name,
-.street-quest--app .rank-score { color: var(--sq-ink); }
+.street-quest--app .rank-score {
+  color: var(--sq-ink);
+}
+
 .street-quest--app .rank-province,
-.street-quest--app .rank-number { color: rgba(24, 21, 16, 0.6); }
-.street-quest--app #tab-community .lb-name { color: var(--sq-ink); }
-.street-quest--app #tab-community .lb-sub { color: rgba(24, 21, 16, 0.64); }
-.street-quest--app #tab-community .lb-score { color: #5c574c; }
-.street-quest--app #tab-community .lb-score.gold { color: #8a6900; }
-.street-quest--app #tab-community .lb-score.silver { color: #5f6470; }
-.street-quest--app #tab-community .lb-score.bronze { color: #9b521e; }
+.street-quest--app .rank-number {
+  color: rgba(24, 21, 16, 0.6);
+}
+
+.street-quest--app #tab-community .lb-name {
+  color: var(--sq-ink);
+}
+
+.street-quest--app #tab-community .lb-sub {
+  color: rgba(24, 21, 16, 0.64);
+}
+
+.street-quest--app #tab-community .lb-score {
+  color: #5c574c;
+}
+
+.street-quest--app #tab-community .lb-score.gold {
+  color: #8a6900;
+}
+
+.street-quest--app #tab-community .lb-score.silver {
+  color: #5f6470;
+}
+
+.street-quest--app #tab-community .lb-score.bronze {
+  color: #9b521e;
+}
+
 .street-quest--app #tab-community .lb-my-row .lb-score,
-.street-quest--app #tab-community .lb-name .lb-you { color: #d7430c; }
+.street-quest--app #tab-community .lb-name .lb-you {
+  color: #d7430c;
+}
 
 /* Collection: archive collage + torn evidence-board controls. */
 .street-quest--app #tab-collection .section-scroll {
@@ -779,7 +1050,10 @@
   text-transform: uppercase;
 }
 
-.collection-archive-copy h2 { font-size: 37px; }
+.collection-archive-copy h2 {
+  font-size: 37px;
+}
+
 .collection-archive-copy p {
   margin: 8px 0 0;
   display: inline-block;
@@ -826,12 +1100,16 @@
   box-shadow: 4px 5px 0 var(--sq-orange);
   clip-path: polygon(0 2%, 4% 0, 12% 2%, 24% 0, 39% 2%, 55% 0, 72% 2%, 88% 0, 100% 2%, 100% 98%, 91% 100%, 76% 98%, 61% 100%, 45% 98%, 28% 100%, 13% 98%, 0 100%);
 }
+
 .street-quest--app #tab-collection .collection-toolbox.has-open-class-menu {
   z-index: 30;
   clip-path: none;
 }
 
-.street-quest--app #tab-collection .collection-toolbox .search-bar { margin: 0; }
+.street-quest--app #tab-collection .collection-toolbox .search-bar {
+  margin: 0;
+}
+
 .street-quest--app #tab-collection .collection-toolbox .stats-row {
   margin: 0;
   min-height: 0;
@@ -841,11 +1119,12 @@
     url('../assets/street-quest/ui-paper-ink.webp');
   background-size: auto, 420px 420px;
 }
+
 .street-quest--app #tab-collection .collection-toolbox .stats-row .stat-item {
   padding: 10px 8px;
 }
 
-.street-quest--app #tab-collection .collection-toolbox .stat-item + .stat-item {
+.street-quest--app #tab-collection .collection-toolbox .stat-item+.stat-item {
   border-left: 1px dashed rgba(255, 248, 229, 0.35);
 }
 
@@ -884,8 +1163,16 @@
   color: #fff8e8;
   text-shadow: 2px 2px 0 #000;
 }
-.community-hero-copy .sq-kicker { color: var(--sq-orange); }
-.community-hero-copy h2 { font-size: 29px; letter-spacing: -0.5px; }
+
+.community-hero-copy .sq-kicker {
+  color: var(--sq-orange);
+}
+
+.community-hero-copy h2 {
+  font-size: 29px;
+  letter-spacing: -0.5px;
+}
+
 .community-hero-copy p {
   display: inline-block;
   margin: 5px 0 0;
@@ -909,9 +1196,27 @@
   font: 800 15px/1 var(--font-display);
   box-shadow: 2px 2px 0 var(--sq-ink);
 }
-.podium-rank--two { left: 18%; top: 115px; background: var(--sq-blue); transform: rotate(-5deg); }
-.podium-rank--one { left: calc(50% - 15px); top: 49px; background: var(--sq-orange); transform: rotate(3deg); }
-.podium-rank--three { right: 17%; top: 76px; background: var(--sq-pink); transform: rotate(5deg); }
+
+.podium-rank--two {
+  left: 18%;
+  top: 115px;
+  background: var(--sq-blue);
+  transform: rotate(-5deg);
+}
+
+.podium-rank--one {
+  left: calc(50% - 15px);
+  top: 49px;
+  background: var(--sq-orange);
+  transform: rotate(3deg);
+}
+
+.podium-rank--three {
+  right: 17%;
+  top: 76px;
+  background: var(--sq-pink);
+  transform: rotate(5deg);
+}
 
 .street-quest--app #community-sub-tabs {
   margin: -8px 8px 0;
@@ -935,6 +1240,7 @@
   border-color: var(--sq-paper-light);
   box-shadow: 5px 5px 0 var(--sq-lime);
 }
+
 .street-quest--app #my-rank-card::before {
   content: 'MY\A RANK';
   white-space: pre;
@@ -951,7 +1257,12 @@
   writing-mode: vertical-rl;
   transform: rotate(180deg);
 }
-.street-quest--app #my-rank-card .lb-my-row { margin: 0; padding: 10px 0; border: 0; }
+
+.street-quest--app #my-rank-card .lb-my-row {
+  margin: 0;
+  padding: 10px 0;
+  border: 0;
+}
 
 .street-quest--app #leaderboard-list {
   padding: 7px 13px;
@@ -963,11 +1274,27 @@
   background-size: auto, 480px 480px;
   box-shadow: 5px 5px 0 var(--sq-blue);
 }
-.street-quest--app #leaderboard-list .lb-row { border-color: rgba(255, 248, 229, 0.18); }
-.street-quest--app #leaderboard-list .lb-name { color: #fff8e8; }
-.street-quest--app #leaderboard-list .lb-sub { color: #b9af99; }
-.street-quest--app #leaderboard-list .lb-score { color: var(--sq-lime); }
-.street-quest--app #leaderboard-list .lb-rank { color: #d9cfb7; }
+
+.street-quest--app #leaderboard-list .lb-row {
+  border-color: rgba(255, 248, 229, 0.18);
+}
+
+.street-quest--app #leaderboard-list .lb-name {
+  color: #fff8e8;
+}
+
+.street-quest--app #leaderboard-list .lb-sub {
+  color: #b9af99;
+}
+
+.street-quest--app #leaderboard-list .lb-score {
+  color: var(--sq-lime);
+}
+
+.street-quest--app #leaderboard-list .lb-rank {
+  color: #d9cfb7;
+}
+
 .street-quest--app #leaderboard-list .lb-my-row {
   margin: 0;
   background: var(--color-primary-dim);
@@ -984,23 +1311,58 @@
   color: #fff8e8;
   box-shadow: 5px 5px 0 var(--sq-blue);
 }
+
 .street-quest--app #guild-panel .guild-section,
 .street-quest--app #guild-panel .guild-subnav,
 .street-quest--app #guild-panel .guild-invite-line,
-.street-quest--app #guild-panel .guild-member-row { border-color: rgba(255, 248, 229, 0.16); }
-.street-quest--app #guild-panel .guild-status-badge { border-color: var(--sq-ink-soft); }
-.street-quest--app #guild-panel .guild-action-btn:hover { background: rgba(255, 248, 229, 0.08); }
+.street-quest--app #guild-panel .guild-member-row {
+  border-color: rgba(255, 248, 229, 0.16);
+}
+
+.street-quest--app #guild-panel .guild-status-badge {
+  border-color: var(--sq-ink-soft);
+}
+
+.street-quest--app #guild-panel .guild-action-btn:hover {
+  background: rgba(255, 248, 229, 0.08);
+}
 
 /* Keep long and dynamic content roomy, scrollable, and inside the mobile frame. */
-.street-quest--auth .auth-page { overflow-y: auto; }
-.street-quest--auth .auth-card { flex-shrink: 0; }
+.street-quest--auth .auth-page {
+  overflow-y: auto;
+}
+
+.street-quest--auth .auth-card {
+  flex-shrink: 0;
+}
+
 .street-quest--app .top-bar__left,
 .street-quest--app .top-bar__center,
-.street-quest--app .top-bar__right { min-width: 0; }
-.street-quest--app .top-bar__left { flex: none; }
-.street-quest--app .top-bar__left { width: 102px; position: relative; z-index: 2; }
-.street-quest--app .top-bar__left .username { max-width: 60px; }
-.street-quest--app .top-bar__right { flex: none; margin-left: auto; position: relative; z-index: 2; }
+.street-quest--app .top-bar__right {
+  min-width: 0;
+}
+
+.street-quest--app .top-bar__left {
+  flex: none;
+}
+
+.street-quest--app .top-bar__left {
+  width: 102px;
+  position: relative;
+  z-index: 2;
+}
+
+.street-quest--app .top-bar__left .username {
+  max-width: 60px;
+}
+
+.street-quest--app .top-bar__right {
+  flex: none;
+  margin-left: auto;
+  position: relative;
+  z-index: 2;
+}
+
 .street-quest--app .top-bar__center {
   position: absolute;
   left: 50%;
@@ -1009,11 +1371,13 @@
   text-align: center;
   transform: translateX(-50%);
 }
+
 .street-quest--app .top-bar__center .page-subtitle {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
 .street-quest--app .bottom-sheet {
   width: calc(100% - 16px);
   max-height: calc(100dvh - 24px);
@@ -1026,26 +1390,64 @@
     url('../assets/street-quest/ui-paper-ink.webp');
   background-size: auto, 520px 520px;
 }
-.street-quest--app .bottom-sheet .btn + .btn { margin-top: 10px; }
-.street-quest--app .proximity-banner { margin-inline: 6px; box-shadow: 3px 3px 0 var(--sq-ink); }
+
+.street-quest--app .bottom-sheet .btn+.btn {
+  margin-top: 10px;
+}
+
+.street-quest--app .proximity-banner {
+  margin-inline: 6px;
+  box-shadow: 3px 3px 0 var(--sq-ink);
+}
 
 @media (max-height: 760px) {
-  .street-quest--auth .auth-page { justify-content: flex-start; }
-  .street-quest--auth .auth-card { margin-top: 14px; }
-  .street-quest--landing .splash-screen { padding-top: 28px; }
+  .street-quest--auth .auth-page {
+    justify-content: flex-start;
+  }
+
+  .street-quest--auth .auth-card {
+    margin-top: 14px;
+  }
+
+  .street-quest--landing .splash-screen {
+    padding-top: 28px;
+  }
 }
 
 @media (max-width: 360px) {
-  .street-quest--landing .app-name { font-size: 70px; }
-  .street-quest--landing .app-name-th { font-size: 43px; }
-  .street-quest--auth .auth-card { padding-inline: 20px; }
-  .street-quest--onboarding .onboard-card { padding-inline: 14px; }
-  .street-quest--app .top-bar__center { display: none; }
-  .street-quest--app .top-bar__left { width: auto; }
-  .street-quest--app .top-bar__left .username { max-width: 100px; }
+  .street-quest--landing .app-name {
+    font-size: 70px;
+  }
+
+  .street-quest--landing .app-name-th {
+    font-size: 43px;
+  }
+
+  .street-quest--auth .auth-card {
+    padding-inline: 20px;
+  }
+
+  .street-quest--onboarding .onboard-card {
+    padding-inline: 14px;
+  }
+
+  .street-quest--app .top-bar__center {
+    display: none;
+  }
+
+  .street-quest--app .top-bar__left {
+    width: auto;
+  }
+
+  .street-quest--app .top-bar__left .username {
+    max-width: 100px;
+  }
+
   .street-quest--app #tab-collection .section-inner,
   .street-quest--app #tab-mission .section-inner,
-  .street-quest--app #tab-community .section-inner { padding-inline: 14px; }
+  .street-quest--app #tab-community .section-inner {
+    padding-inline: 14px;
+  }
 }
 
 /* ── Form-control focus: warm accent, not a hard blue box ── */
@@ -1064,6 +1466,7 @@
   background: transparent;
   box-shadow: none;
 }
+
 .street-quest--app .top-bar__left .username {
   font-weight: 800;
   max-width: 68px;
@@ -1079,37 +1482,119 @@
   color: var(--sq-orange);
   box-shadow: 2px 2px 0 var(--sq-ink);
 }
+
 .street-quest--app .marker-watchtower.visited {
   background: var(--sq-orange);
   border-color: var(--sq-ink);
   color: #fff;
 }
-.street-quest--app .marker-node { border-color: var(--sq-ink); border-width: 2px; }
-.street-quest--app .marker-figure-c { background: var(--sq-lime); border-color: var(--sq-ink); color: var(--sq-ink); }
-.street-quest--app .marker-figure-s { background: var(--sq-orange); border-color: var(--sq-ink); color: #fff; box-shadow: 2px 2px 0 var(--sq-ink); }
-.street-quest--app .marker-lore { background: var(--sq-pink); border-color: var(--sq-ink); color: #fff; box-shadow: 2px 2px 0 var(--sq-ink); }
-.street-quest--app .marker-otop { background: var(--sq-blue); border-color: var(--sq-ink); color: #fff; }
-.street-quest--app .marker-cafe { background: var(--sq-lime); border-color: var(--sq-ink); }
-.street-quest--app .marker-landmark { background: var(--sq-orange); border-color: var(--sq-ink); color: #fff; }
-.street-quest--app .marker-home { background: var(--sq-orange); border-color: var(--sq-ink); }
+
+.street-quest--app .marker-node {
+  border-color: var(--sq-ink);
+  border-width: 2px;
+}
+
+.street-quest--app .marker-figure-c {
+  background: var(--sq-lime);
+  border-color: var(--sq-ink);
+  color: var(--sq-ink);
+}
+
+.street-quest--app .marker-figure-s {
+  background: var(--sq-orange);
+  border-color: var(--sq-ink);
+  color: #fff;
+  box-shadow: 2px 2px 0 var(--sq-ink);
+}
+
+.street-quest--app .marker-lore {
+  background: var(--sq-pink);
+  border-color: var(--sq-ink);
+  color: #fff;
+  box-shadow: 2px 2px 0 var(--sq-ink);
+}
+
+.street-quest--app .marker-otop {
+  background: var(--sq-blue);
+  border-color: var(--sq-ink);
+  color: #fff;
+}
+
+.street-quest--app .marker-cafe {
+  background: var(--sq-lime);
+  border-color: var(--sq-ink);
+}
+
+.street-quest--app .marker-landmark {
+  background: var(--sq-orange);
+  border-color: var(--sq-ink);
+  color: #fff;
+}
+
+.street-quest--app .marker-home {
+  background: var(--sq-orange);
+  border-color: var(--sq-ink);
+}
 
 /* figure-card stamp style: see components.css */
 
 /* ── Leaderboard: fewer heavy boxes, breathing room, clear size hierarchy ── */
-.street-quest--app #community-rank-section { gap: 14px; }
-.street-quest--app #solo-leaderboard-section { display: flex; flex-direction: column; gap: 14px; }
-.street-quest--app #my-rank-card { box-shadow: 3px 3px 0 var(--sq-ink); }
-.street-quest--app #leaderboard-list { box-shadow: none; padding: 6px 14px; }
-.street-quest--app #leaderboard-list .lb-row { min-height: 60px; padding-block: 12px; }
-.street-quest--app #leaderboard-list .lb-rank { font-size: 15px; font-weight: 800; min-width: 30px; }
-.street-quest--app #leaderboard-list .lb-name { font-size: 15px; font-weight: 700; }
-.street-quest--app #leaderboard-list .lb-sub { font-size: 11px; }
-.street-quest--app #leaderboard-list .lb-score { font-size: 17px; font-weight: 800; }
+.street-quest--app #community-rank-section {
+  gap: 14px;
+}
+
+.street-quest--app #solo-leaderboard-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.street-quest--app #my-rank-card {
+  box-shadow: 3px 3px 0 var(--sq-ink);
+}
+
+.street-quest--app #leaderboard-list {
+  box-shadow: none;
+  padding: 6px 14px;
+}
+
+.street-quest--app #leaderboard-list .lb-row {
+  min-height: 60px;
+  padding-block: 12px;
+}
+
+.street-quest--app #leaderboard-list .lb-rank {
+  font-size: 15px;
+  font-weight: 800;
+  min-width: 30px;
+}
+
+.street-quest--app #leaderboard-list .lb-name {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.street-quest--app #leaderboard-list .lb-sub {
+  font-size: 11px;
+}
+
+.street-quest--app #leaderboard-list .lb-score {
+  font-size: 17px;
+  font-weight: 800;
+}
 
 /* ── Guild search result cards: no border, left-aligned name ── */
-.street-quest--app .guild-result-card { border: none; }
-.street-quest--app .guild-result-name { text-align: left; }
-.street-quest--app #guild-leaderboard-list .lb-name { text-align: left; }
+.street-quest--app .guild-result-card {
+  border: none;
+}
+
+.street-quest--app .guild-result-name {
+  text-align: left;
+}
+
+.street-quest--app #guild-leaderboard-list .lb-name {
+  text-align: left;
+}
 
 /* ── Group create/join form: one sticker card, underlined fields ── */
 .street-quest--app .guild-no-panel {
@@ -1119,6 +1604,7 @@
   box-shadow: 3px 3px 0 var(--sq-ink);
   padding: var(--space-lg) var(--space-md);
 }
+
 .street-quest--app #guild-panel .guild-input,
 .street-quest--app #guild-panel .guild-textarea {
   border: none;
@@ -1128,6 +1614,7 @@
   background: none;
   color: var(--sq-ink);
 }
+
 .street-quest--app #guild-panel .guild-input:focus,
 .street-quest--app #guild-panel .guild-input:focus-visible,
 .street-quest--app #guild-panel .guild-textarea:focus,
@@ -1136,45 +1623,70 @@
   outline: none;
   box-shadow: none;
 }
+
 .street-quest--app #guild-panel .guild-input::placeholder,
 .street-quest--app #guild-panel .guild-textarea::placeholder {
   color: rgba(24, 21, 16, 0.5);
   font-size: 12px;
 }
+
 .street-quest--app #guild-panel .guild-no-title,
-.street-quest--app #guild-panel .guild-no-desc { color: var(--sq-ink); }
-.street-quest--app #guild-panel #btn-create-guild { min-height: 40px; font-size: 13px; }
+.street-quest--app #guild-panel .guild-no-desc {
+  color: var(--sq-ink);
+}
+
+.street-quest--app #guild-panel #btn-create-guild {
+  min-height: 40px;
+  font-size: 13px;
+}
 
 /* ── Discussion (community-forum) panel: cream card needs ink text, not white ── */
-.street-quest--app #community-forum-panel { color: var(--sq-ink); }
+.street-quest--app #community-forum-panel {
+  color: var(--sq-ink);
+}
+
 .street-quest--app #community-forum-panel .forum-compose {
   border-bottom: 1.5px solid rgba(24, 21, 16, 0.24);
 }
+
 .street-quest--app #community-forum-panel .forum-compose textarea {
   color: var(--sq-ink);
   outline: none;
   box-shadow: none;
 }
-.street-quest--app #community-forum-panel .forum-compose textarea::placeholder { color: rgba(24, 21, 16, 0.5); }
-.street-quest--app #community-forum-panel .forum-post { border-bottom-color: rgba(24, 21, 16, 0.13); }
+
+.street-quest--app #community-forum-panel .forum-compose textarea::placeholder {
+  color: rgba(24, 21, 16, 0.5);
+}
+
+.street-quest--app #community-forum-panel .forum-post {
+  border-bottom-color: rgba(24, 21, 16, 0.13);
+}
+
 .street-quest--app #community-forum-panel .forum-post-name,
-.street-quest--app #community-forum-panel .forum-post-body { color: var(--sq-ink); }
+.street-quest--app #community-forum-panel .forum-post-body {
+  color: var(--sq-ink);
+}
+
 .street-quest--app #community-forum-panel .forum-reply-input {
   background: rgba(255, 253, 244, 0.92);
   border: 1.5px solid rgba(24, 21, 16, 0.3);
   color: var(--sq-ink);
 }
+
 .street-quest--app #community-forum-panel .forum-reply-input:focus,
 .street-quest--app #community-forum-panel .forum-reply-input:focus-visible {
   outline: none;
   box-shadow: none;
   border-color: var(--sq-orange);
 }
+
 .street-quest--app #guild-panel #btn-join-guild {
   background: var(--sq-ink);
   color: var(--sq-paper);
   border: 1.5px solid var(--sq-ink);
 }
+
 .street-quest--app #guild-panel #btn-join-guild:hover {
   background: var(--sq-orange);
   border-color: var(--sq-orange);
@@ -1212,7 +1724,7 @@
   font-weight: 700;
   text-align: left;
   transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease,
-              transform 140ms ease, box-shadow 140ms ease;
+    transform 140ms ease, box-shadow 140ms ease;
 }
 
 .street-quest--app #community-sub-tabs .pill::after {
@@ -1257,16 +1769,29 @@
   font: 700 10px/1 var(--font-display);
   letter-spacing: 0.12em;
 }
-.community-tab-topline i { font-size: 14px; }
-.community-tab-index { opacity: 0.78; }
-.community-tab-label { line-height: 1.15; }
+
+.community-tab-topline i {
+  font-size: 14px;
+}
+
+.community-tab-index {
+  opacity: 0.78;
+}
+
+.community-tab-label {
+  line-height: 1.15;
+}
+
 .community-tab-meta {
   color: currentColor;
   font: 700 8px/1 var(--font-display);
   letter-spacing: 0.12em;
   opacity: 0.62;
 }
-.street-quest--app #community-sub-tabs .pill.active .community-tab-topline { color: var(--sq-ink); }
+
+.street-quest--app #community-sub-tabs .pill.active .community-tab-topline {
+  color: var(--sq-ink);
+}
 
 .street-quest--app #community-rank-section {
   gap: 12px !important;
@@ -1290,7 +1815,9 @@
 /* The open menu must paint above the following rank cards. The metric card
    has a handmade transform, which otherwise creates an earlier stacking
    context than the cards that follow it in the document. */
-.street-quest--app .leaderboard-control.is-open { z-index: 20; }
+.street-quest--app .leaderboard-control.is-open {
+  z-index: 20;
+}
 
 .street-quest--app .leaderboard-control[data-control="metric"] {
   transform: rotate(-0.25deg);
@@ -1304,6 +1831,7 @@
   gap: 8px;
   margin-bottom: 6px;
 }
+
 .leaderboard-control__label {
   display: inline-flex;
   align-items: center;
@@ -1312,14 +1840,22 @@
   font: 800 10px/1 var(--font-display);
   letter-spacing: 0.14em;
 }
-.leaderboard-control__label i { color: var(--sq-orange); font-size: 11px; }
+
+.leaderboard-control__label i {
+  color: var(--sq-orange);
+  font-size: 11px;
+}
+
 .leaderboard-control__index {
   color: rgba(24, 21, 16, 0.44);
   font: 700 9px/1 var(--font-display);
   letter-spacing: 0.1em;
 }
 
-.street-quest--app .leaderboard-control .lb-custom-wrap { width: 100%; }
+.street-quest--app .leaderboard-control .lb-custom-wrap {
+  width: 100%;
+}
+
 .street-quest--app .leaderboard-control .lb-custom-trigger {
   min-height: 40px;
   padding: 0 10px;
@@ -1332,12 +1868,17 @@
   font-weight: 700;
   box-shadow: 2px 2px 0 rgba(24, 21, 16, 0.22);
 }
+
 .street-quest--app .leaderboard-control .lb-custom-trigger:hover,
 .street-quest--app .leaderboard-control .lb-custom-trigger.open {
   border-color: var(--sq-orange);
   background: var(--sq-ink-soft);
 }
-.street-quest--app .leaderboard-control .lb-custom-trigger svg { color: var(--sq-lime); }
+
+.street-quest--app .leaderboard-control .lb-custom-trigger svg {
+  color: var(--sq-lime);
+}
+
 .street-quest--app .leaderboard-control .lb-custom-panel {
   top: calc(100% + 5px);
   z-index: 30;
@@ -1358,9 +1899,13 @@
   min-width: 0;
   max-width: 100%;
 }
+
 .street-quest--app #my-rank-card,
 .street-quest--app #leaderboard-list,
-.street-quest--app #guild-leaderboard-list { width: 100%; }
+.street-quest--app #guild-leaderboard-list {
+  width: 100%;
+}
+
 .street-quest--app .leaderboard-control .lb-custom-option {
   padding: 10px 9px;
   border-bottom: 1px dashed rgba(24, 21, 16, 0.22);
@@ -1369,15 +1914,22 @@
   font-size: 13px;
   font-weight: 700;
 }
+
 .street-quest--app .leaderboard-control .lb-custom-option:hover,
 .street-quest--app .leaderboard-control .lb-custom-option.selected {
   background: var(--sq-orange);
   color: #fff;
 }
-.street-quest--app .leaderboard-control .lb-custom-option.selected::before { color: var(--sq-ink); }
+
+.street-quest--app .leaderboard-control .lb-custom-option.selected::before {
+  color: var(--sq-ink);
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .street-quest *, .street-quest *::before, .street-quest *::after {
+
+  .street-quest *,
+  .street-quest *::before,
+  .street-quest *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -1595,7 +2147,9 @@
 }
 
 /* Support node card: the map tap becomes a field stop ticket. */
-.street-quest--app #node-info-sheet::before { content: 'FIELD STOP / SUPPORT NODE'; }
+.street-quest--app #node-info-sheet::before {
+  content: 'FIELD STOP / SUPPORT NODE';
+}
 
 .street-quest--app .sq-node-head {
   display: flex;
@@ -1620,9 +2174,23 @@
   transform: rotate(-3deg);
 }
 
-.street-quest--app .sq-node-icon svg { width: 22px; height: 22px; }
-.street-quest--app .sq-node-copy { min-width: 0; flex: 1; }
-.street-quest--app .sq-node-title-row { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.street-quest--app .sq-node-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.street-quest--app .sq-node-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.street-quest--app .sq-node-title-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
 .street-quest--app .sq-node-title {
   overflow: hidden;
   margin: 0;
@@ -1634,7 +2202,12 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.street-quest--app .sq-node-meta { margin: 4px 0 0; color: #bdb29a; font-size: 11px; }
+
+.street-quest--app .sq-node-meta {
+  margin: 4px 0 0;
+  color: #bdb29a;
+  font-size: 11px;
+}
 
 .street-quest--app .sq-node-route-note {
   display: flex;
@@ -1645,8 +2218,15 @@
   font: 700 10px/1 var(--font-display);
   letter-spacing: 0.12em;
 }
-.street-quest--app .sq-node-route-note b { color: var(--sq-lime); font-weight: 700; }
-.street-quest--app .sq-node-action { margin-top: 10px; box-shadow: 4px 4px 0 var(--sq-paper); }
+
+.street-quest--app .sq-node-route-note b {
+  color: var(--sq-lime);
+  font-weight: 700;
+}
+
+.street-quest--app .sq-node-action {
+  box-shadow: 4px 4px 0 var(--sq-paper);
+}
 
 /* Offcanvas panels use paper cards instead of unstyled Bootstrap rectangles. */
 .street-quest--app .sq-offcanvas {
@@ -1687,10 +2267,18 @@
   filter: invert(1) sepia(0.18) saturate(0.35);
   opacity: 0.75;
 }
-.street-quest--app .sq-panel-close:hover { opacity: 1; }
 
-.street-quest--app .sq-panel-body { color: #fff8e8; }
-.street-quest--app .sq-notif-body { padding-bottom: 28px; }
+.street-quest--app .sq-panel-close:hover {
+  opacity: 1;
+}
+
+.street-quest--app .sq-panel-body {
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-notif-body {
+  padding-bottom: 28px;
+}
 
 .street-quest--app .sq-notif-body::before {
   content: 'Keep your route moving. New discoveries will land here.';
@@ -1726,6 +2314,7 @@
   color: #bdb29a;
   text-align: center;
 }
+
 .street-quest--app .sq-notif-empty-mark {
   display: grid;
   width: 38px;
@@ -1737,8 +2326,16 @@
   color: var(--sq-lime);
   font-size: 18px;
 }
-.street-quest--app .sq-notif-empty strong { color: #fff8e8; font: 700 15px/1.2 var(--font-heading); }
-.street-quest--app .sq-notif-empty span:last-child { font-size: 11px; line-height: 1.5; }
+
+.street-quest--app .sq-notif-empty strong {
+  color: #fff8e8;
+  font: 700 15px/1.2 var(--font-heading);
+}
+
+.street-quest--app .sq-notif-empty span:last-child {
+  font-size: 11px;
+  line-height: 1.5;
+}
 
 .street-quest--app .notif-row {
   position: relative;
@@ -1750,8 +2347,16 @@
   color: #fff8e8;
 }
 
-.street-quest--app .notif-row:hover { background: rgba(244, 234, 208, 0.06); }
-.street-quest--app .notif-row.unread { padding-left: 12px; border-left: 4px solid var(--sq-orange); background: rgba(240, 90, 25, 0.09); }
+.street-quest--app .notif-row:hover {
+  background: rgba(244, 234, 208, 0.06);
+}
+
+.street-quest--app .notif-row.unread {
+  padding-left: 12px;
+  border-left: 4px solid var(--sq-orange);
+  background: rgba(240, 90, 25, 0.09);
+}
+
 .street-quest--app .notif-icon {
   display: grid;
   width: 36px;
@@ -1764,11 +2369,32 @@
   color: var(--sq-lime);
   transform: rotate(-3deg);
 }
-.street-quest--app .notif-icon i { color: currentColor; font-size: 18px; }
-.street-quest--app .notif-body { min-width: 0; }
-.street-quest--app .notif-title { color: #fff8e8; font: 700 14px/1.3 var(--font-heading); }
-.street-quest--app .notif-msg { margin-top: 3px; color: #aa9f88; font-size: 11px; line-height: 1.45; }
-.street-quest--app .notif-dot { background: var(--sq-orange); box-shadow: 0 0 0 3px rgba(240, 90, 25, 0.16); }
+
+.street-quest--app .notif-icon i {
+  color: currentColor;
+  font-size: 18px;
+}
+
+.street-quest--app .notif-body {
+  min-width: 0;
+}
+
+.street-quest--app .notif-title {
+  color: #fff8e8;
+  font: 700 14px/1.3 var(--font-heading);
+}
+
+.street-quest--app .notif-msg {
+  margin-top: 3px;
+  color: #aa9f88;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.street-quest--app .notif-dot {
+  background: var(--sq-orange);
+  box-shadow: 0 0 0 3px rgba(240, 90, 25, 0.16);
+}
 
 /* Settings: a passport profile, a practical controls card, and a tiny edition tag. */
 .street-quest--app .sq-settings-body {
@@ -1798,6 +2424,7 @@
   text-align: center;
   transform: rotate(-0.4deg);
 }
+
 .street-quest--app .sq-profile-card::before {
   content: 'EXPLORER PASS';
   position: absolute;
@@ -1808,6 +2435,7 @@
   letter-spacing: 0.12em;
   transform: rotate(4deg);
 }
+
 .street-quest--app .sq-profile-avatar {
   width: 72px;
   height: 72px;
@@ -1818,40 +2446,201 @@
   font-size: 25px;
   box-shadow: 3px 3px 0 var(--sq-blue);
 }
-.street-quest--app .sq-username-view { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 4px; }
-.street-quest--app .sq-username-view p { margin: 0; color: var(--sq-ink); font: 800 20px/1 var(--font-heading); }
-.street-quest--app .sq-edit-name { padding: 3px; border: 0; background: none; color: rgba(24, 21, 16, 0.58); cursor: pointer; }
-.street-quest--app .sq-edit-name:hover { color: var(--sq-orange); }
-.street-quest--app .sq-settings-email { margin: 0; color: rgba(24, 21, 16, 0.58); font-size: 11px; }
-.street-quest--app .sq-name-input { width: 100%; margin-bottom: 7px; padding: 8px 10px; border: 1px solid rgba(24, 21, 16, 0.48); border-radius: 2px; background: rgba(255, 253, 245, 0.7); color: var(--sq-ink); text-align: center; }
-.street-quest--app .sq-name-actions { display: flex; gap: 6px; }
-.street-quest--app .sq-name-cancel,
-.street-quest--app .sq-name-save { flex: 1; min-height: 34px; padding: 5px; font-size: 11px; }
-.street-quest--app .sq-name-cancel { border: 1px solid rgba(24, 21, 16, 0.35); color: var(--sq-ink); }
-.street-quest--app .sq-name-save { box-shadow: 2px 2px 0 var(--sq-ink); }
 
-.street-quest--app .sq-preferences-card { padding: 17px 14px 13px; }
-.street-quest--app .sq-card-kicker { margin-bottom: 9px; color: rgba(24, 21, 16, 0.55); }
-.street-quest--app .sq-setting-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 46px; border-bottom: 1px dashed rgba(24, 21, 16, 0.2); color: var(--sq-ink); font-size: 13px; }
-.street-quest--app .sq-setting-row:last-child { border-bottom: 0; }
-.street-quest--app .sq-setting-row-toggle { cursor: pointer; }
-.street-quest--app .sq-toggle-track { position: relative; width: 42px; height: 23px; border-radius: 0; background: var(--sq-ink); cursor: pointer; transition: background 0.2s ease; }
-.street-quest--app .sq-toggle-thumb { position: absolute; top: 3px; left: 21px; width: 17px; height: 17px; border-radius: 50%; background: var(--sq-lime); transition: left 0.2s ease; }
-.street-quest--app .sq-gps-status { display: flex; align-items: center; gap: 7px; }
-.street-quest--app #gps-status-label { color: #3f883f; font-size: 11px; }
-.street-quest--app .sq-gps-request { padding: 4px 8px; border: 1px solid var(--sq-orange); background: none; color: var(--sq-orange); font-size: 10px; }
-.street-quest--app .sq-home-setting { padding-top: 11px; }
-.street-quest--app .sq-home-label { margin-bottom: 7px; color: var(--sq-ink); font-size: 13px; }
-.street-quest--app .sq-home-select { width: 100%; min-height: 38px; padding: 6px 10px; border: 1px solid rgba(24, 21, 16, 0.42); border-radius: 2px; background: rgba(255, 253, 245, 0.76); color: var(--sq-ink); font-size: 13px; }
-.street-quest--app .sq-version-card { padding: 15px 14px; background-color: var(--sq-ink-soft); background-image: url('../assets/street-quest/ui-paper-ink.webp'); color: #fff8e8; box-shadow: 4px 4px 0 var(--sq-blue); }
-.street-quest--app .sq-version-card .sq-card-kicker { color: var(--sq-lime); }
-.street-quest--app .sq-version-line { margin: 5px 0 0; color: #fff8e8; font: 700 14px/1.2 var(--font-heading); }
-.street-quest--app .sq-version-line span { color: #bdb29a; font: 400 11px/1 var(--font-body); }
-.street-quest--app .sq-signout-btn { min-height: 48px; border: 1px solid rgba(244, 234, 208, 0.4); border-radius: 2px; color: #fff8e8; }
-.street-quest--app .sq-signout-btn:hover { border-color: var(--sq-orange); background: rgba(240, 90, 25, 0.12); }
+.street-quest--app .sq-username-view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.street-quest--app .sq-username-view p {
+  margin: 0;
+  color: var(--sq-ink);
+  font: 800 20px/1 var(--font-heading);
+}
+
+.street-quest--app .sq-edit-name {
+  padding: 3px;
+  border: 0;
+  background: none;
+  color: rgba(24, 21, 16, 0.58);
+  cursor: pointer;
+}
+
+.street-quest--app .sq-edit-name:hover {
+  color: var(--sq-orange);
+}
+
+.street-quest--app .sq-settings-email {
+  margin: 0;
+  color: rgba(24, 21, 16, 0.58);
+  font-size: 11px;
+}
+
+.street-quest--app .sq-name-input {
+  width: 100%;
+  margin-bottom: 7px;
+  padding: 8px 10px;
+  border: 1px solid rgba(24, 21, 16, 0.48);
+  border-radius: 2px;
+  background: rgba(255, 253, 245, 0.7);
+  color: var(--sq-ink);
+  text-align: center;
+}
+
+.street-quest--app .sq-name-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.street-quest--app .sq-name-cancel,
+.street-quest--app .sq-name-save {
+  flex: 1;
+  min-height: 34px;
+  padding: 5px;
+  font-size: 11px;
+}
+
+.street-quest--app .sq-name-cancel {
+  border: 1px solid rgba(24, 21, 16, 0.35);
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-name-save {
+  box-shadow: 2px 2px 0 var(--sq-ink);
+}
+
+.street-quest--app .sq-preferences-card {
+  padding: 17px 14px 13px;
+}
+
+.street-quest--app .sq-card-kicker {
+  margin-bottom: 9px;
+  color: rgba(24, 21, 16, 0.55);
+}
+
+.street-quest--app .sq-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 46px;
+  border-bottom: 1px dashed rgba(24, 21, 16, 0.2);
+  color: var(--sq-ink);
+  font-size: 13px;
+}
+
+.street-quest--app .sq-setting-row:last-child {
+  border-bottom: 0;
+}
+
+.street-quest--app .sq-setting-row-toggle {
+  cursor: pointer;
+}
+
+.street-quest--app .sq-toggle-track {
+  position: relative;
+  width: 42px;
+  height: 23px;
+  border-radius: 0;
+  background: var(--sq-ink);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.street-quest--app .sq-toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 21px;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: var(--sq-lime);
+  transition: left 0.2s ease;
+}
+
+.street-quest--app .sq-gps-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.street-quest--app #gps-status-label {
+  color: #3f883f;
+  font-size: 11px;
+}
+
+.street-quest--app .sq-gps-request {
+  padding: 4px 8px;
+  border: 1px solid var(--sq-orange);
+  background: none;
+  color: var(--sq-orange);
+  font-size: 10px;
+}
+
+.street-quest--app .sq-home-setting {
+  padding-top: 11px;
+}
+
+.street-quest--app .sq-home-label {
+  margin-bottom: 7px;
+  color: var(--sq-ink);
+  font-size: 13px;
+}
+
+.street-quest--app .sq-home-select {
+  width: 100%;
+  min-height: 38px;
+  padding: 6px 10px;
+  border: 1px solid rgba(24, 21, 16, 0.42);
+  border-radius: 2px;
+  background: rgba(255, 253, 245, 0.76);
+  color: var(--sq-ink);
+  font-size: 13px;
+}
+
+.street-quest--app .sq-version-card {
+  padding: 15px 14px;
+  background-color: var(--sq-ink-soft);
+  background-image: url('../assets/street-quest/ui-paper-ink.webp');
+  color: #fff8e8;
+  box-shadow: 4px 4px 0 var(--sq-blue);
+}
+
+.street-quest--app .sq-version-card .sq-card-kicker {
+  color: var(--sq-lime);
+}
+
+.street-quest--app .sq-version-line {
+  margin: 5px 0 0;
+  color: #fff8e8;
+  font: 700 14px/1.2 var(--font-heading);
+}
+
+.street-quest--app .sq-version-line span {
+  color: #bdb29a;
+  font: 400 11px/1 var(--font-body);
+}
+
+.street-quest--app .sq-signout-btn {
+  min-height: 48px;
+  border: 1px solid rgba(244, 234, 208, 0.4);
+  border-radius: 2px;
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-signout-btn:hover {
+  border-color: var(--sq-orange);
+  background: rgba(240, 90, 25, 0.12);
+}
 
 /* Mission tab: ticket board with route checkpoints and stamp-like daily tasks. */
-.street-quest--app #tab-mission .section-inner { position: relative; }
+.street-quest--app #tab-mission .section-inner {
+  position: relative;
+}
+
 .street-quest--app #tab-mission .section-inner::before {
   content: 'YOUR FIELD ROUTE';
   display: block;
@@ -1874,36 +2663,224 @@
   color: var(--sq-ink);
   box-shadow: 5px 5px 0 var(--sq-orange);
 }
-.street-quest--app .sq-ticket-header { padding: 16px 15px 13px; background: rgba(11, 11, 10, 0.95); color: #fff8e8; }
-.street-quest--app .sq-ticket-kicker { display: flex; justify-content: space-between; gap: 8px; color: var(--sq-lime); font: 800 9px/1 var(--font-display); letter-spacing: 0.16em; }
-.street-quest--app .sq-ticket-title-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
-.street-quest--app .sq-ticket-emblem { display: grid; width: 40px; height: 40px; flex: 0 0 40px; place-items: center; border: 2px solid var(--sq-ink); background: var(--sq-orange); color: #fff; transform: rotate(-4deg); }
-.street-quest--app .sq-ticket-emblem svg { width: 20px; height: 20px; }
-.street-quest--app .sq-ticket-heading { min-width: 0; flex: 1; }
-.street-quest--app .sq-ticket-heading h3 { overflow: hidden; margin: 0; color: #fff8e8; font: 800 19px/1.05 var(--font-heading); text-overflow: ellipsis; white-space: nowrap; }
-.street-quest--app .sq-ticket-heading p { margin: 5px 0 0; color: #bdb29a; font-size: 10px; }
-.street-quest--app .sq-ticket-heading b { color: var(--sq-orange); }
-.street-quest--app .sq-ticket-divider { padding: 0 4px; color: #706754; }
-.street-quest--app .sq-ticket-title-row .badge { flex: 0 0 auto; }
-.street-quest--app .sq-route-progress { display: flex; align-items: center; padding: 18px 14px 7px; }
-.street-quest--app .sq-route-node-wrap { display: flex; align-items: center; min-width: 0; flex: 1; }
-.street-quest--app .sq-route-node { display: grid; width: 38px; height: 31px; flex: 0 0 38px; place-items: center; border: 2px dashed rgba(24, 21, 16, 0.38); border-radius: 3px; background: rgba(24, 21, 16, 0.04); color: rgba(24, 21, 16, 0.52); font: 800 8px/1 var(--font-display); letter-spacing: 0.04em; transform: rotate(2deg); }
-.street-quest--app .sq-route-node.is-done { width: 39px; height: 39px; border: 0; border-radius: 50%; background: url('../assets/street-quest/generated-stamps/stamp-blue-ring.png') center / 100% 100% no-repeat; color: #245b9f; font-size: 8px; transform: rotate(-4deg); }
-.street-quest--app .sq-route-node.is-current { border: 2px solid var(--sq-orange); background: rgba(240, 90, 25, 0.08); color: var(--sq-orange); box-shadow: 0 0 0 4px rgba(240, 90, 25, 0.12); transform: rotate(2deg); }
-.street-quest--app .sq-route-line { height: 2px; margin: 0 3px; flex: 1; background: rgba(24, 21, 16, 0.2); }
-.street-quest--app .sq-route-line.is-done { background: var(--sq-lime); }
-.street-quest--app .sq-mission-steps { padding: 7px 14px 11px; }
-.street-quest--app .sq-mission-step { display: flex; align-items: flex-start; gap: 9px; padding: 9px 0; border-bottom: 1px dashed rgba(24, 21, 16, 0.22); }
-.street-quest--app .sq-mission-step:last-child { border-bottom: 0; }
-.street-quest--app .sq-step-stamp { display: grid; width: 48px; height: 28px; flex: 0 0 48px; margin-top: 1px; place-items: center; border: 2px dashed rgba(24, 21, 16, 0.4); color: rgba(24, 21, 16, 0.52); font: 800 8px/1 var(--font-display); letter-spacing: 0.05em; transform: rotate(2deg); }
-.street-quest--app .sq-step-stamp.is-stamped { width: 50px; height: 50px; border: 0; background: url('../assets/street-quest/generated-stamps/stamp-blue-ring.png') center / 100% 100% no-repeat; color: #245b9f; transform: rotate(-4deg); }
-.street-quest--app .sq-step-stamp.is-stamped.is-red { width: 62px; height: 42px; flex-basis: 62px; background-image: url('../assets/street-quest/generated-stamps/stamp-red-frame.png'); color: #a93535; transform: rotate(2deg); }
-.street-quest--app .sq-step-stamp.is-stamped span { position: relative; z-index: 1; }
-.street-quest--app .sq-step-copy { min-width: 0; }
-.street-quest--app .sq-step-copy p { margin: 0; color: var(--sq-ink); font: 700 13px/1.25 var(--font-heading); }
-.street-quest--app .sq-step-copy span { display: block; margin-top: 2px; color: rgba(24, 21, 16, 0.6); font-size: 10px; line-height: 1.35; }
-.street-quest--app .sq-mission-step.is-done .sq-step-copy p { color: rgba(24, 21, 16, 0.45); text-decoration: line-through; }
-.street-quest--app .sq-ticket-foot { display: flex; justify-content: space-between; gap: 10px; padding: 9px 14px; border-top: 2px solid var(--sq-ink); background: var(--sq-orange); color: #fff; font: 800 9px/1 var(--font-display); letter-spacing: 0.1em; }
+
+.street-quest--app .sq-ticket-header {
+  padding: 16px 15px 13px;
+  background: rgba(11, 11, 10, 0.95);
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-ticket-kicker {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--sq-lime);
+  font: 800 9px/1 var(--font-display);
+  letter-spacing: 0.16em;
+}
+
+.street-quest--app .sq-ticket-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.street-quest--app .sq-ticket-emblem {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  place-items: center;
+  border: 2px solid var(--sq-ink);
+  background: var(--sq-orange);
+  color: #fff;
+  transform: rotate(-4deg);
+}
+
+.street-quest--app .sq-ticket-emblem svg {
+  width: 20px;
+  height: 20px;
+}
+
+.street-quest--app .sq-ticket-heading {
+  min-width: 0;
+  flex: 1;
+}
+
+.street-quest--app .sq-ticket-heading h3 {
+  overflow: hidden;
+  margin: 0;
+  color: #fff8e8;
+  font: 800 19px/1.05 var(--font-heading);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.street-quest--app .sq-ticket-heading p {
+  margin: 5px 0 0;
+  color: #bdb29a;
+  font-size: 10px;
+}
+
+.street-quest--app .sq-ticket-heading b {
+  color: var(--sq-orange);
+}
+
+.street-quest--app .sq-ticket-divider {
+  padding: 0 4px;
+  color: #706754;
+}
+
+.street-quest--app .sq-ticket-title-row .badge {
+  flex: 0 0 auto;
+}
+
+.street-quest--app .sq-route-progress {
+  display: flex;
+  align-items: center;
+  padding: 18px 14px 7px;
+}
+
+.street-quest--app .sq-route-node-wrap {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  flex: 1;
+}
+
+.street-quest--app .sq-route-node {
+  display: grid;
+  width: 38px;
+  height: 31px;
+  flex: 0 0 38px;
+  place-items: center;
+  border: 2px dashed rgba(24, 21, 16, 0.38);
+  border-radius: 3px;
+  background: rgba(24, 21, 16, 0.04);
+  color: rgba(24, 21, 16, 0.52);
+  font: 800 8px/1 var(--font-display);
+  letter-spacing: 0.04em;
+  transform: rotate(2deg);
+}
+
+.street-quest--app .sq-route-node.is-done {
+  width: 39px;
+  height: 39px;
+  border: 0;
+  border-radius: 50%;
+  background: url('../assets/street-quest/generated-stamps/stamp-blue-ring.png') center / 100% 100% no-repeat;
+  color: #245b9f;
+  font-size: 8px;
+  transform: rotate(-4deg);
+}
+
+.street-quest--app .sq-route-node.is-current {
+  border: 2px solid var(--sq-orange);
+  background: rgba(240, 90, 25, 0.08);
+  color: var(--sq-orange);
+  box-shadow: 0 0 0 4px rgba(240, 90, 25, 0.12);
+  transform: rotate(2deg);
+}
+
+.street-quest--app .sq-route-line {
+  height: 2px;
+  margin: 0 3px;
+  flex: 1;
+  background: rgba(24, 21, 16, 0.2);
+}
+
+.street-quest--app .sq-route-line.is-done {
+  background: var(--sq-lime);
+}
+
+.street-quest--app .sq-mission-steps {
+  padding: 7px 14px 11px;
+}
+
+.street-quest--app .sq-mission-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 9px 0;
+  border-bottom: 1px dashed rgba(24, 21, 16, 0.22);
+}
+
+.street-quest--app .sq-mission-step:last-child {
+  border-bottom: 0;
+}
+
+.street-quest--app .sq-step-stamp {
+  display: grid;
+  width: 48px;
+  height: 28px;
+  flex: 0 0 48px;
+  margin-top: 1px;
+  place-items: center;
+  border: 2px dashed rgba(24, 21, 16, 0.4);
+  color: rgba(24, 21, 16, 0.52);
+  font: 800 8px/1 var(--font-display);
+  letter-spacing: 0.05em;
+  transform: rotate(2deg);
+}
+
+.street-quest--app .sq-step-stamp.is-stamped {
+  width: 50px;
+  height: 50px;
+  border: 0;
+  background: url('../assets/street-quest/generated-stamps/stamp-blue-ring.png') center / 100% 100% no-repeat;
+  color: #245b9f;
+  transform: rotate(-4deg);
+}
+
+.street-quest--app .sq-step-stamp.is-stamped.is-red {
+  width: 62px;
+  height: 42px;
+  flex-basis: 62px;
+  background-image: url('../assets/street-quest/generated-stamps/stamp-red-frame.png');
+  color: #a93535;
+  transform: rotate(2deg);
+}
+
+.street-quest--app .sq-step-stamp.is-stamped span {
+  position: relative;
+  z-index: 1;
+}
+
+.street-quest--app .sq-step-copy {
+  min-width: 0;
+}
+
+.street-quest--app .sq-step-copy p {
+  margin: 0;
+  color: var(--sq-ink);
+  font: 700 13px/1.25 var(--font-heading);
+}
+
+.street-quest--app .sq-step-copy span {
+  display: block;
+  margin-top: 2px;
+  color: rgba(24, 21, 16, 0.6);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.street-quest--app .sq-mission-step.is-done .sq-step-copy p {
+  color: rgba(24, 21, 16, 0.45);
+  text-decoration: line-through;
+}
+
+.street-quest--app .sq-ticket-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 14px;
+  border-top: 2px solid var(--sq-ink);
+  background: var(--sq-orange);
+  color: #fff;
+  font: 800 9px/1 var(--font-display);
+  letter-spacing: 0.1em;
+}
 
 .street-quest--app .sq-seasonal-card {
   display: flex;
@@ -1917,46 +2894,227 @@
   color: #fff8e8;
   box-shadow: 3px 3px 0 var(--sq-blue);
 }
-.street-quest--app .sq-seasonal-icon { display: grid; width: 34px; height: 34px; flex: 0 0 34px; place-items: center; border: 1px solid var(--event-color); border-radius: 50%; color: var(--event-color); }
-.street-quest--app .sq-seasonal-icon svg { width: 17px; height: 17px; }
-.street-quest--app .sq-seasonal-copy { min-width: 0; flex: 1; }
-.street-quest--app .sq-seasonal-title { margin: 0; color: var(--event-color); font: 700 13px/1.2 var(--font-heading); }
-.street-quest--app .sq-seasonal-desc { margin: 3px 0 0; color: #bdb29a; font-size: 10px; line-height: 1.35; }
-.street-quest--app .sq-seasonal-multiplier { flex: 0 0 auto; color: var(--event-color); font: 800 19px/1 var(--font-display); }
 
-.street-quest--app .sq-daily-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; }
-.street-quest--app .sq-daily-heading .section-title { margin: 5px 0 0; padding: 0; background: none; color: #fff8e8; font-size: 25px; }
-.street-quest--app .sq-daily-status { display: flex; align-items: flex-end; gap: 6px; padding-bottom: 2px; color: #bdb29a; font: 800 9px/1 var(--font-display); letter-spacing: 0.08em; }
-.street-quest--app .sq-daily-status b { padding: 5px 7px; border: 2px solid var(--sq-ink); background: var(--sq-lime); color: var(--sq-ink); font-size: 12px; box-shadow: 2px 2px 0 var(--sq-orange); }
-.street-quest--app .sq-daily-list { display: flex; flex-direction: column; gap: 8px; }
-.street-quest--app .sq-daily-row { display: flex; align-items: center; gap: 10px; min-height: 64px; padding: 10px 11px; border: 2px solid var(--sq-ink); border-radius: 2px; background-color: var(--sq-paper-light); background-image: url('../assets/street-quest/ui-paper-kraft.webp'); background-size: 460px 460px; color: var(--sq-ink); box-shadow: 3px 3px 0 var(--sq-blue); }
-.street-quest--app .sq-daily-row.is-clickable { cursor: pointer; }
-.street-quest--app .sq-daily-row.is-clickable:hover, .street-quest--app .sq-daily-row.is-clickable:focus-within { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--sq-orange); }
-.street-quest--app .sq-daily-row.is-complete { box-shadow: 3px 3px 0 var(--sq-lime); }
-.street-quest--app .sq-daily-row .challenge-icon-box { display: grid; width: 38px; height: 38px; flex: 0 0 38px; place-items: center; border: 2px solid var(--sq-ink); border-radius: 50%; background: rgba(24, 21, 16, 0.08); color: var(--challenge-color); }
-.street-quest--app .sq-daily-row .challenge-icon-box svg { width: 18px; height: 18px; }
-.street-quest--app .sq-daily-copy { min-width: 0; flex: 1; }
-.street-quest--app .sq-daily-copy .challenge-name { overflow: hidden; margin: 0; color: var(--sq-ink); font: 700 13px/1.25 var(--font-heading); text-overflow: ellipsis; white-space: nowrap; }
-.street-quest--app .sq-daily-copy .challenge-loc { display: block; margin-top: 3px; color: rgba(24, 21, 16, 0.56); font-size: 10px; }
-.street-quest--app .sq-daily-row.is-complete .challenge-name { color: rgba(24, 21, 16, 0.48); text-decoration: line-through; }
-.street-quest--app .sq-complete-mark { display: grid; width: 50px; height: 50px; flex: 0 0 50px; place-items: center; border: 0; background: url('../assets/street-quest/generated-stamps/stamp-blue-ring.png') center / 100% 100% no-repeat; color: #245b9f; font: 800 8px/1 var(--font-display); letter-spacing: 0.05em; transform: rotate(3deg); }
-.street-quest--app .challenge-pts { flex: 0 0 auto; padding: 5px 8px; border: 2px solid var(--sq-ink); background: var(--sq-orange); color: #fff; font: 800 11px/1 var(--font-display); box-shadow: 2px 2px 0 var(--sq-ink); }
+.street-quest--app .sq-seasonal-icon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  border: 1px solid var(--event-color);
+  border-radius: 50%;
+  color: var(--event-color);
+}
 
-.street-quest--app .mission-empty { border: 2px solid var(--sq-ink); border-radius: 2px; background: var(--sq-paper-light) url('../assets/street-quest/ui-paper-kraft.webp') center / 500px 500px; color: var(--sq-ink); box-shadow: 4px 4px 0 var(--sq-orange); }
-.street-quest--app .mission-empty i { color: var(--sq-orange); }
-.street-quest--app .mission-empty p { color: var(--sq-ink); }
-.street-quest--app .mission-empty p.sub { color: rgba(24, 21, 16, 0.64); }
+.street-quest--app .sq-seasonal-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.street-quest--app .sq-seasonal-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.street-quest--app .sq-seasonal-title {
+  margin: 0;
+  color: var(--event-color);
+  font: 700 13px/1.2 var(--font-heading);
+}
+
+.street-quest--app .sq-seasonal-desc {
+  margin: 3px 0 0;
+  color: #bdb29a;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.street-quest--app .sq-seasonal-multiplier {
+  flex: 0 0 auto;
+  color: var(--event-color);
+  font: 800 19px/1 var(--font-display);
+}
+
+.street-quest--app .sq-daily-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.street-quest--app .sq-daily-heading .section-title {
+  margin: 5px 0 0;
+  padding: 0;
+  background: none;
+  color: #fff8e8;
+  font-size: 25px;
+}
+
+.street-quest--app .sq-daily-status {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding-bottom: 2px;
+  color: #bdb29a;
+  font: 800 9px/1 var(--font-display);
+  letter-spacing: 0.08em;
+}
+
+.street-quest--app .sq-daily-status b {
+  padding: 5px 7px;
+  border: 2px solid var(--sq-ink);
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+  font-size: 12px;
+  box-shadow: 2px 2px 0 var(--sq-orange);
+}
+
+.street-quest--app .sq-daily-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.street-quest--app .sq-daily-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 64px;
+  padding: 10px 11px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background-color: var(--sq-paper-light);
+  background-image: url('../assets/street-quest/ui-paper-kraft.webp');
+  background-size: 460px 460px;
+  color: var(--sq-ink);
+  box-shadow: 3px 3px 0 var(--sq-blue);
+}
+
+.street-quest--app .sq-daily-row.is-clickable {
+  cursor: pointer;
+}
+
+.street-quest--app .sq-daily-row.is-clickable:hover,
+.street-quest--app .sq-daily-row.is-clickable:focus-within {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--sq-orange);
+}
+
+.street-quest--app .sq-daily-row.is-complete {
+  box-shadow: 3px 3px 0 var(--sq-lime);
+}
+
+.street-quest--app .sq-daily-row .challenge-icon-box {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  place-items: center;
+  border: 2px solid var(--sq-ink);
+  border-radius: 50%;
+  background: rgba(24, 21, 16, 0.08);
+  color: var(--challenge-color);
+}
+
+.street-quest--app .sq-daily-row .challenge-icon-box svg {
+  width: 18px;
+  height: 18px;
+}
+
+.street-quest--app .sq-daily-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.street-quest--app .sq-daily-copy .challenge-name {
+  overflow: hidden;
+  margin: 0;
+  color: var(--sq-ink);
+  font: 700 13px/1.25 var(--font-heading);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.street-quest--app .sq-daily-copy .challenge-loc {
+  display: block;
+  margin-top: 3px;
+  color: rgba(24, 21, 16, 0.56);
+  font-size: 10px;
+}
+
+.street-quest--app .sq-daily-row.is-complete .challenge-name {
+  color: rgba(24, 21, 16, 0.48);
+  text-decoration: line-through;
+}
+
+.street-quest--app .sq-complete-mark {
+  display: grid;
+  width: 50px;
+  height: 50px;
+  flex: 0 0 50px;
+  place-items: center;
+  border: 0;
+  background: url('../assets/street-quest/generated-stamps/stamp-blue-ring.png') center / 100% 100% no-repeat;
+  color: #245b9f;
+  font: 800 8px/1 var(--font-display);
+  letter-spacing: 0.05em;
+  transform: rotate(3deg);
+}
+
+.street-quest--app .challenge-pts {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  border: 2px solid var(--sq-ink);
+  background: var(--sq-orange);
+  color: #fff;
+  font: 800 11px/1 var(--font-display);
+  box-shadow: 2px 2px 0 var(--sq-ink);
+}
+
+.street-quest--app .mission-empty {
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background: var(--sq-paper-light) url('../assets/street-quest/ui-paper-kraft.webp') center / 500px 500px;
+  color: var(--sq-ink);
+  box-shadow: 4px 4px 0 var(--sq-orange);
+}
+
+.street-quest--app .mission-empty i {
+  color: var(--sq-orange);
+}
+
+.street-quest--app .mission-empty p {
+  color: var(--sq-ink);
+}
+
+.street-quest--app .mission-empty p.sub {
+  color: rgba(24, 21, 16, 0.64);
+}
 
 @media (max-width: 360px) {
-  .street-quest--app .sq-sheet { padding-inline: 15px; }
-  .street-quest--app .sq-ticket-heading h3 { font-size: 17px; }
-  .street-quest--app .sq-daily-status > span { display: none; }
-  .street-quest--app .sq-node-title { font-size: 16px; }
+  .street-quest--app .sq-sheet {
+    padding-inline: 15px;
+  }
+
+  .street-quest--app .sq-ticket-heading h3 {
+    font-size: 17px;
+  }
+
+  .street-quest--app .sq-daily-status>span {
+    display: none;
+  }
+
+  .street-quest--app .sq-node-title {
+    font-size: 16px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .street-quest--app .sq-daily-row.is-clickable:hover,
-  .street-quest--app .sq-daily-row.is-clickable:focus-within { transform: none; }
+  .street-quest--app .sq-daily-row.is-clickable:focus-within {
+    transform: none;
+  }
 }
 
 /* Ticket surfaces for the two map actions. The generated paper label is used as
@@ -1983,8 +3141,15 @@
   transform: rotate(-1deg);
 }
 
-.street-quest--app .sq-checkin-sheet::before { content: 'WATCHTOWER PASS / DISTRICT CHECK-IN'; }
-.street-quest--app .sq-node-sheet::before { content: 'FIELD STOP / SUPPORT NODE'; background: var(--sq-lime); color: var(--sq-ink); }
+.street-quest--app .sq-checkin-sheet::before {
+  content: 'WATCHTOWER PASS / DISTRICT CHECK-IN';
+}
+
+.street-quest--app .sq-node-sheet::before {
+  content: 'FIELD STOP / SUPPORT NODE';
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+}
 
 .street-quest--app .sq-checkin-sheet .sheet-handle,
 .street-quest--app .sq-node-sheet .sheet-handle {
@@ -2018,7 +3183,10 @@
   transform: rotate(-4deg);
 }
 
-.street-quest--app .sq-checkin-icon svg { width: 21px; height: 21px; }
+.street-quest--app .sq-checkin-icon svg {
+  width: 21px;
+  height: 21px;
+}
 
 .street-quest--app .sq-district-ticket {
   position: relative;
@@ -2080,7 +3248,10 @@
   transform: rotate(3deg);
 }
 
-.street-quest--app .sq-district-ticket .district-reveals { gap: 6px; }
+.street-quest--app .sq-district-ticket .district-reveals {
+  gap: 6px;
+}
+
 .street-quest--app .sq-district-ticket .reveal-chip {
   display: inline-flex;
   align-items: center;
@@ -2093,7 +3264,12 @@
   font: 700 10px/1 var(--font-display);
   letter-spacing: 0.03em;
 }
-.street-quest--app .sq-district-ticket .reveal-chip svg { width: 11px; height: 11px; margin-right: 1px; }
+
+.street-quest--app .sq-district-ticket .reveal-chip svg {
+  width: 11px;
+  height: 11px;
+  margin-right: 1px;
+}
 
 .street-quest--app .sq-checkin-requirements {
   margin-bottom: 13px;
@@ -2113,7 +3289,10 @@
   transform: rotate(-1deg);
 }
 
-.street-quest--app .sq-checkin-requirements .checklist { gap: 4px; }
+.street-quest--app .sq-checkin-requirements .checklist {
+  gap: 4px;
+}
+
 .street-quest--app .sq-checkin-requirements .checklist-item {
   min-height: 34px;
   gap: 9px;
@@ -2121,7 +3300,11 @@
   border-bottom: 1px dashed rgba(24, 21, 16, 0.2);
   color: var(--sq-ink);
 }
-.street-quest--app .sq-checkin-requirements .checklist-item:last-child { border-bottom: 0; }
+
+.street-quest--app .sq-checkin-requirements .checklist-item:last-child {
+  border-bottom: 0;
+}
+
 .street-quest--app .sq-stamp-mark {
   display: grid;
   width: 60px;
@@ -2135,6 +3318,7 @@
   text-transform: uppercase;
   transform: rotate(1deg);
 }
+
 .street-quest--app .sq-stamp-mark.is-stamped {
   border: 3px double #b64a1a;
   background: rgba(240, 90, 25, 0.08);
@@ -2142,11 +3326,13 @@
   transform: rotate(-4deg);
   box-shadow: 0 0 0 2px rgba(182, 74, 26, 0.14);
 }
+
 .street-quest--app .sq-stamp-mark.is-stamped::after {
   content: '✦';
   margin-left: 3px;
   font-size: 8px;
 }
+
 .street-quest--app .sq-generated-stamp {
   border: 0;
   background-color: transparent;
@@ -2157,6 +3343,7 @@
   text-transform: none;
   box-shadow: none;
 }
+
 .street-quest--app .sq-generated-stamp.sq-stamp-round {
   width: 50px;
   height: 50px;
@@ -2164,11 +3351,13 @@
   background-image: url('../assets/street-quest/generated-stamps/stamp-blue-ring.png');
   transform: rotate(-4deg);
 }
+
 .street-quest--app .sq-generated-stamp.sq-stamp-round.is-stamped {
   border: 0;
   background: transparent url('../assets/street-quest/generated-stamps/stamp-blue-ring.png') center / 100% 100% no-repeat;
   color: #245b9f;
 }
+
 .street-quest--app .sq-generated-stamp.sq-stamp-frame {
   width: 68px;
   height: 37px;
@@ -2177,11 +3366,13 @@
   color: #a93535;
   transform: rotate(2deg);
 }
+
 .street-quest--app .sq-generated-stamp.sq-stamp-frame.is-stamped {
   border: 0;
   background: transparent url('../assets/street-quest/generated-stamps/stamp-red-frame.png') center / 100% 100% no-repeat;
   color: #a93535;
 }
+
 .street-quest--app .sq-generated-stamp:not(.is-stamped) {
   width: 60px;
   height: 28px;
@@ -2191,9 +3382,20 @@
   color: rgba(24, 21, 16, 0.54);
   transform: rotate(1deg);
 }
-.street-quest--app .sq-generated-stamp.is-stamped::after { content: none; }
-.street-quest--app .sq-checkin-requirements .checklist-text { color: var(--sq-ink); font: 700 12px/1.2 var(--font-heading); }
-.street-quest--app .sq-checkin-requirements .checklist-item.done .checklist-text { color: rgba(24, 21, 16, 0.58); text-decoration: none; }
+
+.street-quest--app .sq-generated-stamp.is-stamped::after {
+  content: none;
+}
+
+.street-quest--app .sq-checkin-requirements .checklist-text {
+  color: var(--sq-ink);
+  font: 700 12px/1.2 var(--font-heading);
+}
+
+.street-quest--app .sq-checkin-requirements .checklist-item.done .checklist-text {
+  color: rgba(24, 21, 16, 0.58);
+  text-decoration: none;
+}
 
 .street-quest--app .sq-checkin-primary,
 .street-quest--app .sq-encounter-button {
@@ -2206,12 +3408,27 @@
   font-family: var(--font-heading);
   font-weight: 700;
 }
+
 .street-quest--app .sq-checkin-primary:hover,
 .street-quest--app .sq-checkin-primary:focus-visible,
 .street-quest--app .sq-encounter-button:hover,
-.street-quest--app .sq-encounter-button:focus-visible { background: var(--sq-lime); color: var(--sq-ink); }
-.street-quest--app .sq-checkin-secondary { border-color: rgba(24, 21, 16, 0.48); color: var(--sq-ink); background: rgba(255, 253, 245, 0.22); }
-.street-quest--app .sq-checkin-secondary:hover, .street-quest--app .sq-checkin-secondary:focus-visible { border-color: var(--sq-ink); background: rgba(24, 21, 16, 0.08); color: var(--sq-ink); }
+.street-quest--app .sq-encounter-button:focus-visible {
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-checkin-secondary {
+  border-color: rgba(24, 21, 16, 0.48);
+  color: var(--sq-ink);
+  background: rgba(255, 253, 245, 0.22);
+}
+
+.street-quest--app .sq-checkin-secondary:hover,
+.street-quest--app .sq-checkin-secondary:focus-visible {
+  border-color: var(--sq-ink);
+  background: rgba(24, 21, 16, 0.08);
+  color: var(--sq-ink);
+}
 
 /* Encounter gate becomes a stamped receipt instead of a second generic card. */
 .street-quest--app .sq-encounter-locked,
@@ -2230,29 +3447,132 @@
   padding: 11px 12px;
   border-style: dashed;
 }
-.street-quest--app .sq-encounter-key { display: grid; width: 30px; height: 30px; place-items: center; border: 2px solid var(--sq-ink); border-radius: 50%; background: rgba(24, 21, 16, 0.1); }
-.street-quest--app .sq-encounter-key svg { width: 17px; height: 17px; }
+
+.street-quest--app .sq-encounter-key {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 2px solid var(--sq-ink);
+  border-radius: 50%;
+  background: rgba(24, 21, 16, 0.1);
+}
+
+.street-quest--app .sq-encounter-key svg {
+  width: 17px;
+  height: 17px;
+}
+
 .street-quest--app .sq-encounter-locked strong,
-.street-quest--app .sq-ready-copy strong { display: block; font: 800 13px/1.15 var(--font-heading); }
+.street-quest--app .sq-ready-copy strong {
+  display: block;
+  font: 800 13px/1.15 var(--font-heading);
+}
+
 .street-quest--app .sq-encounter-locked p,
-.street-quest--app .sq-ready-copy span { display: block; margin: 3px 0 0; color: rgba(24, 21, 16, 0.62); font-size: 10px; line-height: 1.35; }
+.street-quest--app .sq-ready-copy span {
+  display: block;
+  margin: 3px 0 0;
+  color: rgba(24, 21, 16, 0.62);
+  font-size: 10px;
+  line-height: 1.35;
+}
 
-.street-quest--app .sq-encounter-ready { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 10px; align-items: center; padding: 12px; box-shadow: 3px 3px 0 var(--sq-lime); }
-.street-quest--app .sq-ready-stamp { display: grid; width: 54px; height: 54px; place-items: center; border: 3px solid var(--sq-orange); border-radius: 50%; color: var(--sq-orange); font: 800 10px/0.95 var(--font-display); text-align: center; transform: rotate(-8deg); }
-.street-quest--app .sq-ready-stamp span, .street-quest--app .sq-ready-stamp b { display: block; }
-.street-quest--app .sq-ready-stamp b { font-size: 12px; }
-.street-quest--app .sq-encounter-button { grid-column: 1 / -1; }
+.street-quest--app .sq-encounter-ready {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  box-shadow: 3px 3px 0 var(--sq-lime);
+}
 
-.street-quest--app .sq-support-progress { padding: 11px 12px 10px; box-shadow: 3px 3px 0 var(--sq-blue); }
-.street-quest--app .sq-support-progress-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 9px; padding-bottom: 8px; border-bottom: 1px dashed rgba(24, 21, 16, 0.35); }
-.street-quest--app .sq-support-progress-head p { margin: 0; font: 800 11px/1.2 var(--font-heading); }
-.street-quest--app .sq-support-progress-head span { padding: 4px 6px; background: var(--sq-ink); color: var(--sq-lime); font: 800 10px/1 var(--font-display); }
-.street-quest--app .sq-support-progress-row { margin-bottom: 9px; }
-.street-quest--app .sq-support-progress-row:last-child { margin-bottom: 0; }
-.street-quest--app .sq-support-progress-label { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; color: rgba(24, 21, 16, 0.72); font: 700 10px/1 var(--font-display); }
-.street-quest--app .sq-support-progress-label b { color: var(--sq-ink); }
-.street-quest--app .sq-support-progress-track { height: 7px; overflow: hidden; border: 1px solid var(--sq-ink); background: rgba(24, 21, 16, 0.1); }
-.street-quest--app .sq-support-progress-fill { height: 100%; background: var(--sq-orange); }
+.street-quest--app .sq-ready-stamp {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  border: 3px solid var(--sq-orange);
+  border-radius: 50%;
+  color: var(--sq-orange);
+  font: 800 10px/0.95 var(--font-display);
+  text-align: center;
+  transform: rotate(-8deg);
+}
+
+.street-quest--app .sq-ready-stamp span,
+.street-quest--app .sq-ready-stamp b {
+  display: block;
+}
+
+.street-quest--app .sq-ready-stamp b {
+  font-size: 12px;
+}
+
+.street-quest--app .sq-encounter-button {
+  grid-column: 1 / -1;
+}
+
+.street-quest--app .sq-support-progress {
+  padding: 11px 12px 10px;
+  box-shadow: 3px 3px 0 var(--sq-blue);
+}
+
+.street-quest--app .sq-support-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 9px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed rgba(24, 21, 16, 0.35);
+}
+
+.street-quest--app .sq-support-progress-head p {
+  margin: 0;
+  font: 800 11px/1.2 var(--font-heading);
+}
+
+.street-quest--app .sq-support-progress-head span {
+  padding: 4px 6px;
+  background: var(--sq-ink);
+  color: var(--sq-lime);
+  font: 800 10px/1 var(--font-display);
+}
+
+.street-quest--app .sq-support-progress-row {
+  margin-bottom: 9px;
+}
+
+.street-quest--app .sq-support-progress-row:last-child {
+  margin-bottom: 0;
+}
+
+.street-quest--app .sq-support-progress-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+  color: rgba(24, 21, 16, 0.72);
+  font: 700 10px/1 var(--font-display);
+}
+
+.street-quest--app .sq-support-progress-label b {
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-support-progress-track {
+  height: 7px;
+  overflow: hidden;
+  border: 1px solid var(--sq-ink);
+  background: rgba(24, 21, 16, 0.1);
+}
+
+.street-quest--app .sq-support-progress-fill {
+  height: 100%;
+  background: var(--sq-orange);
+}
 
 /* Support node: the head is a stamped location ticket with an ink status mark. */
 .street-quest--app .sq-node-sheet .sq-node-head {
@@ -2263,18 +3583,57 @@
   background: rgba(255, 253, 245, 0.28);
   box-shadow: 3px 3px 0 var(--sq-blue);
 }
-.street-quest--app .sq-node-sheet .sq-node-icon { border-color: var(--sq-ink); background: var(--sq-ink); color: var(--sq-paper-light); box-shadow: 2px 2px 0 var(--sq-orange); }
-.street-quest--app .sq-node-sheet .sq-node-title { color: var(--sq-ink); }
-.street-quest--app .sq-node-sheet .sq-node-meta { color: rgba(24, 21, 16, 0.62); }
-.street-quest--app .sq-node-sheet .sq-node-route-note { color: rgba(24, 21, 16, 0.72); }
-.street-quest--app .sq-node-sheet .sq-node-route-note b { color: #5d7f18; }
-.street-quest--app .sq-node-sheet .explored-badge { border: 2px solid var(--sq-ink); border-radius: 2px; background: var(--sq-lime); color: var(--sq-ink); box-shadow: 2px 2px 0 var(--sq-ink); transform: rotate(3deg); }
-.street-quest--app .sq-node-sheet .sq-sheet-secondary { border-color: rgba(24, 21, 16, 0.48); color: var(--sq-ink); background: rgba(255, 253, 245, 0.22); }
+
+.street-quest--app .sq-node-sheet .sq-node-icon {
+  border-color: var(--sq-ink);
+  background: var(--sq-ink);
+  color: var(--sq-paper-light);
+  box-shadow: 2px 2px 0 var(--sq-orange);
+}
+
+.street-quest--app .sq-node-sheet .sq-node-title {
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-node-sheet .sq-node-meta {
+  color: rgba(24, 21, 16, 0.62);
+}
+
+.street-quest--app .sq-node-sheet .sq-node-route-note {
+  color: rgba(24, 21, 16, 0.72);
+}
+
+.street-quest--app .sq-node-sheet .sq-node-route-note b {
+  color: #5d7f18;
+}
+
+.street-quest--app .sq-node-sheet .explored-badge {
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+  box-shadow: 2px 2px 0 var(--sq-ink);
+  transform: rotate(3deg);
+}
+
+.street-quest--app .sq-node-sheet .sq-sheet-secondary {
+  border-color: rgba(24, 21, 16, 0.48);
+  color: var(--sq-ink);
+  background: rgba(255, 253, 245, 0.22);
+}
 
 @media (max-width: 360px) {
-  .street-quest--app .sq-checkin-title { font-size: 24px; }
-  .street-quest--app .sq-district-ticket-head { padding-right: 0; }
-  .street-quest--app .sq-district-ticket::before { display: none; }
+  .street-quest--app .sq-checkin-title {
+    font-size: 24px;
+  }
+
+  .street-quest--app .sq-district-ticket-head {
+    padding-right: 0;
+  }
+
+  .street-quest--app .sq-district-ticket::before {
+    display: none;
+  }
 }
 
 /* Passport pass: settings and notifications now read as document pages, not
@@ -2327,7 +3686,11 @@
   letter-spacing: 0.12em;
   text-align: left;
 }
-.street-quest--app .sq-passport-meta b { color: var(--sq-orange); font-size: 7px; }
+
+.street-quest--app .sq-passport-meta b {
+  color: var(--sq-orange);
+  font-size: 7px;
+}
 
 .street-quest--app .sq-passport-stamp {
   position: absolute;
@@ -2346,8 +3709,15 @@
   transform: rotate(8deg);
   opacity: 0.82;
 }
-.street-quest--app .sq-passport-stamp span { display: block; font-size: 15px; }
-.street-quest--app .sq-passport-stamp b { display: block; }
+
+.street-quest--app .sq-passport-stamp span {
+  display: block;
+  font-size: 15px;
+}
+
+.street-quest--app .sq-passport-stamp b {
+  display: block;
+}
 
 .street-quest--app .sq-profile-avatar {
   position: relative;
@@ -2380,8 +3750,17 @@
   letter-spacing: 0.13em;
   transform: rotate(-0.5deg);
 }
-.street-quest--app .sq-visa-strip b { color: #fff8e8; }
-.street-quest--app .sq-setting-label { display: inline-flex; align-items: center; gap: 8px; }
+
+.street-quest--app .sq-visa-strip b {
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-setting-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .street-quest--app .sq-setting-symbol {
   display: inline-grid;
   width: 22px;
@@ -2394,8 +3773,17 @@
   font-style: normal;
   transform: rotate(-4deg);
 }
-.street-quest--app .sq-setting-row { min-height: 48px; }
-.street-quest--app .sq-version-card { position: relative; min-height: 76px; overflow: hidden; }
+
+.street-quest--app .sq-setting-row {
+  min-height: 48px;
+}
+
+.street-quest--app .sq-version-card {
+  position: relative;
+  min-height: 76px;
+  overflow: hidden;
+}
+
 .street-quest--app .sq-version-card::after {
   content: 'ISSUED / FIELD EDITION';
   position: absolute;
@@ -2406,7 +3794,12 @@
   letter-spacing: 0.12em;
   transform: rotate(-4deg);
 }
-.street-quest--app .sq-signout-btn { position: relative; min-height: 50px; }
+
+.street-quest--app .sq-signout-btn {
+  position: relative;
+  min-height: 50px;
+}
+
 .street-quest--app .sq-signout-btn::after {
   content: 'DEPART';
   position: absolute;
@@ -2417,7 +3810,10 @@
   transform: rotate(-4deg);
 }
 
-.street-quest--app .sq-notif-body::before { display: none; }
+.street-quest--app .sq-notif-body::before {
+  display: none;
+}
+
 .street-quest--app .sq-notif-passport-card {
   position: relative;
   display: flex;
@@ -2436,6 +3832,7 @@
   box-shadow: 4px 4px 0 var(--sq-orange);
   transform: rotate(-0.7deg);
 }
+
 .street-quest--app .sq-notif-passport-card::after {
   content: 'NOTIFICATION PASS / 026';
   position: absolute;
@@ -2445,6 +3842,7 @@
   font: 800 8px/1 var(--font-display);
   letter-spacing: 0.12em;
 }
+
 .street-quest--app .sq-notif-passport-stamp {
   display: grid;
   width: 50px;
@@ -2458,11 +3856,37 @@
   text-align: center;
   transform: rotate(-8deg);
 }
-.street-quest--app .sq-notif-passport-stamp span { display: block; font-size: 15px; }
-.street-quest--app .sq-notif-passport-stamp b { display: block; }
-.street-quest--app .sq-notif-passport-kicker { display: block; color: var(--sq-orange); font: 800 9px/1 var(--font-display); letter-spacing: 0.13em; }
-.street-quest--app .sq-notif-passport-card strong { display: block; margin-top: 4px; color: var(--sq-ink); font: 800 21px/1 var(--font-display); }
-.street-quest--app .sq-notif-passport-card p { max-width: 225px; margin: 5px 0 0; color: rgba(24, 21, 16, 0.62); font-size: 10px; line-height: 1.35; }
+
+.street-quest--app .sq-notif-passport-stamp span {
+  display: block;
+  font-size: 15px;
+}
+
+.street-quest--app .sq-notif-passport-stamp b {
+  display: block;
+}
+
+.street-quest--app .sq-notif-passport-kicker {
+  display: block;
+  color: var(--sq-orange);
+  font: 800 9px/1 var(--font-display);
+  letter-spacing: 0.13em;
+}
+
+.street-quest--app .sq-notif-passport-card strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--sq-ink);
+  font: 800 21px/1 var(--font-display);
+}
+
+.street-quest--app .sq-notif-passport-card p {
+  max-width: 225px;
+  margin: 5px 0 0;
+  color: rgba(24, 21, 16, 0.62);
+  font-size: 10px;
+  line-height: 1.35;
+}
 
 .street-quest--app .sq-notif-empty {
   position: relative;
@@ -2480,6 +3904,7 @@
   box-shadow: 4px 4px 0 var(--sq-blue);
   transform: rotate(0.5deg);
 }
+
 .street-quest--app .sq-notif-empty::after {
   content: 'CLEAR / 0 NOTES';
   position: absolute;
@@ -2489,6 +3914,7 @@
   font: 800 8px/1 var(--font-display);
   letter-spacing: 0.12em;
 }
+
 .street-quest--app .sq-notif-empty-mark {
   width: 82px;
   height: 34px;
@@ -2500,8 +3926,15 @@
   letter-spacing: 0.13em;
   transform: rotate(-5deg);
 }
-.street-quest--app .sq-notif-empty strong { color: var(--sq-ink); font-size: 17px; }
-.street-quest--app .sq-notif-empty span:last-child { color: rgba(24, 21, 16, 0.62); }
+
+.street-quest--app .sq-notif-empty strong {
+  color: var(--sq-ink);
+  font-size: 17px;
+}
+
+.street-quest--app .sq-notif-empty span:last-child {
+  color: rgba(24, 21, 16, 0.62);
+}
 
 .street-quest--app .notif-row {
   min-height: 82px;
@@ -2517,13 +3950,57 @@
   color: var(--sq-ink);
   box-shadow: 3px 3px 0 var(--sq-blue);
 }
-.street-quest--app .notif-row:hover { background-color: var(--sq-paper-light); background-image: url('../assets/street-quest/class-label-paper.png'); color: var(--sq-ink); transform: translate(-1px, -1px); }
-.street-quest--app .notif-row.unread { padding-left: 9px; border-left: 7px solid var(--sq-orange); background-color: #f1dec0; box-shadow: 3px 3px 0 var(--sq-orange); }
-.street-quest--app .notif-icon { width: 39px; height: 39px; border: 2px solid var(--sq-ink); border-radius: 50%; background: var(--sq-ink); color: var(--sq-lime); box-shadow: 2px 2px 0 var(--sq-orange); }
-.street-quest--app .notif-body { color: var(--sq-ink); }
-.street-quest--app .notif-title { color: var(--sq-ink); font-size: 14px; }
-.street-quest--app .notif-msg { color: rgba(24, 21, 16, 0.62); }
-.street-quest--app .notif-dot { background: var(--sq-orange); }
+
+.street-quest--app .notif-row:hover {
+  background-color: var(--sq-paper-light);
+  background-image: url('../assets/street-quest/class-label-paper.png');
+  color: var(--sq-ink);
+  transform: translate(-1px, -1px);
+}
+
+.street-quest--app .notif-row.unread {
+  padding-left: 9px;
+  border-left: 7px solid var(--sq-orange);
+  background-color: #f1dec0;
+  box-shadow: 3px 3px 0 var(--sq-orange);
+}
+
+.street-quest--app .notif-icon {
+  width: 39px;
+  height: 39px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 50%;
+  background: var(--sq-ink);
+  color: var(--sq-lime);
+  box-shadow: 2px 2px 0 var(--sq-orange);
+}
+
+.street-quest--app .notif-body {
+  color: var(--sq-ink);
+}
+
+.street-quest--app .notif-title {
+  color: var(--sq-ink);
+  font-size: 14px;
+}
+
+.street-quest--app .notif-msg {
+  color: rgba(24, 21, 16, 0.62);
+}
+
+.street-quest--app .notif-dot {
+  background: var(--sq-orange);
+}
+
+/* No-guild state renders its own self-contained paper card (.guild-no-panel) ·
+   strip the outer journal frame so it doesn't double up as a second border/shadow. */
+.street-quest--app #guild-panel:has(.guild-no-panel) {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
 
 /* ── Guild hub: field crew journal / paper ticket ─────────────── */
 .street-quest--app #guild-panel {
@@ -2556,10 +4033,20 @@
   font: 800 8px/1 var(--font-display);
   letter-spacing: 0.16em;
 }
-.street-quest--app #guild-panel .guild-panel-kicker span:first-child { color: var(--sq-lime); }
-.street-quest--app #guild-panel .guild-panel-kicker span:last-child { color: rgba(255, 248, 229, 0.42); }
 
-.street-quest--app #guild-panel .guild-header-row { align-items: center; gap: 12px; }
+.street-quest--app #guild-panel .guild-panel-kicker span:first-child {
+  color: var(--sq-lime);
+}
+
+.street-quest--app #guild-panel .guild-panel-kicker span:last-child {
+  color: rgba(255, 248, 229, 0.42);
+}
+
+.street-quest--app #guild-panel .guild-header-row {
+  align-items: center;
+  gap: 12px;
+}
+
 .street-quest--app #guild-panel .guild-emblem {
   width: 58px;
   height: 58px;
@@ -2573,11 +4060,13 @@
   box-shadow: none;
   transform: rotate(-4deg);
 }
+
 .street-quest--app #guild-panel .guild-name {
   color: #fff8e8;
   font-size: 20px;
   line-height: 1.15;
 }
+
 .street-quest--app #guild-panel .guild-header-meta {
   gap: 6px;
   margin-top: 5px;
@@ -2585,7 +4074,12 @@
   font: 700 10px/1 var(--font-display);
   letter-spacing: 0.03em;
 }
-.street-quest--app #guild-panel .guild-status-dot { width: 7px; height: 7px; }
+
+.street-quest--app #guild-panel .guild-status-dot {
+  width: 7px;
+  height: 7px;
+}
+
 .street-quest--app #guild-panel .guild-header-edit-btn {
   width: 38px;
   height: 38px;
@@ -2594,6 +4088,7 @@
   color: rgba(255, 248, 229, 0.66);
   transform: rotate(3deg);
 }
+
 .street-quest--app #guild-panel .guild-header-edit-btn:hover {
   border-color: var(--sq-orange);
   color: var(--sq-orange);
@@ -2605,6 +4100,7 @@
   padding-top: 12px;
   border-top: 1px dashed rgba(255, 248, 229, 0.2);
 }
+
 .street-quest--app #guild-panel .guild-action-btn {
   display: inline-flex;
   align-items: center;
@@ -2625,20 +4121,24 @@
   transform: rotate(var(--guild-action-tilt, 0deg));
   transition: filter 0.15s ease, transform 0.15s ease;
 }
+
 .street-quest--app #guild-panel .guild-action-btn--rally {
   --guild-action-tilt: -1.2deg;
   color: var(--sq-orange);
 }
+
 .street-quest--app #guild-panel .guild-action-btn--discuss {
   --guild-action-tilt: 0.8deg;
   color: var(--sq-ink);
   opacity: 0.82;
 }
+
 .street-quest--app #guild-panel .guild-action-btn--danger {
   --guild-action-tilt: -0.5deg;
   background-image: url('../assets/street-quest/generated-stamps/guild-danger-ticket.png');
   color: #7a2222;
 }
+
 .street-quest--app #guild-panel .guild-action-btn:hover,
 .street-quest--app #guild-panel .guild-action-btn:focus-visible {
   background: transparent url('../assets/street-quest/generated-stamps/guild-action-ticket.png') center / 100% 100% no-repeat;
@@ -2647,14 +4147,17 @@
   outline: none;
   transform: translateY(-1px) rotate(var(--guild-action-tilt, 0deg));
 }
+
 .street-quest--app #guild-panel .guild-action-btn--danger:hover,
 .street-quest--app #guild-panel .guild-action-btn--danger:focus-visible {
   background-image: url('../assets/street-quest/generated-stamps/guild-danger-ticket.png');
 }
+
 .street-quest--app #guild-panel .guild-action-btn:focus-visible {
   outline: 2px solid var(--sq-lime);
   outline-offset: 1px;
 }
+
 .street-quest--app #guild-panel .guild-action-btn:active {
   transform: translateY(1px) rotate(var(--guild-action-tilt, 0deg));
 }
@@ -2664,6 +4167,7 @@
   color: rgba(255, 248, 229, 0.66);
   line-height: 1.6;
 }
+
 .street-quest--app #guild-panel .guild-announce-row {
   margin-top: 13px;
   padding: 10px 11px;
@@ -2671,8 +4175,14 @@
   border-left: 4px solid var(--sq-orange);
   background: rgba(255, 248, 229, 0.055);
 }
-.street-quest--app #guild-panel .guild-announce-row i { color: var(--sq-orange); }
-.street-quest--app #guild-panel .guild-announce-row p { color: rgba(255, 248, 229, 0.72); }
+
+.street-quest--app #guild-panel .guild-announce-row i {
+  color: var(--sq-orange);
+}
+
+.street-quest--app #guild-panel .guild-announce-row p {
+  color: rgba(255, 248, 229, 0.72);
+}
 
 .street-quest--app #guild-panel .guild-subnav {
   display: grid;
@@ -2682,6 +4192,7 @@
   padding: 8px 0;
   border-bottom: 1px solid rgba(255, 248, 229, 0.2);
 }
+
 .street-quest--app #guild-panel .guild-subnav-item {
   min-height: 55px;
   gap: 5px;
@@ -2694,8 +4205,15 @@
   font-family: var(--font-heading);
   transition: filter 0.15s ease, transform 0.15s ease;
 }
-.street-quest--app #guild-panel .guild-subnav-item i { font-size: 17px; }
-.street-quest--app #guild-panel .guild-subnav-item span { font-size: 10px; }
+
+.street-quest--app #guild-panel .guild-subnav-item i {
+  font-size: 17px;
+}
+
+.street-quest--app #guild-panel .guild-subnav-item span {
+  font-size: 10px;
+}
+
 .street-quest--app #guild-panel .guild-subnav-item:hover,
 .street-quest--app #guild-panel .guild-subnav-item:focus-visible {
   color: #fff8e8;
@@ -2703,6 +4221,7 @@
   outline: none;
   transform: translateY(-1px) rotate(-0.5deg);
 }
+
 .street-quest--app #guild-panel .guild-subnav-item.active {
   background-color: transparent;
   background-image: url('../assets/street-quest/generated-stamps/guild-tab-marker.png');
@@ -2713,6 +4232,7 @@
   filter: none;
   transform: rotate(-1.2deg);
 }
+
 .street-quest--app #guild-panel .guild-subnav-item.active:hover,
 .street-quest--app #guild-panel .guild-subnav-item.active:focus-visible {
   background: transparent url('../assets/street-quest/generated-stamps/guild-tab-marker.png') center / 100% 100% no-repeat;
@@ -2720,7 +4240,10 @@
   filter: brightness(1.04) saturate(1.08);
   transform: translateY(-1px) rotate(-1.2deg);
 }
-.street-quest--app #guild-panel .guild-subnav-item.active::after { display: none; }
+
+.street-quest--app #guild-panel .guild-subnav-item.active::after {
+  display: none;
+}
 
 .street-quest--app #guild-panel .guild-subpanel {
   margin: 14px 14px 18px;
@@ -2745,27 +4268,34 @@
   background: url('../assets/street-quest/generated-stamps/guild-journal-label.png') center / 100% 100% no-repeat;
   color: rgba(24, 21, 16, 0.66);
 }
+
 .street-quest--app #guild-panel .guild-invite-label {
   font: 800 9px/1 var(--font-display);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
+
 .street-quest--app #guild-panel .guild-invite-code {
   color: var(--sq-orange);
   font: 800 18px/1 var(--font-display);
   letter-spacing: 0.14em;
 }
+
 .street-quest--app #guild-panel .guild-invite-copy-btn {
   border-color: rgba(24, 21, 16, 0.35);
   border-radius: 2px;
   color: rgba(24, 21, 16, 0.62);
 }
+
 .street-quest--app #guild-panel .guild-invite-copy-btn:hover {
   border-color: var(--sq-orange);
   color: var(--sq-orange);
 }
 
-.street-quest--app #guild-panel #guild-member-list { counter-reset: guild-member; }
+.street-quest--app #guild-panel #guild-member-list {
+  counter-reset: guild-member;
+}
+
 .street-quest--app #guild-panel .guild-member-row {
   position: relative;
   gap: 9px;
@@ -2774,6 +4304,7 @@
   border-bottom: 1px dashed rgba(24, 21, 16, 0.2);
   color: var(--sq-ink);
 }
+
 .street-quest--app #guild-panel .guild-member-row::before {
   counter-increment: guild-member;
   content: counter(guild-member, decimal-leading-zero);
@@ -2783,27 +4314,41 @@
   font: 800 9px/1 var(--font-display);
   letter-spacing: 0.04em;
 }
-.street-quest--app #guild-panel .guild-member-row:last-child { border-bottom: none; }
-.street-quest--app #guild-panel .guild-status-badge { border-color: var(--sq-paper-light); }
+
+.street-quest--app #guild-panel .guild-member-row:last-child {
+  border-bottom: none;
+}
+
+.street-quest--app #guild-panel .guild-status-badge {
+  border-color: var(--sq-paper-light);
+}
+
 .street-quest--app #guild-panel .guild-member-name {
   color: var(--sq-ink);
   font-size: 15px;
 }
-.street-quest--app #guild-panel .guild-member-you { color: rgba(24, 21, 16, 0.55); }
+
+.street-quest--app #guild-panel .guild-member-you {
+  color: rgba(24, 21, 16, 0.55);
+}
+
 .street-quest--app #guild-panel .guild-member-leader-tag {
   color: var(--sq-orange);
   font: 800 10px/1 var(--font-display);
   letter-spacing: 0.03em;
 }
+
 .street-quest--app #guild-panel .guild-icon-btn {
   border-color: rgba(24, 21, 16, 0.3);
   border-radius: 2px;
   color: rgba(24, 21, 16, 0.64);
 }
+
 .street-quest--app #guild-panel .guild-icon-btn:hover {
   border-color: var(--sq-orange);
   color: var(--sq-orange);
 }
+
 .street-quest--app #guild-panel .guild-icon-btn.danger {
   border-color: rgba(192, 54, 37, 0.42);
   color: #b63e2f;
@@ -2814,20 +4359,42 @@
   padding-top: 12px;
   border-top: 1px solid rgba(24, 21, 16, 0.18);
 }
+
 .street-quest--app #guild-panel .guild-announcement-item,
 .street-quest--app #guild-panel .guild-log-item {
   border-bottom-color: rgba(24, 21, 16, 0.16);
 }
+
 .street-quest--app #guild-panel .guild-announcement-text,
-.street-quest--app #guild-panel .guild-log-text { color: var(--sq-ink); }
+.street-quest--app #guild-panel .guild-log-text {
+  color: var(--sq-ink);
+}
+
 .street-quest--app #guild-panel .guild-announcement-meta,
 .street-quest--app #guild-panel .guild-log-time,
-.street-quest--app #guild-panel .guild-list-empty { color: rgba(24, 21, 16, 0.57); }
-.street-quest--app #guild-panel .guild-log-icon { color: var(--sq-orange); }
-.street-quest--app #guild-panel .guild-log-detail { color: #a94622; }
-.street-quest--app #guild-panel .guild-compose-row { border-bottom-color: rgba(24, 21, 16, 0.27); }
-.street-quest--app #guild-panel .guild-compose-row textarea { color: var(--sq-ink); }
-.street-quest--app #guild-panel .guild-compose-row textarea::placeholder { color: rgba(24, 21, 16, 0.5); }
+.street-quest--app #guild-panel .guild-list-empty {
+  color: rgba(24, 21, 16, 0.57);
+}
+
+.street-quest--app #guild-panel .guild-log-icon {
+  color: var(--sq-orange);
+}
+
+.street-quest--app #guild-panel .guild-log-detail {
+  color: #a94622;
+}
+
+.street-quest--app #guild-panel .guild-compose-row {
+  border-bottom-color: rgba(24, 21, 16, 0.27);
+}
+
+.street-quest--app #guild-panel .guild-compose-row textarea {
+  color: var(--sq-ink);
+}
+
+.street-quest--app #guild-panel .guild-compose-row textarea::placeholder {
+  color: rgba(24, 21, 16, 0.5);
+}
 
 /* ── Guild field kit: roster slips, note cards, mission passes, ink icons ── */
 .street-quest--app #guild-panel .guild-tab-icon,
@@ -2840,20 +4407,35 @@
   background-repeat: no-repeat;
   background-size: contain;
 }
+
 .street-quest--app #guild-panel .guild-tab-icon {
   width: 28px;
   height: 28px;
   opacity: 0.72;
   filter: saturate(0.82);
 }
-.street-quest--app #guild-panel .guild-tab-icon--members { background-image: url('../assets/street-quest/generated-stamps/guild-icon-members.png'); }
-.street-quest--app #guild-panel .guild-tab-icon--announce { background-image: url('../assets/street-quest/generated-stamps/guild-icon-announce.png'); }
-.street-quest--app #guild-panel .guild-tab-icon--log { background-image: url('../assets/street-quest/generated-stamps/guild-icon-log.png'); }
-.street-quest--app #guild-panel .guild-tab-icon--missions { background-image: url('../assets/street-quest/generated-stamps/guild-icon-missions.png'); }
+
+.street-quest--app #guild-panel .guild-tab-icon--members {
+  background-image: url('../assets/street-quest/generated-stamps/guild-icon-members.png');
+}
+
+.street-quest--app #guild-panel .guild-tab-icon--announce {
+  background-image: url('../assets/street-quest/generated-stamps/guild-icon-announce.png');
+}
+
+.street-quest--app #guild-panel .guild-tab-icon--log {
+  background-image: url('../assets/street-quest/generated-stamps/guild-icon-log.png');
+}
+
+.street-quest--app #guild-panel .guild-tab-icon--missions {
+  background-image: url('../assets/street-quest/generated-stamps/guild-icon-missions.png');
+}
+
 .street-quest--app #guild-panel .guild-subnav-item.active .guild-tab-icon {
   opacity: 1;
   filter: saturate(1.08) contrast(1.05);
 }
+
 .street-quest--app #guild-panel .guild-note-icon {
   width: 25px;
   height: 25px;
@@ -2864,6 +4446,7 @@
 .street-quest--app #guild-panel #guild-member-list {
   padding-top: 3px;
 }
+
 .street-quest--app #guild-panel .guild-member-row {
   min-height: 72px;
   margin: 0 -3px 8px;
@@ -2876,14 +4459,20 @@
   background-size: 100% 100%;
   color: var(--sq-ink);
 }
-.street-quest--app #guild-panel .guild-member-row:last-child { margin-bottom: 0; }
+
+.street-quest--app #guild-panel .guild-member-row:last-child {
+  margin-bottom: 0;
+}
+
 .street-quest--app #guild-panel .guild-member-copy {
   flex: 1;
   min-width: 0;
 }
+
 .street-quest--app #guild-panel .guild-member-row::before {
   color: rgba(24, 21, 16, 0.5);
 }
+
 .street-quest--app #guild-panel .guild-announcement-item,
 .street-quest--app #guild-panel .guild-log-item {
   position: relative;
@@ -2898,25 +4487,46 @@
   background-repeat: no-repeat;
   background-size: 100% 100%;
 }
+
 .street-quest--app #guild-panel .guild-announcement-marker,
 .street-quest--app #guild-panel .guild-log-marker {
   width: 27px;
   height: 27px;
 }
-.street-quest--app #guild-panel .guild-announcement-marker { background-image: url('../assets/street-quest/generated-stamps/guild-icon-announce.png'); }
-.street-quest--app #guild-panel .guild-log-marker--capture { background-image: url('../assets/street-quest/generated-stamps/guild-icon-members.png'); }
-.street-quest--app #guild-panel .guild-log-marker--fog { background-image: url('../assets/street-quest/generated-stamps/guild-icon-missions.png'); }
-.street-quest--app #guild-panel .guild-log-marker--lore { background-image: url('../assets/street-quest/generated-stamps/guild-icon-log.png'); }
+
+.street-quest--app #guild-panel .guild-announcement-marker {
+  background-image: url('../assets/street-quest/generated-stamps/guild-icon-announce.png');
+}
+
+.street-quest--app #guild-panel .guild-log-marker--capture {
+  background-image: url('../assets/street-quest/generated-stamps/guild-icon-members.png');
+}
+
+.street-quest--app #guild-panel .guild-log-marker--fog {
+  background-image: url('../assets/street-quest/generated-stamps/guild-icon-missions.png');
+}
+
+.street-quest--app #guild-panel .guild-log-marker--lore {
+  background-image: url('../assets/street-quest/generated-stamps/guild-icon-log.png');
+}
+
 .street-quest--app #guild-panel .guild-announcement-item:last-child,
-.street-quest--app #guild-panel .guild-log-item:last-child { margin-bottom: 0; }
+.street-quest--app #guild-panel .guild-log-item:last-child {
+  margin-bottom: 0;
+}
+
 .street-quest--app #guild-panel .guild-announcement-text,
-.street-quest--app #guild-panel .guild-log-text { line-height: 1.5; }
+.street-quest--app #guild-panel .guild-log-text {
+  line-height: 1.5;
+}
+
 .street-quest--app #guild-panel .guild-del-btn {
   width: 27px;
   height: 27px;
   border: 1px solid rgba(192, 54, 37, 0.35);
   color: #a94622;
 }
+
 .street-quest--app #guild-panel .guild-list-empty {
   min-height: 120px;
   display: grid;
@@ -2935,11 +4545,13 @@
   background-repeat: no-repeat;
   background-size: 100% 100%;
 }
+
 .street-quest--app #guild-panel .guild-compose-row {
   margin: 0 -3px 11px;
   padding: 12px 14px 13px;
   border-bottom: 1px dashed rgba(24, 21, 16, 0.34);
 }
+
 .street-quest--app #guild-panel .guild-compose-row .forum-send-btn {
   width: 68px;
   height: 38px;
@@ -2949,6 +4561,7 @@
   color: var(--sq-orange);
   box-shadow: none;
 }
+
 .street-quest--app #guild-panel .guild-compose-row .forum-send-btn:hover,
 .street-quest--app #guild-panel .guild-compose-row .forum-send-btn:focus-visible {
   background: transparent url('../assets/street-quest/generated-stamps/guild-action-ticket.png') center / 100% 100% no-repeat;
@@ -2962,7 +4575,11 @@
   background-image: url('../assets/street-quest/ui-paper-kraft.webp');
   background-size: 460px 460px;
 }
-.street-quest--app #guild-panel #guild-hub-missions { gap: 10px !important; }
+
+.street-quest--app #guild-panel #guild-hub-missions {
+  gap: 10px !important;
+}
+
 .street-quest--app #guild-panel #guild-hub-missions .coop-mission-card {
   min-height: 225px;
   margin: 0;
@@ -2976,8 +4593,13 @@
   background-size: 100% 100%;
   box-shadow: none;
 }
-.street-quest--app #guild-panel #guild-hub-missions .coop-mission-head { align-items: flex-start; gap: 8px; }
-.street-quest--app #guild-panel #guild-hub-missions .coop-mission-head > i {
+
+.street-quest--app #guild-panel #guild-hub-missions .coop-mission-head {
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.street-quest--app #guild-panel #guild-hub-missions .coop-mission-head>i {
   display: block;
   width: 27px;
   height: 27px;
@@ -2987,37 +4609,47 @@
   color: transparent;
   font-size: 0;
 }
+
 .street-quest--app #guild-panel #guild-hub-missions .coop-mission-title {
   color: var(--sq-ink);
   font: 800 16px/1.25 var(--font-heading);
 }
+
 .street-quest--app #guild-panel #guild-hub-missions .coop-mission-badge {
   color: var(--sq-orange);
   font: 800 11px/1.2 var(--font-display);
   white-space: nowrap;
 }
+
 .street-quest--app #guild-panel #guild-hub-missions .coop-mission-desc {
   margin: 9px 0 13px;
   color: rgba(24, 21, 16, 0.66);
   font-size: 12px;
   line-height: 1.55;
 }
+
 .street-quest--app #guild-panel #guild-hub-missions .coop-progress-row {
   margin-bottom: 6px;
   color: rgba(24, 21, 16, 0.56);
   font-size: 11px;
 }
+
 .street-quest--app #guild-panel #guild-hub-missions .coop-progress-track {
   height: 7px;
   border: 1px solid rgba(24, 21, 16, 0.32);
   border-radius: 0;
   background: rgba(24, 21, 16, 0.1);
 }
+
 .street-quest--app #guild-panel #guild-hub-missions .coop-progress-fill {
   border-radius: 0;
   background: var(--sq-orange);
 }
-.street-quest--app #guild-panel #guild-hub-missions .coop-progress-fill.done { background: var(--sq-lime); }
+
+.street-quest--app #guild-panel #guild-hub-missions .coop-progress-fill.done {
+  background: var(--sq-lime);
+}
+
 .street-quest--app #guild-panel #guild-hub-missions .coop-checkin-btn {
   min-height: 39px;
   margin-top: 14px;
@@ -3029,6 +4661,7 @@
   font: 800 12px/1 var(--font-heading);
   box-shadow: none;
 }
+
 .street-quest--app #guild-panel #guild-hub-missions .coop-checkin-btn:hover,
 .street-quest--app #guild-panel #guild-hub-missions .coop-checkin-btn:focus-visible {
   background: transparent url('../assets/street-quest/generated-stamps/guild-action-ticket.png') center / 100% 100% no-repeat;
@@ -3060,9 +4693,14 @@
 }
 
 .street-quest--app #tab-mission .sq-mission-pass--02,
-.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass--02 { --sq-mission-accent: #d43d6f; }
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass--02 {
+  --sq-mission-accent: #d43d6f;
+}
+
 .street-quest--app #tab-mission .sq-mission-pass--03,
-.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass--03 { --sq-mission-accent: #9db817; }
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass--03 {
+  --sq-mission-accent: #9db817;
+}
 
 .street-quest--app #tab-mission .sq-mission-rail,
 .street-quest--app #guild-panel #guild-hub-missions .sq-mission-rail {
@@ -3125,8 +4763,8 @@
   gap: 8px;
 }
 
-.street-quest--app #tab-mission .sq-mission-pass .coop-mission-head > i,
-.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-mission-head > i {
+.street-quest--app #tab-mission .sq-mission-pass .coop-mission-head>i,
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-mission-head>i {
   display: none;
 }
 
@@ -3209,7 +4847,9 @@
 }
 
 .street-quest--app #tab-mission .sq-mission-pass .coop-progress-fill.done,
-.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-progress-fill.done { background: #5b9b4a; }
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-progress-fill.done {
+  background: #5b9b4a;
+}
 
 .street-quest--app #tab-mission .sq-mission-pass .coop-checkin-btn,
 .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-checkin-btn {
@@ -3263,7 +4903,10 @@
 }
 
 .street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-main,
-.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-main { min-width: 0; }
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-main {
+  min-width: 0;
+}
+
 .street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-head,
 .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-head {
   align-items: flex-start;
@@ -3271,8 +4914,12 @@
   padding: 0;
   border-bottom: 0;
 }
+
 .street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-label,
-.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-label { color: rgba(24, 21, 16, 0.53); }
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-label {
+  color: rgba(24, 21, 16, 0.53);
+}
+
 .street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-title,
 .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-title {
   margin-top: 5px;
@@ -3280,35 +4927,56 @@
   font: 900 17px/1.17 var(--font-heading);
   overflow-wrap: anywhere;
 }
+
 .street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-pts,
 .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-pts {
   color: #c43e18;
   font: 900 12px/1.15 var(--font-display);
   white-space: nowrap;
 }
+
 .street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-body,
 .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-body {
   padding: 12px 0 0;
   color: var(--sq-ink);
 }
+
 .street-quest--app #tab-mission .sq-mission-pass .jigsaw-hint,
 .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-hint,
 .street-quest--app #tab-mission .sq-mission-pass .jigsaw-chapter-label,
-.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-chapter-label { color: rgba(24, 21, 16, 0.76); }
+.street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-chapter-label {
+  color: rgba(24, 21, 16, 0.76);
+}
 
 @media (max-width: 380px) {
+
   .street-quest--app #tab-mission .sq-mission-pass,
-  .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass { grid-template-columns: 61px minmax(0, 1fr); }
+  .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass {
+    grid-template-columns: 61px minmax(0, 1fr);
+  }
+
   .street-quest--app #tab-mission .sq-mission-rail,
-  .street-quest--app #guild-panel #guild-hub-missions .sq-mission-rail { padding-inline: 4px; }
+  .street-quest--app #guild-panel #guild-hub-missions .sq-mission-rail {
+    padding-inline: 4px;
+  }
+
   .street-quest--app #tab-mission .sq-mission-rail strong,
-  .street-quest--app #guild-panel #guild-hub-missions .sq-mission-rail strong { font-size: 38px; }
+  .street-quest--app #guild-panel #guild-hub-missions .sq-mission-rail strong {
+    font-size: 38px;
+  }
+
   .street-quest--app #tab-mission .sq-mission-pass-body,
-  .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass-body { padding-left: 9px; padding-right: 7px; }
+  .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass-body {
+    padding-left: 9px;
+    padding-right: 7px;
+  }
+
   .street-quest--app #tab-mission .sq-mission-pass .coop-mission-title,
   .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .coop-mission-title,
   .street-quest--app #tab-mission .sq-mission-pass .jigsaw-card-title,
-  .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-title { font-size: 15px; }
+  .street-quest--app #guild-panel #guild-hub-missions .sq-mission-pass .jigsaw-card-title {
+    font-size: 15px;
+  }
 }
 
 /* ── Image-backed co-op pass revision ──────────────────────────────
@@ -3421,13 +5089,15 @@
   font: 800 13px/1.2 var(--font-heading);
 }
 
-.street-quest--app #guild-panel .guild-requests-heading > span {
+.street-quest--app #guild-panel .guild-requests-heading>span {
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
-.street-quest--app #guild-panel .guild-requests-heading i { font-size: 14px; }
+.street-quest--app #guild-panel .guild-requests-heading i {
+  font-size: 14px;
+}
 
 .street-quest--app #guild-panel .guild-request-count {
   display: inline-grid;
@@ -3463,7 +5133,9 @@
   background: rgba(255, 248, 232, 0.72);
 }
 
-.street-quest--app #guild-panel .guild-request-copy { min-width: 0; }
+.street-quest--app #guild-panel .guild-request-copy {
+  min-width: 0;
+}
 
 .street-quest--app #guild-panel .guild-request-name {
   margin: 0;
@@ -3522,7 +5194,9 @@
   transform: translateY(-1px);
 }
 
-.street-quest--app #guild-panel .guild-request-btn:active { transform: translateY(1px); }
+.street-quest--app #guild-panel .guild-request-btn:active {
+  transform: translateY(1px);
+}
 
 .street-quest--app #guild-panel .guild-request-empty {
   margin: 0;
@@ -3534,7 +5208,10 @@
 }
 
 @media (max-width: 380px) {
-  .street-quest--app #guild-panel .guild-request-row { grid-template-columns: auto minmax(0, 1fr); }
+  .street-quest--app #guild-panel .guild-request-row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
   .street-quest--app #guild-panel .guild-request-actions {
     grid-column: 1 / -1;
     justify-content: flex-end;
@@ -3580,7 +5257,9 @@
 
 .street-quest--app .capture-reveal-card .capture-glow-ring,
 .street-quest--app .capture-reveal-card .capture-shimmer,
-.street-quest--app .capture-reveal-card .capture-confetti { display: none; }
+.street-quest--app .capture-reveal-card .capture-confetti {
+  display: none;
+}
 
 .street-quest--app .capture-reveal-card .capture-header {
   position: absolute;
@@ -3811,7 +5490,9 @@
   font: 700 10px/1.2 var(--font-display);
 }
 
-.street-quest--app .figure-dossier-points { color: var(--sq-lime); }
+.street-quest--app .figure-dossier-points {
+  color: var(--sq-lime);
+}
 
 .street-quest--app .figure-detail-dossier .figure-dossier-body {
   min-height: 0;
@@ -4003,8 +5684,13 @@
   margin: 0;
 }
 
-.street-quest--app .sq-preferences-card .sq-setting-row-toggle { top: 12px; }
-.street-quest--app .sq-preferences-card .sq-gps-row { top: 60px; }
+.street-quest--app .sq-preferences-card .sq-setting-row-toggle {
+  top: 12px;
+}
+
+.street-quest--app .sq-preferences-card .sq-gps-row {
+  top: 60px;
+}
 
 .street-quest--app .sq-home-setting {
   position: absolute;
@@ -4028,7 +5714,9 @@
   margin: 0;
 }
 
-.street-quest--app .sq-version-line { margin: 0; }
+.street-quest--app .sq-version-line {
+  margin: 0;
+}
 
 .street-quest--app .sq-signout-btn {
   position: absolute;
@@ -4193,9 +5881,18 @@
 }
 
 .street-quest--app .sq-checkin-sheet .sq-encounter-locked,
-.street-quest--app .sq-checkin-sheet .sq-encounter-locked strong { color: #fff8e8; }
-.street-quest--app .sq-checkin-sheet .sq-encounter-locked p { color: rgba(255, 248, 232, 0.7); }
-.street-quest--app .sq-checkin-sheet .sq-encounter-key { border-color: rgba(255, 248, 232, 0.72); color: #fff8e8; }
+.street-quest--app .sq-checkin-sheet .sq-encounter-locked strong {
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-encounter-locked p {
+  color: rgba(255, 248, 232, 0.7);
+}
+
+.street-quest--app .sq-checkin-sheet .sq-encounter-key {
+  border-color: rgba(255, 248, 232, 0.72);
+  color: #fff8e8;
+}
 
 .street-quest--app .sq-checkin-sheet .sq-encounter-ready,
 .street-quest--app .sq-checkin-sheet .sq-support-progress {
@@ -4257,7 +5954,9 @@
   font-size: clamp(15px, 4vw, 18px);
 }
 
-.street-quest--app .sq-node-sheet .sq-node-meta { color: rgba(255, 248, 232, 0.68); }
+.street-quest--app .sq-node-sheet .sq-node-meta {
+  color: rgba(255, 248, 232, 0.68);
+}
 
 .street-quest--app .sq-node-sheet .sq-node-route-note {
   position: absolute;
@@ -4303,8 +6002,8 @@
 }
 
 .street-quest--app .sq-node-sheet {
-  height: 226px;
-  max-height: 226px;
+  height: 264px;
+  max-height: 264px;
 }
 
 .street-quest--app .sq-checkin-sheet::before,
@@ -4346,7 +6045,9 @@
   transform: translateX(-50%);
 }
 
-.street-quest--app .sq-node-sheet .sheet-handle { top: 39px; }
+.street-quest--app .sq-node-sheet .sheet-handle {
+  top: 39px;
+}
 
 .street-quest--app .sq-checkin-sheet .sq-checkin-title {
   position: absolute;
@@ -4381,7 +6082,10 @@
   transform: rotate(-4deg);
 }
 
-.street-quest--app .sq-checkin-title .sq-checkin-icon svg { width: 21px; height: 21px; }
+.street-quest--app .sq-checkin-title .sq-checkin-icon svg {
+  width: 21px;
+  height: 21px;
+}
 
 .street-quest--app .sq-checkin-sheet .sq-district-ticket {
   position: absolute;
@@ -4414,11 +6118,28 @@
   transform: rotate(2deg);
 }
 
-.street-quest--app .sq-checkin-sheet .sq-district-ticket-head { padding-right: 84px; }
-.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-name { max-width: 68%; font-size: clamp(19px, 5vw, 23px); }
-.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-province { margin: 6px 0 12px; color: #bdb29a; }
-.street-quest--app .sq-checkin-sheet .sq-district-ticket .explored-badge { top: 39px; right: 12px; }
-.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-reveals { gap: 6px; }
+.street-quest--app .sq-checkin-sheet .sq-district-ticket-head {
+  padding-right: 84px;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-name {
+  max-width: 68%;
+  font-size: clamp(19px, 5vw, 23px);
+}
+
+.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-province {
+  margin: 6px 0 12px;
+  color: #bdb29a;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-district-ticket .explored-badge {
+  top: 39px;
+  right: 12px;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-reveals {
+  gap: 6px;
+}
 
 .street-quest--app .sq-checkin-sheet .sq-checkin-requirements {
   position: absolute;
@@ -4459,10 +6180,26 @@
   border-bottom: 1px dashed rgba(24, 21, 16, 0.25);
 }
 
-.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist-item:last-child { border-bottom: 0; }
-.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .sq-generated-stamp { width: 50px; height: 50px; flex-basis: 50px; }
-.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .sq-generated-stamp.sq-stamp-frame { width: 68px; height: 37px; flex-basis: 68px; }
-.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist-text { color: var(--sq-ink); font: 800 12px/1.25 var(--font-heading); }
+.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist-item:last-child {
+  border-bottom: 0;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .sq-generated-stamp {
+  width: 50px;
+  height: 50px;
+  flex-basis: 50px;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .sq-generated-stamp.sq-stamp-frame {
+  width: 68px;
+  height: 37px;
+  flex-basis: 68px;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist-text {
+  color: var(--sq-ink);
+  font: 800 12px/1.25 var(--font-heading);
+}
 
 .street-quest--app .sq-checkin-sheet .sq-encounter-ready {
   position: absolute;
@@ -4483,7 +6220,11 @@
   color: var(--sq-ink);
 }
 
-.street-quest--app .sq-checkin-sheet .sq-encounter-ready .sq-ready-stamp { width: 54px; height: 54px; }
+.street-quest--app .sq-checkin-sheet .sq-encounter-ready .sq-ready-stamp {
+  width: 54px;
+  height: 54px;
+}
+
 .street-quest--app .sq-checkin-sheet .sq-encounter-button {
   grid-column: 1 / -1;
   min-height: 46px;
@@ -4563,11 +6304,37 @@
   box-shadow: 2px 2px 0 var(--sq-orange);
 }
 
-.street-quest--app .sq-node-sheet .sq-node-copy { min-width: 0; flex: 1; }
-.street-quest--app .sq-node-sheet .sq-node-title-row { display: block; min-width: 0; }
-.street-quest--app .sq-node-sheet .sq-node-title { color: var(--sq-ink); font-size: 18px; }
-.street-quest--app .sq-node-sheet .sq-node-meta { margin-top: 4px; color: rgba(24, 21, 16, 0.62); }
-.street-quest--app .sq-node-sheet .explored-badge { position: absolute; top: 7px; right: 27px; border: 2px solid var(--sq-ink); border-radius: 2px; background: var(--sq-lime); color: var(--sq-ink); box-shadow: 2px 2px 0 var(--sq-ink); transform: rotate(3deg); }
+.street-quest--app .sq-node-sheet .sq-node-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-title-row {
+  display: block;
+  min-width: 0;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-title {
+  color: var(--sq-ink);
+  font-size: 18px;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-meta {
+  margin-top: 4px;
+  color: rgba(24, 21, 16, 0.62);
+}
+
+.street-quest--app .sq-node-sheet .explored-badge {
+  position: absolute;
+  top: 7px;
+  right: 27px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+  box-shadow: 2px 2px 0 var(--sq-ink);
+  transform: rotate(3deg);
+}
 
 .street-quest--app .sq-node-sheet .sq-node-route-note {
   position: absolute;
@@ -4582,7 +6349,10 @@
   color: rgba(24, 21, 16, 0.72);
 }
 
-.street-quest--app .sq-node-sheet .sq-node-route-note b { color: #5d7f18; }
+.street-quest--app .sq-node-sheet .sq-node-route-note b {
+  color: #5d7f18;
+}
+
 .street-quest--app .sq-node-sheet .sq-node-action,
 .street-quest--app .sq-node-sheet .sq-sheet-secondary {
   position: absolute;
@@ -4609,7 +6379,9 @@
 }
 
 @media (max-width: 430px) {
-  .street-quest--app .sq-checkin-sheet .sq-checkin-title { font-size: clamp(18px, 6vw, 25px); }
+  .street-quest--app .sq-checkin-sheet .sq-checkin-title {
+    font-size: clamp(18px, 6vw, 25px);
+  }
 }
 
 /* Keep the compact reference layout ahead of the older generated-sheet rules
@@ -4627,8 +6399,8 @@ body.street-quest--app .sq-node-sheet {
 }
 
 body.street-quest--app .sq-node-sheet {
-  height: 226px;
-  max-height: 226px;
+  height: 264px;
+  max-height: 264px;
 }
 
 body.street-quest--app .sq-checkin-sheet::before,
@@ -4650,7 +6422,10 @@ body.street-quest--app .sq-node-sheet::before {
   box-shadow: 3px 3px 0 var(--sq-ink);
 }
 
-body.street-quest--app .sq-node-sheet::before { background: var(--sq-lime); color: var(--sq-ink); }
+body.street-quest--app .sq-node-sheet::before {
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+}
 
 body.street-quest--app .sq-checkin-sheet .sheet-handle,
 body.street-quest--app .sq-node-sheet .sheet-handle {
@@ -4665,7 +6440,9 @@ body.street-quest--app .sq-node-sheet .sheet-handle {
   transform: translateX(-50%);
 }
 
-body.street-quest--app .sq-node-sheet .sheet-handle { top: 39px; }
+body.street-quest--app .sq-node-sheet .sheet-handle {
+  top: 39px;
+}
 
 body.street-quest--app .sq-checkin-sheet .sq-checkin-title {
   top: 54px;
@@ -4696,7 +6473,10 @@ body.street-quest--app .sq-checkin-title .sq-checkin-icon {
   transform: rotate(-4deg);
 }
 
-body.street-quest--app .sq-checkin-title .sq-checkin-icon svg { width: 21px; height: 21px; }
+body.street-quest--app .sq-checkin-title .sq-checkin-icon svg {
+  width: 21px;
+  height: 21px;
+}
 
 body.street-quest--app .sq-checkin-sheet .sq-district-ticket {
   top: 108px;
@@ -4715,11 +6495,40 @@ body.street-quest--app .sq-checkin-sheet .sq-district-ticket {
   transform: none;
 }
 
-body.street-quest--app .sq-checkin-sheet .sq-district-ticket::before { display: block; top: 8px; right: 10px; color: var(--sq-lime); font: 800 9px/1 var(--font-display); letter-spacing: 0.13em; transform: rotate(2deg); }
-body.street-quest--app .sq-checkin-sheet .sq-district-ticket-head { padding-right: 84px; }
-body.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-name { width: calc(100% - 50px); max-width: none; overflow: visible; font-size: 21px; white-space: nowrap; }
-body.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-province { margin: 6px 0 12px; color: #bdb29a; }
-body.street-quest--app .sq-checkin-sheet .sq-district-ticket .explored-badge { top: 39px; right: 12px; padding: 6px 10px; font: 800 13px/1 var(--font-heading); white-space: nowrap; }
+body.street-quest--app .sq-checkin-sheet .sq-district-ticket::before {
+  display: block;
+  top: 8px;
+  right: 10px;
+  color: var(--sq-lime);
+  font: 800 9px/1 var(--font-display);
+  letter-spacing: 0.13em;
+  transform: rotate(2deg);
+}
+
+body.street-quest--app .sq-checkin-sheet .sq-district-ticket-head {
+  padding-right: 84px;
+}
+
+body.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-name {
+  width: calc(100% - 50px);
+  max-width: none;
+  overflow: visible;
+  font-size: 21px;
+  white-space: nowrap;
+}
+
+body.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-province {
+  margin: 6px 0 12px;
+  color: #bdb29a;
+}
+
+body.street-quest--app .sq-checkin-sheet .sq-district-ticket .explored-badge {
+  top: 39px;
+  right: 12px;
+  padding: 6px 10px;
+  font: 800 13px/1 var(--font-heading);
+  white-space: nowrap;
+}
 
 body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements {
   top: 247px;
@@ -4732,13 +6541,48 @@ body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements {
   background: rgba(244, 234, 208, 0.28);
 }
 
-body.street-quest--app .sq-checkin-sheet .sq-checkin-section-label { top: 16px; left: 12px; margin: 0; }
-body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist { top: 48px; right: 8px; left: 8px; display: grid; gap: 0; }
-body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist-item { grid-template-columns: 58px minmax(0, 1fr); min-height: 59px; gap: 8px; padding: 0; border-bottom: 1px dashed rgba(24, 21, 16, 0.25); }
-body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist-item:last-child { border-bottom: 0; }
-body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .sq-generated-stamp { width: 50px; height: 50px; flex-basis: 50px; }
-body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .sq-generated-stamp.sq-stamp-frame { width: 68px; height: 37px; flex-basis: 68px; }
-body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist-text { color: var(--sq-ink); font: 800 12px/1.25 var(--font-heading); }
+body.street-quest--app .sq-checkin-sheet .sq-checkin-section-label {
+  top: 16px;
+  left: 12px;
+  margin: 0;
+}
+
+body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist {
+  top: 48px;
+  right: 8px;
+  left: 8px;
+  display: grid;
+  gap: 0;
+}
+
+body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist-item {
+  grid-template-columns: 58px minmax(0, 1fr);
+  min-height: 59px;
+  gap: 8px;
+  padding: 0;
+  border-bottom: 1px dashed rgba(24, 21, 16, 0.25);
+}
+
+body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist-item:last-child {
+  border-bottom: 0;
+}
+
+body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .sq-generated-stamp {
+  width: 50px;
+  height: 50px;
+  flex-basis: 50px;
+}
+
+body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .sq-generated-stamp.sq-stamp-frame {
+  width: 68px;
+  height: 37px;
+  flex-basis: 68px;
+}
+
+body.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist-text {
+  color: var(--sq-ink);
+  font: 800 12px/1.25 var(--font-heading);
+}
 
 body.street-quest--app .sq-checkin-sheet .sq-encounter-ready {
   top: 495px;
@@ -4757,90 +6601,453 @@ body.street-quest--app .sq-checkin-sheet .sq-encounter-ready {
   color: var(--sq-ink);
 }
 
-body.street-quest--app .sq-checkin-sheet .sq-encounter-ready .sq-ready-stamp { width: 54px; height: 54px; }
-body.street-quest--app .sq-checkin-sheet .sq-encounter-button { grid-column: 1 / -1; min-height: 46px; border: 2px solid var(--sq-ink); border-radius: 0; background: var(--sq-orange); color: #fff; box-shadow: none; }
-body.street-quest--app .sq-checkin-sheet .sq-encounter-locked { top: 495px; right: 4.5%; left: 2.5%; height: 96px; margin: 0 !important; padding: 10px 12px; border: 2px solid var(--sq-ink); border-radius: 0; background: rgba(255, 253, 245, 0.36); color: var(--sq-ink); }
-body.street-quest--app .sq-checkin-sheet .sq-checkin-primary { top: 573px; right: 8%; left: 6%; width: auto; margin: 0; }
-body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary { right: 4.5%; bottom: 10px; left: 2.5%; width: auto; height: 42px; min-height: 42px; margin: 0 !important; border: 1px solid rgba(24, 21, 16, 0.48); border-radius: 8px; background: rgba(255, 253, 245, 0.36); color: var(--sq-ink); }
+body.street-quest--app .sq-checkin-sheet .sq-encounter-ready .sq-ready-stamp {
+  width: 54px;
+  height: 54px;
+}
 
-body.street-quest--app .sq-node-sheet .sq-node-head { top: 60px; right: 3.5%; left: 3%; display: flex; gap: 12px; height: 76px; padding: 9px 10px; border: 2px solid var(--sq-ink); border-bottom-style: dashed; background: rgba(255, 253, 245, 0.3); box-shadow: none; }
-body.street-quest--app .sq-node-sheet .sq-node-icon { width: 48px; height: 48px; flex-basis: 48px; border: 2px solid var(--sq-ink); background: var(--sq-ink); color: var(--sq-paper-light); box-shadow: 2px 2px 0 var(--sq-orange); }
-body.street-quest--app .sq-node-sheet .sq-node-copy { min-width: 0; flex: 1; }
-body.street-quest--app .sq-node-sheet .sq-node-title-row { display: block; min-width: 0; }
-body.street-quest--app .sq-node-sheet .sq-node-title { color: var(--sq-ink); font-size: 18px; }
-body.street-quest--app .sq-node-sheet .sq-node-meta { margin-top: 4px; color: rgba(24, 21, 16, 0.62); }
-body.street-quest--app .sq-node-sheet .explored-badge { top: 7px; right: 27px; padding: 5px 12px; border: 2px solid var(--sq-ink); border-radius: 2px; background: var(--sq-lime); color: var(--sq-ink); box-shadow: 2px 2px 0 var(--sq-ink); font: 800 12px/1 var(--font-heading); white-space: nowrap; transform: rotate(3deg); }
-body.street-quest--app .sq-node-sheet .sq-node-route-note { top: 149px; right: auto; left: 3%; display: flex; width: 93%; height: 16px; margin: 0; padding: 0; align-items: center; justify-content: space-between; gap: 0; color: rgba(24, 21, 16, 0.72); }
-body.street-quest--app .sq-node-sheet .sq-node-route-note b { color: #5d7f18; }
-body.street-quest--app .sq-node-sheet .sq-node-route-note b { letter-spacing: 0; }
+body.street-quest--app .sq-checkin-sheet .sq-encounter-button {
+  grid-column: 1 / -1;
+  min-height: 46px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 0;
+  background: var(--sq-orange);
+  color: #fff;
+  box-shadow: none;
+}
+
+body.street-quest--app .sq-checkin-sheet .sq-encounter-locked {
+  top: 495px;
+  right: 4.5%;
+  left: 2.5%;
+  height: 96px;
+  margin: 0 !important;
+  padding: 10px 12px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 0;
+  background: rgba(255, 253, 245, 0.36);
+  color: var(--sq-ink);
+}
+
+body.street-quest--app .sq-checkin-sheet .sq-checkin-primary {
+  top: 573px;
+  right: 8%;
+  left: 6%;
+  width: auto;
+  margin: 0;
+}
+
+body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary {
+  right: 4.5%;
+  bottom: 10px;
+  left: 2.5%;
+  width: auto;
+  height: 42px;
+  min-height: 42px;
+  margin: 0 !important;
+  border: 1px solid rgba(24, 21, 16, 0.48);
+  border-radius: 8px;
+  background: rgba(255, 253, 245, 0.36);
+  color: var(--sq-ink);
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-head {
+  top: 60px;
+  right: 3.5%;
+  left: 3%;
+  display: flex;
+  gap: 12px;
+  height: 76px;
+  padding: 9px 10px;
+  border: 2px solid var(--sq-ink);
+  border-bottom-style: dashed;
+  background: rgba(255, 253, 245, 0.3);
+  box-shadow: none;
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-icon {
+  width: 48px;
+  height: 48px;
+  flex-basis: 48px;
+  border: 2px solid var(--sq-ink);
+  background: var(--sq-ink);
+  color: var(--sq-paper-light);
+  box-shadow: 2px 2px 0 var(--sq-orange);
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-title-row {
+  display: block;
+  min-width: 0;
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-title {
+  color: var(--sq-ink);
+  font-size: 18px;
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-meta {
+  margin-top: 4px;
+  color: rgba(24, 21, 16, 0.62);
+}
+
+body.street-quest--app .sq-node-sheet .explored-badge {
+  top: 7px;
+  right: 27px;
+  padding: 5px 12px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+  box-shadow: 2px 2px 0 var(--sq-ink);
+  font: 800 12px/1 var(--font-heading);
+  white-space: nowrap;
+  transform: rotate(3deg);
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-route-note {
+  top: 149px;
+  right: auto;
+  left: 3%;
+  display: flex;
+  width: 93%;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0;
+  color: rgba(24, 21, 16, 0.72);
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-route-note b {
+  color: #5d7f18;
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-route-note b {
+  letter-spacing: 0;
+}
+
 body.street-quest--app .sq-node-sheet .sq-node-action,
-body.street-quest--app .sq-node-sheet .sq-sheet-secondary { right: 4%; bottom: 10px; left: 3%; width: auto; height: 42px; min-height: 42px; margin: 0 !important; border: 1px solid rgba(24, 21, 16, 0.48); border-radius: 8px; background: rgba(255, 253, 245, 0.36); color: var(--sq-ink); box-shadow: none; }
-body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--sq-ink); border-radius: 0; background: var(--sq-orange); color: #fff; }
+body.street-quest--app .sq-node-sheet .sq-sheet-secondary {
+  right: 4%;
+  bottom: 10px;
+  left: 3%;
+  width: auto;
+  height: 42px;
+  min-height: 42px;
+  margin: 0 !important;
+  border: 1px solid rgba(24, 21, 16, 0.48);
+  border-radius: 8px;
+  background: rgba(255, 253, 245, 0.36);
+  color: var(--sq-ink);
+  box-shadow: none;
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-action {
+  border: 2px solid var(--sq-ink);
+  border-radius: 0;
+  background: var(--sq-orange);
+  color: #fff;
+}
 
 /* Final Support Node slot map; keep this after the shared field-sheet rules. */
-.street-quest--app .sq-node-sheet { height: min(370px, calc(100dvh - 18px)); }
-.street-quest--app .sq-node-sheet .sq-node-head { top: 0; right: 0; left: 0; height: 100%; display: block; padding: 0; }
-.street-quest--app .sq-node-sheet .sq-node-icon { position: absolute; top: 17%; left: 37%; }
-.street-quest--app .sq-node-sheet .sq-node-copy { position: absolute; top: 13%; right: 9%; left: 50%; }
-.street-quest--app .sq-node-sheet .sq-node-title-row { display: block; }
-.street-quest--app .sq-node-sheet .sq-node-title { color: var(--sq-ink); }
-.street-quest--app .sq-node-sheet .sq-node-meta { color: rgba(24, 21, 16, 0.62); }
-.street-quest--app .sq-node-sheet .sq-node-route-note { top: 40%; right: auto; left: 36%; width: 33%; justify-content: flex-start; gap: 16px; }
+.street-quest--app .sq-node-sheet {
+  height: min(370px, calc(100dvh - 18px));
+}
+
+.street-quest--app .sq-node-sheet .sq-node-head {
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 100%;
+  display: block;
+  padding: 0;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-icon {
+  position: absolute;
+  top: 17%;
+  left: 37%;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-copy {
+  position: absolute;
+  top: 13%;
+  right: 9%;
+  left: 50%;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-title-row {
+  display: block;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-title {
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-node-sheet .sq-node-meta {
+  color: rgba(24, 21, 16, 0.62);
+}
+
+.street-quest--app .sq-node-sheet .sq-node-route-note {
+  top: 40%;
+  right: auto;
+  left: 36%;
+  width: 33%;
+  justify-content: flex-start;
+  gap: 16px;
+}
+
 .street-quest--app .sq-node-sheet .sq-node-action,
-.street-quest--app .sq-node-sheet .sq-sheet-secondary { right: auto; left: 37%; width: 28%; }
-.street-quest--app .sq-node-sheet .sq-node-action { top: 53%; bottom: auto; }
-.street-quest--app .sq-node-sheet .sq-sheet-secondary { bottom: 20%; }
-.street-quest--app .sq-checkin-title .sq-checkin-icon { left: -4px; }
-.street-quest--app .sq-checkin-sheet .sq-encounter-locked { right: 26%; left: 16%; }
+.street-quest--app .sq-node-sheet .sq-sheet-secondary {
+  right: auto;
+  left: 37%;
+  width: 28%;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-action {
+  top: 58%;
+  bottom: auto;
+}
+
+.street-quest--app .sq-node-sheet .sq-sheet-secondary {
+  bottom: 20%;
+}
+
+.street-quest--app .sq-checkin-title .sq-checkin-icon {
+  left: -4px;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-encounter-locked {
+  right: 26%;
+  left: 16%;
+}
 
 /* Higher specificity keeps the slot map ahead of the shared field-sheet
    baseline that is declared later in this legacy stylesheet. */
-body.street-quest--app .sq-node-sheet { height: min(370px, calc(100dvh - 18px)); }
-body.street-quest--app .sq-node-sheet .sq-node-head { top: 0; right: 0; left: 0; height: 100%; display: block; padding: 0; }
-body.street-quest--app .sq-node-sheet .sq-node-icon { position: absolute; top: 17%; left: 37%; }
-body.street-quest--app .sq-node-sheet .sq-node-copy { position: absolute; top: 13%; right: 9%; left: 50%; }
-body.street-quest--app .sq-node-sheet .sq-node-title-row { display: block; }
-body.street-quest--app .sq-node-sheet .sq-node-title { color: var(--sq-ink); }
-body.street-quest--app .sq-node-sheet .sq-node-meta { color: rgba(24, 21, 16, 0.62); }
-body.street-quest--app .sq-node-sheet .sq-node-route-note { top: 40%; right: auto; left: 36%; width: 33%; justify-content: flex-start; gap: 16px; }
+body.street-quest--app .sq-node-sheet {
+  height: min(370px, calc(100dvh - 18px));
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-head {
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 100%;
+  display: block;
+  padding: 0;
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-icon {
+  position: absolute;
+  top: 17%;
+  left: 37%;
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-copy {
+  position: absolute;
+  top: 13%;
+  right: 9%;
+  left: 50%;
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-title-row {
+  display: block;
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-title {
+  color: var(--sq-ink);
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-meta {
+  color: rgba(24, 21, 16, 0.62);
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-route-note {
+  top: 40%;
+  right: auto;
+  left: 36%;
+  width: 33%;
+  justify-content: flex-start;
+  gap: 16px;
+}
+
 body.street-quest--app .sq-node-sheet .sq-node-action,
-body.street-quest--app .sq-node-sheet .sq-sheet-secondary { right: auto; left: 37%; width: 28%; }
-body.street-quest--app .sq-node-sheet .sq-node-action { top: 53%; bottom: auto; }
-body.street-quest--app .sq-node-sheet .sq-sheet-secondary { bottom: 20%; }
-body.street-quest--app .sq-checkin-title .sq-checkin-icon { left: -4px; }
-body.street-quest--app .sq-checkin-sheet .sq-encounter-locked { right: 26%; left: 16%; }
+body.street-quest--app .sq-node-sheet .sq-sheet-secondary {
+  right: auto;
+  left: 37%;
+  width: 28%;
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-action {
+  top: 58%;
+  bottom: auto;
+}
+
+body.street-quest--app .sq-node-sheet .sq-sheet-secondary {
+  bottom: 20%;
+}
+
+body.street-quest--app .sq-checkin-title .sq-checkin-icon {
+  left: -4px;
+}
+
+body.street-quest--app .sq-checkin-sheet .sq-encounter-locked {
+  right: 26%;
+  left: 16%;
+}
 
 /* Final compact Support Node override after the legacy full-sheet slot maps. */
-body.street-quest--app .sq-node-sheet .sq-node-head { top: 60px; right: 3.5%; left: 3%; display: flex; gap: 12px; height: 76px; padding: 9px 10px; border: 2px solid var(--sq-ink); border-bottom-style: dashed; background: rgba(255, 253, 245, 0.3); box-shadow: none; }
-body.street-quest--app .sq-node-sheet .sq-node-icon { position: static; width: 48px; height: 48px; flex-basis: 48px; border: 2px solid var(--sq-ink); background: var(--sq-ink); color: var(--sq-paper-light); box-shadow: 2px 2px 0 var(--sq-orange); }
-body.street-quest--app .sq-node-sheet .sq-node-copy { position: static; min-width: 0; flex: 1; }
-body.street-quest--app .sq-node-sheet .sq-node-title-row { display: block; min-width: 0; }
-body.street-quest--app .sq-node-sheet .sq-node-title { color: var(--sq-ink); font-size: 18px; }
-body.street-quest--app .sq-node-sheet .sq-node-meta { margin-top: 4px; color: rgba(24, 21, 16, 0.62); }
-body.street-quest--app .sq-node-sheet .explored-badge { top: 7px; right: 27px; padding: 5px 12px; border: 2px solid var(--sq-ink); border-radius: 2px; background: var(--sq-lime); color: var(--sq-ink); box-shadow: 2px 2px 0 var(--sq-ink); font: 800 12px/1 var(--font-heading); white-space: nowrap; transform: rotate(3deg); }
-body.street-quest--app .sq-node-sheet .sq-node-route-note { top: 149px; right: auto; left: 3%; display: flex; width: 93%; height: 16px; margin: 0; padding: 0; align-items: center; justify-content: space-between; gap: 0; color: rgba(24, 21, 16, 0.72); }
-body.street-quest--app .sq-node-sheet .sq-node-route-note { font: 700 11px/1 var(--font-display); letter-spacing: 0.12em; }
-body.street-quest--app .sq-node-sheet .sq-node-route-note b { color: #5d7f18; letter-spacing: 0.12em; }
+body.street-quest--app .sq-node-sheet .sq-node-head {
+  top: 60px;
+  right: 3.5%;
+  left: 3%;
+  display: flex;
+  gap: 12px;
+  height: 76px;
+  padding: 9px 10px;
+  border: 2px solid var(--sq-ink);
+  border-bottom-style: dashed;
+  background: rgba(255, 253, 245, 0.3);
+  box-shadow: none;
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-icon {
+  position: static;
+  width: 48px;
+  height: 48px;
+  flex-basis: 48px;
+  border: 2px solid var(--sq-ink);
+  background: var(--sq-ink);
+  color: var(--sq-paper-light);
+  box-shadow: 2px 2px 0 var(--sq-orange);
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-copy {
+  position: static;
+  min-width: 0;
+  flex: 1;
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-title-row {
+  display: block;
+  min-width: 0;
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-title {
+  color: var(--sq-ink);
+  font-size: 18px;
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-meta {
+  margin-top: 4px;
+  color: rgba(24, 21, 16, 0.62);
+}
+
+body.street-quest--app .sq-node-sheet .explored-badge {
+  top: 7px;
+  right: 27px;
+  padding: 5px 12px;
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+  box-shadow: 2px 2px 0 var(--sq-ink);
+  font: 800 12px/1 var(--font-heading);
+  white-space: nowrap;
+  transform: rotate(3deg);
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-route-note {
+  top: 149px;
+  right: auto;
+  left: 3%;
+  display: flex;
+  width: 93%;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0;
+  color: rgba(24, 21, 16, 0.72);
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-route-note {
+  font: 700 11px/1 var(--font-display);
+  letter-spacing: 0.12em;
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-route-note b {
+  color: #5d7f18;
+  letter-spacing: 0.12em;
+}
+
 body.street-quest--app .sq-node-sheet .sq-node-action,
-body.street-quest--app .sq-node-sheet .sq-sheet-secondary { right: 4%; bottom: 10px; left: 3%; width: auto; height: 42px; min-height: 42px; margin: 0 !important; border: 1px solid rgba(24, 21, 16, 0.48); border-radius: 8px; background: rgba(255, 253, 245, 0.36); color: var(--sq-ink); box-shadow: none; }
-body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--sq-ink); border-radius: 0; background: var(--sq-orange); color: #fff; }
+body.street-quest--app .sq-node-sheet .sq-sheet-secondary {
+  right: 4%;
+  bottom: 10px;
+  left: 3%;
+  width: auto;
+  height: 42px;
+  min-height: 42px;
+  margin: 0 !important;
+  border: 1px solid rgba(24, 21, 16, 0.48);
+  border-radius: 8px;
+  background: rgba(255, 253, 245, 0.36);
+  color: var(--sq-ink);
+  box-shadow: none;
+}
+
+body.street-quest--app .sq-node-sheet .sq-node-action {
+  border: 2px solid var(--sq-ink);
+  border-radius: 0;
+  background: var(--sq-orange);
+  color: #fff;
+}
 
 /* Final slot nudges for the 375px field-kit capture. */
-.street-quest--app .sq-profile-avatar { left: 9%; }
+.street-quest--app .sq-profile-avatar {
+  left: 9%;
+}
+
 .street-quest--app .sq-passport-meta,
 .street-quest--app .sq-username-view,
 .street-quest--app .sq-username-edit,
-.street-quest--app .sq-settings-email { left: 43%; }
-.street-quest--app .sq-preferences-card .sq-card-kicker { left: 9%; }
+.street-quest--app .sq-settings-email {
+  left: 43%;
+}
+
+.street-quest--app .sq-preferences-card .sq-card-kicker {
+  left: 9%;
+}
+
 .street-quest--app .sq-visa-strip,
-.street-quest--app .sq-preferences-card .sq-setting-row { right: 8%; left: 8%; }
-.street-quest--app .sq-home-setting { right: 8%; left: 8%; }
-.street-quest--app .sq-version-card { padding-inline: 8%; }
+.street-quest--app .sq-preferences-card .sq-setting-row {
+  right: 8%;
+  left: 8%;
+}
+
+.street-quest--app .sq-home-setting {
+  right: 8%;
+  left: 8%;
+}
+
+.street-quest--app .sq-version-card {
+  padding-inline: 8%;
+}
 
 /* The Support Node capture uses the compact 941:1672 field print at a
    370px crop. Its live controls need their own slots instead of sharing the
    Watchtower flow layout. */
-.street-quest--app .sq-node-sheet { height: min(370px, calc(100dvh - 18px)); }
+.street-quest--app .sq-node-sheet {
+  height: min(370px, calc(100dvh - 18px));
+}
 
 .street-quest--app .sq-node-sheet .sq-node-head {
   top: 0;
@@ -4866,9 +7073,17 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   left: 50%;
 }
 
-.street-quest--app .sq-node-sheet .sq-node-title-row { display: block; }
-.street-quest--app .sq-node-sheet .sq-node-title { color: var(--sq-ink); }
-.street-quest--app .sq-node-sheet .sq-node-meta { color: rgba(24, 21, 16, 0.62); }
+.street-quest--app .sq-node-sheet .sq-node-title-row {
+  display: block;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-title {
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-node-sheet .sq-node-meta {
+  color: rgba(24, 21, 16, 0.62);
+}
 
 .street-quest--app .sq-node-sheet .sq-node-route-note {
   top: 40%;
@@ -4887,14 +7102,22 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
 }
 
 .street-quest--app .sq-node-sheet .sq-node-action {
-  top: 53%;
+  top: 58%;
   bottom: auto;
 }
 
-.street-quest--app .sq-node-sheet .sq-sheet-secondary { bottom: 20%; }
+.street-quest--app .sq-node-sheet .sq-sheet-secondary {
+  bottom: 20%;
+}
 
-.street-quest--app .sq-checkin-title .sq-checkin-icon { left: -4px; }
-.street-quest--app .sq-checkin-sheet .sq-encounter-locked { right: 26%; left: 16%; }
+.street-quest--app .sq-checkin-title .sq-checkin-icon {
+  left: -4px;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-encounter-locked {
+  right: 26%;
+  left: 16%;
+}
 
 /* Support and Watchtower sheets share a single field-sheet print. */
 .street-quest--app .sq-checkin-sheet,
@@ -4911,8 +7134,81 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   scrollbar-width: thin;
 }
 
+/* Lore's card art is a fixed-size printed slip, not an endless scroll — the
+   sheet itself must stay the artwork's height so the background never gets
+   cut mid-print. Only the narrative paragraph inside it scrolls. */
+.street-quest--app .sq-lore-sheet {
+  display: flex;
+  flex-direction: column;
+  height: min(700px, calc(100dvh - 18px));
+  max-height: min(700px, calc(100dvh - 18px));
+  overflow-y: hidden;
+  padding-left: 3%;
+  padding-right: 3%;
+}
+
+.street-quest--app .sq-lore-sheet #btn-save-lore:disabled {
+  background: var(--sq-lime);
+  border-color: var(--sq-ink);
+  color: var(--sq-ink);
+  opacity: 1;
+}
+
+.street-quest--app .sq-lore-sheet .lore-narrative {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  border: 2px solid var(--sq-ink);
+  background-color: var(--sq-paper-light);
+  background-image:
+    linear-gradient(rgba(255, 250, 236, 0.76), rgba(255, 250, 236, 0.76)),
+    url('../assets/street-quest/ui-paper-cream.webp');
+  background-size: auto, 460px 460px;
+  box-shadow: 4px 4px 0 var(--sq-orange);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(24, 21, 16, 0.2) transparent;
+}
+
+.street-quest--app .sq-lore-sheet .lore-narrative::-webkit-scrollbar {
+  width: 4px;
+}
+
+.street-quest--app .sq-lore-sheet .lore-narrative::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.street-quest--app .sq-lore-sheet .lore-narrative::-webkit-scrollbar-thumb {
+  background: rgba(24, 21, 16, 0.2);
+  border-radius: 3px;
+}
+
+.street-quest--app .sq-lore-sheet #lore-phase-panel:not([hidden]),
+.street-quest--app .sq-lore-sheet .btn-outline,
+.street-quest--app .sq-lore-sheet .sq-sheet-secondary {
+  flex: 0 0 auto;
+}
+
+/* The shared reject-stamp texture is a circular mark meant for small square
+   buttons elsewhere · stretched over lore's full-width close button it reads
+   as a stray double ring, so give it the plain flat secondary style instead. */
+.street-quest--app .sq-lore-sheet .sq-sheet-secondary {
+  margin-top: 10px;
+  background: rgba(244, 234, 208, 0.04);
+  border: 1px solid rgba(244, 234, 208, 0.45);
+  color: #f4ead0;
+}
+
+.street-quest--app .sq-lore-sheet .sq-sheet-secondary:hover,
+.street-quest--app .sq-lore-sheet .sq-sheet-secondary:focus-visible {
+  background: rgba(244, 234, 208, 0.12);
+  color: #fff8e8;
+  border-color: var(--sq-paper-light);
+}
+
 .street-quest--app .sq-checkin-sheet::before,
-.street-quest--app .sq-node-sheet::before { display: none; }
+.street-quest--app .sq-node-sheet::before {
+  display: none;
+}
 
 .street-quest--app .sq-checkin-sheet .sheet-handle,
 .street-quest--app .sq-node-sheet .sheet-handle,
@@ -4945,7 +7241,11 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   transform: rotate(-5deg);
   vertical-align: -8px;
 }
-.street-quest--app .sq-checkin-sheet .sq-checkin-icon svg { width: 18px; height: 18px; }
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-icon svg {
+  width: 18px;
+  height: 18px;
+}
 
 .street-quest--app .sq-district-ticket,
 .street-quest--app .sq-checkin-requirements,
@@ -4967,24 +7267,53 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   transform: rotate(-0.4deg);
 }
 
-.street-quest--app .sq-district-ticket::before { display: none; }
-.street-quest--app .sq-district-ticket .district-preview-name { color: #fff8e8; font: 900 19px/1.15 var(--font-heading); }
-.street-quest--app .sq-district-ticket .district-preview-province { color: #c9bea7; }
-.street-quest--app .sq-district-ticket .explored-badge { border: 0; background: var(--sq-lime); color: var(--sq-ink); box-shadow: 2px 2px 0 var(--sq-orange); }
-.street-quest--app .sq-district-ticket .reveal-chip { border-color: rgba(255, 248, 232, 0.45); color: #f1dfc0; }
+.street-quest--app .sq-district-ticket::before {
+  display: none;
+}
+
+.street-quest--app .sq-district-ticket .district-preview-name {
+  color: #fff8e8;
+  font: 900 19px/1.15 var(--font-heading);
+}
+
+.street-quest--app .sq-district-ticket .district-preview-province {
+  color: #c9bea7;
+}
+
+.street-quest--app .sq-district-ticket .explored-badge {
+  border: 0;
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+  box-shadow: 2px 2px 0 var(--sq-orange);
+}
+
+.street-quest--app .sq-district-ticket .reveal-chip {
+  border-color: rgba(255, 248, 232, 0.45);
+  color: #f1dfc0;
+}
 
 .street-quest--app .sq-checkin-requirements {
   margin-bottom: 12px;
   padding: 10px 5px 4px;
 }
+
 .street-quest--app .sq-checkin-section-label {
   margin-bottom: 8px;
   background: var(--sq-ink);
   color: var(--sq-lime);
   transform: rotate(-1deg);
 }
-.street-quest--app .sq-checkin-requirements .checklist-item { min-height: 42px; padding: 5px 0; border-bottom: 1px dashed rgba(24, 21, 16, 0.25); }
-.street-quest--app .sq-checkin-requirements .checklist-text { color: var(--sq-ink); font: 800 11px/1.25 var(--font-heading); }
+
+.street-quest--app .sq-checkin-requirements .checklist-item {
+  min-height: 42px;
+  padding: 5px 0;
+  border-bottom: 1px dashed rgba(24, 21, 16, 0.25);
+}
+
+.street-quest--app .sq-checkin-requirements .checklist-text {
+  color: var(--sq-ink);
+  font: 800 11px/1.25 var(--font-heading);
+}
 
 .street-quest--app .sq-checkin-primary,
 .street-quest--app .sq-encounter-button,
@@ -4997,6 +7326,7 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   box-shadow: none;
   font: 900 13px/1.1 var(--font-heading);
 }
+
 .street-quest--app .sq-checkin-primary,
 .street-quest--app .sq-encounter-button,
 .street-quest--app .sq-node-action,
@@ -5004,36 +7334,77 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   background: transparent url('../assets/street-quest/generated-stamps/guild-request-approve.png') center / 100% 100% no-repeat;
   color: var(--sq-ink);
 }
+
 .street-quest--app .sq-checkin-secondary,
 .street-quest--app .sq-sheet-secondary {
   background: transparent url('../assets/street-quest/generated-stamps/guild-request-reject.png') center / 100% 100% no-repeat;
   color: #fff8e8;
 }
+
 .street-quest--app .sq-checkin-primary:hover,
 .street-quest--app .sq-checkin-primary:focus-visible,
 .street-quest--app .sq-encounter-button:hover,
 .street-quest--app .sq-encounter-button:focus-visible,
 .street-quest--app .sq-node-action:hover,
-.street-quest--app .sq-sheet-primary:hover { filter: brightness(1.08) saturate(1.08); color: var(--sq-ink); }
+.street-quest--app .sq-sheet-primary:hover {
+  filter: brightness(1.08) saturate(1.08);
+  color: var(--sq-ink);
+}
 
 .street-quest--app .sq-encounter-locked,
 .street-quest--app .sq-encounter-ready,
-.street-quest--app .sq-support-progress { padding: 8px 4px; color: var(--sq-ink); }
+.street-quest--app .sq-support-progress {
+  padding: 8px 4px;
+  color: var(--sq-ink);
+}
+
 .street-quest--app .sq-encounter-locked strong,
 .street-quest--app .sq-ready-copy strong,
-.street-quest--app .sq-support-progress-head p { color: var(--sq-ink); }
+.street-quest--app .sq-support-progress-head p {
+  color: var(--sq-ink);
+}
+
 .street-quest--app .sq-encounter-locked p,
 .street-quest--app .sq-ready-copy span,
-.street-quest--app .sq-support-progress-label { color: rgba(24, 21, 16, 0.62); }
-.street-quest--app .sq-ready-stamp { border-color: var(--sq-orange); color: var(--sq-orange); }
-.street-quest--app .sq-support-progress-track { border-color: var(--sq-ink); background: rgba(24, 21, 16, 0.1); }
+.street-quest--app .sq-support-progress-label {
+  color: rgba(24, 21, 16, 0.62);
+}
 
-.street-quest--app .sq-node-sheet .sq-node-head { padding: 9px 4px 12px; border-bottom: 1px dashed rgba(24, 21, 16, 0.4); }
-.street-quest--app .sq-node-sheet .sq-node-title { color: var(--sq-ink); font: 900 17px/1.15 var(--font-heading); }
+.street-quest--app .sq-ready-stamp {
+  border-color: var(--sq-orange);
+  color: var(--sq-orange);
+}
+
+.street-quest--app .sq-support-progress-track {
+  border-color: var(--sq-ink);
+  background: rgba(24, 21, 16, 0.1);
+}
+
+.street-quest--app .sq-node-sheet .sq-node-head {
+  padding: 9px 4px 12px;
+  border-bottom: 1px dashed rgba(24, 21, 16, 0.4);
+}
+
+.street-quest--app .sq-node-sheet .sq-node-title {
+  color: var(--sq-ink);
+  font: 900 17px/1.15 var(--font-heading);
+}
+
 .street-quest--app .sq-node-sheet .sq-node-meta,
-.street-quest--app .sq-node-sheet .sq-node-route-note { color: rgba(24, 21, 16, 0.62); }
-.street-quest--app .sq-node-sheet .sq-node-route-note b { color: #5d7f18; }
-.street-quest--app .sq-node-sheet .sq-node-icon { border: 0; background: var(--sq-ink); color: var(--sq-paper-light); box-shadow: 2px 2px 0 var(--sq-orange); }
+.street-quest--app .sq-node-sheet .sq-node-route-note {
+  color: rgba(24, 21, 16, 0.62);
+}
+
+.street-quest--app .sq-node-sheet .sq-node-route-note b {
+  color: #5d7f18;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-icon {
+  border: 0;
+  background: var(--sq-ink);
+  color: var(--sq-paper-light);
+  box-shadow: 2px 2px 0 var(--sq-orange);
+}
 
 /* C-class encounter sheet: the short confirmation step now feels like the
    same collectible poster as the reveal that follows it. */
@@ -5047,6 +7418,7 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   box-shadow: 6px 0 0 var(--sq-orange), -6px 0 0 var(--sq-blue);
   color: var(--sq-ink);
 }
+
 .street-quest--app #c-capture-sheet::before {
   content: 'FIELD ENCOUNTER';
   display: block;
@@ -5056,43 +7428,156 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   letter-spacing: 0.12em;
   text-align: center;
 }
-.street-quest--app #c-capture-sheet .sheet-handle { width: 44px; height: 5px; margin: 15px auto 0; background: var(--sq-ink); border-radius: 0; }
-.street-quest--app #c-capture-sheet .c-capture-copy { position: absolute; top: 21%; right: 9%; left: 9%; text-align: center; }
-.street-quest--app #c-capture-sheet #c-capture-emoji { display: grid; width: 38%; height: 38%; min-height: 150px; margin: 0 auto; place-items: center; font-size: clamp(70px, 21vw, 100px); line-height: 1; filter: drop-shadow(0 4px 4px rgba(24, 21, 16, 0.22)); }
-.street-quest--app #c-capture-sheet #c-capture-name { margin: 0; color: #fff8e8; font: 900 clamp(20px, 6vw, 29px)/1.1 var(--font-heading); text-shadow: 0 2px 0 rgba(0, 0, 0, 0.32); }
-.street-quest--app #c-capture-sheet .c-capture-primary,
-.street-quest--app #c-capture-sheet .c-capture-secondary { position: absolute; right: 10%; left: 10%; min-height: 48px; border: 0; border-radius: 0; box-shadow: none; font: 900 16px/1 var(--font-heading); }
-.street-quest--app #c-capture-sheet .c-capture-primary,
-.street-quest--app #c-capture-sheet .c-capture-secondary { width: 80%; }
-.street-quest--app #c-capture-sheet .c-capture-primary { bottom: 16%; background: transparent url('../assets/street-quest/generated-stamps/guild-request-approve.png') center / 100% 100% no-repeat; color: var(--sq-ink); }
-.street-quest--app #c-capture-sheet .c-capture-secondary { bottom: 6%; background: transparent url('../assets/street-quest/generated-stamps/guild-request-reject.png') center / 100% 100% no-repeat; color: #fff8e8; }
-.street-quest--app #c-capture-sheet .c-capture-primary:hover,
-.street-quest--app #c-capture-sheet .c-capture-secondary:hover { filter: brightness(1.08) saturate(1.08); }
 
-/* Lore uses the same field-sheet language, with a full-width narrative zone. */
-.street-quest--app .sq-lore-sheet { padding-bottom: 22px; }
-.street-quest--app .sq-lore-sheet .lore-sheet-head { margin-bottom: 8px; }
-.street-quest--app .sq-lore-sheet .lore-type-badge { background: var(--sq-lime); color: var(--sq-ink); }
-.street-quest--app .sq-lore-sheet .lore-pts-badge { background: var(--sq-orange); color: #fff8e8; }
-.street-quest--app .sq-lore-sheet .lore-title { color: var(--sq-ink); font: 900 clamp(22px, 7vw, 30px)/1.08 var(--font-heading); }
-.street-quest--app .sq-lore-sheet .lore-narrator-row { color: rgba(24, 21, 16, 0.62); }
-.street-quest--app .sq-lore-sheet .lore-narrator-avatar { border-color: var(--sq-ink); background: var(--sq-orange); color: var(--sq-ink); box-shadow: 2px 2px 0 var(--sq-blue); }
-.street-quest--app .sq-lore-sheet .lore-narrative {
-  max-height: 54vh;
-  margin-bottom: 13px;
-  padding: 10px 6px;
+.street-quest--app #c-capture-sheet .sheet-handle {
+  width: 44px;
+  height: 5px;
+  margin: 15px auto 0;
+  background: var(--sq-ink);
+  border-radius: 0;
+}
+
+.street-quest--app #c-capture-sheet .c-capture-copy {
+  position: absolute;
+  top: 21%;
+  right: 9%;
+  left: 9%;
+  text-align: center;
+}
+
+.street-quest--app #c-capture-sheet #c-capture-emoji {
+  display: grid;
+  width: 38%;
+  height: 38%;
+  min-height: 150px;
+  margin: 0 auto;
+  place-items: center;
+  font-size: clamp(70px, 21vw, 100px);
+  line-height: 1;
+  filter: drop-shadow(0 4px 4px rgba(24, 21, 16, 0.22));
+}
+
+.street-quest--app #c-capture-sheet #c-capture-name {
+  margin: 0;
+  color: #fff8e8;
+  font: 900 clamp(20px, 6vw, 29px)/1.1 var(--font-heading);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.32);
+}
+
+.street-quest--app #c-capture-sheet .c-capture-primary,
+.street-quest--app #c-capture-sheet .c-capture-secondary {
+  position: absolute;
+  right: 10%;
+  left: 10%;
+  min-height: 48px;
   border: 0;
   border-radius: 0;
-  background: transparent;
-  color: var(--sq-ink);
   box-shadow: none;
-  font: 600 16px/2 var(--font-body);
+  font: 900 16px/1 var(--font-heading);
 }
-.street-quest--app .sq-lore-sheet .lore-narrative.lore-quote { border-left: 4px solid var(--sq-orange); padding-left: 16px; }
-.street-quest--app .sq-lore-sheet .lore-narrative.lore-quote::before { color: var(--sq-orange); }
-.street-quest--app .sq-lore-sheet .lore-quiz-opt { border-color: rgba(24, 21, 16, 0.35); background: rgba(255, 248, 232, 0.42); color: var(--sq-ink); }
+
+.street-quest--app #c-capture-sheet .c-capture-primary,
+.street-quest--app #c-capture-sheet .c-capture-secondary {
+  width: 80%;
+}
+
+.street-quest--app #c-capture-sheet .c-capture-primary {
+  bottom: 16%;
+  background: transparent url('../assets/street-quest/generated-stamps/guild-request-approve.png') center / 100% 100% no-repeat;
+  color: var(--sq-ink);
+}
+
+.street-quest--app #c-capture-sheet .c-capture-secondary {
+  bottom: 6%;
+  background: transparent url('../assets/street-quest/generated-stamps/guild-request-reject.png') center / 100% 100% no-repeat;
+  color: #fff8e8;
+}
+
+.street-quest--app #c-capture-sheet .c-capture-primary:hover,
+.street-quest--app #c-capture-sheet .c-capture-secondary:hover {
+  filter: brightness(1.08) saturate(1.08);
+}
+
+/* Lore uses the same field-sheet language, with a full-width narrative zone. */
+.street-quest--app .sq-lore-sheet {
+  padding-bottom: 22px;
+}
+
+.street-quest--app .sq-lore-sheet .lore-sheet-head {
+  margin: 8px 0 14px;
+}
+
+.street-quest--app .sq-lore-sheet .lore-type-badge {
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-lore-sheet .explored-badge {
+  border: 1px solid var(--sq-ink);
+  border-radius: 2px;
+  padding: 5px 9px;
+  font: 800 10px/1 var(--font-display);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  background: var(--sq-paper-light);
+  color: var(--sq-ink);
+  box-shadow: 2px 2px 0 var(--sq-ink);
+}
+
+.street-quest--app .sq-lore-sheet .lore-pts-badge {
+  background: var(--sq-orange);
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-lore-sheet .lore-title {
+  background: var(--sq-ink);
+  color: #fff8e8;
+  font: 900 clamp(17px, 5vw, 21px)/1.08 var(--font-heading);
+  padding: 10px 14px;
+  border-radius: 2px;
+  margin: 0 0 12px;
+}
+
+.street-quest--app .sq-lore-sheet .lore-narrator-row {
+  margin-bottom: 12px;
+  color: rgba(24, 21, 16, 0.62);
+}
+
+.street-quest--app .sq-lore-sheet .lore-narrator-avatar {
+  border-color: var(--sq-ink);
+  background: var(--sq-orange);
+  color: var(--sq-ink);
+  box-shadow: 2px 2px 0 var(--sq-blue);
+}
+
+.street-quest--app .sq-lore-sheet .lore-narrative {
+  margin-bottom: 16px;
+  padding: 22px 16px 18px 34px;
+  border-radius: 2px;
+  color: var(--sq-ink);
+  font: 600 14px/1.6 var(--font-body);
+  overflow-wrap: anywhere;
+}
+
+.street-quest--app .sq-lore-sheet .lore-narrative.lore-quote {
+  border-left: 4px solid var(--sq-orange);
+}
+
+.street-quest--app .sq-lore-sheet .lore-narrative.lore-quote::before {
+  color: var(--sq-orange);
+}
+
+.street-quest--app .sq-lore-sheet .lore-quiz-opt {
+  border-color: rgba(24, 21, 16, 0.35);
+  background: rgba(255, 248, 232, 0.42);
+  color: var(--sq-ink);
+}
+
 .street-quest--app .sq-lore-sheet .lore-quiz-opt.active,
-.street-quest--app .sq-lore-sheet .lore-quiz-opt:hover { background: var(--sq-lime); color: var(--sq-ink); }
+.street-quest--app .sq-lore-sheet .lore-quiz-opt:hover {
+  background: var(--sq-lime);
+  color: var(--sq-ink);
+}
 
 /* Full-page notification field notes. */
 .street-quest--app .sq-notif-panel {
@@ -5101,9 +7586,20 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   background: #11110f url('../assets/street-quest/generated-stamps/notifications-fieldnotes-template.webp') center / 100% 100% no-repeat;
   color: #fff8e8;
 }
-.street-quest--app .sq-notif-panel .sq-panel-header { background: transparent; }
-.street-quest--app .sq-notif-panel .sq-panel-title { color: #fff8e8; }
-.street-quest--app .sq-notif-body { padding: 2px 7% 28px; background: transparent; }
+
+.street-quest--app .sq-notif-panel .sq-panel-header {
+  background: transparent;
+}
+
+.street-quest--app .sq-notif-panel .sq-panel-title {
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-notif-body {
+  padding: 2px 7% 28px;
+  background: transparent;
+}
+
 .street-quest--app .sq-notif-passport-card {
   min-height: 190px;
   margin: 0 0 18px;
@@ -5113,11 +7609,32 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   box-shadow: none;
   color: var(--sq-ink);
 }
-.street-quest--app .sq-notif-passport-stamp { display: none; }
-.street-quest--app .sq-notif-passport-card > div:last-child { max-width: 76%; margin: 0 auto; text-align: center; }
-.street-quest--app .sq-notif-passport-kicker { color: var(--sq-orange); }
-.street-quest--app .sq-notif-passport-card strong { color: var(--sq-ink); font-size: 23px; }
-.street-quest--app .sq-notif-passport-card p { max-width: none; color: rgba(24, 21, 16, 0.62); font-size: 11px; }
+
+.street-quest--app .sq-notif-passport-stamp {
+  display: none;
+}
+
+.street-quest--app .sq-notif-passport-card>div:last-child {
+  max-width: 76%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.street-quest--app .sq-notif-passport-kicker {
+  color: var(--sq-orange);
+}
+
+.street-quest--app .sq-notif-passport-card strong {
+  color: var(--sq-ink);
+  font-size: 23px;
+}
+
+.street-quest--app .sq-notif-passport-card p {
+  max-width: none;
+  color: rgba(24, 21, 16, 0.62);
+  font-size: 11px;
+}
+
 .street-quest--app .notif-row {
   min-height: 78px;
   margin: 9px 0;
@@ -5127,12 +7644,43 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   color: var(--sq-ink);
   box-shadow: none;
 }
-.street-quest--app .notif-row.unread { padding-left: 12px; border-left: 0; background-image: url('../assets/street-quest/generated-stamps/guild-member-slip.png'); box-shadow: none; }
-.street-quest--app .notif-icon { width: 36px; height: 36px; border: 0; background: var(--sq-ink); color: var(--sq-lime); box-shadow: 2px 2px 0 var(--sq-orange); }
-.street-quest--app .notif-title { color: var(--sq-ink); font: 900 13px/1.25 var(--font-heading); }
-.street-quest--app .notif-msg { color: rgba(24, 21, 16, 0.62); font-size: 10px; }
-.street-quest--app .notif-dot { background: var(--sq-orange); }
-.street-quest--app .notif-actions { display: flex; gap: 5px; flex-shrink: 0; }
+
+.street-quest--app .notif-row.unread {
+  padding-left: 12px;
+  border-left: 0;
+  background-image: url('../assets/street-quest/generated-stamps/guild-member-slip.png');
+  box-shadow: none;
+}
+
+.street-quest--app .notif-icon {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: var(--sq-ink);
+  color: var(--sq-lime);
+  box-shadow: 2px 2px 0 var(--sq-orange);
+}
+
+.street-quest--app .notif-title {
+  color: var(--sq-ink);
+  font: 900 13px/1.25 var(--font-heading);
+}
+
+.street-quest--app .notif-msg {
+  color: rgba(24, 21, 16, 0.62);
+  font-size: 10px;
+}
+
+.street-quest--app .notif-dot {
+  background: var(--sq-orange);
+}
+
+.street-quest--app .notif-actions {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
 .street-quest--app .notif-action-btn {
   min-width: 50px;
   min-height: 32px;
@@ -5145,13 +7693,38 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   color: var(--sq-ink);
   font: 800 10px/1 var(--font-heading);
 }
-.street-quest--app .notif-action-btn--accept { background-image: url('../assets/street-quest/generated-stamps/guild-request-approve.png'); }
-.street-quest--app .notif-action-btn--ignore { background-image: url('../assets/street-quest/generated-stamps/guild-request-reject.png'); color: #fff8e8; }
+
+.street-quest--app .notif-action-btn--accept {
+  background-image: url('../assets/street-quest/generated-stamps/guild-request-approve.png');
+}
+
+.street-quest--app .notif-action-btn--ignore {
+  background-image: url('../assets/street-quest/generated-stamps/guild-request-reject.png');
+  color: #fff8e8;
+}
+
 .street-quest--app .notif-action-btn:hover,
-.street-quest--app .notif-action-btn:focus-visible { filter: brightness(1.08); outline: 2px solid var(--sq-lime); outline-offset: 2px; }
-.street-quest--app .sq-notif-empty { margin: 0; border: 0; background: transparent url('../assets/street-quest/generated-stamps/guild-note-slip.png') center / 100% 100% no-repeat; color: var(--sq-ink); box-shadow: none; }
-.street-quest--app .sq-notif-empty strong { color: var(--sq-ink); }
-.street-quest--app .sq-notif-empty span:last-child { color: rgba(24, 21, 16, 0.62); }
+.street-quest--app .notif-action-btn:focus-visible {
+  filter: brightness(1.08);
+  outline: 2px solid var(--sq-lime);
+  outline-offset: 2px;
+}
+
+.street-quest--app .sq-notif-empty {
+  margin: 0;
+  border: 0;
+  background: transparent url('../assets/street-quest/generated-stamps/guild-note-slip.png') center / 100% 100% no-repeat;
+  color: var(--sq-ink);
+  box-shadow: none;
+}
+
+.street-quest--app .sq-notif-empty strong {
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-notif-empty span:last-child {
+  color: rgba(24, 21, 16, 0.62);
+}
 
 /* Settings field kit + permission stamp. */
 .street-quest--app .sq-settings-panel {
@@ -5160,8 +7733,17 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   background: #11110f url('../assets/street-quest/generated-stamps/settings-fieldkit-template.webp') center / 100% 100% no-repeat;
   color: #fff8e8;
 }
-.street-quest--app .sq-settings-panel .sq-panel-header { background: transparent; }
-.street-quest--app .sq-settings-body { gap: 13px; padding: 8px 7% 28px; background: transparent; }
+
+.street-quest--app .sq-settings-panel .sq-panel-header {
+  background: transparent;
+}
+
+.street-quest--app .sq-settings-body {
+  gap: 13px;
+  padding: 8px 7% 28px;
+  background: transparent;
+}
+
 .street-quest--app .sq-settings-card {
   border: 0;
   border-radius: 0;
@@ -5169,19 +7751,73 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   box-shadow: none;
   color: var(--sq-ink);
 }
-.street-quest--app .sq-profile-card { min-height: 235px; padding: 30px 9% 18px; }
+
+.street-quest--app .sq-profile-card {
+  min-height: 235px;
+  padding: 30px 9% 18px;
+}
+
 .street-quest--app .sq-profile-card::before,
-.street-quest--app .sq-profile-card::after { display: none; }
-.street-quest--app .sq-profile-avatar { width: 92px; height: 92px; margin: 20px auto 8px; border: 3px solid var(--sq-ink); background: var(--sq-orange); box-shadow: 3px 3px 0 var(--sq-blue); }
-.street-quest--app .sq-passport-meta { top: 13px; left: 9%; }
-.street-quest--app .sq-passport-stamp { right: 8%; }
-.street-quest--app .sq-username-view p { color: var(--sq-ink); font-size: 22px; }
-.street-quest--app .sq-settings-email { color: rgba(24, 21, 16, 0.62); }
-.street-quest--app .sq-preferences-card { min-height: 264px; padding: 38px 9% 14px; }
-.street-quest--app .sq-card-kicker { color: var(--sq-orange); }
-.street-quest--app .sq-visa-strip { margin-inline: -2px; background: var(--sq-ink); color: var(--sq-lime); }
-.street-quest--app .sq-preferences-card .sq-setting-row { color: var(--sq-ink); background: rgba(255, 248, 232, 0.58); }
-.street-quest--app #gps-status-label { display: inline-flex; align-items: center; min-height: 31px; padding: 5px 9px; color: rgba(24, 21, 16, 0.62); font: 800 10px/1 var(--font-display); }
+.street-quest--app .sq-profile-card::after {
+  display: none;
+}
+
+.street-quest--app .sq-profile-avatar {
+  width: 92px;
+  height: 92px;
+  margin: 20px auto 8px;
+  border: 3px solid var(--sq-ink);
+  background: var(--sq-orange);
+  box-shadow: 3px 3px 0 var(--sq-blue);
+}
+
+.street-quest--app .sq-passport-meta {
+  top: 13px;
+  left: 9%;
+}
+
+.street-quest--app .sq-passport-stamp {
+  right: 8%;
+}
+
+.street-quest--app .sq-username-view p {
+  color: var(--sq-ink);
+  font-size: 22px;
+}
+
+.street-quest--app .sq-settings-email {
+  color: rgba(24, 21, 16, 0.62);
+}
+
+.street-quest--app .sq-preferences-card {
+  min-height: 264px;
+  padding: 38px 9% 14px;
+}
+
+.street-quest--app .sq-card-kicker {
+  color: var(--sq-orange);
+}
+
+.street-quest--app .sq-visa-strip {
+  margin-inline: -2px;
+  background: var(--sq-ink);
+  color: var(--sq-lime);
+}
+
+.street-quest--app .sq-preferences-card .sq-setting-row {
+  color: var(--sq-ink);
+  background: rgba(255, 248, 232, 0.58);
+}
+
+.street-quest--app #gps-status-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 31px;
+  padding: 5px 9px;
+  color: rgba(24, 21, 16, 0.62);
+  font: 800 10px/1 var(--font-display);
+}
+
 .street-quest--app #gps-status-label.is-granted {
   min-width: 71px;
   justify-content: center;
@@ -5189,25 +7825,94 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   color: #245b9f !important;
   transform: rotate(-4deg);
 }
-.street-quest--app .sq-gps-request { border: 0; background: var(--sq-orange); color: #fff8e8; }
-.street-quest--app .sq-home-select { border: 1px solid rgba(24, 21, 16, 0.4); border-radius: 0; background: rgba(255, 253, 245, 0.7); color: var(--sq-ink); }
-.street-quest--app .sq-version-card { min-height: 78px; padding: 21px 9%; border: 0; background: transparent; box-shadow: none; color: var(--sq-ink); }
-.street-quest--app .sq-version-card .sq-card-kicker { color: #fff8e8; }
-.street-quest--app .sq-version-line { color: #fff8e8; }
-.street-quest--app .sq-version-line span { color: #c9bea7; }
-.street-quest--app .sq-signout-btn { min-height: 62px; border: 0; border-radius: 0; background: transparent; color: var(--sq-ink); }
+
+.street-quest--app .sq-gps-request {
+  border: 0;
+  background: var(--sq-orange);
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-home-select {
+  border: 1px solid rgba(24, 21, 16, 0.4);
+  border-radius: 0;
+  background: rgba(255, 253, 245, 0.7);
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-version-card {
+  min-height: 78px;
+  padding: 21px 9%;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--sq-ink);
+}
+
+.street-quest--app .sq-version-card .sq-card-kicker {
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-version-line {
+  color: #fff8e8;
+}
+
+.street-quest--app .sq-version-line span {
+  color: #c9bea7;
+}
+
+.street-quest--app .sq-signout-btn {
+  min-height: 62px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--sq-ink);
+}
 
 /* Invite code: strong contrast on the generated label. */
-.street-quest--app #guild-panel .guild-invite-label { color: rgba(24, 21, 16, 0.76); font-size: 10px; }
-.street-quest--app #guild-panel .guild-invite-code { color: #c7430d; font-size: 20px; letter-spacing: 0.16em; text-shadow: 0 1px 0 #fff8e8; }
-.street-quest--app #guild-panel .guild-invite-copy-btn { width: 34px; height: 34px; background: rgba(255, 248, 232, 0.38); color: var(--sq-ink); }
+.street-quest--app #guild-panel .guild-invite-label {
+  color: rgba(24, 21, 16, 0.76);
+  font-size: 10px;
+}
+
+.street-quest--app #guild-panel .guild-invite-code {
+  color: #c7430d;
+  font-size: 20px;
+  letter-spacing: 0.16em;
+  text-shadow: 0 1px 0 #fff8e8;
+}
+
+.street-quest--app #guild-panel .guild-invite-copy-btn {
+  width: 34px;
+  height: 34px;
+  background: rgba(255, 248, 232, 0.38);
+  color: var(--sq-ink);
+}
 
 @media (max-width: 380px) {
-  .street-quest--app .capture-reveal-card { width: min(340px, 94vw); }
-  .street-quest--app .figure-detail-dialog { width: calc(100vw - 12px); height: calc(100vh - 12px); margin: 6px auto; }
-  .street-quest--app .figure-dossier-footer { padding-inline: 8%; }
-  .street-quest--app .notif-actions { flex-direction: column; gap: 3px; }
-  .street-quest--app .notif-action-btn { min-width: 47px; min-height: 28px; padding: 5px 6px; }
+  .street-quest--app .capture-reveal-card {
+    width: min(340px, 94vw);
+  }
+
+  .street-quest--app .figure-detail-dialog {
+    width: calc(100vw - 12px);
+    height: calc(100vh - 12px);
+    margin: 6px auto;
+  }
+
+  .street-quest--app .figure-dossier-footer {
+    padding-inline: 8%;
+  }
+
+  .street-quest--app .notif-actions {
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .street-quest--app .notif-action-btn {
+    min-width: 47px;
+    min-height: 28px;
+    padding: 5px 6px;
+  }
 }
 
 /* Keep the artwork alignment rules last: the older field-kit declarations
@@ -5320,8 +8025,13 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   margin: 0;
 }
 
-.street-quest--app .sq-preferences-card .sq-setting-row-toggle { top: 12px; }
-.street-quest--app .sq-preferences-card .sq-gps-row { top: 60px; }
+.street-quest--app .sq-preferences-card .sq-setting-row-toggle {
+  top: 12px;
+}
+
+.street-quest--app .sq-preferences-card .sq-gps-row {
+  top: 60px;
+}
 
 .street-quest--app .sq-home-setting {
   position: absolute;
@@ -5345,7 +8055,9 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   margin: 0;
 }
 
-.street-quest--app .sq-version-line { margin: 0; }
+.street-quest--app .sq-version-line {
+  margin: 0;
+}
 
 .street-quest--app .sq-signout-btn {
   position: absolute;
@@ -5373,8 +8085,13 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   background-size: 100% 100%;
 }
 
-.street-quest--app .sq-checkin-sheet { height: min(800px, 100dvh); }
-.street-quest--app .sq-node-sheet { height: min(320px, calc(100dvh - 18px)); }
+.street-quest--app .sq-checkin-sheet {
+  height: min(800px, 100dvh);
+}
+
+.street-quest--app .sq-node-sheet {
+  height: min(320px, calc(100dvh - 18px));
+}
 
 .street-quest--app .sq-checkin-sheet .sheet-handle,
 .street-quest--app .sq-node-sheet .sheet-handle {
@@ -5420,9 +8137,19 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   transform: none;
 }
 
-.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-name { max-width: 65%; }
-.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-province { margin: 5px 0 8px; }
-.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-reveals { display: flex; flex-wrap: wrap; gap: 4px; }
+.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-name {
+  max-width: 65%;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-preview-province {
+  margin: 5px 0 8px;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-district-ticket .district-reveals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
 
 .street-quest--app .sq-checkin-sheet .sq-checkin-requirements {
   position: absolute;
@@ -5435,7 +8162,12 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   padding: 0;
 }
 
-.street-quest--app .sq-checkin-section-label { position: absolute; top: 0; left: 0; margin: 0; }
+.street-quest--app .sq-checkin-section-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+}
 
 .street-quest--app .sq-checkin-requirements .checklist {
   position: absolute;
@@ -5455,9 +8187,22 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   border-bottom: 0;
 }
 
-.street-quest--app .sq-checkin-requirements .sq-generated-stamp { width: 44px; height: 44px; flex-basis: 44px; }
-.street-quest--app .sq-checkin-requirements .sq-generated-stamp.sq-stamp-frame { width: 54px; height: 32px; flex-basis: 54px; }
-.street-quest--app .sq-checkin-requirements .checklist-text { min-width: 0; overflow-wrap: anywhere; }
+.street-quest--app .sq-checkin-requirements .sq-generated-stamp {
+  width: 44px;
+  height: 44px;
+  flex-basis: 44px;
+}
+
+.street-quest--app .sq-checkin-requirements .sq-generated-stamp.sq-stamp-frame {
+  width: 54px;
+  height: 32px;
+  flex-basis: 54px;
+}
+
+.street-quest--app .sq-checkin-requirements .checklist-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 
 .street-quest--app .sq-checkin-sheet .sq-encounter-locked {
   position: absolute;
@@ -5502,7 +8247,9 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   margin: 0 !important;
 }
 
-.street-quest--app .sq-node-sheet #node-info-content { position: static; }
+.street-quest--app .sq-node-sheet #node-info-content {
+  position: static;
+}
 
 .street-quest--app .sq-node-sheet .sq-node-head {
   position: absolute;
@@ -5518,9 +8265,20 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   box-shadow: none;
 }
 
-.street-quest--app .sq-node-sheet .sq-node-icon { width: 36px; height: 36px; flex-basis: 36px; }
-.street-quest--app .sq-node-sheet .sq-node-title { color: #fff8e8; font-size: clamp(15px, 4vw, 18px); }
-.street-quest--app .sq-node-sheet .sq-node-meta { color: rgba(255, 248, 232, 0.68); }
+.street-quest--app .sq-node-sheet .sq-node-icon {
+  width: 36px;
+  height: 36px;
+  flex-basis: 36px;
+}
+
+.street-quest--app .sq-node-sheet .sq-node-title {
+  color: #fff8e8;
+  font-size: clamp(15px, 4vw, 18px);
+}
+
+.street-quest--app .sq-node-sheet .sq-node-meta {
+  color: rgba(255, 248, 232, 0.68);
+}
 
 .street-quest--app .sq-node-sheet .sq-node-route-note {
   position: absolute;
@@ -5542,4 +8300,133 @@ body.street-quest--app .sq-node-sheet .sq-node-action { border: 2px solid var(--
   left: 38%;
   width: auto;
   margin: 0;
+}
+/* Check-in sheet: the checklist and support-stamp progress card were both
+   pinned to fixed percentage zones sized for a shorter template, so real
+   content (3 checklist rows + 3 progress bars) overflowed and overlapped.
+   Put them back in normal document flow inside the already-scrollable sheet. */
+.street-quest--app .sq-checkin-sheet .sq-checkin-requirements,
+.street-quest--app .sq-checkin-sheet .sq-checkin-requirements .checklist,
+.street-quest--app .sq-checkin-sheet .sq-checkin-section-label,
+.street-quest--app .sq-checkin-sheet .sq-encounter-locked,
+.street-quest--app .sq-checkin-sheet .sq-encounter-ready,
+.street-quest--app .sq-checkin-sheet .sq-support-progress,
+.street-quest--app .sq-checkin-sheet .sq-checkin-primary,
+.street-quest--app .sq-checkin-sheet .sq-checkin-secondary {
+  position: static;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  height: auto;
+  width: auto;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-requirements {
+  margin: 0 0 12px;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-encounter-locked,
+.street-quest--app .sq-checkin-sheet .sq-encounter-ready,
+.street-quest--app .sq-checkin-sheet .sq-support-progress {
+  margin: 0 0 28px !important;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-primary {
+  margin: 0 0 8px;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-title {
+  color: var(--sq-ink);
+}
+
+/* Title, icon, sheet handle and district ticket were also pinned to the
+   same broken template positions, floating over the content instead of
+   pushing it down. A higher-specificity "body.street-quest--app ..." copy
+   of these same rules exists earlier in the file and otherwise wins over
+   plain ".street-quest--app ..." overrides regardless of source order, so
+   match that specificity here. */
+.street-quest--app .sq-checkin-sheet .sheet-handle,
+.street-quest--app .sq-checkin-sheet .sq-checkin-title,
+.street-quest--app .sq-checkin-title .sq-checkin-icon,
+.street-quest--app .sq-checkin-sheet .sq-district-ticket,
+body.street-quest--app .sq-checkin-sheet .sheet-handle,
+body.street-quest--app .sq-checkin-sheet .sq-checkin-title,
+body.street-quest--app .sq-checkin-title .sq-checkin-icon,
+body.street-quest--app .sq-checkin-sheet .sq-district-ticket {
+  position: static;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  height: auto;
+  width: auto;
+}
+
+.street-quest--app .sq-checkin-sheet::before,
+body.street-quest--app .sq-checkin-sheet::before {
+  display: block;
+  position: static;
+}
+
+.street-quest--app .sq-checkin-sheet .sheet-handle,
+body.street-quest--app .sq-checkin-sheet .sheet-handle {
+  margin: 4px auto 16px;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-title,
+body.street-quest--app .sq-checkin-sheet .sq-checkin-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 16px;
+  color: var(--sq-ink);
+  text-shadow: none;
+}
+
+.street-quest--app .sq-checkin-title .sq-checkin-icon,
+body.street-quest--app .sq-checkin-title .sq-checkin-icon {
+  margin: 0;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-district-ticket {
+  margin: 0 0 16px;
+}
+
+/* Cancel button on the check-in sheet: a higher-specificity
+   "body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary" rule
+   earlier in the file still pins it absolute and strips its theme, same
+   class of bug as the title/requirements fixes above. Match that
+   specificity, bring it into flow, and give it real breathing room below
+   the Encounter key card. */
+.street-quest--app .sq-checkin-sheet .sq-checkin-secondary,
+body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary {
+  position: relative;
+  top: auto;
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  display: block;
+  width: 64%;
+  height: auto;
+  min-height: 44px;
+  margin: 24px 0 0;
+  transform: translateX(-50%);
+  border: 2px solid var(--sq-ink);
+  border-radius: 2px;
+  background: rgba(255, 253, 245, 0.22);
+  color: var(--sq-ink);
+  font: 800 14px/1.1 var(--font-heading);
+  text-align: center;
+  letter-spacing: 0.04em;
+  box-shadow: none;
+}
+
+.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:hover,
+.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible,
+body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:hover,
+body.street-quest--app .sq-checkin-sheet .sq-checkin-secondary:focus-visible {
+  background: rgba(24, 21, 16, 0.08);
+  border-color: var(--sq-ink);
+  color: var(--sq-ink);
 }
