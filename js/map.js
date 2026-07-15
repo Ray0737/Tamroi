@@ -1,14 +1,14 @@
 // ── Map Module ────────────────────────────────────────
 const MapModule = (() => {
-  let map              = null;
-  let guildFogLayer    = null;    // truthy flag: guild fog currently rendered
-  let markers          = {};
-  let activeDistrict   = null;
-  let _locationMarker  = null;    // real-time GPS dot
+  let map = null;
+  let guildFogLayer = null;    // truthy flag: guild fog currently rendered
+  let markers = {};
+  let activeDistrict = null;
+  let _locationMarker = null;    // real-time GPS dot
   let _locationWatcher = null;    // watchPosition handle
-  let _posHistory      = [];      // recent positions for speed/teleport detection
+  let _posHistory = [];      // recent positions for speed/teleport detection
   let allDistrictsCache = null;
-  let homeLocation      = null;
+  let homeLocation = null;
   let lastKnownPosition = null;
   let loreNodes = [];
   let activeLoreNode = null;
@@ -60,7 +60,7 @@ const MapModule = (() => {
   const capturedFigureIds = new Set();
   const jigsawUnlockedFigureIds = new Set(); // figures unlocked via a completed Jigsaw mission, bypasses the support-node gate
   const _figureCircleFeatures = {};  // figure.id -> GeoJSON circle Feature (80m proximity)
-  const _loreRingFeatures     = {};  // node.id   -> GeoJSON circle Feature (50m proximity)
+  const _loreRingFeatures = {};  // node.id   -> GeoJSON circle Feature (50m proximity)
 
 
   // ── Lore nodes · loaded from Supabase lore_nodes table ─
@@ -70,32 +70,33 @@ const MapModule = (() => {
   const _blank = () => ({ fogged: true, cafes_visited: 0, otops_visited: 0, landmarks_visited: 0 });
   let userDistrictState = {
     rattanakosin: _blank(),
-    dusit:        _blank(),
-    pathumwan:    _blank(),
-    silom:        _blank(),
-    sukhumvit:    _blank(),
-    watthana:     _blank(),
-    chatuchak:    _blank(),
-    ladphrao:     _blank(),
-    bang_kapi:    _blank(),
+    dusit: _blank(),
+    pathumwan: _blank(),
+    silom: _blank(),
+    sukhumvit: _blank(),
+    watthana: _blank(),
+    chatuchak: _blank(),
+    ladphrao: _blank(),
+    bang_kapi: _blank(),
     phra_khanong: _blank(),
-    bang_na:      _blank(),
-    nonthaburi:   _blank(),
-    ayutthaya:    _blank(),
-    satit_test:   _blank(),
+    bang_na: _blank(),
+    nonthaburi: _blank(),
+    ayutthaya: _blank(),
+    satit_test: _blank(),
+    rangsit: _blank(),
   };
 
   // ── SVG icon helpers ────────────────────────────────
   const _SVG = {
     coffee: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`,
-    shop:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>`,
+    shop: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>`,
     temple: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="13"/><line x1="10" y1="18" x2="10" y2="13"/><line x1="14" y1="18" x2="14" y2="13"/><line x1="18" y1="18" x2="18" y2="13"/><polygon points="12 3 20 8 4 8"/></svg>`,
   };
 
   const NODE_CFG = {
-    cafe:     { label: 'ร้านกาแฟ',      color: '#7BC67E', bg: 'rgba(123,198,126,0.18)', svg: _SVG.coffee },
-    otop:     { label: 'OTOP / ร้านค้า', color: '#fff', bg: 'rgba(126,184,232,0.18)', svg: _SVG.shop },
-    landmark: { label: 'สถานที่สำคัญ',   color: '#fff', bg: 'rgba(242,184,75,0.18)', svg: _SVG.temple },
+    cafe: { label: 'ร้านกาแฟ', color: '#7BC67E', bg: 'rgba(123,198,126,0.18)', svg: _SVG.coffee },
+    otop: { label: 'OTOP / ร้านค้า', color: '#fff', bg: 'rgba(126,184,232,0.18)', svg: _SVG.shop },
+    landmark: { label: 'สถานที่สำคัญ', color: '#fff', bg: 'rgba(242,184,75,0.18)', svg: _SVG.temple },
   };
 
   // ── MapLibre helpers ─────────────────────────────────
@@ -173,38 +174,56 @@ const MapModule = (() => {
   function _initOverlaySources() {
     // Order = paint order (bottom -> top): grid, fog, guild fog, proximity rings.
     map.addSource('grid-source', { type: 'geojson', data: _emptyFC() });
-    map.addLayer({ id: 'grid-layer', type: 'line', source: 'grid-source',
-      paint: { 'line-color': 'rgba(255,255,255,0.15)', 'line-width': 1 } });
+    map.addLayer({
+      id: 'grid-layer', type: 'line', source: 'grid-source',
+      paint: { 'line-color': 'rgba(255,255,255,0.15)', 'line-width': 1 }
+    });
 
     map.addSource('fog-source', { type: 'geojson', data: _emptyFC() });
-    map.addLayer({ id: 'fog-layer', type: 'fill', source: 'fog-source',
-      paint: { 'fill-color': '#08070f', 'fill-opacity': 0.88 } });
+    map.addLayer({
+      id: 'fog-layer', type: 'fill', source: 'fog-source',
+      paint: { 'fill-color': '#08070f', 'fill-opacity': 0.88 }
+    });
 
     // Fog-clear sweep: buildFogLayer() swaps the fog polygon's shape instantly (geometry
     // changes can't tween), so this is a separate real MapLibre fill layer shaped like the
     // just-revealed district, faded out via a native paint-property transition. Being a real
     // 3D layer (not a CSS/DOM overlay) it tilts with the map's pitch exactly like fog-layer does.
     map.addSource('fog-clear-fx-source', { type: 'geojson', data: _emptyFC() });
-    map.addLayer({ id: 'fog-clear-fx-layer', type: 'fill', source: 'fog-clear-fx-source',
-      paint: { 'fill-color': '#08070f', 'fill-opacity': 0, 'fill-opacity-transition': { duration: 800 } } });
+    map.addLayer({
+      id: 'fog-clear-fx-layer', type: 'fill', source: 'fog-clear-fx-source',
+      paint: { 'fill-color': '#08070f', 'fill-opacity': 0, 'fill-opacity-transition': { duration: 800 } }
+    });
 
     map.addSource('guild-fog-source', { type: 'geojson', data: _emptyFC() });
-    map.addLayer({ id: 'guild-fog-fill', type: 'fill', source: 'guild-fog-source',
-      paint: { 'fill-color': '#7BC67E', 'fill-opacity': 0.22 } });
-    map.addLayer({ id: 'guild-fog-line', type: 'line', source: 'guild-fog-source',
-      paint: { 'line-color': '#7BC67E', 'line-width': 1, 'line-opacity': 0.35 } });
+    map.addLayer({
+      id: 'guild-fog-fill', type: 'fill', source: 'guild-fog-source',
+      paint: { 'fill-color': '#7BC67E', 'fill-opacity': 0.22 }
+    });
+    map.addLayer({
+      id: 'guild-fog-line', type: 'line', source: 'guild-fog-source',
+      paint: { 'line-color': '#7BC67E', 'line-width': 1, 'line-opacity': 0.35 }
+    });
 
     map.addSource('figure-proximity-source', { type: 'geojson', data: _emptyFC() });
-    map.addLayer({ id: 'figure-proximity-fill', type: 'fill', source: 'figure-proximity-source',
-      paint: { 'fill-color': '#EAE7E1', 'fill-opacity': 0.12 } });
-    map.addLayer({ id: 'figure-proximity-line', type: 'line', source: 'figure-proximity-source',
-      paint: { 'line-color': '#EAE7E1', 'line-width': 2 } });
+    map.addLayer({
+      id: 'figure-proximity-fill', type: 'fill', source: 'figure-proximity-source',
+      paint: { 'fill-color': '#EAE7E1', 'fill-opacity': 0.12 }
+    });
+    map.addLayer({
+      id: 'figure-proximity-line', type: 'line', source: 'figure-proximity-source',
+      paint: { 'line-color': '#EAE7E1', 'line-width': 2 }
+    });
 
     map.addSource('lore-ring-source', { type: 'geojson', data: _emptyFC() });
-    map.addLayer({ id: 'lore-ring-fill', type: 'fill', source: 'lore-ring-source',
-      paint: { 'fill-color': '#8986A8', 'fill-opacity': 0.05 } });
-    map.addLayer({ id: 'lore-ring-line', type: 'line', source: 'lore-ring-source',
-      paint: { 'line-color': '#8986A8', 'line-width': 1, 'line-dasharray': [4, 4] } });
+    map.addLayer({
+      id: 'lore-ring-fill', type: 'fill', source: 'lore-ring-source',
+      paint: { 'fill-color': '#8986A8', 'fill-opacity': 0.05 }
+    });
+    map.addLayer({
+      id: 'lore-ring-line', type: 'line', source: 'lore-ring-source',
+      paint: { 'line-color': '#8986A8', 'line-width': 1, 'line-dasharray': [4, 4] }
+    });
   }
 
   // ── Init ───────────────────────────────────────────
@@ -339,7 +358,7 @@ const MapModule = (() => {
     if (_posHistory.length) {
       const prev = _posHistory[_posHistory.length - 1];
       const dist = haversineDistance(prev.lat, prev.lng, lat, lng);
-      const dt   = (now - prev.ts) / 1000; // seconds
+      const dt = (now - prev.ts) / 1000; // seconds
       if (dt > 0 && dist / dt > 50) return false; // > 50 m/s is impossible on foot/transit
     }
 
@@ -384,7 +403,7 @@ const MapModule = (() => {
       }
     }
     let local = [];
-    try { local = JSON.parse(localStorage.getItem(_walkStoreKey) || '[]'); } catch {}
+    try { local = JSON.parse(localStorage.getItem(_walkStoreKey) || '[]'); } catch { }
     _walkedPoints = local;
 
     if (!user || !DB.WalkTrail) return;
@@ -394,7 +413,7 @@ const MapModule = (() => {
       // filter _walkedPoints (not `local`) so GPS points revealed while the
       // fetch was in flight survive the replacement below
       const missing = _walkedPoints.filter(p => !inDb.has(`${p.lat},${p.lng}`));
-      if (missing.length) DB.WalkTrail.addPoints(user.id, missing).catch(() => {});
+      if (missing.length) DB.WalkTrail.addPoints(user.id, missing).catch(() => { });
       _walkedPoints = dbPoints.concat(missing);
       if (allDistrictsCache) buildFogLayer(allDistrictsCache);
     } catch { /* offline · keep the localStorage copy */ }
@@ -418,9 +437,9 @@ const MapModule = (() => {
     const tooClose = _walkedPoints.some(p => haversineDistance(p.lat, p.lng, lat, lng) < WALK_MIN_SPACING_M);
     if (tooClose) return;
     _walkedPoints.push({ lat, lng });
-    try { localStorage.setItem(_walkStoreKey, JSON.stringify(_walkedPoints)); } catch {}
+    try { localStorage.setItem(_walkStoreKey, JSON.stringify(_walkedPoints)); } catch { }
     const user = window.AppCore?.App?.user;
-    if (user) DB.WalkTrail?.addPoints(user.id, [{ lat, lng }]).catch(() => {}); // fire-and-forget · localStorage line above is the offline net, _initWalkGrid re-syncs it
+    if (user) DB.WalkTrail?.addPoints(user.id, [{ lat, lng }]).catch(() => { }); // fire-and-forget · localStorage line above is the offline net, _initWalkGrid re-syncs it
     if (allDistrictsCache) buildFogLayer(allDistrictsCache);
   }
 
@@ -616,7 +635,7 @@ const MapModule = (() => {
     renderLoreMarkers();
     window.AppCore?.closeAllSheets();
     showFloatPtsOnMap(node.lore_pts || 0);
-    if (user) DB.Missions?.updateChallengeProgress(user.id, 'lore').catch(() => {});
+    if (user) DB.Missions?.updateChallengeProgress(user.id, 'lore').catch(() => { });
     window.CollectionModule?.load?.();
     checkLoreChainComplete(node, user);
   }
@@ -969,7 +988,7 @@ const MapModule = (() => {
     supportNodes.forEach((node, i) => {
       if (!_isRevealedAt(node.districtId, node.lat, node.lng)) return;
 
-      const cfg  = NODE_CFG[node.type] || NODE_CFG.landmark;
+      const cfg = NODE_CFG[node.type] || NODE_CFG.landmark;
       const html = `<div class="marker-node marker-${node.type}" style="color:${cfg.color}">${cfg.svg}</div>`;
 
       const nodeMarker = _addMarker(node.lat, node.lng, html, { anchorX: 11, anchorY: 11 });
@@ -1086,7 +1105,7 @@ const MapModule = (() => {
         }
       }
     }
-    if (u) DB.Missions?.updateChallengeProgress(u.id, 'capture').catch(() => {});
+    if (u) DB.Missions?.updateChallengeProgress(u.id, 'capture').catch(() => { });
     capturedFigureIds.add(figure.id);
     window.CollectionModule?.markCaptured?.(figure.id);
     const mk = markers[`figure-${figure.id}`];
@@ -1097,7 +1116,7 @@ const MapModule = (() => {
     }
     const distId = figure.districtId;
     if (distId && userDistrictState[distId]?.fogged !== false) {
-      if (u) DB.Districts.checkIn(u.id, distId).catch(() => {});
+      if (u) DB.Districts.checkIn(u.id, distId).catch(() => { });
       userDistrictState[distId] = { ...(userDistrictState[distId] || {}), fogged: false };
       buildFogLayer(allDistrictsCache || []);
       renderWatchtowers(allDistrictsCache || []);
@@ -1164,7 +1183,7 @@ const MapModule = (() => {
     const content = document.getElementById('node-info-content');
     if (!content) return;
 
-    const cfg      = NODE_CFG[node.type] || NODE_CFG.landmark;
+    const cfg = NODE_CFG[node.type] || NODE_CFG.landmark;
     const district = (allDistrictsCache || []).find(d => d.id === node.districtId);
     const id = getSupportNodeId(node);
     const visited = visitedSupportNodeIds.has(id);
@@ -1238,7 +1257,7 @@ const MapModule = (() => {
     const current = userDistrictState[node.districtId] || { fogged: false, cafes_visited: 0, otops_visited: 0, landmarks_visited: 0 };
     const field = node.type === 'cafe' ? 'cafes_visited'
       : node.type === 'otop' ? 'otops_visited'
-      : 'landmarks_visited';
+        : 'landmarks_visited';
     userDistrictState[node.districtId] = nextState || {
       ...current,
       [field]: (current[field] || 0) + 1,
@@ -1264,14 +1283,14 @@ const MapModule = (() => {
       ? !visitedWatchtowerIds.has(district.watchtowerId)
       : (state.fogged ?? true);
 
-    document.getElementById('checkin-district-name').textContent     = district.name_th;
+    document.getElementById('checkin-district-name').textContent = district.name_th;
     document.getElementById('checkin-district-province').textContent = district.province;
 
-    const rc = district.required_cafes     || 2;
-    const ro = district.required_otops     || 1;
+    const rc = district.required_cafes || 2;
+    const ro = district.required_otops || 1;
     const rl = district.required_landmarks || 3;
-    const vc = state.cafes_visited     || 0;
-    const vo = state.otops_visited     || 0;
+    const vc = state.cafes_visited || 0;
+    const vo = state.otops_visited || 0;
     const vl = state.landmarks_visited || 0;
 
     document.getElementById('checkin-reveals').innerHTML = `
@@ -1315,8 +1334,8 @@ const MapModule = (() => {
       </div>
     `;
 
-    const btn      = document.getElementById('btn-checkin');
-    const badge    = document.getElementById('checkin-explored-badge');
+    const btn = document.getElementById('btn-checkin');
+    const badge = document.getElementById('checkin-explored-badge');
     const alreadyCleared = !fogged;
 
     // Already-explored is redundant once checked in · the encounter/support-node
@@ -1327,10 +1346,10 @@ const MapModule = (() => {
     if (alreadyCleared) {
       btn.hidden = true;
     } else {
-      btn.hidden      = false;
+      btn.hidden = false;
       btn.textContent = 'Check In & Clear Fog';
-      btn.disabled    = false;
-      btn.className   = 'btn btn-sm btn-full btn-primary sq-checkin-primary';
+      btn.disabled = false;
+      btn.className = 'btn btn-sm btn-full btn-primary sq-checkin-primary';
     }
 
     window.AppCore?.openSheet('checkin-sheet');
@@ -1343,8 +1362,8 @@ const MapModule = (() => {
     if (!state.has_encounter_key) {
       container.innerHTML = `
         <div class="sq-encounter-locked mb-3">
-          <span class="sq-encounter-key">${keySVG(22)}</span>
-          <div>
+          <div class="sq-locked-stamp">${lockSVG(20)}</div>
+          <div class="sq-locked-copy text-black">
             <strong>Encounter key locked</strong>
             <p>เช็กอิน Watchtower เพื่อรับกุญแจ Encounter</p>
           </div>
@@ -1384,14 +1403,14 @@ const MapModule = (() => {
         </div>
         <div class="sq-support-progress-list">
         ${rows.map(row => {
-          const pct = Math.min(100, Math.round((row.count / row.required) * 100));
-          return `
+      const pct = Math.min(100, Math.round((row.count / row.required) * 100));
+      return `
             <div class="sq-support-progress-row">
               <div class="sq-support-progress-label"><span>${row.label}</span><b>${row.count}/${row.required}</b></div>
               <div class="sq-support-progress-track"><div class="sq-support-progress-fill" style="width:${pct}%"></div></div>
             </div>
           `;
-        }).join('')}
+    }).join('')}
         </div>
       </div>
     `;
@@ -1502,7 +1521,7 @@ const MapModule = (() => {
     }
 
     const question = activeQuiz.questions[activeQuiz.questionIndex];
-    const chosen  = activeQuiz.selected;
+    const chosen = activeQuiz.selected;
     const correct = question.correct_option;
 
     if (chosen !== correct) {
@@ -1510,10 +1529,10 @@ const MapModule = (() => {
       opts.forEach(btn => {
         btn.disabled = true;
         if (btn.dataset.option === correct) btn.classList.add('quiz-correct');
-        if (btn.dataset.option === chosen)  btn.classList.add('quiz-wrong');
+        if (btn.dataset.option === chosen) btn.classList.add('quiz-wrong');
       });
       const optionsEl = document.getElementById('quiz-options');
-      let feedbackEl  = document.querySelector('.quiz-feedback');
+      let feedbackEl = document.querySelector('.quiz-feedback');
       if (!feedbackEl) {
         feedbackEl = document.createElement('p');
         feedbackEl.className = 'quiz-feedback';
@@ -1539,7 +1558,7 @@ const MapModule = (() => {
 
     const user = window.AppCore?.App?.user;
     // Increment quiz challenge progress on each correct answer
-    if (user) DB.Missions?.updateChallengeProgress(user.id, 'quiz').catch(() => {});
+    if (user) DB.Missions?.updateChallengeProgress(user.id, 'quiz').catch(() => { });
 
     if (activeQuiz.questionIndex + 1 < activeQuiz.questions.length) {
       openQuizForFigure(activeQuiz.figure.id, activeQuiz.questionIndex + 1, activeQuiz.questions);
@@ -1555,7 +1574,7 @@ const MapModule = (() => {
   // ── Perform check-in ────────────────────────────────
   async function performCheckIn() {
     if (!activeDistrict) return;
-    const d   = activeDistrict;
+    const d = activeDistrict;
     const btn = document.getElementById('btn-checkin');
 
     if (!isDev() && !isWithinCheckInRange(d)) {
@@ -1564,7 +1583,7 @@ const MapModule = (() => {
     }
 
     btn.innerHTML = `<div class="spinner"></div>`;
-    btn.disabled  = true;
+    btn.disabled = true;
 
     const user = window.AppCore?.App?.user;
     const sweepLat = d.checkinLat ?? d.watchtower_lat ?? d.center_lat;
@@ -1636,15 +1655,15 @@ const MapModule = (() => {
     updateStatsBar();
     syncDiscoveryPercent(user?.id);
     showFloatPtsOnMap(150);
-    if (user) DB.Missions?.updateChallengeProgress(user.id, 'checkin').catch(() => {});
+    if (user) DB.Missions?.updateChallengeProgress(user.id, 'checkin').catch(() => { });
   }
 
   // ── Check-in eligibility ────────────────────────────
   function canCheckIn(districtId, district) {
     const s = userDistrictState[districtId] || {};
-    return (s.cafes_visited     || 0) >= (district.required_cafes     || 2) &&
-           (s.otops_visited     || 0) >= (district.required_otops     || 1) &&
-           (s.landmarks_visited || 0) >= (district.required_landmarks || 3);
+    return (s.cafes_visited || 0) >= (district.required_cafes || 2) &&
+      (s.otops_visited || 0) >= (district.required_otops || 1) &&
+      (s.landmarks_visited || 0) >= (district.required_landmarks || 3);
   }
 
   function isWithinCheckInRange(district) {
@@ -1675,7 +1694,7 @@ const MapModule = (() => {
   }
 
   function showHomeLocationPicker(districts) {
-    const grid   = document.getElementById('home-picker-grid');
+    const grid = document.getElementById('home-picker-grid');
     if (!grid) return;
     const pinSVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>`;
     grid.innerHTML = districts.map(d => `
@@ -1692,8 +1711,10 @@ const MapModule = (() => {
     const district = (allDistrictsCache || []).find(d => d.id === districtId);
     if (!district) return;
 
-    homeLocation = { id: districtId, lat: district.center_lat, lng: district.center_lng,
-                     name_th: district.name_th, name_en: district.name_en };
+    homeLocation = {
+      id: districtId, lat: district.center_lat, lng: district.center_lng,
+      name_th: district.name_th, name_en: district.name_en
+    };
     try {
       localStorage.setItem(HOME_KEY, JSON.stringify(homeLocation));
       localStorage.removeItem(LEGACY_HOME_KEY);
@@ -1710,7 +1731,7 @@ const MapModule = (() => {
 
     // Persist home district fog clear to DB so it survives reload.
     const homeUser = window.AppCore?.App?.user;
-    if (homeUser) DB.Districts.checkIn(homeUser.id, districtId).catch(() => {});
+    if (homeUser) DB.Districts.checkIn(homeUser.id, districtId).catch(() => { });
   }
 
   function skipHomePicker() {
@@ -1733,9 +1754,9 @@ const MapModule = (() => {
 
   // ── Stats bar ───────────────────────────────────────
   function updateStatsBar() {
-    const total    = Object.keys(userDistrictState).length;
+    const total = Object.keys(userDistrictState).length;
     const explored = Object.values(userDistrictState).filter(s => !s.fogged).length;
-    const pct      = total ? Math.round((explored / total) * 100) : 0;
+    const pct = total ? Math.round((explored / total) * 100) : 0;
     const el = document.getElementById('map-stat-explored');
     if (el) el.textContent = pct + '%';
   }
@@ -1764,6 +1785,12 @@ const MapModule = (() => {
   function keySVG(size = 16) {
     return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:${size}px;height:${size}px;vertical-align:-3px;flex-shrink:0">
       <circle cx="7" cy="15" r="4"/><path d="M10.5 11.5L21 1"/><path d="M17 5l3 3"/><path d="M14 8l2.5 2.5"/>
+    </svg>`;
+  }
+
+  function lockSVG(size = 16) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:${size}px;height:${size}px;vertical-align:-3px;flex-shrink:0">
+      <rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>
     </svg>`;
   }
 

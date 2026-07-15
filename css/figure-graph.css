@@ -312,13 +312,12 @@
   background: linear-gradient(to bottom, rgba(11, 11, 10, 0.94), rgba(11, 11, 10, 0.22));
 }
 .street-quest--app #fg-back-btn {
-  width: 38px;
-  height: 34px;
-  border: 0;
-  border-radius: 0;
-  background: transparent url('../assets/street-quest/generated-stamps/guild-request-reject.png') center / 100% 100% no-repeat;
+  width: 36px;
+  height: 36px;
+  border: 2px solid rgba(244, 234, 208, 0.4);
+  border-radius: 50%;
+  background: rgba(244, 234, 208, 0.08);
   color: #fff8e8;
-  font: 900 24px/1 var(--font-display);
 }
 .street-quest--app #fg-title {
   color: var(--sq-lime);
@@ -335,7 +334,7 @@
   max-width: 390px;
   border: 0;
   border-radius: 0;
-  padding: 24px 9% 30px;
+  padding: 24px 24px 30px;
   background: transparent url('../assets/street-quest/generated-stamps/guild-note-slip.png') center / 100% 100% no-repeat;
   color: var(--sq-ink);
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.48);

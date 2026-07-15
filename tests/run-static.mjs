@@ -9,6 +9,7 @@ const tests = [
   'tests/grid-fog-static.test.mjs',
   'tests/coop-static.test.mjs',
   'tests/new-features-static.test.mjs',
+  'tests/land-verification-static.test.mjs',
 ];
 
 let failed = false;

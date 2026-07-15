@@ -259,8 +259,8 @@ test('capture Watchtower check-in sheet', async ({ page }) => {
       </div>`;
     document.getElementById('checkin-encounter').innerHTML = `
       <div class="sq-encounter-locked mb-3">
-        <span class="sq-encounter-key">⌗</span>
-        <div><strong>Encounter key locked</strong><p>เช็กอิน Watchtower เพื่อรับกุญแจ Encounter</p></div>
+        <div class="sq-locked-stamp">⌗</div>
+        <div class="sq-locked-copy"><strong>Encounter key locked</strong><p>เช็กอิน Watchtower เพื่อรับกุญแจ Encounter</p></div>
       </div>`;
     document.getElementById('btn-checkin').hidden = false;
     document.getElementById('btn-checkin').textContent = 'Check In & Clear Fog';

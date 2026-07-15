@@ -91,9 +91,14 @@
     ├── patch_encounter_key.sql has_encounter_key column on user_districts + backfill for existing check-ins
     ├── patch_jigsaw_v2.sql     GPS-gated jigsaw v2 — lore_node_id/proposed_order on assignments, unlocks_figure_id on collab_missions, user_jigsaw_encounters table, on_jigsaw_proposed_order SECURITY DEFINER trigger
     ├── patch_walk_trail.sql    user_walk_points table — per-account walk-trail fog reveal (was localStorage-only)
-    └── patch_mock_satit.sql    Test-only seed data — REMOVE before production
+    ├── patch_mock_satit.sql    Test-only seed data — REMOVE before production
+    ├── patch_thammasat_rangsit.sql Thammasat content: fig-a-21 (Sanya Dharmasakti), lore-tu-history, TU Tha Prachan/Rangsit support nodes, `rangsit` district + its own single watchtower (kept separate from pathumwan's watchtowers so it doesn't gate Pathumwan's fog-clear)
+    └── patch_node_verification.sql verification_status/verified_note/verified_at on support_nodes + watchtowers — see docs/land_verification.md
+└── scripts/
+    └── verification-checklist.mjs Regenerates docs/land_verification.md from live DB; `mark <id> verified|flagged "note"` writes a review (needs local SUPABASE_SERVICE_KEY env var, never committed)
 └── docs/
     ├── Db.md                   Figure roster snapshot from the live Supabase DB
+    ├── land_verification.md    Generated audit trail — every support_node/watchtower coord's reviewed/flagged status (regenerate via scripts/verification-checklist.mjs)
     ├── FUNCTION_LOG.md         Live log of all gameplay/DB functions; update each session
     ├── GAME_LOGIC.md           Player-facing gameplay mechanics reference
     ├── gps-spoofing.md         GPS anti-cheat threat analysis + mitigation status
@@ -116,6 +121,7 @@
     ├── prod-readiness-static.test.mjs Static regression check for deploy readiness
     ├── remaining-static.test.mjs Static regression check for gameplay loop work
     ├── ui-visual.spec.mjs         Playwright captures, populated group/forum/Watchtower Check-In states, and 430px/375px collision checks
+    ├── land-verification-static.test.mjs Static regression check for the node land-verification patch/script
     └── run-static.mjs             One-command static regression suite runner
 ```
 
@@ -245,6 +251,8 @@ Run patches in this order:
 25. SQL Editor → `supabase/patch_jigsaw_v2.sql`
 26. SQL Editor → `supabase/patch_remove_sirindhorn.sql` — content-safety swap, same rationale as the Rama-line removal
 27. SQL Editor → `supabase/patch_walk_trail.sql`
+27a. SQL Editor → `supabase/patch_thammasat_rangsit.sql`
+27b. SQL Editor → `supabase/patch_node_verification.sql`
 28. Authentication → Email → **disable "Confirm email"** for dev
 29. Authentication → URL Configuration → add `http://127.0.0.1:5500/**`
 30. Settings → API → copy URL + anon key into `js/env.js`
@@ -367,12 +375,14 @@ Run patches in this order:
 | `check_district_watchtowers_complete` trigger | patch_multi_watchtower | Flips `user_districts.fogged = false` once a user has visited every watchtower in a district |
 | `user_districts.has_encounter_key` | patch_encounter_key | Set true on check-in; required alongside support-node chain to start an A-tier Legendary Encounter |
 | `user_walk_points` | patch_walk_trail | Per-account walk-trail fog-reveal points; PK `(user_id, lat, lng)`; own-row RLS; localStorage kept as offline cache, re-synced on boot |
+| `districts` row `rangsit` | patch_thammasat_rangsit | Thammasat Rangsit campus as its own single-watchtower district (province ปทุมธานี, outside the other 14 Bangkok districts); `required_cafes/otops/landmarks` all 0 — no S/A gating there, just a real playable check-in point |
 | `quiz_questions.lore_id` | patch_retrieval_practice | Links recall questions to their source lore node |
 | `quiz_questions.assessment_type` | patch_retrieval_practice | `'capture'` / `'pretest'` / `'recall'` |
 | `user_lore.recall_due_at` | patch_retrieval_practice | Spaced-repetition due timestamp; auto-set by DB trigger |
 | `on_capture_update_score` trigger | patch_lore | Auto-updates `profiles.legacy_score` on `user_captures` insert |
 | `on_collab_checkin_threshold` trigger | patch_coop | Auto-completes mission + awards pts when checkin count ≥ required |
 | `on_discussion_flag_count` trigger | patch_coop | Sets `is_flagged = true` when flag count ≥ 3 |
+| `support_nodes.verification_status` / `watchtowers.verification_status` | patch_node_verification | `'pending'` / `'verified'` / `'flagged'` — manual land-verification review state per coordinate; `verified_note` + `verified_at` alongside |
 
 ### Runtime APIs
 

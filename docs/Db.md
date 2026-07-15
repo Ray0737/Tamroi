@@ -33,7 +33,7 @@ Live counts: **S 10 · A 23 · B 20 · C 20** (73 total). Conditional (S+A) shar
 | 🐘 | `fig-s-09` | Queen Sri Suriyothai | สมเด็จพระศรีสุริโยทัย | อยุธยา (ayutthaya) | No | 14.3505, 100.5648 | Gave her life in 1548 to save King Maha Chakkraphat in battle against the Burmese, riding into combat disguised as a warrior. One of few women in Thai history to receive the royal title Somdet. |
 | 🛡️ | `fig-s-14` | Somdet Sri Suriyawong | สมเด็จเจ้าพระยาบรมมหาศรีสุริยวงศ์ (ช่วง บุนนาค) | บางรัก/สีลม (silom) | No | 13.7254, 100.5236 | Most powerful regent of the Rattanakosin era; regent during Rama V's minority (1868–1873). Modernized the Siamese military, managed relations with Britain/France/US while keeping Siam independent. |
 
-## Class A — Epic (200 pts, 23 figures)
+## Class A — Epic (200 pts, 24 figures)
 
 | Emoji | ID | Name (EN) | Name (TH) | District | lat, lng | Description |
 |---|---|---|---|---|---|---|
@@ -60,6 +60,7 @@ Live counts: **S 10 · A 23 · B 20 · C 20** (73 total). Conditional (S+A) shar
 | 💐 | `fig-a-07` | Thanpuying Plian Phasakorawongse | ท่านผู้หญิงเปลี่ยน ภาสกรวงศ์ | ปทุมวัน | 13.7330, 100.5420 | Bangkok society reformer of the Rama V era. During the 1893 Franco-Siamese crisis founded the "Sapha Unalom Daeng" (Red Unalom Society), forerunner of the Thai Red Cross. Authored the first published Thai cookbook. |
 | 🎵 | `fig-a-10` | Uea Sunthornsanan | เอื้อ สุนทรสนาน (ครูเอื้อ) | พระนคร | 13.7480, 100.4950 | Founded the Sunthraporn Band (1939), Thailand's first Thai-Western fusion orchestra; composed hundreds of songs still performed. Founded the Music Association of Thailand. |
 | 🏛️ | `fig-a-02` | Phraya Phahon Phonphayuhasena | พระยาพหลพลพยุหเสนา (พจน์ พหลโยธิน) | ดุสิต | 13.7697, 100.5137 | Leader of the 1932 Siamese Revolution that ended absolute monarchy; read the Declaration of the New Siamese State; second PM of Siam (1933–1938). |
+| ⚖️ | `fig-a-21` | Sanya Dharmasakti | สัญญา ธรรมศักดิ์ | ปทุมวัน | 13.7567, 100.4931 | Rector of Thammasat University (1971–1973); appointed Prime Minister after the October 14, 1973 uprising (14 Oct 1973 – 14 Feb 1975). Later Chief Justice of the Supreme Court and President of the Privy Council (1975–1998). Studied law at the Middle Temple, England. Added 2026-07-15. |
 
 ## Class B — Rare (100 pts, 20 figures)
 
@@ -113,7 +114,7 @@ Live counts: **S 10 · A 23 · B 20 · C 20** (73 total). Conditional (S+A) shar
 
 ---
 
-## Districts (`districts` table, 14 rows)
+## Districts (`districts` table, 15 rows)
 
 | ID | Thai | Watchtower lat, lng |
 |---|---|---|
@@ -126,6 +127,7 @@ Live counts: **S 10 · A 23 · B 20 · C 20** (73 total). Conditional (S+A) shar
 | `nonthaburi` | นนทบุรี | 13.8621, 100.5144 |
 | `pathumwan` | ปทุมวัน | 13.7306, 100.5450 |
 | `phra_khanong` | พระโขนง | 13.7088, 100.6010 |
+| `rangsit` | รังสิต (จ. ปทุมธานี) | 14.0716, 100.6072 — added 2026-07-15 for Thammasat Rangsit; only Bangkok-external district, `required_cafes/otops/landmarks` all 0 (no S/A gating) |
 | `rattanakosin` | พระนคร | 13.7500, 100.4913 |
 | `satit_test` [TEST] | สาธิตประสานมิตร [TEST] | 13.7432, 100.5658 |
 | `silom` | บางรัก/สีลม | 13.7283, 100.5268 |
@@ -140,10 +142,11 @@ Live counts: **S 10 · A 23 · B 20 · C 20** (73 total). Conditional (S+A) shar
 
 Watthana has 2 check-in points total: the district-level tower above (Satit PSM area) plus this Terminal 21 row — players must visit both before the district's fog clears fully.
 
-## Support Nodes (`support_nodes` table, 90 rows — cafe/otop/landmark)
+## Support Nodes (`support_nodes` table, 93 rows — cafe/otop/landmark)
 
 | District | Cafés | OTOP | Landmarks |
 |---|---|---|---|
+| `rangsit` | — | — | มหาวิทยาลัยธรรมศาสตร์ ศูนย์รังสิต (โดม) (14.0716,100.6072) |
 | `ayutthaya` | Busaba Cafe & Bake Lab (14.3577,100.5637); BORAN Cafe and Restaurant (14.3573,100.5637) | อยุธยา พาวิลเลียน (14.3560,100.5850) | วัดพระศรีสรรเพชญ์ (14.3559,100.5586); วัดใหญ่ชัยมงคล (14.3453,100.5925); พระราชวังบางปะอิน (14.2325,100.5792) |
 | `bang_kapi` | Pacamara Coffee Roasters (13.7522,100.6099); 212 Caffe' Co. (13.7552,100.6201) | OTOP มีนบุรี (13.7810,100.6280) | วัดอุทัยธาราม (13.7740,100.5760); มหาวิทยาลัยรามคำแหง (13.7552,100.6201); ราชมังคลากีฬาสถาน (13.7532,100.6200) |
 | `bang_na` | Suvarnabhumi Café (13.6640,100.6200); Nana Coffee Roasters Bangna (13.6680,100.6060); CAFE.HOO (13.6570,100.6020) | OTOP Bang Na (13.6520,100.6070); ตลาดสี่แยกบางนา (13.6730,100.6058) | วัดบางนาใน (13.6580,100.6120); ไบเทค บางนา (13.6682,100.6060); วัดบางนานอก (13.6756,100.5875) |
@@ -151,7 +154,7 @@ Watthana has 2 check-in points total: the district-level tower above (Satit PSM 
 | `dusit` | ประกายสิริ (13.7750,100.5140); Daily Dose (13.7805,100.5204) | OTOP ของที่ระลึก (13.7780,100.5150) | พระที่นั่งวิมานเมฆ (13.7741,100.5124); วัดเบญจมบพิตร (13.7661,100.5141); สวนสัตว์ดุสิต/เขาดินวนา (13.7718,100.5161) |
 | `ladphrao` | BAKEBURY Espresso Bar (13.8150,100.5610); Pacamara Coffee Roasters CentralPlaza (13.8168,100.5560) | OTOP ลาดพร้าว (13.8140,100.5880) | วัดลาดพร้าว (13.8200,100.5910); วัดสิริกมลาวาส (13.8230,100.5970); วัดลาดปลาเค้า (13.8469,100.6046) |
 | `nonthaburi` | บ้านท่าน้ำนนท์ (13.8570,100.5100); ชื่นอุรากาแฟ (13.8595,100.5130) | ตลาดนนทบุรี (13.8591,100.5217) | วัดเฉลิมพระเกียรติ (13.8478,100.4842); ศาลากลางฯ หลังเก่า (13.8622,100.5133); วัดเขมาภิรตาราม (13.8217,100.5036) |
-| `pathumwan` | True Coffee Siam Sq. (13.7454,100.5326); Mil Toast House (13.7457,100.5343) | นารายณ์ภัณฑ์ (13.7433,100.5491) | ศาลท้าวมหาพรหม (13.7439,100.5406); หอศิลปวัฒนธรรมฯ BACC (13.7467,100.5303); บ้านจิม ทอมป์สัน (13.7492,100.5284) |
+| `pathumwan` | True Coffee Siam Sq. (13.7454,100.5326); Mil Toast House (13.7457,100.5343); โรงอาหาร มธ. ท่าพระจันทร์ (13.7567,100.4931) | นารายณ์ภัณฑ์ (13.7433,100.5491) | ศาลท้าวมหาพรหม (13.7439,100.5406); หอศิลปวัฒนธรรมฯ BACC (13.7467,100.5303); บ้านจิม ทอมป์สัน (13.7492,100.5284); มหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์ (13.7567,100.4931) |
 | `phra_khanong` | The Wood Land (13.7050,100.6010); Craft Cafe Sukhumvit 71 (13.7090,100.6000) | ตลาดพระโขนง (13.7090,100.6010) | วัดพระโขนง (13.6960,100.5880); วัดธรรมมงคล (13.6877,100.6155); วัดวชิรธรรมสาธิต (13.7050,100.6100); W District/W Market (13.7142,100.5932) |
 | `rattanakosin` | Old Town Cafe' Bangkok (13.7480,100.4910); Golden Place Cafe Tha Chang (13.7527,100.4913); Ha Tien Cafe Tha Tien (13.7460,100.4920); Home Cafe Tha Tien (13.7450,100.4920) | OTOP ผ้าไทย (13.7560,100.4980) | วัดพระแก้ว (13.7515,100.4927); พระบรมมหาราชวัง (13.7500,100.4913); วัดโพธิ์ (13.7466,100.4930); มิวเซียมสยาม (13.7444,100.4941); ศาลเจ้าพ่อเสือ (13.7526,100.4977) |
 | `satit_test` [TEST] | โรงอาหารสาธิต ฝั่งเหนือ (13.7433,100.5660); คาเฟ่ตึกอาจารย์ (13.7434,100.5656) | ร้านสหกรณ์ มศว (13.7429,100.5659) | ป้ายหน้าโรงเรียนสาธิตประสานมิตร (13.7426,100.5659) |
@@ -161,12 +164,13 @@ Watthana has 2 check-in points total: the district-level tower above (Satit PSM 
 
 Note: `pathumwan` and `silom` each have one landmark row still tagged with a legacy `node-sukhumvit-*` / `node-silom-*` id prefix from an earlier district split (บ้านจิม ทอมป์สัน, ศาลเจ้าพ่อเสือ) — harmless (the row's `district_id` column is correct), just an id-naming leftover.
 
-## Lore Nodes (`lore_nodes` table, 55 rows — 51 `review_status = 'approved'` as of 2026-07-13, 4 `pending` added 2026-07-14 to `chain-grand-palace-heritage`)
+## Lore Nodes (`lore_nodes` table, 56 rows — 51 `review_status = 'approved'` as of 2026-07-13, 4 `pending` added 2026-07-14 to `chain-grand-palace-heritage`, 1 `approved` added 2026-07-15 for Thammasat)
 
-### Standalone district-overview nodes (13, all approved, no chain)
+### Standalone district-overview nodes (14, no chain)
 
 | ID | Name (EN) | District | lat, lng | radius_m | pts |
 |---|---|---|---|---|---|
+| `lore-tu-history` | The Founding of Thammasat University | pathumwan | 13.7567, 100.4931 | 100 | 30 |
 | `lore-bangkapi` | Bang Kapi — Eastern Canal Community | bang_kapi | 13.7640, 100.6074 | 100 | 25 |
 | `lore-bangna` | Bang Na — From Rice Fields to Industry | bang_na | 13.6681, 100.5997 | 100 | 25 |
 | `lore-chatuchak` | Chatuchak — Legacy of the Green Market | chatuchak | 13.7997, 100.5500 | 150 | 25 |
@@ -219,14 +223,19 @@ Per `CLAUDE.md`, the client-side ×2 transport bonus was removed 2026-07-09 — 
 
 ## Other counts
 
-- `quiz_questions`: 164 rows (was 173 before the mock fixture's 9 rows were deleted with `fig-mock-satit-b-01`).
-- All 73 figures now have `lat`/`lng` populated — the old "47 of 74 figures have no coords" fallback-pin situation from the 2026-07-05 snapshot no longer applies.
+- `quiz_questions`: 172 rows (164 + 8 added 2026-07-15 for Thammasat: 4 capture questions for `fig-a-21`, 4 pretest questions for `lore-tu-history`).
+- 74 figures total (73 + `fig-a-21` added 2026-07-15). All have `lat`/`lng` populated — the old "47 of 74 figures have no coords" fallback-pin situation from the 2026-07-05 snapshot no longer applies.
 
 ---
 
 ## Appendix: Lore Node Content (`content_th` / `content_en`)
 
 ### Standalone district-overview nodes
+
+**`lore-tu-history`** — The Founding of Thammasat University (pathumwan) — verbatim from tu.ac.th/about/history, added 2026-07-15
+- TH: มหาวิทยาลัยธรรมศาสตร์ก่อตั้งเมื่อวันที่ 27 มิถุนายน 2477 ชื่อมหาวิทยาลัยแรกเริ่ม คือ "มหาวิทยาลัยวิชาธรรมศาสตร์และการเมือง" (มธก.) จากแนวคิดของศาสตราจารย์ดร.ปรีดี พนมยงค์ ที่ต้องการจัดตั้งมหาวิทยาลัยที่เน้นการเรียนการสอนเรื่องประชาธิปไตย เพื่อให้การศึกษาและสร้างความเข้าใจ ในระบอบการปกครองใหม่ที่เพิ่งถือกำเนิดขึ้นก่อนหน้านี้เพียง 2 ปีแก่พลเมืองจำนวนมากผู้อยู่ในภาวะกระหายใคร่รู้ "มหาวิทยาลัยย่อมอุปมา ประดุจบ่อน้ำ บำบัดความกระหายของราษฎร ผู้สมัครแสวงหาความรู้ อันเป็นสิทธิและโอกาส ที่เขาควรมีควรได้ ตามหลักเสรีภาพของการศึกษา" ด้วยเหตุนี้มหาวิทยาลัยวิชาธรรมศาสตร์และการเมืองจึงมีลักษณะเป็นตลาดวิชา โดยเปิดกว้างแก่ผู้สำเร็จประโยคมัธยมศึกษาและผู้ที่ทำงานแล้วเข้าเรียนโดยไม่มีการสอบเข้า เก็บค่าเล่าเรียนในอัตราต่ำ จัดพิมพ์คำสอนจำหน่ายในราคาถูก ไม่บังคับให้นักศึกษาต้องมาฟังคำบรรยาย เพียงแต่มาสอบตามกำหนดเวลา นับเป็นมหาวิทยาลัยเปิดแห่งแรกของประเทศไทย ปรากฏว่า ในปีแรกมีผู้สมัครเข้าศึกษาถึง 7,094 คน ส่วนใหญ่ประกอบด้วยบุตรชายหญิงจากชนชั้นที่ไม่ได้ร่ำรวย รวมทั้งชนชั้นกลางที่มีความหลากหลายทางอาชีพ วิชาที่เปิดสอนมี 2 แขนงคือ หลักสูตรธรรมศาสตรบัณฑิตและวิชาการบัญชี
+- EN: Thammasat University was founded 27 June 1934, originally the "University of Moral and Political Science" (UMPS), from Pridi Banomyong's vision of a university centered on teaching democracy. His quote: "A university is like a well, quenching the thirst of the people who seek knowledge — a right and an opportunity they should have, under the principle of educational freedom." Thailand's first open university — no entrance exam, low tuition, cheap course materials, attendance optional (only exams mandatory). 7,094 enrolled in year one, mostly working/middle-class. Two initial programs: Bachelor of Laws/Moral Science and Accounting.
+- Has 4 `pretest` quiz questions (founding year, original name, founder, open-university characteristics) for the full lore pre/post-test flow.
 
 **`lore-bangkapi`** — Bang Kapi — Eastern Canal Community (bang_kapi)
 - TH: บางกะปิในอดีตเป็นชุมชนริมคลองและสวนผลไม้ทางตะวันออกของกรุงเทพฯ ตลาดน้ำบางกะปิเคยเป็นตลาดที่คึกคักที่สุดแห่งหนึ่ง เป็นจุดพักของพ่อค้าที่ขนสินค้าจากจังหวัดภาคตะวันออกเข้าสู่กรุงเทพฯ ตามคลองแสนแสบ
