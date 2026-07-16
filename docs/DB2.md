@@ -1,6 +1,6 @@
 # DB2 — Lore/Figure Content Revisions (Draft)
 
-Draft content only. Not yet applied to Supabase (no `patch_*.sql` written, no MCP calls made). Once reviewed, fold into a `patch_grand_palace_fix.sql` / `patch_rangsit_lore.sql` and update `docs/Db.md` + `CLAUDE.md` DB Tables section per the normal docs-sync rule.
+**Applied 2026-07-15** — §2 and §3 patched into Supabase via MCP `apply_migration`, recorded in `supabase/patch_grand_palace_fix.sql`, and folded into `docs/Db.md`. §1 (fig-b-07 district mis-tag) is an audit note only, deferred to whoever owns figure roster edits — `docs/Db.md` already carries the flag, no DB change made.
 
 ---
 
