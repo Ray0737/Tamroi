@@ -5,6 +5,12 @@ Snapshot date: 2026-07-13 (post tier-reclass, see `supabase/patch_tier_reclass.s
 
 Columns: `id`, `name_th`, `name_en`, `class` (S/A/B/C), `legacy_pts`, `district_id` → `district_name`, `description`, `image_emoji`, `is_active`, `raid_only`, `raid_min_players`, `lat`, `lng`.
 
+## Content rule — figure–district relevance
+
+A figure assigned to a district must have actually lived, worked, or have a documented event in that area — not assigned to fill a district quota (e.g. King Naresuan → Ayutthaya, `fig-s-10`, is the pattern to follow). Scope for now is Bangkok only; applying it to the rest of the country (e.g. Naresuan → Phitsanulok) is future work.
+
+One known violation from the 2026-07-15 roster audit: `fig-b-07` Thao Thep Krasattri (จัน) & Thao Si Sunthon (มุก), tagged to Bang Na, but the historical event (defense of Thalang) is in Phuket, ~700km away — see the note on that row below. Recommend re-tagging to a non-geo-gated placeholder or dropping the figure; deferred to whoever owns figure roster edits. No other district mis-tags found in a pass of the Class S/A/B/C tables.
+
 ## Tier reclassification — resolved 2026-07-13
 
 The citation/rubric review flagged 20 figures as strained or borderline against the scale/duration/evidence criteria; applied live via `supabase/patch_tier_reclass.sql`:
@@ -165,7 +171,7 @@ Watthana has 2 check-in points total: the district-level tower above (Satit PSM 
 
 Note: `pathumwan` and `silom` each have one landmark row still tagged with a legacy `node-sukhumvit-*` / `node-silom-*` id prefix from an earlier district split (บ้านจิม ทอมป์สัน, ศาลเจ้าพ่อเสือ) — harmless (the row's `district_id` column is correct), just an id-naming leftover.
 
-## Lore Nodes (`lore_nodes` table, 59 rows — 51 `review_status = 'approved'` as of 2026-07-13, 4 `pending` added 2026-07-14 to `chain-grand-palace-heritage`, 1 `approved` added 2026-07-15 for Thammasat, 3 `pending` added 2026-07-15 for Rangsit; `lore-gp-1`/`lore-gp-4`/`lore-gp-5`/`lore-gp-6` content revised 2026-07-15 per `docs/DB2.md` — see `supabase/patch_grand_palace_fix.sql`)
+## Lore Nodes (`lore_nodes` table, 59 rows — 51 `review_status = 'approved'` as of 2026-07-13, 4 `pending` added 2026-07-14 to `chain-grand-palace-heritage`, 1 `approved` added 2026-07-15 for Thammasat, 3 `pending` added 2026-07-15 for Rangsit; `lore-gp-1`/`lore-gp-4`/`lore-gp-5`/`lore-gp-6` content revised 2026-07-15 — see `supabase/patch_grand_palace_fix.sql`)
 
 ### Standalone district-overview nodes (17, no chain)
 
@@ -194,7 +200,7 @@ Note: `pathumwan` and `silom` each have one landmark row still tagged with a leg
 | Chain | District | Status | Parts (in order) |
 |---|---|---|---|
 | `chain-rattanakosin-founding` | rattanakosin | approved | 1. City Walls of Rattanakosin (13.7526,100.4892,r80,30pt) → 2. The Grand Palace (13.7500,100.4913,r100,40pt) → 3. Wat Phra Kaew (13.7514,100.4925,r100,50pt) |
-| `chain-grand-palace-heritage` | rattanakosin | approved (gp-1/gp-4) + pending (gp-2/gp-3/gp-5/gp-6) | 1. The Upper Terrace of Wat Phra Kaew (13.751457,100.492503,r30,60pt) → 2. The Emerald Buddha (13.75145,100.49180,r100,20pt) *pending* → 3. Chakri Maha Prasat Throne Hall (13.75130,100.49175,r100,20pt) *pending* → 4. Queen Sirikit Museum of Textiles (13.7511,100.4903,r60,30pt) → 5. Museum of Wat Phra Kaew (13.75095,100.49215,r100,20pt) *pending* → 6. The Grand Mahamontien Residential Group (13.75155,100.49150,r100,20pt) *pending* — restructured 2026-07-14 from 4 parts to 2 (see note below table), then re-expanded same day with 4 pending nodes pulled verbatim from the Grand Palace Google Doc — awaiting content review before `approved`; `content_th`/`content_en` for gp-1/gp-4/gp-5/gp-6 revised 2026-07-15 (formal register, gp-1 fact-corrected from "ubosot enshrining the Emerald Buddha" to Prasat Phra Thep Bidon/Royal Pantheon) per `docs/DB2.md` |
+| `chain-grand-palace-heritage` | rattanakosin | approved (gp-1/gp-4) + pending (gp-2/gp-3/gp-5/gp-6) | 1. The Upper Terrace of Wat Phra Kaew (13.751457,100.492503,r30,60pt) → 2. The Emerald Buddha (13.75145,100.49180,r100,20pt) *pending* → 3. Chakri Maha Prasat Throne Hall (13.75130,100.49175,r100,20pt) *pending* → 4. Queen Sirikit Museum of Textiles (13.7511,100.4903,r60,30pt) → 5. Museum of Wat Phra Kaew (13.75095,100.49215,r100,20pt) *pending* → 6. The Grand Mahamontien Residential Group (13.75155,100.49150,r100,20pt) *pending* — restructured 2026-07-14 from 4 parts to 2 (see note below table), then re-expanded same day with 4 pending nodes pulled verbatim from the Grand Palace Google Doc — awaiting content review before `approved`; `content_th`/`content_en` for gp-1/gp-4/gp-5/gp-6 revised 2026-07-15 (formal register, gp-1 fact-corrected from "ubosot enshrining the Emerald Buddha" to Prasat Phra Thep Bidon/Royal Pantheon) |
 | `chain-1932-revolution` | dusit→rattanakosin→pathumwan | approved | 1. Royal Plaza (13.7697,100.5137,dusit,r100,40pt) → 2. Democracy Monument (13.7567,100.5017,rattanakosin,r80,40pt) → 3. Thammasat University (13.7567,100.4930,pathumwan,r120,50pt) |
 | `chain-ayutthaya-glory` | ayutthaya | approved | 1. Wat Phra Si Sanphet (14.3558,100.5581,r120,40pt) → 2. Elephant Duel Battlefield (14.3692,100.5878,r120,50pt) → 3. Wat Yai Chaimongkol (14.3455,100.5924,r120,30pt) |
 | `chain-satit-history` [TEST] | satit_test | approved | 1. The Founding of Satit Prasarnmit, 1952–1954 (13.7435,100.5661,r100,25pt) → 2. Becoming Srinakharinwirot University, 1974–2010 (13.7436,100.5655,r100,25pt) → 3. 74 Years On — Sakyavirote Center and Today, 2012–2026 (13.7428,100.5661,r100,30pt) — replaced 2026-07-13 with real school-history content from the official 74th-anniversary infographics |
@@ -285,15 +291,15 @@ Per `CLAUDE.md`, the client-side ×2 transport bonus was removed 2026-07-09 — 
 - TH: เขตวัฒนาเติบโตขึ้นในทศวรรษ 2500-2510 เมื่อกองทหารสหรัฐอเมริกาประจำการในไทยช่วงสงครามเวียดนาม ธุรกิจบริการ ร้านอาหาร และบาร์ตามถนนสุขุมวิทตอนกลางขยายตัวอย่างรวดเร็ว ปูทางให้วัฒนากลายเป็นย่านนานาชาติหลักของกรุงเทพฯ
 - EN: Watthana grew rapidly in the 1960s–70s as US military personnel stationed in Thailand during the Vietnam War era created demand for international services. Restaurants, bars, and businesses along mid-Sukhumvit expanded dramatically, establishing the district as Bangkok's primary international zone — a character it retains today.
 
-**`lore-rangsit-canal`** — Rangsit Canal (rangsit) *(pending review, added 2026-07-15 per `docs/DB2.md`)*
+**`lore-rangsit-canal`** — Rangsit Canal (rangsit) *(pending review, added 2026-07-15)*
 - TH: คลองรังสิตประยูรศักดิ์เริ่มขุดเมื่อ พ.ศ. 2433 ในรัชสมัยพระบาทสมเด็จพระจุลจอมเกล้าเจ้าอยู่หัว ดำเนินการโดยบริษัท ขุดคลองแลคูนาสยาม จำกัด นับเป็นคลองสายหลักของโครงการพัฒนาที่ดินขนาดใหญ่โครงการแรกของประเทศไทย เชื่อมแม่น้ำเจ้าพระยากับแม่น้ำนครนายก เปิดพื้นที่รกร้างระหว่างสองแม่น้ำให้กลายเป็นที่ดินทำกินได้กว่าล้านไร่
 - EN: Rangsit Canal (Khlong Rangsit Prayurasakdi) began excavation in 1890 under King Chulalongkorn (Rama V), carried out by the Siam Canal, Land, and Irrigation Company. It formed the main artery of Thailand's first large-scale land development project, linking the Chao Phraya and Nakhon Nayok rivers and opening over a million rai of previously unused land between them for cultivation.
 
-**`lore-rangsit-agriculture`** — Rangsit Agricultural Development (rangsit) *(pending review, added 2026-07-15 per `docs/DB2.md`)*
+**`lore-rangsit-agriculture`** — Rangsit Agricultural Development (rangsit) *(pending review, added 2026-07-15)*
 - TH: การขุดคลองรังสิตทำให้เกิดโครงข่ายคลองซอยกว่า 100 สาย ระบายน้ำและชลประทานพื้นที่ราบลุ่มภาคกลางตอนล่าง เปลี่ยนทุ่งร้างให้กลายเป็นแหล่งปลูกข้าวที่สำคัญที่สุดแห่งหนึ่งของสยาม ดึงดูดชาวนาจากทั่วประเทศให้อพยพเข้ามาจับจองที่ดิน วางรากฐานให้รังสิตกลายเป็นศูนย์กลางเกษตรกรรมของจังหวัดปทุมธานีมาจนถึงปัจจุบัน
 - EN: The Rangsit Canal project spawned a network of over 100 branch canals, draining and irrigating the lower central plain and turning previously idle fields into one of Siam's most important rice-growing regions. It drew farmers from across the country to claim land, laying the foundation for Rangsit's continued role as the agricultural center of Pathum Thani province.
 
-**`lore-rangsit-name-origin`** — The Name "Rangsit" (rangsit) *(pending review, added 2026-07-15 per `docs/DB2.md`)*
+**`lore-rangsit-name-origin`** — The Name "Rangsit" (rangsit) *(pending review, added 2026-07-15)*
 - TH: ชื่อ "รังสิต" มาจากพระนามของพระเจ้าลูกยาเธอ พระองค์เจ้ารังสิตประยูรศักดิ์ พระราชโอรสองค์ที่ 58 ในพระบาทสมเด็จพระจุลจอมเกล้าเจ้าอยู่หัว ประสูติแต่เจ้าจอมมารดาหม่อมราชวงศ์เนื่อง สนิทวงศ์ คลองและพื้นที่โดยรอบจึงได้รับพระราชทานนามตามพระนามของพระองค์ ภายหลังทรงเลื่อนกรมขึ้นเป็นสมเด็จพระเจ้าบรมวงศ์เธอ กรมพระยาชัยนาทนเรนทร ทรงมีบทบาทสำคัญด้านการแพทย์และสาธารณสุขของประเทศในเวลาต่อมา
 - EN: The name "Rangsit" derives from Prince Rangsit Prayurasakdi, the 58th son of King Chulalongkorn (Rama V), born to Chao Chom Manda M.R. Nueang Sanitwong. The canal and surrounding area were named in his honor. He was later elevated in rank to Prince Chainat Narenthorn (กรมพระยาชัยนาทนเรนทร) — the same "Prince of Chainat" — and went on to play a major role in Thailand's medicine and public health institutions.
 
@@ -332,11 +338,11 @@ Restructured 2026-07-14 from 4 parts to 2 — the original 3 upper-terrace nodes
 - TH: เป็นพระที่นั่งแบบผสมผสานระหว่างสถาปัตยกรรมไทยกับสถาปัตยกรรมตะวันตก พระบาทสมเด็จพระจุลจอมเกล้าเจ้าอยู่หัว ทรงพระกรุณาโปรดเกล้าฯ ให้สถาปนิกชาวอังกฤษจากสิงคโปร์ ชื่อ มิสเตอร์ จอห์น คลูนิช ทำหน้าที่เป็นนายช่างออกแบบถวายตามพระราชดำริ ... (the "ฝรั่งสวมชฎา" compromise story — Western-style hall body with Thai prasat roof spires; completed for the 1882 Rattanakosin centennial)
 - Full `content_th` stored verbatim in DB (~2,000 chars) — not reproduced in full here; see `lore_nodes.content_th` for `lore-gp-3`.
 
-**Part 5 — `lore-gp-5`** Museum of Wat Phra Kaew *(pending review; content rephrased 2026-07-15 for timeline clarity per `docs/DB2.md` — still current-state-sensitive, worth a freshness check before `approved`)*
+**Part 5 — `lore-gp-5`** Museum of Wat Phra Kaew *(pending review; content rephrased 2026-07-15 for timeline clarity — still current-state-sensitive, worth a freshness check before `approved`)*
 - TH: ใน พ.ศ. 2522 พระบาทสมเด็จพระบรมชนกาธิเบศร มหาภูมิพลอดุลยเดชมหาราช บรมนาถบพิตร ทรงพระกรุณาโปรดเกล้าฯ ให้สมเด็จพระกนิษฐาธิราชเจ้า กรมสมเด็จพระเทพรัตนราชสุดาฯ สยามบรมราชกุมารี ทรงเป็นประธานกรรมการอำนวยการปฏิสังขรณ์วัดพระศรีรัตนศาสดารามและพระบรมมหาราชวัง เนื่องในโอกาสสมโภชกรุงรัตนโกสินทร์ครบ 200 ปี พิพิธภัณฑ์วัดพระศรีรัตนศาสดารามจึงเปิดให้เข้าชมอย่างเป็นทางการเมื่อวันที่ 7 พฤษภาคม พ.ศ. 2525 และดำเนินการต่อเนื่องมากว่าสี่ทศวรรษ ก่อนปิดปรับปรุงตั้งแต่วันที่ 5 สิงหาคม พ.ศ. 2567 จนถึงปัจจุบัน ยังไม่มีกำหนดเปิดใหม่
 - EN: The restoration effort began in 1979, when King Bhumibol Adulyadej appointed HRH Princess Maha Chakri Sirindhorn to chair the restoration committee for Wat Phra Kaew and the Grand Palace, ahead of the 200th anniversary of the founding of Bangkok. The Museum of Wat Phra Kaew opened as a result on 7 May 1982, and operated continuously for over four decades before closing for renovation on 5 August 2024 — it remains closed, with no announced reopening date.
 
-**Part 6 — `lore-gp-6`** The Grand Mahamontien Residential Group *(pending review; content revised 2026-07-15 — formal register, added Rama I–III bedchamber detail per `docs/DB2.md`)*
+**Part 6 — `lore-gp-6`** The Grand Mahamontien Residential Group *(pending review; content revised 2026-07-15 — formal register, added Rama I–III bedchamber detail)*
 - TH: หมู่พระมหามณเฑียรเป็นหมู่พระที่นั่งแรกที่สร้างขึ้นในรัชสมัยพระบาทสมเด็จพระพุทธยอดฟ้าจุฬาโลกมหาราชเมื่อ พ.ศ. 2325 ประกอบด้วยพระที่นั่งและหอเชื่อมต่อเนื่องกันรวม 7 องค์ พระที่นั่งจักรพรรดิพิมานเป็นที่ประทับส่วนพระองค์ของพระมหากษัตริย์ตั้งแต่รัชกาลที่ 1 ถึงรัชกาลที่ 3 และยังคงใช้เป็นสถานที่ประกอบพระราชพิธีสำคัญ อาทิ การบรรทมเป็นสัญลักษณ์ในพระราชพิธีบรมราชาภิเษกสืบมาจนถึงปัจจุบัน พระที่นั่งไพศาลทักษิณเป็นที่ประดิษฐานพระสยามเทวาธิราช เทพารักษ์ผู้พิทักษ์แผ่นดินสยาม ส่วนพระที่นั่งอมรินทรวินิจฉัยใช้เป็นท้องพระโรงสำหรับออกว่าราชการและประกอบพระราชพิธี
 - EN: The Grand Mahamontien Residential Group was the first set of royal residences built under King Rama I in 1782, comprising seven interconnected halls and pavilions. Chakraphat Phiman Hall served as the private bedchamber of the reigning king from Rama I through Rama III, and remains part of the coronation ceremony to this day, in which the new king symbolically spends a night there. Phaisan Thaksin Hall enshrines the Phra Siam Devadhiraj, the guardian deity of the kingdom, while Amarin Winitchai Hall serves as the throne hall for royal audiences and ceremonies.
 

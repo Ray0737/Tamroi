@@ -98,7 +98,6 @@
     └── verification-checklist.mjs Regenerates docs/land_verification.md from live DB; `mark <id> verified|flagged "note"` writes a review (needs local SUPABASE_SERVICE_KEY env var, never committed)
 └── docs/
     ├── DATABASE.md                   Figure/district/lore roster snapshot from the live Supabase DB
-    ├── DB2.md                  Content-revision changelog for DATABASE.md (Grand Palace lore fixes, Rangsit additions) — already folded into DATABASE.md, kept as the applied record
     ├── land_verification.md    Generated audit trail — every support_node/watchtower coord's reviewed/flagged status (regenerate via scripts/verification-checklist.mjs)
     ├── ALL_FUNCTIONS.md         Live log of all gameplay/DB functions; update each session
     ├── PROJECT_SUMMARY_GAME.md           Player-facing gameplay mechanics reference

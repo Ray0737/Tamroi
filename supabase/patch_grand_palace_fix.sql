@@ -1,4 +1,5 @@
--- DB2.md §2: content revisions for chain-grand-palace-heritage lore nodes.
+-- Content revisions for chain-grand-palace-heritage lore nodes (originally drafted in
+-- docs/DB2.md, since folded into docs/DATABASE.md; DB2.md removed as a standalone file).
 -- gp-2/gp-3 explicitly carry over as-is (no factual edit requested) — not touched.
 -- Applied to live Supabase via MCP apply_migration 2026-07-15; this file is the repo record.
 
@@ -22,7 +23,7 @@ UPDATE lore_nodes SET
   content_en = 'The Grand Mahamontien Residential Group was the first set of royal residences built under King Rama I in 1782, comprising seven interconnected halls and pavilions. Chakraphat Phiman Hall served as the private bedchamber of the reigning king from Rama I through Rama III, and remains part of the coronation ceremony to this day, in which the new king symbolically spends a night there. Phaisan Thaksin Hall enshrines the Phra Siam Devadhiraj, the guardian deity of the kingdom, while Amarin Winitchai Hall serves as the throne hall for royal audiences and ceremonies.'
 WHERE id = 'lore-gp-6';
 
--- DB2.md §3: new standalone Rangsit lore, near the existing TU Rangsit campus support
+-- New standalone Rangsit lore, near the existing TU Rangsit campus support
 -- node (node-tu-rangsit, 14.0716,100.6072) — spread out slightly so they don't stack.
 INSERT INTO lore_nodes (id, name_th, name_en, lat, lng, radius_m, lore_pts, content_type, content_th, content_en, chain_id, chain_part, district_id, review_status)
 VALUES
