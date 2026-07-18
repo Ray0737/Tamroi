@@ -1,6 +1,6 @@
 # Phase 3 — Co-op Mode Design
 > ตามรอย · NSC 2026 · Team ปลามึกยักษ์
-> **Status: Implemented (Phase 3 complete 2026-06-28).** Archived design doc — for current status see `docs/PROJECT_SUMMARY.md` / `docs/FUNCTION_LOG.md`. Note: written when the map was still Leaflet.js; the app has since moved to MapLibre GL (2026-07-07) and guild cap is 6, not the 2–6 range originally proposed.
+> **Status: Implemented (Phase 3 complete 2026-06-28).** Archived design doc — for current status see `docs/PROJECT_SUMMARY_CODE.md` / `docs/ALL_FUNCTIONS.md`. Note: written when the map was still Leaflet.js; the app has since moved to MapLibre GL (2026-07-07) and guild cap is 6, not the 2–6 range originally proposed.
 
 Phase 3 adds collaborative gameplay on top of the existing solo Phase 1 foundation. It introduces four features drawn from the NSC proposal (§11.4): **Guild/Party System**, **Collaborative Missions**, **Raid Encounters**, and **Historical Discussion Threads**.
 

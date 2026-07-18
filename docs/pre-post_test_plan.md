@@ -180,7 +180,7 @@ This requires `DB.Lore.getAssessments()` to be called alongside existing unlock 
 | `css/components.css` | `.lore-delta-badge` |
 | `js/collection.js` | `renderLoreJournal` — fetch + show pre/post pill |
 | `docs/CLAUDE.md` | Add `user_lore_assessments` to DB Tables; add new DB.Lore methods |
-| `docs/FUNCTION_LOG.md` | Log new functions |
+| `docs/ALL_FUNCTIONS.md` | Log new functions |
 
 ---
 

@@ -55,4 +55,4 @@ Run every patch in the order listed in `CLAUDE.md` → "Supabase Setup" (canonic
 
 ## Known Gaps To Not Mistake For Bugs
 
-See `docs/PROJECT_SUMMARY.md` → "Feature Status" for the current list (co-op mission check-in has no GPS gate, walk-cell fog is device-local, `figures.era` column not yet populated, tier ratio off-target, mock Satit test data present intentionally).
+See `docs/PROJECT_SUMMARY_CODE.md` → "Feature Status" for the current list (co-op mission check-in has no GPS gate, walk-cell fog is device-local, `figures.era` column not yet populated, tier ratio off-target, mock Satit test data present intentionally).

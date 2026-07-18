@@ -1,6 +1,6 @@
 # Plan — Figure Biography Detail + Relationship Graph UI
 
-> **Status: Implemented (2026-07-05, `patch_figure_bio.sql`).** Archived design doc — for current status see `docs/FUNCTION_LOG.md` ("Figure Biography + Graph Functions") and `docs/progress.md`.
+> **Status: Implemented (2026-07-05, `patch_figure_bio.sql`).** Archived design doc — for current status see `docs/ALL_FUNCTIONS.md` ("Figure Biography + Graph Functions") and `docs/progress.md`.
 > Scope: Collection tab → tap captured figure → full biography view (bio, relatives, related locations, related lore) + an interactive relationship graph overlay.
 
 ---
@@ -27,7 +27,7 @@ If a true React template is still wanted later, it lives in a separate repo — 
 
 ## Current state (what already exists)
 
-- `figures` table: 74 rows, has `lat`, `lng`, `era` (patch_era), `description`, `class`, `district_id`. See `docs/Db.md`.
+- `figures` table: 74 rows, has `lat`, `lng`, `era` (patch_era), `description`, `class`, `district_id`. See `docs/DATABASE.md`.
 - `lore_nodes.figure_id` **already exists** (patch_figure_quote.sql) — links a lore node/chain to a figure. Currently only used by the chain-complete sheet in map.js.
 - `collection.js showDetail()`: Bootstrap modal with name/class/pts/era/description + debate button. This is the extension point.
 - Lore Journal in Collection works (`renderLoreJournal`); it is *not* connected to figures yet.
@@ -56,7 +56,7 @@ ALTER TABLE figure_relations ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "public read figure_relations" ON figure_relations FOR SELECT USING (true);
 -- Rows are stored one-directional; the client queries both directions (or() filter).
 
--- 3. Seed: start with the obvious clusters from Db.md
+-- 3. Seed: start with the obvious clusters from DATABASE.md
 --    - Pridi Banomyong ↔ Thanpuying Phunsuk (คู่สมรส)
 --    - Pridi ↔ Seni Pramoj ↔ Free Thai Movement (ขบวนการเสรีไทย)
 --    - Phraya Phahon ↔ Phibunsongkhram ↔ Phraya Song Suradej (คณะราษฎร 2475)
@@ -86,7 +86,7 @@ async getAllRelations()       // all edges — used by the graph view
 async getForFigure(figureId)  // lore_nodes where figure_id = X (public read)
 ```
 
-Update CLAUDE.md Runtime APIs + FUNCTION_LOG.md in the same task.
+Update CLAUDE.md Runtime APIs + ALL_FUNCTIONS.md in the same task.
 
 ---
 
@@ -195,7 +195,7 @@ Performance guard: ~75 nodes + edges is trivial for SVG; disable blur filter if
 
 ## Phase E — Docs + tests
 
-- Update `docs/progress.md`, `docs/FUNCTION_LOG.md`, `docs/GAME_LOGIC.md`, `CLAUDE.md` (DB tables + Runtime APIs + file structure + Supabase patch order).
+- Update `docs/progress.md`, `docs/ALL_FUNCTIONS.md`, `docs/PROJECT_SUMMARY_GAME.md`, `CLAUDE.md` (DB tables + Runtime APIs + file structure + Supabase patch order).
 - `tests/figure-bio-static.test.mjs`: static checks — patch file exists, `figure_relations` has RLS, `collection.js` calls `escapeHtml` in new render paths, `figure-graph.js` exposes `window.FigureGraphModule.open/close`.
 
 ## Build order & effort
@@ -206,6 +206,6 @@ Performance guard: ~75 nodes + edges is trivial for SVG; disable blur filter if
 
 ## Open questions (answer before implementing)
 
-1. Relation seed: who writes the historical relation data — hand-curated SQL (recommended, ~30 edges from Db.md clusters) or later CMS-style admin?
+1. Relation seed: who writes the historical relation data — hand-curated SQL (recommended, ~30 edges from DATABASE.md clusters) or later CMS-style admin?
 2. Graph scope: whole roster in one canvas, or only the focused figure's neighborhood (1–2 hops)? Recommend neighborhood-first — cleaner on a 430px screen.
 3. Should non-captured related figures be fully hidden instead of "???" teasers? (Teaser recommended — drives gameplay loop.)

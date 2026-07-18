@@ -1,6 +1,6 @@
 # ตามรอย · Tamroi — Game Logic Reference
 
-> Pure gameplay mechanics: what each part of the game is, and exactly when/how it triggers. No theory, no code/file references — see `docs/PROJECT_SUMMARY.md` for the technical side.
+> Pure gameplay mechanics: what each part of the game is, and exactly when/how it triggers. No theory, no code/file references — see `docs/PROJECT_SUMMARY_CODE.md` for the technical side.
 > Last accurate as of: 2026-07-05 — re-verified against live code (`js/`) and the live Supabase DB (project `NSC`), not just prior notes.
 
 ---

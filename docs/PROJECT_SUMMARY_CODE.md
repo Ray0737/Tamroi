@@ -1,7 +1,7 @@
 # ตามรอย · Tamroi — Project Summary
 
 > **Folder role:** `Website - Tamroi - Round2` — the active development + production tree. Solo core (Phase 1), Co-op layer (Phase 3), educational features (retrieval practice, debates, jigsaw, pre/post-test), and the July map/capture overhaul are all merged into `main` and deployed on Vercel.
-> ⚠️ **The production content dataset (figures/lore/support nodes) is NOT reproducible from this repo's committed SQL files** — the live Supabase project holds a much larger dataset (74 figures) than any committed seed file creates. `docs/Db.md` is the roster snapshot; the live DB is the source of truth.
+> ⚠️ **The production content dataset (figures/lore/support nodes) is NOT reproducible from this repo's committed SQL files** — the live Supabase project holds a much larger dataset (74 figures) than any committed seed file creates. `docs/DATABASE.md` is the roster snapshot; the live DB is the source of truth.
 > Last accurate as of: 2026-07-05 (cross-checked directly against the live Supabase project `NSC`, not just committed files)
 
 ---
@@ -53,7 +53,7 @@
 
 ## Function Completion, Possible Errors & Security Concerns
 
-> Requested audit view: every functional area, how complete it is, what can realistically go wrong at runtime, and the security exposure. Row-level detail for individual functions lives in `docs/FUNCTION_LOG.md`.
+> Requested audit view: every functional area, how complete it is, what can realistically go wrong at runtime, and the security exposure. Row-level detail for individual functions lives in `docs/ALL_FUNCTIONS.md`.
 
 ### Solo core
 
@@ -152,9 +152,9 @@ PWA offline support · precise GeoJSON district polygons · server-side GPS vali
 
 | What | Where |
 |---|---|
-| Gameplay loop + mechanics (player-facing) | `docs/GAME_LOGIC.md` |
-| Function inventory (per-function status) | `docs/FUNCTION_LOG.md` |
-| Figure roster snapshot | `docs/Db.md` |
+| Gameplay loop + mechanics (player-facing) | `docs/PROJECT_SUMMARY_GAME.md` |
+| Function inventory (per-function status) | `docs/ALL_FUNCTIONS.md` |
+| Figure roster snapshot | `docs/DATABASE.md` |
 | Phase tracking | `docs/progress.md` |
 | Co-op feature design (archived — shipped 2026-06-28) | `docs/superpowers/specs/2026-06-28-coop-design.md` |
 | Figure bio + relation graph design (archived — shipped 2026-07-05) | `docs/superpowers/specs/2026-07-05-figure-bio-graph-plan.md` |
@@ -162,11 +162,11 @@ PWA offline support · precise GeoJSON district polygons · server-side GPS vali
 | GPS anti-cheat notes | `docs/gps-spoofing.md` |
 | Pre/post-test evaluation plan | `docs/pre-post_test_plan.md` |
 | Smoke-test checklist | `docs/production-smoke.md` |
-| Architecture overview | `docs/system_architect.md` |
+| Architecture overview | `docs/SYSTEM_ARCHITECTURE.md` |
 | Design system | `CLAUDE.md` → "Design System" |
 | SQL run order | `CLAUDE.md` → "Supabase Setup" |
 | All DB/Auth calls | `js/supabase-client.js` (`window.DB`) |
 | Static tests | `node tests/run-static.mjs` |
 | Game rules (authoritative) | `docs/proposal/ตามรอย_NSC_2026_v20.md` (+ v29 docx) |
 
-> `docs/CODING_INSTRUCTIONS.md` and `docs/VERIFYLOGIC.md` were deleted 2026-07-12 — both described a Leaflet-era/26-figure prototype fully superseded by this file, `FUNCTION_LOG.md`, `progress.md`, and `Db.md`. `docs/jigsaw-v2-design.md` was deleted as a duplicate of the fuller `docs/superpowers/specs/` version.
+> `docs/CODING_INSTRUCTIONS.md` and `docs/VERIFYLOGIC.md` were deleted 2026-07-12 — both described a Leaflet-era/26-figure prototype fully superseded by this file, `ALL_FUNCTIONS.md`, `progress.md`, and `DATABASE.md`. `docs/jigsaw-v2-design.md` was deleted as a duplicate of the fuller `docs/superpowers/specs/` version.

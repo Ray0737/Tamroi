@@ -205,6 +205,6 @@
 
 ## Notes
 - Functions marked ❌ must be built before the NSC demo is "complete per proposal"
-- Functions marked ⚠️ have known issues — see `docs/PROJECT_SUMMARY.md` → "Function Completion, Possible Errors & Security Concerns" for detail
+- Functions marked ⚠️ have known issues — see `docs/PROJECT_SUMMARY_CODE.md` → "Function Completion, Possible Errors & Security Concerns" for detail
 - Functions marked ✅ are working and tested
 - When adding a new function, add a row here with status ❌, then change to ✅ when done

@@ -1,7 +1,7 @@
 # Tamroi System Architecture
 
 > Phase 1 Web MVP architecture for Tamroi (ตามรอย), NSC 2026.
-> Extended 2026-07-12 to cover Phase 3 Co-op + educational-feature modules (originally Phase-1-only). For full module/function status see `docs/FUNCTION_LOG.md`; for a snapshot with completion/security notes see `docs/PROJECT_SUMMARY.md`.
+> Extended 2026-07-12 to cover Phase 3 Co-op + educational-feature modules (originally Phase-1-only). For full module/function status see `docs/ALL_FUNCTIONS.md`; for a snapshot with completion/security notes see `docs/PROJECT_SUMMARY_CODE.md`.
 
 ## Architecture Summary
 

@@ -1,6 +1,6 @@
 # DB2 — Lore/Figure Content Revisions (Draft)
 
-**Applied 2026-07-15** — §2 and §3 patched into Supabase via MCP `apply_migration`, recorded in `supabase/patch_grand_palace_fix.sql`, and folded into `docs/Db.md`. §1 (fig-b-07 district mis-tag) is an audit note only, deferred to whoever owns figure roster edits — `docs/Db.md` already carries the flag, no DB change made.
+**Applied 2026-07-15** — §2 and §3 patched into Supabase via MCP `apply_migration`, recorded in `supabase/patch_grand_palace_fix.sql`, and folded into `docs/DATABASE.md`. §1 (fig-b-07 district mis-tag) is an audit note only, deferred to whoever owns figure roster edits — `docs/DATABASE.md` already carries the flag, no DB change made.
 
 ---
 
@@ -10,17 +10,17 @@
 
 **Scope for now: Bangkok only.** Applying this to the rest of the country (e.g. Naresuan → Phitsanulok) is future work, out of scope here.
 
-**Audit against `docs/Db.md`'s existing roster:** one known violation already flagged in that doc —
+**Audit against `docs/DATABASE.md`'s existing roster:** one known violation already flagged in that doc —
 
-- `fig-b-07` Thao Thep Krasattri (จัน) & Thao Si Sunthon (มุก) — tagged to `บางนา` (Bang Na), but the historical event (defense of Thalang) is in Phuket, ~700km from Bangkok. Db.md already carries a note on this. Recommend either re-tagging to a non-geo-gated placeholder or dropping the figure from the Bangkok roster; deferred to whoever owns figure roster edits.
+- `fig-b-07` Thao Thep Krasattri (จัน) & Thao Si Sunthon (มุก) — tagged to `บางนา` (Bang Na), but the historical event (defense of Thalang) is in Phuket, ~700km from Bangkok. DATABASE.md already carries a note on this. Recommend either re-tagging to a non-geo-gated placeholder or dropping the figure from the Bangkok roster; deferred to whoever owns figure roster edits.
 
-No other district mis-tags found on a pass of the Class S/A/B/C tables in `docs/Db.md`.
+No other district mis-tags found on a pass of the Class S/A/B/C tables in `docs/DATABASE.md`.
 
 ---
 
 ## 2. `chain-grand-palace-heritage` fixes
 
-Overall register raised to formal (dropped the "mystery-box" rhetorical-question framing from `lore-gp-1`; dropped conversational transitions from `lore-gp-4`). Content below replaces the corresponding `content_th`/`content_en` in `docs/Db.md` §Appendix once patched into Supabase.
+Overall register raised to formal (dropped the "mystery-box" rhetorical-question framing from `lore-gp-1`; dropped conversational transitions from `lore-gp-4`). Content below replaces the corresponding `content_th`/`content_en` in `docs/DATABASE.md` §Appendix once patched into Supabase.
 
 ### Part 1 — `lore-gp-1` The Upper Terrace of Wat Phra Kaew — **name/fact correction**
 
@@ -56,7 +56,7 @@ No factual edit requested; carries over as-is pending its own review pass.
 
 ## 3. New lore — Rangsit (Thammasat Rangsit district)
 
-District `rangsit` already exists in `districts` (added 2026-07-15, see `docs/Db.md` §Districts) with `lore-tu-history` as its sole standalone node so far. The three points below are new content covering the broader Rangsit area — not yet wired into `lore_nodes` (no `id`/`chain_id`/coordinates assigned; pick standalone nodes vs. a chain during review).
+District `rangsit` already exists in `districts` (added 2026-07-15, see `docs/DATABASE.md` §Districts) with `lore-tu-history` as its sole standalone node so far. The three points below are new content covering the broader Rangsit area — not yet wired into `lore_nodes` (no `id`/`chain_id`/coordinates assigned; pick standalone nodes vs. a chain during review).
 
 ### 3.1 Rangsit Canal (คลองรังสิตประยูรศักดิ์)
 
